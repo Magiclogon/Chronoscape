@@ -295,56 +295,75 @@ classDiagram
         +create(): Pickable
     }
 
-    class Upgrade {
-        <<abstract>>
-        - multiplier : double
-    }
-
-    class WeaponUpgrade {
-        <<abstract>>
-        - multiplier : double
-    }
-
-    class RangeUpgrade {
-        - multiplier : double
-    }
-
-    class DamageUpgrade {
-        - multiplier : double
-    }
-
-    class AOEUpgrage {
-        - multiplier : double
-    }
-
-    class AttackSpeedUpgrade {
-        - multiplier : double
-    }
-
-    class PlayerUpgrade {
-        <<abstract>>
-        - multiplier : double
-    }
-
-    class HpUpgrade {
-        - multiplier : double
-    }
-
-    class StrenghtUpgrade{
-        - mutiplier : double
-    }
-
-    class Item {
-        <<abstract>>
-        - upgrades : List<Upgrade>
-        - price: double
-    }
-
-    clqss
+    
 
     class Shop {
-
+        - availableItems : List<ShopItem>
+        - instance : Shop
+        + getInstance() : Shop
+        + addItem(item : ShopItem) : void
+        + removeItem(item : ShopItem) : void
+        + getAvailableItems() : List<ShopItem>
+        + purchaseItem(player : Player, item : ShopItem) : boolean
     }
+    
+    class ShopItem {
+        <<abstract>>
+        - id : String
+        - name : String
+        - description : String
+        - price : double
+        - iconPath : String
+        + getId() : String
+        + getName() : String
+        + getPrice() : double
+        + apply(player : Player) : void
+    }
+    
+    class StatModifierItem {
+        - hpModifier : double
+        - strengthModifier : double
+        - velocityModifier : double
+        - regenerationModifier : double
+        + apply(player : Player) : void
+    }
+    
+    class WeaponItem {
+        - weaponId : String
+        - weaponType : Class
+        - upgradeMultiplier : double
+        + apply(player : Player) : void
+        - createWeapon() : Weapon
+        - upgradeWeapon(weapon : Weapon) : Weapon
+    }
+    
+    class Inventory {
+        - purchasedItems : List<ShopItem>
+        - activeEffects : Map<String, StatModifier>
+        + addItem(item : ShopItem) : void
+        + removeItem(item : ShopItem) : void
+        + getItems() : List<ShopItem>
+        + hasItem(itemId : String) : boolean
+        + getTotalStatModifier(stat : String) : double
+    }
+    
+    class StatModifier {
+        - statName : String
+        - modifier : double
+        - isMultiplicative : boolean
+        + apply(baseValue : double) : double
+    }
+    
+    %% Relationships
+    Shop --> ShopItem : contains
+    ShopItem <|-- StatModifierItem
+    ShopItem <|-- WeaponItem
+    Player --> Inventory : has
+    Inventory --> ShopItem : stores
+    Inventory --> StatModifier : tracks
+    Shop --> Player : interacts with
+    WeaponItem --> Weapon : creates/upgrades
+    
 
     %% Inheritances
     Entity <|-- LivingEntity
