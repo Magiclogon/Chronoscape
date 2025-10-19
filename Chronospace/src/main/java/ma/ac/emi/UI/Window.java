@@ -6,15 +6,18 @@ public class Window extends JFrame implements Runnable{
 	private Thread UIThread;
 	private MainMenu mainMenu;
 	private LevelSelection levelSelection;
+	private DifficultyMenu difficultyMenu;
+	
 	
 	public Window() {
 		UIThread = new Thread(this);
-		mainMenu = new MainMenu();
+		mainMenu = new MainMenu(this);
+		difficultyMenu = new DifficultyMenu();
 		levelSelection = new LevelSelection(this);
 		add(mainMenu);
-
+		
 	}
-	
+
 	public void startUIThread() {
 		UIThread.run();
 	}
@@ -30,6 +33,13 @@ public class Window extends JFrame implements Runnable{
 	public void showLevelSelection() {
 		this.getContentPane().removeAll();
 		this.add(levelSelection);
+		this.revalidate();
+		this.repaint();
+	}
+
+	public void showDifficultyMenu() {
+		this.getContentPane().removeAll();
+		this.add(difficultyMenu);
 		this.revalidate();
 		this.repaint();
 	}

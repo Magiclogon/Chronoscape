@@ -21,18 +21,12 @@ public class MainMenu extends JPanel{
 	private JLabel title;
 	private JButton startButton, quitButton;
 	
-	public MainMenu() {
+	public MainMenu(Window window) {
 		title = new JLabel();
 		startButton = new JButton("Start");
+		startButton.addActionListener(e -> window.showDifficultyMenu());
 		quitButton = new JButton("Quit");
-		quitButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-			
-		});
+		quitButton.addActionListener(e -> System.exit(0));
 		
 		this.setBackground(Color.BLACK);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
