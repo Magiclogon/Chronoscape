@@ -5,11 +5,14 @@ import javax.swing.JFrame;
 public class Window extends JFrame implements Runnable{
 	private Thread UIThread;
 	private MainMenu mainMenu;
+	private LevelSelection levelSelection;
 	
 	public Window() {
 		UIThread = new Thread(this);
 		mainMenu = new MainMenu();
+		levelSelection = new LevelSelection(this);
 		add(mainMenu);
+
 	}
 	
 	public void startUIThread() {
@@ -22,5 +25,12 @@ public class Window extends JFrame implements Runnable{
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	public void showLevelSelection() {
+		this.getContentPane().removeAll();
+		this.add(levelSelection);
+		this.revalidate();
+		this.repaint();
 	}
 }
