@@ -1,6 +1,7 @@
 package ma.ac.emi.UI;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Window extends JFrame implements Runnable{
 	private Thread UIThread;
@@ -10,37 +11,40 @@ public class Window extends JFrame implements Runnable{
 	
 	
 	public Window() {
-		UIThread = new Thread(this);
-		mainMenu = new MainMenu(this);
-		difficultyMenu = new DifficultyMenu();
-		levelSelection = new LevelSelection(this);
-		add(mainMenu);
+		
 		
 	}
 
 	public void startUIThread() {
-		UIThread.run();
+		UIThread = new Thread(this);
+		UIThread.start();
 	}
 
 	@Override
 	public void run() {
+		mainMenu = new MainMenu(this);
+		difficultyMenu = new DifficultyMenu();
+		levelSelection = new LevelSelection(this);
 		this.setSize(500, 500);
 		this.setVisible(true);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		add(mainMenu);
+
+		
 	}
 	
-	public void showLevelSelection() {
+	private void showPanel(JPanel panel) {
 		this.getContentPane().removeAll();
-		this.add(levelSelection);
+		this.add(panel);
 		this.revalidate();
 		this.repaint();
+	}
+	public void showLevelSelection() {
+		showPanel(levelSelection);
 	}
 
 	public void showDifficultyMenu() {
-		this.getContentPane().removeAll();
-		this.add(difficultyMenu);
-		this.revalidate();
-		this.repaint();
+		showPanel(difficultyMenu);
 	}
 }
