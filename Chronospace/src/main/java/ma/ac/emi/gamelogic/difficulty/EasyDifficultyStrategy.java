@@ -1,17 +1,19 @@
 package ma.ac.emi.gamelogic.difficulty;
 
+import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.pickable.Pickable;
+import ma.ac.emi.gamelogic.shop.StatModifier;
+
+import java.util.ArrayList;
+
 public class EasyDifficultyStrategy implements DifficultyStrategy {
     @Override
-    public void addStatModifier(String statName, StatModifier modifier) {
-        if (!activeEffects.containsKey(statName)) {
-            activeEffects.put(statName, new ArrayList<>());
-        }
-        activeEffects.get(statName).add(modifier);
+    public void adjustEnemyStats(Ennemy enemy) {
+        // Increase enemy stats for hard mode
     }
 
-    public void removeStatModifier(String statName, StatModifier modifier) {
-        if (activeEffects.containsKey(statName)) {
-            activeEffects.get(statName).remove(modifier);
-        }
+    @Override
+    public void adjustPickableDrop(Pickable pickable) {
+        // Decrease drop rates for hard mode
     }
 }

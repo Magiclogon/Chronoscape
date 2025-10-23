@@ -1,4 +1,4 @@
 package ma.ac.emi.gamelogic.weapon;
 
-public class MeleeSingleHit {
+public abstract class MeleeSingleHit extends Weapon{
 }

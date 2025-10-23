@@ -1,4 +1,4 @@
 package ma.ac.emi.gamelogic.entity;
 
-public class SpeedsterEnnemy {
+public class SpeedsterEnnemy extends Ennemy{
 }
