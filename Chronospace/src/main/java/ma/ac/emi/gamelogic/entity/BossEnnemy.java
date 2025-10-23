@@ -1,4 +1,4 @@
 package ma.ac.emi.gamelogic.entity;
 
-public class BossEnnemy {
+public class BossEnnemy extends Ennemy{
 }
