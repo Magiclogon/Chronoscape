@@ -1,26 +1,37 @@
 package ma.ac.emi.gamelogic.entity;
 
+
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
 
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Ennemy extends LivingEntity {
+	private Player player;
     protected double damage;
 
-	public Ennemy(Vector2D pos, double speed) {
+	public Ennemy(Vector2D pos, double speed, Player player) {
 		super(pos, speed);
-	}
+        this.player = player;
+		this.velocity = new Vector2D();
+    }
 
-	public double getDamage() { return damage; }
-    public void setDamage(double damage) { this.damage = damage; }
 	@Override
 	public void update(double step) {
-		// TODO Auto-generated method stub
-		
+		velocity.init();
+		Vector2D playerPos = player.getPos();
+		Vector2D direction = (playerPos.sub(getPos())).normalize();
+		setVelocity(direction.mult(getSpeed()));
+
+		velocity.mult(step);
+		setPos(getPos().add(velocity));
 	}
+
 	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		
+		g.setColor(Color.RED);
+		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 	}
 }

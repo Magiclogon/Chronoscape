@@ -18,18 +18,13 @@ public class GamePanel extends JPanel implements Runnable{
 	public GamePanel(){
 		KeyHandler.getInstance().setupKeyBindings(this);
 
-		world = new World(20, 10);
+		world = new World(20, 20);
 	}
 	@Override
 	public void run() {
 		long latestTime = System.nanoTime();
 		long deltaTime = 0, accumTime = 0, currentTime;
 		do{
-			/*currentTime = System.nanoTime();
-			update(deltaTime/Math.pow(10, 9));
-			repaint();
-			latestTime = System.nanoTime();
-			deltaTime = latestTime - currentTime;*/
 			deltaTime = System.nanoTime() - latestTime;
 			latestTime += deltaTime;
 			accumTime += deltaTime;
