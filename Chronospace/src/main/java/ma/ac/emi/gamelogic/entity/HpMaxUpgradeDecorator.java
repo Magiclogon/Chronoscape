@@ -1,15 +1,5 @@
 package ma.ac.emi.gamelogic.entity;
 
-public class HpMaxUpgradeDecorator extends LivingEntityStatUpgradeDecorator {
-    private double multiplier;
+public class HpMaxUpgradeDecorator  {
 
-    public HpMaxUpgradeDecorator(LivingEntity wrappee, double multiplier) {
-        super(wrappee);
-        this.multiplier = multiplier;
-    }
-
-    @Override
-    public double getHpMax() {
-        return wrappee.getHpMax() * multiplier;
-    }
 }

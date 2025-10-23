@@ -1,9 +1,5 @@
 package ma.ac.emi.gamelogic.entity;
 
-public abstract class LivingEntityStatUpgradeDecorator extends LivingEntity {
-    protected LivingEntity wrappee;
+public abstract class LivingEntityStatUpgradeDecorator  {
 
-    public LivingEntityStatUpgradeDecorator(LivingEntity wrappee) {
-        this.wrappee = wrappee;
-    }
 }

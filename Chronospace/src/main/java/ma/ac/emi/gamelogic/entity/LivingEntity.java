@@ -1,10 +1,16 @@
 package ma.ac.emi.gamelogic.entity;
 
+import ma.ac.emi.math.Vector2D;
+
 public abstract class LivingEntity extends Entity {
     protected double hp;
     protected double hpMax;
     protected double strength;
     protected double regenerationSpeed;
+
+    public LivingEntity(Vector2D pos, double speed) {
+        super(pos, speed);
+    }
 
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }

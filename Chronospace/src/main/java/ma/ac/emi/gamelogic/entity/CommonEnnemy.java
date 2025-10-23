@@ -1,4 +1,4 @@
 package ma.ac.emi.gamelogic.entity;
 
-public class CommonEnnemy extends Ennemy{
+public class CommonEnnemy{
 }

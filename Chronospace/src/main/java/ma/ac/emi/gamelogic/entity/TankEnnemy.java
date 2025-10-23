@@ -1,4 +1,4 @@
 package ma.ac.emi.gamelogic.entity;
 
-public class TankEnnemy extends Ennemy{
+public class TankEnnemy{
 }
