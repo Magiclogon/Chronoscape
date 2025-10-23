@@ -14,7 +14,7 @@ public class World {
 	
 	public World(int w, int h) {
 		width = w; height = h;
-		player = new Player(new Vector2D(), 5);
+		player = new Player(new Vector2D(), 2);
 		camera = new Camera(player.getPos(), width, height);
 	}
 	
@@ -26,7 +26,7 @@ public class World {
 		g.setColor(Color.BLACK);
 		for(int i = 0; i < height; i++) {
 			for(int j = 0 ; j < width; j++) {
-				g.drawRect(i*GamePanel.TILE_SIZE, j*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+				g.drawRect(j*GamePanel.TILE_SIZE, i*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 			}
 		}
 		

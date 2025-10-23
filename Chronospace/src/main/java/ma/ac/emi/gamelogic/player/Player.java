@@ -24,9 +24,13 @@ public class Player extends Entity{
 
 	@Override
 	public void update(double step) {
+		System.out.println(pos.getX());
 		vel.init();
 		if(KeyHandler.getInstance().isLeft()) vel.setX(-1*speed);
-		if(KeyHandler.getInstance().isRight()) vel.setX(speed);
+		if(KeyHandler.getInstance().isRight()) {
+			vel.setX(speed);
+			System.out.println("right");
+		}
 		if(KeyHandler.getInstance().isUp()) vel.setY(-1*speed);
 		if(KeyHandler.getInstance().isDown()) vel.setY(speed);
 		vel.mult(step);
