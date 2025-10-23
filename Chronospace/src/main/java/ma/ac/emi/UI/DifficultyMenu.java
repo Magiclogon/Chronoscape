@@ -7,12 +7,14 @@ public class DifficultyMenu extends JPanel{
     private JLabel title;
     private JButton easyButton, mediumButton, hardButton, anwarButton;
 
-    public DifficultyMenu() {
+    public DifficultyMenu(Window window) {
         title = new JLabel();
         easyButton = new JButton("Easy Button");
         mediumButton = new JButton("Medium Button");
         hardButton = new JButton("Hard Button");
         anwarButton = new JButton("Anwar Button");
+        
+        easyButton.addActionListener((e) -> window.showLevelSelection());
 
         title.setForeground(Color.RED);
         title.setFont(new Font("Arial", Font.BOLD, 28));

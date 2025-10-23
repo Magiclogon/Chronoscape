@@ -16,6 +16,7 @@ public class LevelSelection extends JPanel{
 		levelsButtons = new ArrayList<>();
 		for(int i = 1; i <= 4; i++) {
 			JButton levelButton = new JButton("Level "+ i);
+			levelButton.addActionListener((e) -> window.startGame());
 			levelsButtons.add(levelButton);
 		}
 		
