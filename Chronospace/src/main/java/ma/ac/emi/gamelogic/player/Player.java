@@ -18,33 +18,27 @@ public class Player extends Entity{
 	public Player(Vector2D pos, double speed) {
 		super(pos, speed);
 		inventory = new Inventory();
-		vel = new Vector2D();
+		velocity = new Vector2D();
 	}
-	
 
 	@Override
 	public void update(double step) {
-		System.out.println(pos.getX());
-		vel.init();
-		if(KeyHandler.getInstance().isLeft()) vel.setX(-1*speed);
+		velocity.init();
+		if(KeyHandler.getInstance().isLeft()) velocity.setX(-1*speed);
 		if(KeyHandler.getInstance().isRight()) {
-			vel.setX(speed);
-			System.out.println("right");
+			velocity.setX(speed);
 		}
-		if(KeyHandler.getInstance().isUp()) vel.setY(-1*speed);
-		if(KeyHandler.getInstance().isDown()) vel.setY(speed);
-		vel.mult(step);
-		pos = pos.add(vel);
+		if(KeyHandler.getInstance().isUp()) velocity.setY(-1*speed);
+		if(KeyHandler.getInstance().isDown()) velocity.setY(speed);
+		velocity.mult(step);
+		setPos(pos.add(velocity));
 	}
 
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.RED);
+		g.setColor(Color.GREEN);
 		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		
 	}
-
- 
 
     public String getPseudoname() { return pseudoname; }
     public void setPseudoname(String pseudoname) { this.pseudoname = pseudoname; }
