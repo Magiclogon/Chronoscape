@@ -1,11 +1,12 @@
 package ma.ac.emi.gamecontrol;
 
 import java.awt.*;
-import java.awt.event.KeyListener;
 
 import javax.swing.JPanel;
 
+import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
+import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
 public class GamePanel extends JPanel implements Runnable{
@@ -13,17 +14,17 @@ public class GamePanel extends JPanel implements Runnable{
 	public final static int TILE_SIZE = 16;
 	
 	private World world;
-	double x = 0;
+	private Camera camera;
 	
 	public GamePanel(){
 		KeyHandler.getInstance().setupKeyBindings(this);
-
-		world = new World(20, 20);
+		camera = new Camera(new Vector2D(), 100, 100, this);
+		world = new World(20, 10, camera);
 	}
 	@Override
 	public void run() {
 		long latestTime = System.nanoTime();
-		long deltaTime = 0, accumTime = 0, currentTime;
+		long deltaTime = 0, accumTime = 0;
 		do{
 			deltaTime = System.nanoTime() - latestTime;
 			latestTime += deltaTime;
@@ -46,14 +47,10 @@ public class GamePanel extends JPanel implements Runnable{
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		world.draw(g);
-		g.setColor(Color.yellow);
-		System.out.println(x);
-
-		g.fillRect((int)x, 100, 100, 100);
 	}
 	
 	public void update(double step) {
+		camera.update(step);
 		world.update(step);
-		x += 2 * step;
 	}
 }

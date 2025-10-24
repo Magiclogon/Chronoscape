@@ -58,13 +58,21 @@ public class Window extends JFrame{
 		    gameThread.start();
 		});
 	    JLayeredPane layeredPane = new JLayeredPane();
-	    layeredPane.setPreferredSize(new Dimension(800, 600));
+	    layeredPane.setLayout(null); // still manual layout
 
-	    gamePanel.setBounds(0, 0, 800, 600);
-	    gameUIPanel.setBounds(0, 0, 800, 600);
-
+	    // Add both at fixed layers
 	    layeredPane.add(gamePanel, Integer.valueOf(0));
 	    layeredPane.add(gameUIPanel, Integer.valueOf(1));
+
+	    // Auto-resize listener
+	    layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+	        @Override
+	        public void componentResized(java.awt.event.ComponentEvent e) {
+	            Dimension size = layeredPane.getSize();
+	            gamePanel.setBounds(0, 0, size.width, size.height);
+	            gameUIPanel.setBounds(0, 0, size.width, size.height);
+	        }
+	    });
 
 	    showComponent(layeredPane);
 	}
