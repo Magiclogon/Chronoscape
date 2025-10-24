@@ -18,7 +18,7 @@ public class World extends GameDrawable{
 		super(camera);
 		width = w; height = h;
 		player = new Player(new Vector2D(), 2, camera);
-		ennemy = new Ennemy(new Vector2D(320,320), 1, player);
+		ennemy = new Ennemy(new Vector2D(320,320), 1, camera, player);
 		camera.snapTo(player);
 	}
 	

@@ -5,11 +5,12 @@ import java.awt.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.math.Vector2D;
 
-public class Player extends Entity{
+public class Player extends LivingEntity{
     private String pseudoname;
     private double money;
     private Gender gender;
