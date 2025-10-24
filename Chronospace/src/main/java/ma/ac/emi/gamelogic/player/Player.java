@@ -4,6 +4,7 @@ import java.awt.*;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;

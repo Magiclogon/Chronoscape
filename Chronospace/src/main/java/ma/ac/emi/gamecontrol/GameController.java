@@ -20,14 +20,14 @@ public class GameController implements Runnable {
 	private Thread gameThread;
 
 	public GameController() {
-		world = new World(500, 500);
+		world = new World(50, 50);
 		gamePanel = new GamePanel(world);
 		gameUIPanel = new GameUIPanel(world);
 
-		double camWidth = 800;
-		double camHeight = 600;
+		double camWidth = 640;
+		double camHeight = 480;
 
-		camera = new Camera(new Vector2D(0, 0), camWidth, camHeight, gamePanel, world.getPlayer());
+		camera = new Camera(new Vector2D(), camWidth, camHeight, gamePanel, world.getPlayer());
 		camera.snapTo(world.getPlayer());
 
 		gamePanel.setCamera(camera);

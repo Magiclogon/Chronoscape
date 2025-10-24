@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
@@ -37,6 +38,11 @@ public class World {
 	}
 
 	public void draw(Graphics g) {
+		for(int i = 0; i < height; i++) {
+			for(int j = 0; j < width; j++) {
+				g.drawRect(j*GamePanel.TILE_SIZE, i*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE); //Added this to see how the world reacts to the camera
+			}
+		}
 		player.draw(g);
 		for(Ennemy ennemy : ennemies) {
 			ennemy.draw(g);

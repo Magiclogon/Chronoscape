@@ -4,11 +4,13 @@ import java.awt.*;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.camera.Camera;
+import ma.ac.emi.camera.GameDrawable;
 import ma.ac.emi.math.Vector2D;
 
 @Setter
 @Getter
-public abstract class Entity {
+public abstract class Entity{
 	protected Vector2D pos;
 	protected Vector2D velocity;
 	protected double speed;
@@ -17,7 +19,7 @@ public abstract class Entity {
 		this.pos = pos;
 		this.speed = speed;
 	}
-
+	
 	public abstract void update(double step);
 	
 	public abstract void draw(Graphics g);
