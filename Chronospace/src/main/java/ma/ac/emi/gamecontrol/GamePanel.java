@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D) g;
 		if (camera == null) {
+			System.out.println("Camera is null");
 			world.draw(g);
 			return;
 		}

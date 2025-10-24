@@ -22,7 +22,7 @@ public class GameController implements Runnable {
 	public GameController() {
 		world = new World(500, 500);
 		gamePanel = new GamePanel(world);
-		gameUIPanel = new GameUIPanel();
+		gameUIPanel = new GameUIPanel(world);
 
 		double camWidth = 800;
 		double camHeight = 600;
@@ -54,6 +54,7 @@ public class GameController implements Runnable {
 				accumTime -= SIM_STEP;
 			}
 			gamePanel.repaint();
+			gameUIPanel.repaint();
 
 			try {
 				Thread.sleep(10);

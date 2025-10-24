@@ -20,7 +20,7 @@ public class World {
 
 	public World(int w, int h) {
 		width = w; height = h;
-		player = new Player(new Vector2D(500,500), 2);
+		player = new Player(new Vector2D(0,0), 2);
 		ennemies = new ArrayList<>();
 		ennemies.add(new Ennemy(new Vector2D(100, 100), 1));
 		ennemies.add(new Ennemy(new Vector2D(200, 200), 1));
@@ -32,7 +32,6 @@ public class World {
 		for(Ennemy ennemy : ennemies) {
 			ennemy.update(step, playerPos);
 		}
-
 	}
 
 	public void draw(Graphics g) {
