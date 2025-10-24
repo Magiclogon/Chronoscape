@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.player;
 
 import java.awt.*;
 
+import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.shop.Inventory;
@@ -15,8 +16,8 @@ public class Player extends Entity{
     private Inventory inventory;
 
 	
-	public Player(Vector2D pos, double speed) {
-		super(pos, speed);
+	public Player(Vector2D pos, double speed, Camera camera) {
+		super(pos, speed, camera);
 		inventory = new Inventory();
 		vel = new Vector2D();
 	}
@@ -24,6 +25,7 @@ public class Player extends Entity{
 
 	@Override
 	public void update(double step) {
+		camTransform();
 		System.out.println(pos.getX());
 		vel.init();
 		if(KeyHandler.getInstance().isLeft()) vel.setX(-1*speed);
@@ -34,13 +36,14 @@ public class Player extends Entity{
 		if(KeyHandler.getInstance().isUp()) vel.setY(-1*speed);
 		if(KeyHandler.getInstance().isDown()) vel.setY(speed);
 		vel.mult(step);
-		pos = pos.add(vel);
+		setPos(pos.add(vel));
+		
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.RED);
-		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		g.fillRect((int)(getScreenPos().getX()), (int)(getScreenPos().getY()), (int)(GamePanel.TILE_SIZE*scaleRatios.getX()), (int)(GamePanel.TILE_SIZE*scaleRatios.getY()));
 		
 	}
 
@@ -56,4 +59,12 @@ public class Player extends Entity{
     public void setGender(Gender gender) { this.gender = gender; }
 
     public Inventory getInventory() { return inventory; }
+
+
+	@Override
+	public void camTransform() {
+		setScreenPos(camera.camTransform(getPos()));
+		setScaleRatios(camera.getScreenCamRatios());
+		
+	}
 }
