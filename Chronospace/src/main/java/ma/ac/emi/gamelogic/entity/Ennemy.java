@@ -6,11 +6,9 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
-
 import java.awt.*;
 
 public class Ennemy extends LivingEntity {
-	private Player player;
     protected double damage;
 
 	public Ennemy(Vector2D pos, double speed, Camera camera, Player player) {
@@ -23,13 +21,15 @@ public class Ennemy extends LivingEntity {
 	public void update(double step) {
 		camTransform();
 		velocity.init();
-		Vector2D playerPos = player.getPos();
-		Vector2D direction = (playerPos.sub(getPos())).normalize();
+		Vector2D direction = (targetPos.sub(getPos())).normalize();
 		setVelocity(direction.mult(getSpeed()));
 
 		velocity.mult(step);
 		setPos(getPos().add(velocity));
 	}
+
+	@Override
+	public void update(double step) { /* TODO Just the fill in the implementation*/ }
 
 	@Override
 	public void draw(Graphics g) {

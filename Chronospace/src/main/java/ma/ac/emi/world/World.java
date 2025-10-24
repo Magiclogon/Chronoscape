@@ -2,6 +2,8 @@ package ma.ac.emi.world;
 
 import java.awt.*;
 
+import lombok.Getter;
+import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.camera.GameDrawable;
 import ma.ac.emi.gamecontrol.GamePanel;
@@ -21,13 +23,13 @@ public class World extends GameDrawable{
 		ennemy = new Ennemy(new Vector2D(320,320), 1, camera, player);
 		camera.snapTo(player);
 	}
-	
+
 	public void update(double step) {
 		camTransform();
 		player.update(step);
     ennemy.update(step);
 	}
-	
+
 	public void draw(Graphics g) {
 		g.setColor(Color.BLACK);
 		for(int i = 0; i < height; i++) {
@@ -39,7 +41,7 @@ public class World extends GameDrawable{
 			}
 		}
 		player.draw(g);
-        ennemy.draw(g);
+		ennemy.draw(g);
 	}
 
 	@Override

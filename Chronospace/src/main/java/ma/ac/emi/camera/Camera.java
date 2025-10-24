@@ -8,6 +8,8 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
+@Setter
+@Getter
 public class Camera {
 	private Vector2D pos;
 	private double width, height;
