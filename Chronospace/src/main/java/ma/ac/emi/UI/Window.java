@@ -1,49 +1,45 @@
 package ma.ac.emi.UI;
 
-import java.awt.CardLayout;
 import java.awt.Dimension;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
+import ma.ac.emi.gamecontrol.GameController; // <-- Import Controller
 import ma.ac.emi.gamecontrol.GamePanel;
-import ma.ac.emi.input.KeyHandler;
 
-public class Window extends JFrame{
+public class Window extends JFrame {
 	private MainMenu mainMenu;
 	private LevelSelection levelSelection;
-	private DifficultyMenu difficultyMenu;	
-	private GameUIPanel gameUIPanel;
-	private GamePanel gamePanel;
-	
+	private DifficultyMenu difficultyMenu;
+	private GameController gameController;
+
 	public Window() {
 		mainMenu = new MainMenu(this);
 		difficultyMenu = new DifficultyMenu(this);
 		levelSelection = new LevelSelection(this);
-		gameUIPanel = new GameUIPanel();
-		gamePanel = new GamePanel();
-		this.setSize(500, 500);
+		gameController = new GameController();
+
+		this.setSize(800, 600);
 		this.setLocationRelativeTo(null);
+		this.setResizable(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		add(mainMenu);
-		
 		this.setVisible(true);
 	}
-	
+
 	private void showComponent(JComponent component) {
 		this.getContentPane().removeAll();
 		this.add(component);
 		this.revalidate();
 		this.repaint();
 	}
-	
+
 	private void showPanel(JPanel panel) {
 		showComponent(panel);
 	}
+
 	public void showLevelSelection() {
 		showPanel(levelSelection);
 	}
@@ -53,20 +49,33 @@ public class Window extends JFrame{
 	}
 
 	public void startGame() {
-		SwingUtilities.invokeLater(() -> {
-			Thread gameThread = new Thread(gamePanel);
-		    gameThread.start();
+		GamePanel gamePanel = gameController.getGamePanel();
+		GameUIPanel gameUIPanel = gameController.getGameUIPanel();
+
+		JLayeredPane layeredPane = new JLayeredPane();
+
+		Dimension size = this.getContentPane().getSize();
+		layeredPane.setPreferredSize(size);
+
+		gamePanel.setBounds(0, 0, size.width, size.height);
+		gameUIPanel.setBounds(0, 0, size.width, size.height);
+
+		layeredPane.add(gamePanel, Integer.valueOf(0));
+		layeredPane.add(gameUIPanel, Integer.valueOf(1));
+
+		layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+			@Override
+			public void componentResized(java.awt.event.ComponentEvent e) {
+				Dimension newSize = layeredPane.getSize();
+				gamePanel.setBounds(0, 0, newSize.width, newSize.height);
+				gameUIPanel.setBounds(0, 0, newSize.width, newSize.height);
+				gamePanel.revalidate();
+				gamePanel.repaint();
+			}
 		});
-	    JLayeredPane layeredPane = new JLayeredPane();
-	    layeredPane.setPreferredSize(new Dimension(800, 600));
 
-	    gamePanel.setBounds(0, 0, 800, 600);
-	    gameUIPanel.setBounds(0, 0, 800, 600);
+		showComponent(layeredPane);
 
-	    layeredPane.add(gamePanel, Integer.valueOf(0));
-	    layeredPane.add(gameUIPanel, Integer.valueOf(1));
-
-	    showComponent(layeredPane);
+		gameController.startGameThread();
 	}
-
 }

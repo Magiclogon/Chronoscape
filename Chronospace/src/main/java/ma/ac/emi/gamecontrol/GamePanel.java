@@ -1,59 +1,49 @@
 package ma.ac.emi.gamecontrol;
 
 import java.awt.*;
-import java.awt.event.KeyListener;
-
+import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
+import lombok.Getter;
+import lombok.Setter;
+import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
+import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
-public class GamePanel extends JPanel implements Runnable{
-	public final static long SIM_STEP = (long)(Math.pow(10, 9)/60);
-	public final static int TILE_SIZE = 16;
-	
-	private World world;
-	double x = 0;
-	
-	public GamePanel(){
-		KeyHandler.getInstance().setupKeyBindings(this);
+@Setter
+@Getter
+public class GamePanel extends JPanel {
 
-		world = new World(20, 20);
+	public static final int TILE_SIZE = 16;
+
+	private final World world;
+	private Camera camera;
+
+	public GamePanel(World world) {
+		this.world = world;
+		Dimension panelSize = new Dimension(world.getWidth() * TILE_SIZE, world.getHeight() * TILE_SIZE);
+		this.setPreferredSize(panelSize);
+		KeyHandler.getInstance().setupKeyBindings(this);
 	}
-	@Override
-	public void run() {
-		long latestTime = System.nanoTime();
-		long deltaTime = 0, accumTime = 0, currentTime;
-		do{
-			deltaTime = System.nanoTime() - latestTime;
-			latestTime += deltaTime;
-			accumTime += deltaTime;
-			while(accumTime > SIM_STEP) {
-				update(SIM_STEP/Math.pow(10, 9));
-				accumTime -= SIM_STEP;
-			}
-			repaint();
-			
-			try {
-				Thread.sleep(16);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}while(true);
-	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		world.draw(g);
-		g.setColor(Color.yellow);
-		System.out.println(x);
+		Graphics2D g2d = (Graphics2D) g;
+		if (camera == null) {
+			world.draw(g);
+			return;
+		}
+		AffineTransform oldTransform = g2d.getTransform();
 
-		g.fillRect((int)x, 100, 100, 100);
-	}
-	
-	public void update(double step) {
-		world.update(step);
-		x += 2 * step;
+		Vector2D camPos = camera.getPos();
+		Vector2D ratios = camera.getScreenCamRatios();
+
+		g2d.scale(ratios.getX(), ratios.getY());
+		g2d.translate(-camPos.getX(), -camPos.getY());
+		world.draw(g2d);
+
+		g2d.setTransform(oldTransform);
 	}
 }
