@@ -2,17 +2,14 @@ package ma.ac.emi.gamelogic.entity;
 
 import java.awt.*;
 
-import ma.ac.emi.camera.Camera;
-import ma.ac.emi.camera.GameDrawable;
 import ma.ac.emi.math.Vector2D;
 
-public abstract class Entity extends GameDrawable{
+public abstract class Entity {
 	protected Vector2D pos;
 	protected Vector2D velocity;
 	protected double speed;
 		
-	public Entity(Vector2D pos, double speed, Camera camera) {
-		super(camera);
+	public Entity(Vector2D pos, double speed) {
 		this.pos = pos;
 		this.speed = speed;
 	}

@@ -20,7 +20,7 @@ public class Window extends JFrame {
 		levelSelection = new LevelSelection(this);
 		gameController = new GameController();
 
-		this.setSize(800, 600);
+		this.setSize(500, 500);
 		this.setLocationRelativeTo(null);
 		this.setResizable(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -49,33 +49,21 @@ public class Window extends JFrame {
 	}
 
 	public void startGame() {
-		SwingUtilities.invokeLater(() -> {
-			Thread gameThread = new Thread(gamePanel);
-		    gameThread.start();
-		});
-	    JLayeredPane layeredPane = new JLayeredPane();
-	    layeredPane.setLayout(null); // still manual layout
+		GamePanel gamePanel = gameController.getGamePanel();
+		GameUIPanel gameUIPanel = gameController.getGameUIPanel();
 
-	    // Add both at fixed layers
-	    layeredPane.add(gamePanel, Integer.valueOf(0));
-	    layeredPane.add(gameUIPanel, Integer.valueOf(1));
+		JLayeredPane layeredPane = new JLayeredPane();
 
-	    // Auto-resize listener
-	    layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
-	        @Override
-	        public void componentResized(java.awt.event.ComponentEvent e) {
-	            Dimension size = layeredPane.getSize();
-	            gamePanel.setBounds(0, 0, size.width, size.height);
-	            gameUIPanel.setBounds(0, 0, size.width, size.height);
-	        }
-	    });
+		Dimension size = this.getContentPane().getSize();
+		layeredPane.setPreferredSize(size);
 
-	    showComponent(layeredPane);
-	}
+		gamePanel.setBounds(0, 0, size.width, size.height);
+		gameUIPanel.setBounds(0, 0, size.width, size.height);
 
 		layeredPane.add(gamePanel, Integer.valueOf(0));
 		layeredPane.add(gameUIPanel, Integer.valueOf(1));
 
+		// Adjust in real time
 		layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
 			@Override
 			public void componentResized(java.awt.event.ComponentEvent e) {

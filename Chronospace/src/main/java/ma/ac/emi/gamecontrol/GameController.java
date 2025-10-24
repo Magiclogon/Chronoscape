@@ -20,11 +20,10 @@ public class GameController implements Runnable {
 	private Thread gameThread;
 
 	public GameController() {
-		world = new World(300, 300);
+		world = new World(500, 500);
 		gamePanel = new GamePanel(world);
 		gameUIPanel = new GameUIPanel();
 
-		// window size
 		double camWidth = 800;
 		double camHeight = 600;
 

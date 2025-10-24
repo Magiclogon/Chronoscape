@@ -1,56 +1,49 @@
 package ma.ac.emi.gamecontrol;
 
 import java.awt.*;
-
+import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 
+import lombok.Getter;
+import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
-public class GamePanel extends JPanel implements Runnable{
-	public final static long SIM_STEP = (long)(Math.pow(10, 9)/60);
-	public final static int TILE_SIZE = 16;
-	
-	private World world;
+@Getter
+@Setter
+public class GamePanel extends JPanel {
+
+	public static final int TILE_SIZE = 16;
+
+	private final World world;
 	private Camera camera;
-	
-	public GamePanel(){
+
+	public GamePanel(World world) {
+		this.world = world;
+		Dimension panelSize = new Dimension(world.getWidth() * TILE_SIZE, world.getHeight() * TILE_SIZE);
+		this.setPreferredSize(panelSize);
 		KeyHandler.getInstance().setupKeyBindings(this);
-		camera = new Camera(new Vector2D(), 100, 100, this);
-		world = new World(20, 10, camera);
-	}
-	@Override
-	public void run() {
-		long latestTime = System.nanoTime();
-		long deltaTime = 0, accumTime = 0;
-		do{
-			deltaTime = System.nanoTime() - latestTime;
-			latestTime += deltaTime;
-			accumTime += deltaTime;
-			while(accumTime > SIM_STEP) {
-				update(SIM_STEP/Math.pow(10, 9));
-				accumTime -= SIM_STEP;
-			}
-			repaint();
-			
-			try {
-				Thread.sleep(16);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}while(true);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		world.draw(g);
-	}
-	
-	public void update(double step) {
-		camera.update(step);
-		world.update(step);
+		Graphics2D g2d = (Graphics2D) g;
+		if (camera == null) {
+			world.draw(g);
+			return;
+		}
+		AffineTransform oldTransform = g2d.getTransform();
+
+		Vector2D camPos = camera.getPos();
+		Vector2D ratios = camera.getScreenCamRatios();
+
+		g2d.scale(ratios.getX(), ratios.getY());
+		g2d.translate(-camPos.getX(), -camPos.getY());
+		world.draw(g2d);
+
+		g2d.setTransform(oldTransform);
 	}
 }
