@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -17,6 +18,7 @@ public class World {
 	private int height;
 	private Player player;
 	private List<Ennemy> ennemies;
+	private WaveManager waveManager;
 
 	public World(int w, int h) {
 		width = w; height = h;
