@@ -9,8 +9,8 @@ public abstract class LivingEntity extends Entity {
     protected double strength;
     protected double regenerationSpeed;
 
-    public LivingEntity(Vector2D pos, double speed, Camera camera) {
-        super(pos, speed, camera);
+    public LivingEntity(Vector2D pos, double speed) {
+        super(pos, speed);
     }
 
     public double getHp() { return hp; }
