@@ -13,6 +13,7 @@ import ma.ac.emi.world.World;
 @Setter
 @Getter
 public class Camera {
+	public double scaling_factor = 0.25;
 	private Vector2D pos;
 	private double width;
 	private double height;
@@ -32,9 +33,9 @@ public class Camera {
 			return;
 		}
 
-		// camera match panel size
-		this.width = gamePanel.getWidth();
-		this.height = gamePanel.getHeight();
+		// camera match panel aspect ratio
+		this.width = gamePanel.getWidth()*scaling_factor;
+		this.height = gamePanel.getHeight()*scaling_factor;		
 
 		Vector2D targetPos = followed.getPos();
 
@@ -55,22 +56,11 @@ public class Camera {
 	}
 
 	public Vector2D camTransform(Vector2D worldVector) {
-		Vector2D ratios = getScreenCamRatios();
 		Vector2D transformedVector = worldVector.sub(this.pos);
-		transformedVector.setX(transformedVector.getX() * ratios.getX());
-		transformedVector.setY(transformedVector.getY() * ratios.getY());
+		transformedVector.setX(transformedVector.getX() / scaling_factor);
+		transformedVector.setY(transformedVector.getY() / scaling_factor);
 
 		return transformedVector;
-	}
-
-	public Vector2D getScreenCamRatios() {
-		double panelWidth = this.gamePanel.getSize().getWidth();
-		double panelHeight = this.gamePanel.getSize().getHeight();
-
-		if (this.width == 0 || this.height == 0) {
-			return new Vector2D(1, 1);
-		}
-		return new Vector2D(panelWidth / this.width, panelHeight / this.height);
 	}
 
 	public void snapTo(Entity entity) {

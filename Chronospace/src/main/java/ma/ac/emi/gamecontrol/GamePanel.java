@@ -39,7 +39,7 @@ public class GamePanel extends JPanel {
 		AffineTransform oldTransform = g2d.getTransform();
 
 		Vector2D camPos = camera.getPos();
-		Vector2D ratios = camera.getScreenCamRatios();
+		Vector2D ratios = new Vector2D(1/camera.scaling_factor, 1/camera.scaling_factor);
 
 		g2d.scale(ratios.getX(), ratios.getY());
 		g2d.translate(-camPos.getX(), -camPos.getY());
