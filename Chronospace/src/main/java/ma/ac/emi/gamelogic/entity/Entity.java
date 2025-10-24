@@ -8,7 +8,7 @@ import ma.ac.emi.math.Vector2D;
 
 public abstract class Entity extends GameDrawable{
 	protected Vector2D pos;
-	protected Vector2D vel;
+	protected Vector2D velocity;
 	protected double speed;
 		
 	public Entity(Vector2D pos, double speed, Camera camera) {
@@ -29,12 +29,12 @@ public abstract class Entity extends GameDrawable{
 		this.pos = pos;
 	}
 
-	public Vector2D getVel() {
-		return vel;
+	public Vector2D getVelocity() {
+		return velocity;
 	}
 
-	public void setVel(Vector2D vel) {
-		this.vel = vel;
+	public void setVelocity(Vector2D velocity) {
+		this.velocity = velocity;
 	}
 
 	public double getSpeed() {

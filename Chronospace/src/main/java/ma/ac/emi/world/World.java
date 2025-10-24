@@ -5,24 +5,27 @@ import java.awt.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.camera.GameDrawable;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
 
 public class World extends GameDrawable{
 	private int width, height; //width and height in tiles
 	private Player player;
+	private Ennemy ennemy;
 	
 	public World(int w, int h, Camera camera) {
 		super(camera);
 		width = w; height = h;
 		player = new Player(new Vector2D(), 2, camera);
-		
+		ennemy = new Ennemy(new Vector2D(320,320), 1, player);
 		camera.snapTo(player);
 	}
 	
 	public void update(double step) {
 		camTransform();
 		player.update(step);
+    ennemy.update(step);
 	}
 	
 	public void draw(Graphics g) {
@@ -35,8 +38,8 @@ public class World extends GameDrawable{
 						(int)(GamePanel.TILE_SIZE*scaleRatios.getY()));
 			}
 		}
-		
 		player.draw(g);
+        ennemy.draw(g);
 	}
 
 	@Override

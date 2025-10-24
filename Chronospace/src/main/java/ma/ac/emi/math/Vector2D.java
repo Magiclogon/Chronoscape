@@ -3,12 +3,12 @@ package ma.ac.emi.math;
 public class Vector2D {
 	private double x, y;
 	
-	public Vector2D(double x, double y) {
-		this.x = x; this.y = y;
-	}
-	
 	public Vector2D() {
 		this(0, 0);
+	}
+
+	public Vector2D(double x, double y) {
+		this.x = x; this.y = y;
 	}
 	
 	public void init() {
@@ -29,6 +29,14 @@ public class Vector2D {
 	
 	public double dotP(Vector2D v) {
 		return this.getX() * v.getX() + this.getY() * v.getY();
+	}
+
+	public double norm() {
+		return Math.sqrt(Math.pow(this.getX(), 2) + Math.pow(this.getY(), 2));
+	}
+
+	public Vector2D normalize() {
+		return new Vector2D(this.getX() / norm(), this.getY() / norm());
 	}
 	
 	public double getX() {

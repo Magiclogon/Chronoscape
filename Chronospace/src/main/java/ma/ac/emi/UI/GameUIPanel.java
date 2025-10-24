@@ -12,7 +12,6 @@ public class GameUIPanel extends JPanel{
 	
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.GREEN);
-		g.fillRect(30, 30, 200, 50);
+
 	}
 }
