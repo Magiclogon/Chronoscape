@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.entity;
 
+import ma.ac.emi.camera.Camera;
 import ma.ac.emi.math.Vector2D;
 
 public abstract class LivingEntity extends Entity {
@@ -8,8 +9,8 @@ public abstract class LivingEntity extends Entity {
     protected double strength;
     protected double regenerationSpeed;
 
-    public LivingEntity(Vector2D pos, double speed) {
-        super(pos, speed);
+    public LivingEntity(Vector2D pos, double speed, Camera camera) {
+        super(pos, speed, camera);
     }
 
     public double getHp() { return hp; }

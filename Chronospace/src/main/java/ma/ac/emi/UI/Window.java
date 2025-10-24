@@ -49,16 +49,29 @@ public class Window extends JFrame {
 	}
 
 	public void startGame() {
-		GamePanel gamePanel = gameController.getGamePanel();
-		GameUIPanel gameUIPanel = gameController.getGameUIPanel();
+		SwingUtilities.invokeLater(() -> {
+			Thread gameThread = new Thread(gamePanel);
+		    gameThread.start();
+		});
+	    JLayeredPane layeredPane = new JLayeredPane();
+	    layeredPane.setLayout(null); // still manual layout
 
-		JLayeredPane layeredPane = new JLayeredPane();
+	    // Add both at fixed layers
+	    layeredPane.add(gamePanel, Integer.valueOf(0));
+	    layeredPane.add(gameUIPanel, Integer.valueOf(1));
 
-		Dimension size = this.getContentPane().getSize();
-		layeredPane.setPreferredSize(size);
+	    // Auto-resize listener
+	    layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+	        @Override
+	        public void componentResized(java.awt.event.ComponentEvent e) {
+	            Dimension size = layeredPane.getSize();
+	            gamePanel.setBounds(0, 0, size.width, size.height);
+	            gameUIPanel.setBounds(0, 0, size.width, size.height);
+	        }
+	    });
 
-		gamePanel.setBounds(0, 0, size.width, size.height);
-		gameUIPanel.setBounds(0, 0, size.width, size.height);
+	    showComponent(layeredPane);
+	}
 
 		layeredPane.add(gamePanel, Integer.valueOf(0));
 		layeredPane.add(gameUIPanel, Integer.valueOf(1));
