@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.math.Vector2D;
 
 @Setter
 @Getter
-public class Player extends Entity{
+public class Player extends LivingEntity {
 	private String pseudoname;
 	private double money;
 	private Gender gender;
@@ -23,6 +24,9 @@ public class Player extends Entity{
 		super(pos, speed);
 		inventory = new Inventory();
 		velocity = new Vector2D();
+		hp = 50;
+		hpMax = 100;
+		money = 0;
 	}
 
 	@Override

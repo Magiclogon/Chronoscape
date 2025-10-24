@@ -1,7 +1,6 @@
 package ma.ac.emi.gamelogic.entity;
 
 import ma.ac.emi.gamecontrol.GamePanel;
-import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
 import java.awt.*;
 
