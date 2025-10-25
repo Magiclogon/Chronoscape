@@ -10,6 +10,8 @@ public class Ennemy extends LivingEntity {
 	public Ennemy(Vector2D pos, double speed) {
 		super(pos, speed);
 		this.velocity = new Vector2D();
+		hpMax = 100;
+		hp = 100;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 	}
 
