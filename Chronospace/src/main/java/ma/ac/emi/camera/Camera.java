@@ -12,7 +12,7 @@ import ma.ac.emi.math.Vector2D;
 @Setter
 @Getter
 public class Camera {
-	private double scalingFactor = 0.25;
+	private double scalingFactor = 0.3;
 	private Vector2D pos;
 	private double width;
 	private double height;

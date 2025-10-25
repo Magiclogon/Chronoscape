@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.projectile.ProjectileManager;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 
@@ -18,8 +19,8 @@ public abstract class Weapon {
     protected Vector2D pos;
     protected Vector2D dir;
 	protected Entity bearer;
-
-    
+	protected double tsla; //Time Since Last Attack
+	    
     public Weapon() {
     	pos = new Vector2D();
     	dir = new Vector2D();
