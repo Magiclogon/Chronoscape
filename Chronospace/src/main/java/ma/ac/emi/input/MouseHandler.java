@@ -66,13 +66,12 @@ public class MouseHandler implements MouseMotionListener, MouseListener{
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		setMouseScreenPos(new Vector2D(e.getX(), e.getY()));
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		setMouseScreenPos(new Vector2D(e.getX(), e.getY()));
-
-		
 	}
 
 	@Override
