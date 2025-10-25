@@ -13,20 +13,10 @@ import ma.ac.emi.gamelogic.weapon.RangeSingleHit;
 @Setter
 public class AK47 extends RangeSingleHit{
 	public AK47() {
+		setExample(new Projectile(getPos(), getDir().mult(500), new Rectangle(4,4), this, bearer instanceof Player));
+		setProjectileSpeed(250);
+		setRange(500);
 		setAttackSpeed(10); //10 bullets/s
-	}
-	@Override
-	public void attack() {
-		if(getTsla() >= 1/getAttackSpeed()) {
-			projectileManager.addProjectile(new Projectile(getPos(), getDir().mult(500), new Rectangle(4,4), this, bearer instanceof Player));
-			setTsla(0);
-		}
-	}
-
-	@Override
-	public void update(double step) {
-		super.update(step);
-		this.setTsla(getTsla() + step);
 	}
 
 	@Override

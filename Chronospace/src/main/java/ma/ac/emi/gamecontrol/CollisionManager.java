@@ -25,17 +25,20 @@ public class CollisionManager {
 				projectile.setActive(false);
 			}
 		}
-		
+		int i = 0;
 		for(Projectile projectile : projectileManager.getPlayerProjectiles()) {
-			enemies.forEach((enemy) -> {
+			System.out.println("player projectile" + i);
+			 for(Ennemy enemy : enemies){
 				if(enemy.getBound().intersects(projectile.getBound())) {
+					System.out.println("enemey hit");
 					//Apply damage
-					
+					enemy.applyDamage(5);
 					//Desactivate projectile
 					projectile.setActive(false);
 				}
-			});
-			
+			}
+			i++;
 		}
+		System.out.println(projectileManager.getPlayerProjectiles().size());
 	}
 }

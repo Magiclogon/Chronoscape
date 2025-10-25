@@ -57,8 +57,8 @@ public class World {
 		}
 		
 		projectileManager.update(step, this);
-		
 		collisionManager.handleCollisions();
+
 	}
 
 	public void draw(Graphics g) {

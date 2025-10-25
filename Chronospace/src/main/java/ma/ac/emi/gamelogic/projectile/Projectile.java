@@ -33,14 +33,17 @@ public class Projectile extends Entity{
         this.fromPlayer = fromPlayer;
     }
 
-    public void update(double step, World world) {
-    	System.out.println(bound);
+    public Projectile(Projectile example) {
+		this(example.getPos(), example.getVelocity(), example.getBound(), example.getWeapon(), example.isFromPlayer());
+	}
+
+	public void update(double step, World world) {
         setPos(getPos().add(velocity.mult(step)));
         
         bound.x = (int) getPos().getX();
         bound.y = (int) getPos().getY();
         
-        if(isOutOfWorld(world)) {
+        if(isOutOfWorld(world) || isOutOfRange()) {
         	setActive(false);
         }
     }
@@ -54,6 +57,10 @@ public class Projectile extends Entity{
     
     public boolean isOutOfWorld(World world) {
     	return !(world.getBound().contains(this.getBound()));
+    }
+    
+    public boolean isOutOfRange() {
+    	return getPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
     }
 
 	@Override

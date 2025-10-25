@@ -11,6 +11,7 @@ public class Ennemy extends LivingEntity {
 		super(pos, speed);
 		this.velocity = new Vector2D();
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		hp = 30;
 	}
 
 	public void update(double step, Vector2D targetPos) {
@@ -29,7 +30,13 @@ public class Ennemy extends LivingEntity {
 
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.RED);
-		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		if(hp > 0) {
+			g.setColor(Color.RED);
+			g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		}
+		
+		g.setColor(Color.yellow);
+		g.drawRect(bound.x, bound.y, bound.width, bound.height);
+		
 	}
 }

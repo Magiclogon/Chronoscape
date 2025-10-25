@@ -11,10 +11,16 @@ import ma.ac.emi.world.World;
 @Getter
 @Setter
 public class ProjectileManager {
-    private List<Projectile> projectiles = new ArrayList<>();
+    private List<Projectile> projectiles;
+    
+    public ProjectileManager() {
+    	projectiles = new ArrayList<>();
+
+    }
 
     public void addProjectile(Projectile projectile) {
         projectiles.add(projectile);
+    
     }
 
     public void update(double deltaTime, World world) {
