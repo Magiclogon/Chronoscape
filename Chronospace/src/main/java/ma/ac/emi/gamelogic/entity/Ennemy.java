@@ -17,8 +17,7 @@ public class Ennemy extends LivingEntity {
 		Vector2D direction = (targetPos.sub(getPos())).normalize();
 		setVelocity(direction.mult(getSpeed()));
 
-		velocity.mult(step);
-		setPos(getPos().add(velocity));
+		setPos(getPos().add(velocity.mult(step)));
 	}
 
 	@Override

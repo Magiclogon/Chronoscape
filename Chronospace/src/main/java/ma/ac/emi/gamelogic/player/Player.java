@@ -46,8 +46,7 @@ public class Player extends LivingEntity {
 		}
 		if(KeyHandler.getInstance().isUp()) velocity.setY(-1*speed);
 		if(KeyHandler.getInstance().isDown()) velocity.setY(speed);
-		velocity.mult(step);
-		setPos(pos.add(velocity));
+		setPos(pos.add(velocity.mult(step)));
 		
 		weapon.update(step);
 	}

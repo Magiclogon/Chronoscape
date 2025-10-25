@@ -5,23 +5,27 @@ import java.awt.geom.AffineTransform;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.projectile.Projectile;
 import ma.ac.emi.gamelogic.weapon.RangeSingleHit;
-import ma.ac.emi.math.Vector2D;
 
 @Getter
 @Setter
 public class AK47 extends RangeSingleHit{
-
+	public AK47() {
+		setAttackSpeed(10); //10 bullets/s
+	}
 	@Override
 	public void attack() {
-		System.out.println("attacking in direction: " + getDir().toString());
-		
+		if(getTsla() >= 1/getAttackSpeed()) {
+			projectileManager.addProjectile(new Projectile(getPos(), getDir().mult(500), new Rectangle(4,4), this));
+			setTsla(0);
+		}
 	}
 
 	@Override
 	public void update(double step) {
 		super.update(step);
+		this.setTsla(getTsla() + step);
 	}
 
 	@Override
