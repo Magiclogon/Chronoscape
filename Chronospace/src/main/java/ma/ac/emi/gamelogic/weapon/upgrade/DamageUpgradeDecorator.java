@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.weapon.upgrade;
 
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
+import java.awt.*;
+
 public class DamageUpgradeDecorator extends WeaponUpgradeDecorator {
     private double multiplier;
 
@@ -13,5 +15,10 @@ public class DamageUpgradeDecorator extends WeaponUpgradeDecorator {
     @Override
     public double getDamage() {
         return wrappee.getDamage() * multiplier;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+
     }
 }

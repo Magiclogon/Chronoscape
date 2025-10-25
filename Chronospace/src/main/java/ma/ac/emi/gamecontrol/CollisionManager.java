@@ -30,7 +30,9 @@ public class CollisionManager {
 			enemies.forEach((enemy) -> {
 				if(enemy.getBound().intersects(projectile.getBound())) {
 					//Apply damage
-					
+					enemy.setHp(enemy.getHp() - projectile.getWeapon().getDamage());
+					System.out.println("Target hit, damage: " + projectile.getWeapon().getDamage() + ", remaining hp: " + enemy.getHp());
+
 					//Desactivate projectile
 					projectile.setActive(false);
 				}
