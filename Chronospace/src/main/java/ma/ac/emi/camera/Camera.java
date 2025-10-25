@@ -1,22 +1,23 @@
 package ma.ac.emi.camera;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
-import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector2D;
-import ma.ac.emi.world.World;
 
 @Setter
 @Getter
 public class Camera {
-	public double scaling_factor = 0.25;
+	private double scalingFactor = 0.25;
 	private Vector2D pos;
 	private double width;
 	private double height;
+	private AffineTransform camTransform;
+	
 	private GamePanel gamePanel;
 	private Entity followed;
 
@@ -34,8 +35,8 @@ public class Camera {
 		}
 
 		// camera match panel aspect ratio
-		this.width = gamePanel.getWidth()*scaling_factor;
-		this.height = gamePanel.getHeight()*scaling_factor;		
+		this.width = gamePanel.getWidth()*scalingFactor;
+		this.height = gamePanel.getHeight()*scalingFactor;		
 
 		Vector2D targetPos = followed.getPos();
 
@@ -54,16 +55,19 @@ public class Camera {
 		this.pos.setX(camX);
 		this.pos.setY(camY);
 	}
-
-	public Vector2D camTransform(Vector2D worldVector) {
-		Vector2D transformedVector = worldVector.sub(this.pos);
-		transformedVector.setX(transformedVector.getX() / scaling_factor);
-		transformedVector.setY(transformedVector.getY() / scaling_factor);
-
-		return transformedVector;
+	
+	public void calculateTransform() {
+		camTransform = new AffineTransform();
+		camTransform.scale(1/scalingFactor, 1/scalingFactor);
+		camTransform.translate(-getPos().getX(), -getPos().getY());
 	}
 
 	public void snapTo(Entity entity) {
 		followed = entity;
+	}
+	
+	public AffineTransform getCamTransform() {
+		calculateTransform();
+		return camTransform;
 	}
 }

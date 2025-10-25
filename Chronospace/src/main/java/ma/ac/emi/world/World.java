@@ -10,6 +10,8 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.gamelogic.weapon.model.AK47;
+import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -24,6 +26,7 @@ public class World {
 	public World(int w, int h) {
 		width = w; height = h;
 		player = new Player(new Vector2D(0,0), 2);
+		player.setWeapon(new AK47());
 		ennemies = new ArrayList<>();
 		ennemies.add(new Ennemy(new Vector2D(100, 100), 1));
 		ennemies.add(new Ennemy(new Vector2D(200, 200), 1));
@@ -38,6 +41,7 @@ public class World {
 	}
 
 	public void draw(Graphics g) {
+		g.setColor(Color.black);
 		for(int i = 0; i < height; i++) {
 			for(int j = 0; j < width; j++) {
 				g.drawRect(j*GamePanel.TILE_SIZE, i*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE); //Added this to see how the world reacts to the camera
@@ -47,5 +51,10 @@ public class World {
 		for(Ennemy ennemy : ennemies) {
 			ennemy.draw(g);
 		}
+		
+		
+		
+		
+		
 	}
 }

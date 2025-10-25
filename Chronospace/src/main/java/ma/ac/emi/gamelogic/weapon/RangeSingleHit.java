@@ -1,10 +1,13 @@
 package ma.ac.emi.gamelogic.weapon;
 
-public abstract class RangeSingleHit extends Weapon {
-    protected double range;
+import lombok.Getter;
+import lombok.Setter;
 
-    @Override
-    public double getRange() { return range; }
-    @Override
-    public void setRange(double range) { this.range = range; }
+@Getter
+@Setter
+public abstract class RangeSingleHit extends Weapon {
+	public RangeSingleHit() {
+		setAoe(0);
+	}
+
 }
