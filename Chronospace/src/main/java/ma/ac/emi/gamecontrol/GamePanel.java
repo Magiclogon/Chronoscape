@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
+import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
@@ -21,9 +22,9 @@ public class GamePanel extends JPanel {
 	private Camera camera;
 
 	public GamePanel(World world) {
+		addMouseListener(MouseHandler.getInstance());
+		addMouseMotionListener(MouseHandler.getInstance());
 		this.world = world;
-		Dimension panelSize = new Dimension(world.getWidth() * TILE_SIZE, world.getHeight() * TILE_SIZE);
-		this.setPreferredSize(panelSize);
 		KeyHandler.getInstance().setupKeyBindings(this);
 	}
 
@@ -35,16 +36,18 @@ public class GamePanel extends JPanel {
 			System.out.println("Camera is null");
 			world.draw(g);
 			return;
-		}
+		}		
 		AffineTransform oldTransform = g2d.getTransform();
-
-		Vector2D camPos = camera.getPos();
-		Vector2D ratios = new Vector2D(1/camera.scaling_factor, 1/camera.scaling_factor);
-
-		g2d.scale(ratios.getX(), ratios.getY());
-		g2d.translate(-camPos.getX(), -camPos.getY());
+		
+		AffineTransform newTransform = oldTransform;
+		newTransform.concatenate(camera.getCamTransform());
+		
+		g2d.setTransform(newTransform);
 		world.draw(g2d);
 
 		g2d.setTransform(oldTransform);
+		
+		
+		
 	}
 }

@@ -9,7 +9,9 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.Inventory;
+import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.input.KeyHandler;
+import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 
 @Setter
@@ -19,6 +21,7 @@ public class Player extends LivingEntity {
 	private double money;
 	private Gender gender;
 	private Inventory inventory;
+	private Weapon weapon;
 
 
 	public Player(Vector2D pos, double speed) {
@@ -32,6 +35,10 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
+		if(MouseHandler.getInstance().isMouseDown()) {
+			attack();
+		}
+		
 		velocity.init();
 		if(KeyHandler.getInstance().isLeft()) velocity.setX(-1*speed);
 		if(KeyHandler.getInstance().isRight()) {
@@ -41,11 +48,24 @@ public class Player extends LivingEntity {
 		if(KeyHandler.getInstance().isDown()) velocity.setY(speed);
 		velocity.mult(step);
 		setPos(pos.add(velocity));
+		
+		weapon.update(step);
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(Color.GREEN);
 		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		
+		weapon.draw(g);
+	}
+	
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+		this.weapon.snapTo(this);
+	}
+	
+	public void attack() {
+		weapon.attack();
 	}
 }

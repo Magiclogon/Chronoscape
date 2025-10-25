@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.GameUIPanel;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
@@ -31,6 +32,7 @@ public class GameController implements Runnable {
 		camera.snapTo(world.getPlayer());
 
 		gamePanel.setCamera(camera);
+		MouseHandler.getInstance().setCamera(camera);
 	}
 
 	public void startGameThread() {

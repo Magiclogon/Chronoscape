@@ -4,8 +4,6 @@ import java.awt.*;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.camera.Camera;
-import ma.ac.emi.camera.GameDrawable;
 import ma.ac.emi.math.Vector2D;
 
 @Setter

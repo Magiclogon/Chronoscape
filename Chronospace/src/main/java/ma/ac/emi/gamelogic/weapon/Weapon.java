@@ -1,34 +1,45 @@
 package ma.ac.emi.gamelogic.weapon;
 
+import java.awt.Graphics;
+
+import lombok.Getter;
+import lombok.Setter;
+import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.math.Vector2D;
+
+@Getter
+@Setter
 public abstract class Weapon {
     protected double damage;
     protected double range;
     protected double aoe;
     protected double attackSpeed;
-    protected double positionX;
-    protected double positionY;
-    protected double rotation;
+    protected Vector2D pos;
+    protected Vector2D dir;
+	protected Entity bearer;
 
+    
+    public Weapon() {
+    	pos = new Vector2D();
+    	dir = new Vector2D();
+    }
+    
+    public abstract void draw(Graphics g);
     public abstract void attack();
+    
+    public void update(double step) {
+		setPos(getBearer().getPos());
+		pointAt(MouseHandler.getInstance().getMouseWorldPos());
+	}
+    
+    public void snapTo(Entity entity) {
+		setBearer(entity);
+		
+	}
+    
+    public void pointAt(Vector2D target) {
+    	setDir(target.sub(getPos()).normalize());
+    }
 
-    public double getDamage() { return damage; }
-    public void setDamage(double damage) { this.damage = damage; }
-
-    public double getRange() { return range; }
-    public void setRange(double range) { this.range = range; }
-
-    public double getAoe() { return aoe; }
-    public void setAoe(double aoe) { this.aoe = aoe; }
-
-    public double getAttackSpeed() { return attackSpeed; }
-    public void setAttackSpeed(double attackSpeed) { this.attackSpeed = attackSpeed; }
-
-    public double getPositionX() { return positionX; }
-    public void setPositionX(double positionX) { this.positionX = positionX; }
-
-    public double getPositionY() { return positionY; }
-    public void setPositionY(double positionY) { this.positionY = positionY; }
-
-    public double getRotation() { return rotation; }
-    public void setRotation(double rotation) { this.rotation = rotation; }
 }

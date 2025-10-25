@@ -1,5 +1,13 @@
 package ma.ac.emi.math;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Vector2D {
 	private double x, y;
 	
@@ -39,20 +47,16 @@ public class Vector2D {
 		return new Vector2D(this.getX() / norm(), this.getY() / norm());
 	}
 	
-	public double getX() {
-		return x;
+	public Vector2D applyTransform(AffineTransform transform) {
+	    Point2D.Double src = new Point2D.Double(x, y);
+	    Point2D.Double dst = new Point2D.Double();
+	    transform.transform(src, dst);
+	    return new Vector2D(dst.x, dst.y);
 	}
 	
-	public double getY() {
-		return y;
-	}
-	
-	public void setX(double x) {
-		this.x = x;
-	}
-	
-	public void setY(double y) {
-		this.y = y;
+	@Override
+	public String toString() {
+		return "(" + getX() + "," + getY() + ")";
 	}
 	
 }

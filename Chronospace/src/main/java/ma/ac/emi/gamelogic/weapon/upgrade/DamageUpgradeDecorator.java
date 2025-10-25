@@ -1,4 +1,6 @@
-package ma.ac.emi.gamelogic.weapon;
+package ma.ac.emi.gamelogic.weapon.upgrade;
+
+import ma.ac.emi.gamelogic.weapon.Weapon;
 
 public class DamageUpgradeDecorator extends WeaponUpgradeDecorator {
     private double multiplier;
