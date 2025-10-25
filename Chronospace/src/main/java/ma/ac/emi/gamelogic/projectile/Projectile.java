@@ -19,21 +19,27 @@ public class Projectile extends Entity{
     private Vector2D velocity;
     private double radius = 2;
     private boolean active;
+    private boolean fromPlayer;
     
-    private Rectangle bound;
     private Weapon weapon;
 
-    public Projectile(Vector2D pos, Vector2D velocity, Rectangle bound, Weapon weapon) {
+    public Projectile(Vector2D pos, Vector2D velocity, Rectangle bound, Weapon weapon, boolean fromPlayer) {
     	super(pos, velocity.norm());
         this.pos = pos;
         this.velocity = velocity;
         this.active = true;
         this.bound = bound;
         this.weapon = weapon;
+        this.fromPlayer = fromPlayer;
     }
 
     public void update(double step, World world) {
+    	System.out.println(bound);
         setPos(getPos().add(velocity.mult(step)));
+        
+        bound.x = (int) getPos().getX();
+        bound.y = (int) getPos().getY();
+        
         if(isOutOfWorld(world)) {
         	setActive(false);
         }

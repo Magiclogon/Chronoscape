@@ -1,12 +1,15 @@
 package ma.ac.emi.gamelogic.projectile;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import ma.ac.emi.world.World;
 
+@Getter
+@Setter
 public class ProjectileManager {
     private List<Projectile> projectiles = new ArrayList<>();
 
@@ -27,6 +30,16 @@ public class ProjectileManager {
         for (Projectile p : projectiles) {
             p.draw(g);
         }
+    }
+    
+    public List<Projectile> getEnemyProjectiles(){
+		return getProjectiles().stream().filter((p) -> !p.isFromPlayer()).toList();
+
+    }
+    
+    public List<Projectile> getPlayerProjectiles(){
+		return getProjectiles().stream().filter((p) -> p.isFromPlayer()).toList();
+
     }
 }
 

@@ -10,6 +10,7 @@ public class Ennemy extends LivingEntity {
 	public Ennemy(Vector2D pos, double speed) {
 		super(pos, speed);
 		this.velocity = new Vector2D();
+		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 	}
 
 	public void update(double step, Vector2D targetPos) {
@@ -18,6 +19,9 @@ public class Ennemy extends LivingEntity {
 		setVelocity(direction.mult(getSpeed()));
 
 		setPos(getPos().add(velocity.mult(step)));
+		
+		bound.x = (int) getPos().getX();
+		bound.y = (int) getPos().getY();
 	}
 
 	@Override

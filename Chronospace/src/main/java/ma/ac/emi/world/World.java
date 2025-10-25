@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.CollisionManager;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
@@ -24,10 +25,12 @@ public class World {
 	private WaveManager waveManager;
 	private Rectangle bound;
 	private ProjectileManager projectileManager;
+	private CollisionManager collisionManager;
 
 	public World(int w, int h) {
-		this.projectileManager = new ProjectileManager();
 		width = w; height = h;
+		collisionManager = new CollisionManager();
+		projectileManager = new ProjectileManager();
 		
 		AK47 ak = new AK47();
 		ak.setProjectileManager(this.projectileManager);
@@ -39,7 +42,11 @@ public class World {
 		ennemies.add(new Ennemy(new Vector2D(100, 100), 50));
 		ennemies.add(new Ennemy(new Vector2D(200, 200), 50));
 		
-		bound = new Rectangle(w, h);
+		bound = new Rectangle(w*GamePanel.TILE_SIZE, h*GamePanel.TILE_SIZE);
+		
+		collisionManager.setPlayer(player);
+		collisionManager.setEnemies(ennemies);
+		collisionManager.setProjectileManager(projectileManager);
 	}
 
 	public void update(double step) {
@@ -50,6 +57,8 @@ public class World {
 		}
 		
 		projectileManager.update(step, this);
+		
+		collisionManager.handleCollisions();
 	}
 
 	public void draw(Graphics g) {

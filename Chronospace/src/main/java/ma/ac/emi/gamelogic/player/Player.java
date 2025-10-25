@@ -31,6 +31,7 @@ public class Player extends LivingEntity {
 		hp = 50;
 		hpMax = 100;
 		money = 0;
+		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 	}
 
 	@Override
@@ -48,6 +49,8 @@ public class Player extends LivingEntity {
 		if(KeyHandler.getInstance().isDown()) velocity.setY(speed);
 		setPos(pos.add(velocity.mult(step)));
 		
+		bound.x = (int) getPos().getX();
+		bound.y = (int) getPos().getY();
 		weapon.update(step);
 	}
 
