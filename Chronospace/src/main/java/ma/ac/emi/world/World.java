@@ -14,6 +14,7 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.model.AK47;
 import ma.ac.emi.gamelogic.weapon.model.RPG7;
+import ma.ac.emi.gamelogic.weapon.model.Sword;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -40,8 +41,11 @@ public class World {
 		RPG7 rpg7 = new RPG7();
 		rpg7.setAttackObjectManager(this.attackObjectManager);
 		
+		Sword sword = new Sword();
+		sword.setAttackObjectManager(attackObjectManager);
+		
 		player = new Player(new Vector2D(0,0), 100);
-		player.setWeapon(rpg7);
+		player.setWeapon(sword);
 		
 		ennemies = new ArrayList<>();
 		ennemies.add(new Ennemy(new Vector2D(100, 100), 50));

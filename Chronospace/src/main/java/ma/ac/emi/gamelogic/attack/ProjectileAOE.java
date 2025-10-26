@@ -1,6 +1,5 @@
 package ma.ac.emi.gamelogic.attack;
 
-import ma.ac.emi.gamelogic.attack.type.AOEFactory;
 import ma.ac.emi.gamelogic.attack.type.ProjectileType;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.RangeAOE;
@@ -15,11 +14,25 @@ public class ProjectileAOE extends Projectile{
 	}
 	
 	@Override
+	public void update(double step) {
+		super.update(step);
+	}
+	
+	@Override
 	public void applyEffect(LivingEntity entity) {
+		super.applyEffect(entity);
+	}
+	
+	public void spawnAoe() {
 		RangeAOE weapon = (RangeAOE) getWeapon();
 		AOE aoe = new AOE(getPos(), weapon.getAoeType(), weapon);
 		weapon.getAttackObjectManager().addObject(aoe);
-		super.applyEffect(entity);
 	}
+
+	@Override
+	public void onDesactivate() {
+		spawnAoe();
+	}
+	
 
 }

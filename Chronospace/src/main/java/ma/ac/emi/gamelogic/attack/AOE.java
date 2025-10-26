@@ -53,10 +53,12 @@ public class AOE extends AttackObject{
 		double closestInfCoolDownMultiple = Math.floor(getCurrentAge()/coolDown) * coolDown;
 		
 		if(getLastAge() <= closestInfCoolDownMultiple && getCurrentAge() >= closestInfCoolDownMultiple) {
-			System.out.println("applying effect");
 			entity.setHp(Math.max(0, entity.getHp() - getWeapon().getDamage()));
 		}
 		
 	}
+	
+	@Override
+	public void onDesactivate() {}
 
 }
