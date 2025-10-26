@@ -1,4 +1,4 @@
-package ma.ac.emi.gamelogic.projectile;
+package ma.ac.emi.gamelogic.attack;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -7,44 +7,34 @@ import java.awt.Rectangle;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.type.ProjectileType;
 import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
 @Getter
 @Setter
-public class Projectile extends Entity{
+public abstract class Projectile extends AttackObject{
 	private ProjectileType projectileType;
-	
-    private Vector2D pos;
-    private Vector2D velocity;
     private double radius = 2;
-    private boolean active;
-    private boolean fromPlayer;
     
-    
-    private Weapon weapon;
-
-    public Projectile(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon, boolean fromPlayer) {
-    	super(pos, projectileType.getBaseSpeed());
+    public Projectile(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon) {
+    	super(pos, weapon);
     	this.projectileType = projectileType;
     	
-        this.pos = pos;
         this.velocity = dir.mult(projectileType.getBaseSpeed());
-        this.active = true;
         this.bound = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
-        this.weapon = weapon;
-        this.fromPlayer = fromPlayer;
     }
 
-	public void update(double step, World world) {
+	public void update(double step) {
         setPos(getPos().add(velocity.mult(step)));
         
         bound.x = (int) getPos().getX();
         bound.y = (int) getPos().getY();
         
-        if(isOutOfWorld(world) || isOutOfRange()) {
+        if(isOutOfRange()) {
         	setActive(false);
         }
     }
@@ -61,17 +51,13 @@ public class Projectile extends Entity{
         
     }
     
-    public boolean isOutOfWorld(World world) {
-    	return !(world.getBound().contains(this.getBound()));
-    }
-    
     public boolean isOutOfRange() {
     	return getPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
     }
 
 	@Override
-	public void update(double step) {
-		// TODO Auto-generated method stub
-		
+	public void applyEffect(LivingEntity entity) {
+		setActive(false);
 	}
+
 }

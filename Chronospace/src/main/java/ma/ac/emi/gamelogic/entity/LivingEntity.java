@@ -12,9 +12,12 @@ public abstract class LivingEntity extends Entity {
     protected double hpMax;
     protected double strength;
     protected double regenerationSpeed;
+    protected double speed;
 
     public LivingEntity(Vector2D pos, double speed) {
-        super(pos, speed);
+        super(pos);
+        this.speed = speed;
+        
     }
 
     public void applyDamage(double damage) {

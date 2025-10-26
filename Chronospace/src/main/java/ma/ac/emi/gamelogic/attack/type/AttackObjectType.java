@@ -1,4 +1,4 @@
-package ma.ac.emi.gamelogic.projectile;
+package ma.ac.emi.gamelogic.attack.type;
 
 import java.awt.Image;
 
@@ -7,17 +7,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProjectileType {
+public abstract class AttackObjectType {
     private final Image sprite;
-    private final double baseSpeed;
     private final int boundWidth, boundHeight;
 
-    public ProjectileType(Image sprite, double baseSpeed, int boundWidth, int boundHeight) {
+    public AttackObjectType(Image sprite,int boundWidth, int boundHeight) {
         this.sprite = sprite;
-        this.baseSpeed = baseSpeed;
         this.boundWidth = boundWidth;
         this.boundHeight = boundHeight;
     }
 
 }
-

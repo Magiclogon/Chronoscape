@@ -1,34 +1,29 @@
 package ma.ac.emi.gamelogic.weapon;
 
-import java.awt.Rectangle;
-
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.projectile.Projectile;
-import ma.ac.emi.gamelogic.projectile.ProjectileManager;
-import ma.ac.emi.gamelogic.projectile.ProjectileType;
+import ma.ac.emi.gamelogic.attack.ProjectileSingleHit;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.attack.type.ProjectileType;
 
 @Getter
 @Setter
 public abstract class RangeSingleHit extends Weapon {
-	protected ProjectileManager projectileManager;
+	protected AttackObjectManager attackObjectManager;
 	protected ProjectileType projectileType;
 
 	public RangeSingleHit() {
 		setAoe(0);
 	}
 	
-	@Override
 	public void attack() {
 		if(getTsla() >= 1/getAttackSpeed()) {
-			Projectile shotted = new Projectile(
+			ProjectileSingleHit shotted = new ProjectileSingleHit(
 					getPos(), 
 					getDir(),
 					getProjectileType(),
-					this,
-					this.getBearer() instanceof Player);
-			projectileManager.addProjectile(shotted);
+					this);
+			attackObjectManager.addObject(shotted);
 			setTsla(0);
 		}
 	}
