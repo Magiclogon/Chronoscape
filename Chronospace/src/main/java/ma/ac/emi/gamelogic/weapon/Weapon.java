@@ -24,6 +24,7 @@ public abstract class Weapon {
     public Weapon() {
     	pos = new Vector2D();
     	dir = new Vector2D();
+    	tsla = 0;
     }
     
     public abstract void draw(Graphics g);
@@ -32,6 +33,7 @@ public abstract class Weapon {
     public void update(double step) {
 		setPos(getBearer().getPos());
 		pointAt(MouseHandler.getInstance().getMouseWorldPos());
+		setTsla(getTsla() + step);
 	}
     
     public void snapTo(Entity entity) {

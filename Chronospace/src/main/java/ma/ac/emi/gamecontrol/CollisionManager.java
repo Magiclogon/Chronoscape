@@ -25,19 +25,19 @@ public class CollisionManager {
 				projectile.setActive(false);
 			}
 		}
-		
 		for(Projectile projectile : projectileManager.getPlayerProjectiles()) {
-			enemies.forEach((enemy) -> {
+			 for(Ennemy enemy : enemies){
 				if(enemy.getBound().intersects(projectile.getBound())) {
+					System.out.println("enemey hit");
 					//Apply damage
-					enemy.setHp(enemy.getHp() - projectile.getWeapon().getDamage());
+					enemy.applyDamage(5);
 					System.out.println("Target hit, damage: " + projectile.getWeapon().getDamage() + ", remaining hp: " + enemy.getHp());
 
 					//Desactivate projectile
 					projectile.setActive(false);
 				}
-			});
-			
+			}
 		}
+		System.out.println(projectileManager.getPlayerProjectiles().size());
 	}
 }

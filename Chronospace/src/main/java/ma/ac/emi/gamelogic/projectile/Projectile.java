@@ -15,45 +15,58 @@ import ma.ac.emi.world.World;
 @Getter
 @Setter
 public class Projectile extends Entity{
+	private ProjectileType projectileType;
+	
     private Vector2D pos;
     private Vector2D velocity;
     private double radius = 2;
     private boolean active;
     private boolean fromPlayer;
     
+    
     private Weapon weapon;
 
-    public Projectile(Vector2D pos, Vector2D velocity, Rectangle bound, Weapon weapon, boolean fromPlayer) {
-    	super(pos, velocity.norm());
+    public Projectile(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon, boolean fromPlayer) {
+    	super(pos, projectileType.getBaseSpeed());
+    	this.projectileType = projectileType;
+    	
         this.pos = pos;
-        this.velocity = velocity;
+        this.velocity = dir.mult(projectileType.getBaseSpeed());
         this.active = true;
-        this.bound = bound;
+        this.bound = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
         this.weapon = weapon;
         this.fromPlayer = fromPlayer;
     }
 
-    public void update(double step, World world) {
-    	System.out.println(bound);
+	public void update(double step, World world) {
         setPos(getPos().add(velocity.mult(step)));
         
         bound.x = (int) getPos().getX();
         bound.y = (int) getPos().getY();
         
-        if(isOutOfWorld(world)) {
+        if(isOutOfWorld(world) || isOutOfRange()) {
         	setActive(false);
         }
     }
 
     public void draw(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(Color.red);
-        g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
-                     (int)(radius * 2), (int)(radius * 2));
+    	if(isActive()) {
+    		g2d.setColor(Color.red);
+            g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
+                         (int)(radius * 2), (int)(radius * 2));
+            g2d.setColor(Color.black);
+            g2d.draw(bound);
+    	}
+        
     }
     
     public boolean isOutOfWorld(World world) {
     	return !(world.getBound().contains(this.getBound()));
+    }
+    
+    public boolean isOutOfRange() {
+    	return getPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
     }
 
 	@Override
