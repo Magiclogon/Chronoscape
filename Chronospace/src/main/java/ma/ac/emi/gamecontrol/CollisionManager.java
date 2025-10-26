@@ -31,6 +31,8 @@ public class CollisionManager {
 					System.out.println("enemey hit");
 					//Apply damage
 					enemy.applyDamage(5);
+					System.out.println("Target hit, damage: " + projectile.getWeapon().getDamage() + ", remaining hp: " + enemy.getHp());
+
 					//Desactivate projectile
 					projectile.setActive(false);
 				}

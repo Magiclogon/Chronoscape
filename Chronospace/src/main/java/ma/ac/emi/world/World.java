@@ -33,6 +33,7 @@ public class World {
 		projectileManager = new ProjectileManager();
 		
 		AK47 ak = new AK47();
+		ak.setDamage(10);
 		ak.setProjectileManager(this.projectileManager);
 		
 		player = new Player(new Vector2D(0,0), 100);
