@@ -30,6 +30,7 @@ public class ProjectileManager {
 
         // Remove inactive ones
         projectiles.removeIf(p -> !p.isActive());
+       
     }
 
     public void draw(Graphics g) {

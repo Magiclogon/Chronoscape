@@ -5,16 +5,14 @@ import java.awt.geom.AffineTransform;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.projectile.Projectile;
+import ma.ac.emi.gamelogic.projectile.ProjectileFactory;
 import ma.ac.emi.gamelogic.weapon.RangeSingleHit;
 
 @Getter
 @Setter
 public class AK47 extends RangeSingleHit{
 	public AK47() {
-		setExample(new Projectile(getPos(), getDir().mult(500), new Rectangle(4,4), this, bearer instanceof Player));
-		setProjectileSpeed(250);
+		setProjectileType(ProjectileFactory.getProjectileType("AK_BULLET", null, 500, 4, 4));
 		setRange(500);
 		setAttackSpeed(10); //10 bullets/s
 	}

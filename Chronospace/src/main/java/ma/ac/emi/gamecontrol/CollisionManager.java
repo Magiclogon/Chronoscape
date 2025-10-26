@@ -25,9 +25,7 @@ public class CollisionManager {
 				projectile.setActive(false);
 			}
 		}
-		int i = 0;
 		for(Projectile projectile : projectileManager.getPlayerProjectiles()) {
-			System.out.println("player projectile" + i);
 			 for(Ennemy enemy : enemies){
 				if(enemy.getBound().intersects(projectile.getBound())) {
 					System.out.println("enemey hit");
@@ -37,7 +35,6 @@ public class CollisionManager {
 					projectile.setActive(false);
 				}
 			}
-			i++;
 		}
 		System.out.println(projectileManager.getPlayerProjectiles().size());
 	}

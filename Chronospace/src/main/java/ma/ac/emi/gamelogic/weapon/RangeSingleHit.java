@@ -7,13 +7,13 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.projectile.Projectile;
 import ma.ac.emi.gamelogic.projectile.ProjectileManager;
+import ma.ac.emi.gamelogic.projectile.ProjectileType;
 
 @Getter
 @Setter
 public abstract class RangeSingleHit extends Weapon {
-	protected double projectileSpeed;
 	protected ProjectileManager projectileManager;
-	protected Projectile example;
+	protected ProjectileType projectileType;
 
 	public RangeSingleHit() {
 		setAoe(0);
@@ -22,10 +22,12 @@ public abstract class RangeSingleHit extends Weapon {
 	@Override
 	public void attack() {
 		if(getTsla() >= 1/getAttackSpeed()) {
-			Projectile shotted = new Projectile(getExample());
-			shotted.setPos(getPos());
-			shotted.setVelocity(getDir().mult(projectileSpeed));
-			shotted.setFromPlayer(getBearer() instanceof Player);
+			Projectile shotted = new Projectile(
+					getPos(), 
+					getDir(),
+					getProjectileType(),
+					this,
+					this.getBearer() instanceof Player);
 			projectileManager.addProjectile(shotted);
 			setTsla(0);
 		}
