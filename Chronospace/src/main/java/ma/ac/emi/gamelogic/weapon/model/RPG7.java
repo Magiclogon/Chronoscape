@@ -1,21 +1,22 @@
 package ma.ac.emi.gamelogic.weapon.model;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
-import lombok.Getter;
-import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.type.AOEFactory;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
-import ma.ac.emi.gamelogic.weapon.RangeSingleHit;
+import ma.ac.emi.gamelogic.weapon.RangeAOE;
 
-@Getter
-@Setter
-public class AK47 extends RangeSingleHit{
-	public AK47() {
-		setProjectileType(ProjectileFactory.getProjectileType(toString(), null, 500, 4, 4));
-		setRange(50);
-		setAttackSpeed(10); //bullets/s
-		setDamage(2);
+public class RPG7 extends RangeAOE{
+	
+	public RPG7() {
+		setProjectileType(ProjectileFactory.getProjectileType(toString(), null, 100, 4, 4));
+		setAoeType(AOEFactory.getAOEType(toString(), null, 16, 16, 10, 0.25));
+		setRange(100);
+		setAttackSpeed(2); //bullets/s
+		setDamage(5);
 	}
 
 	@Override
@@ -32,9 +33,7 @@ public class AK47 extends RangeSingleHit{
 		g2d.fillRect(0, 0, 16, 8);
 		
 		g2d.setTransform(oldTransform);
-				
-	}	
-	
-	
+		
+	}
 
 }

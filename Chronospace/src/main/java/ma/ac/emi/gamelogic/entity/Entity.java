@@ -11,13 +11,11 @@ import ma.ac.emi.math.Vector2D;
 public abstract class Entity{
 	protected Vector2D pos;
 	protected Vector2D velocity;
-	protected double speed;
 	
 	protected Rectangle bound;
 		
-	public Entity(Vector2D pos, double speed) {
+	public Entity(Vector2D pos) {
 		this.pos = pos;
-		this.speed = speed;
 	}
 	
 	public abstract void update(double step);

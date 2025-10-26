@@ -8,12 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.projectile.ProjectileManager;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.model.AK47;
-import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.gamelogic.weapon.model.RPG7;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -24,30 +24,32 @@ public class World {
 	private List<Ennemy> ennemies;
 	private WaveManager waveManager;
 	private Rectangle bound;
-	private ProjectileManager projectileManager;
+	private AttackObjectManager attackObjectManager;
 	private CollisionManager collisionManager;
 
 	public World(int w, int h) {
 		width = w; height = h;
+		bound = new Rectangle(w*GamePanel.TILE_SIZE, h*GamePanel.TILE_SIZE);
+
 		collisionManager = new CollisionManager();
-		projectileManager = new ProjectileManager();
+		attackObjectManager = new AttackObjectManager(this);
 		
 		AK47 ak = new AK47();
-		ak.setDamage(10);
-		ak.setProjectileManager(this.projectileManager);
+		ak.setAttackObjectManager(this.attackObjectManager);
+		
+		RPG7 rpg7 = new RPG7();
+		rpg7.setAttackObjectManager(this.attackObjectManager);
 		
 		player = new Player(new Vector2D(0,0), 100);
-		player.setWeapon(ak);
+		player.setWeapon(rpg7);
 		
 		ennemies = new ArrayList<>();
 		ennemies.add(new Ennemy(new Vector2D(100, 100), 50));
 		ennemies.add(new Ennemy(new Vector2D(200, 200), 50));
-		
-		bound = new Rectangle(w*GamePanel.TILE_SIZE, h*GamePanel.TILE_SIZE);
-		
+				
 		collisionManager.setPlayer(player);
 		collisionManager.setEnemies(ennemies);
-		collisionManager.setProjectileManager(projectileManager);
+		collisionManager.setAttackObjectManager(attackObjectManager);
 	}
 
 	public void update(double step) {
@@ -57,7 +59,7 @@ public class World {
 			ennemy.update(step, playerPos);
 		}
 		
-		projectileManager.update(step, this);
+		attackObjectManager.update(step);
 		collisionManager.handleCollisions();
 
 	}
@@ -69,11 +71,13 @@ public class World {
 				g.drawRect(j*GamePanel.TILE_SIZE, i*GamePanel.TILE_SIZE, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE); //Added this to see how the world reacts to the camera
 			}
 		}
+		
+		attackObjectManager.draw(g);
+
 		player.draw(g);
 		for(Ennemy ennemy : ennemies) {
 			ennemy.draw(g);
 		}
-		projectileManager.draw(g);
 		
 	}
 }

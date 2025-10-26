@@ -1,10 +1,10 @@
-package ma.ac.emi.gamelogic.projectile;
+package ma.ac.emi.gamelogic.attack.type;
 
 import java.awt.Image;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProjectileFactory {
+public class ProjectileFactory{
     private static final Map<String, ProjectileType> types = new HashMap<>();
 
     public static ProjectileType getProjectileType(String key, Image sprite, double baseSpeed, int boundWidth, int boundHeight) {
@@ -15,4 +15,6 @@ public class ProjectileFactory {
         }
         return type;
     }
+
+
 }

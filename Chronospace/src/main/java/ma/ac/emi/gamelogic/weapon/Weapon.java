@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Entity;
-import ma.ac.emi.gamelogic.projectile.ProjectileManager;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 
@@ -44,5 +44,14 @@ public abstract class Weapon {
     public void pointAt(Vector2D target) {
     	setDir(target.sub(getPos()).normalize());
     }
+    
+    public boolean isFromPlayer() {
+    	return getBearer() instanceof Player;
+    }
+    
+    @Override
+	public String toString() {
+		return this.getClass().getName();
+	}
 
 }

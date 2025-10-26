@@ -4,40 +4,32 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.AOE;
+import ma.ac.emi.gamelogic.attack.AttackObject;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.projectile.Projectile;
-import ma.ac.emi.gamelogic.projectile.ProjectileManager;
 
 @Getter
 @Setter
 public class CollisionManager {
 	private Player player;
 	private List<Ennemy> enemies;
-	private ProjectileManager projectileManager;
+	private AttackObjectManager attackObjectManager;
 	
 	public void handleCollisions() {
-		for(Projectile projectile : projectileManager.getEnemyProjectiles()) {
-			if(player.getBound().intersects(projectile.getBound())) {
-				//Apply damage
+		for(AttackObject attackObject : attackObjectManager.getEnemyObjects()) {
+			if(player.getBound().intersects(attackObject.getBound()) && attackObject.isActive()) {
+				attackObject.applyEffect(player);
 				
-				//Desactivate projectile
-				projectile.setActive(false);
 			}
 		}
-		for(Projectile projectile : projectileManager.getPlayerProjectiles()) {
+		for(AttackObject attackObject : attackObjectManager.getPlayerObjects()) {
 			 for(Ennemy enemy : enemies){
-				if(enemy.getBound().intersects(projectile.getBound())) {
-					System.out.println("enemey hit");
-					//Apply damage
-					enemy.applyDamage(5);
-					System.out.println("Target hit, damage: " + projectile.getWeapon().getDamage() + ", remaining hp: " + enemy.getHp());
-
-					//Desactivate projectile
-					projectile.setActive(false);
+				if(enemy.getBound().intersects(attackObject.getBound()) && attackObject.isActive()) {
+					attackObject.applyEffect(enemy);
 				}
 			}
 		}
-		System.out.println(projectileManager.getPlayerProjectiles().size());
 	}
 }
