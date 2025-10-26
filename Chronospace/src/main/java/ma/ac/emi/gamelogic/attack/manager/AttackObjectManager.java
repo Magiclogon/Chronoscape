@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.AOE;
 import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.world.World;
@@ -33,7 +34,14 @@ public class AttackObjectManager {
             	attackObject.setActive(false);
             }
         }
-
+        
+        List<AttackObject> copy = new ArrayList<>(getAttackObjects());
+        copy.forEach((object) -> {
+        	if(!(object.isActive())) {
+        		object.onDesactivate();
+        	}
+        });
+        
         // Remove inactive ones
         attackObjects.removeIf(attackObject -> !attackObject.isActive());
        

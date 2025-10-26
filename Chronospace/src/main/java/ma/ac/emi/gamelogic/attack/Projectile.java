@@ -18,11 +18,13 @@ import ma.ac.emi.world.World;
 @Setter
 public abstract class Projectile extends AttackObject{
 	private ProjectileType projectileType;
+	private Vector2D startingPos;
     private double radius = 2;
     
     public Projectile(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon) {
     	super(pos, weapon);
     	this.projectileType = projectileType;
+    	this.startingPos = pos;
     	
         this.velocity = dir.mult(projectileType.getBaseSpeed());
         this.bound = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
@@ -52,7 +54,7 @@ public abstract class Projectile extends AttackObject{
     }
     
     public boolean isOutOfRange() {
-    	return getPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
+    	return getStartingPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
     }
 
 	@Override

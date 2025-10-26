@@ -4,15 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.ProjectileAOE;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.attack.type.AOEType;
 import ma.ac.emi.gamelogic.attack.type.ProjectileType;
 
 @Getter
 @Setter
 public abstract class RangeAOE extends Weapon {
-	protected AttackObjectManager attackObjectManager;
 	protected ProjectileType projectileType;
-	protected AOEType aoeType;
 
 	public RangeAOE() {
 	

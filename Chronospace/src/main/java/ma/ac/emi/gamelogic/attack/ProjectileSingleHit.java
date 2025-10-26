@@ -16,4 +16,10 @@ public class ProjectileSingleHit extends Projectile{
 		System.out.println("Target hit, damage: " + this.getWeapon().getDamage() + ", remaining hp: " + entity.getHp());
 		super.applyEffect(entity);
 	}
+
+	@Override
+	public void onDesactivate() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -4,6 +4,8 @@ import java.awt.Graphics;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.attack.type.AOEType;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.input.MouseHandler;
@@ -14,12 +16,16 @@ import ma.ac.emi.math.Vector2D;
 public abstract class Weapon {
     protected double damage;
     protected double range;
-    protected double aoe;
     protected double attackSpeed;
     protected Vector2D pos;
     protected Vector2D dir;
 	protected Entity bearer;
 	protected double tsla; //Time Since Last Attack
+	
+	protected AOEType aoeType;
+	protected AttackObjectManager attackObjectManager;
+
+
 	    
     public Weapon() {
     	pos = new Vector2D();

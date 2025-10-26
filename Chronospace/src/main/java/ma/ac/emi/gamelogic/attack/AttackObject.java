@@ -27,4 +27,7 @@ public abstract class AttackObject extends Entity{
     }
     
     public abstract void applyEffect(LivingEntity entity);
+    
+    public abstract void onDesactivate();
+    
 }
