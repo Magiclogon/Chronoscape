@@ -12,8 +12,8 @@ import ma.ac.emi.gamelogic.weapon.RangeAOE;
 public class RPG7 extends RangeAOE{
 	
 	public RPG7() {
-		setProjectileType(ProjectileFactory.getProjectileType(toString(), null, 100, 4, 4));
-		setAoeType(AOEFactory.getAOEType(toString(), null, 16, 16, 10, 0.25));
+		setProjectileType(ProjectileFactory.getProjectileType(toString(), null, 500, 4, 4));
+		setAoeType(AOEFactory.getAOEType(toString(), null, 48, 48, 10, 0.25));
 		setRange(100);
 		setAttackSpeed(2); //bullets/s
 		setDamage(5);

@@ -20,6 +20,7 @@ import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.model.AK47;
 import ma.ac.emi.gamelogic.weapon.model.RPG7;
+import ma.ac.emi.gamelogic.weapon.model.Spear;
 import ma.ac.emi.gamelogic.weapon.model.Sword;
 import ma.ac.emi.math.Vector2D;
 
@@ -50,10 +51,13 @@ public class World {
 
 		Sword sword = new Sword();
 		sword.setAttackObjectManager(attackObjectManager);
+		
+		Spear spear = new Spear();
+		spear.setAttackObjectManager(attackObjectManager);
 
 		player = new Player(new Vector2D(w * GamePanel.TILE_SIZE / 2,
 				h * GamePanel.TILE_SIZE / 2), 100);
-		player.setWeapon(rpg7);
+		player.setWeapon(spear);
 
 		ennemies = new ArrayList<>();
 
