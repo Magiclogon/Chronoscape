@@ -4,10 +4,17 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 
 public class WaveFactory {
+
     public Wave createWave(WaveConfig config, DifficultyStrategy difficulty,
-                           EnnemySpecieFactory specieFactory) {
-        Wave wave = new Wave(0, 10,specieFactory, difficulty);
-        // Configure wave based on config
+                           EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight) {
+        int totalEnemies = config.getTotalEnemyCount();
+
+        Wave wave = new Wave(config.getWaveNumber(), totalEnemies, specieFactory,
+                difficulty, worldWidth, worldHeight);
+        wave.setEnemyComposition(config.getEnemies());
+        wave.setBossWave(config.isBossWave());
+        wave.setSpawnDelay(config.getSpawnDelay());
+
         return wave;
     }
 }

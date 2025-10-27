@@ -13,11 +13,6 @@ public class AOEUpgradeDecorator extends WeaponUpgradeDecorator {
     }
 
     @Override
-    public double getAoe() {
-        return wrappee.getAoe() * multiplier;
-    }
-
-    @Override
     public void draw(Graphics g) {
 
     }
