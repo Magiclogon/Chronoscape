@@ -11,35 +11,35 @@ public class VampireFactory implements EnnemySpecieFactory {
 
     @Override
     public Ennemy createCommon() {
-        CommonEnnemy enemy = new CommonEnnemy(new Vector2D(), 1);
+        CommonEnnemy enemy = new CommonEnnemy(new Vector2D(), 10);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createSpeedster() {
-        SpeedsterEnnemy enemy = new SpeedsterEnnemy(new Vector2D(), 2);
+        SpeedsterEnnemy enemy = new SpeedsterEnnemy(new Vector2D(), 10);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createTank() {
-        TankEnnemy enemy = new TankEnnemy(new Vector2D(), 0.5);
+        TankEnnemy enemy = new TankEnnemy(new Vector2D(), 10);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createRanged() {
-        RangedEnnemy enemy = new RangedEnnemy(new Vector2D(), 1);
+        RangedEnnemy enemy = new RangedEnnemy(new Vector2D(), 10);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createBoss() {
-        BossEnnemy enemy = new BossEnnemy(new Vector2D(), 0.5);
+        BossEnnemy enemy = new BossEnnemy(new Vector2D(), 10);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }

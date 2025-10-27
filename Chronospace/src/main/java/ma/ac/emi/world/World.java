@@ -16,6 +16,7 @@ import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.model.AK47;
 import ma.ac.emi.gamelogic.weapon.model.RPG7;
@@ -52,7 +53,7 @@ public class World {
 
 		player = new Player(new Vector2D(w * GamePanel.TILE_SIZE / 2,
 				h * GamePanel.TILE_SIZE / 2), 100);
-		player.setWeapon(sword);
+		player.setWeapon(rpg7);
 
 		ennemies = new ArrayList<>();
 
@@ -67,7 +68,7 @@ public class World {
 		} catch (IOException e) {
 			System.err.println("Could not load waves.json, creating sample file...");
 			try {
-				waveManager.createSampleConfigFile("waves_sample.json");
+				waveManager.createSampleConfigFile("waves.json");
 				System.out.println("Sample waves file created. Please configure waves.json");
 			} catch (IOException ex) {
 				System.err.println("Failed to create sample config: " + ex.getMessage());
@@ -111,8 +112,10 @@ public class World {
 		attackObjectManager.draw(g);
 
 		player.draw(g);
-		for(Ennemy ennemy : ennemies) {
-			ennemy.draw(g);
+		for(Wave wave: waveManager.getWaves()) {
+			for(Ennemy ennemy : wave.getEnemies()) {
+				ennemy.draw(g);
+			}
 		}
 	}
 }
