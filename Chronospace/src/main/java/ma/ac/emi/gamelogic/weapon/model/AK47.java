@@ -13,7 +13,7 @@ import ma.ac.emi.gamelogic.weapon.RangeSingleHit;
 public class AK47 extends RangeSingleHit{
 	public AK47() {
 		setProjectileType(ProjectileFactory.getProjectileType(toString(), null, 500, 4, 4));
-		setRange(50);
+		setRange(500);
 		setAttackSpeed(10); //bullets/s
 		setDamage(2);
 	}

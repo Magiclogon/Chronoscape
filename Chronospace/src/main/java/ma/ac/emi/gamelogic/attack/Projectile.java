@@ -17,7 +17,7 @@ import ma.ac.emi.world.World;
 @Getter
 @Setter
 public abstract class Projectile extends AttackObject{
-	private ProjectileType projectileType;
+	private ProjectileType projectileType; 
 	private Vector2D startingPos;
     private double radius = 2;
     
@@ -54,7 +54,7 @@ public abstract class Projectile extends AttackObject{
     }
     
     public boolean isOutOfRange() {
-    	return getStartingPos().sub(getWeapon().getPos()).norm() > getWeapon().getRange();
+    	return getPos().sub(getStartingPos()).norm() > getWeapon().getRange();
     }
 
 	@Override
