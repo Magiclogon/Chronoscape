@@ -53,7 +53,7 @@ public class Wave {
         enemiesSpawned = 0;
     }
 
-    public void update(double deltaTime) {
+    public void update(double deltaTime, Vector2D playerPos) {
         if (spawnState == WaveSpawnState.SPAWNING) {
             spawnTimer += deltaTime;
 
@@ -69,6 +69,9 @@ public class Wave {
         }
 
         enemies.removeIf(enemy -> enemy.getHp() <= 0);
+        for(Ennemy e: enemies) {
+            e.update(deltaTime, playerPos);
+        }
     }
 
     private void spawnEnemy() {

@@ -13,11 +13,4 @@ public class Sword extends MeleeAOE{
 		setDamage(5);
 		setAttackSpeed(1);
 	}
-
-	@Override
-	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

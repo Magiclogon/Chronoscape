@@ -29,7 +29,6 @@ import ma.ac.emi.math.Vector2D;
 public class World {
 	private int width, height;
 	private Player player;
-	private List<Ennemy> ennemies;
 	private WaveManager waveManager;
 	private Rectangle bound;
 	private AttackObjectManager attackObjectManager;
@@ -59,8 +58,6 @@ public class World {
 				h * GamePanel.TILE_SIZE / 2), 100);
 		player.setWeapon(ak);
 
-		ennemies = new ArrayList<>();
-
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);
 
@@ -80,7 +77,7 @@ public class World {
 		}
 
 		collisionManager.setPlayer(player);
-		collisionManager.setEnemies(ennemies);
+		collisionManager.setEnemies(new ArrayList<Ennemy>());
 		collisionManager.setAttackObjectManager(attackObjectManager);
 	}
 
@@ -88,17 +85,10 @@ public class World {
 		player.update(step);
 
 		// Update wave manager
-		waveManager.update(step);
+		waveManager.update(step, player.getPos());
 
 		// Get enemies from current wave
-		ennemies = waveManager.getCurrentEnemies();
-		collisionManager.setEnemies(ennemies);
-
-		// Update enemies
-		Vector2D playerPos = player.getPos();
-		for(Ennemy ennemy : ennemies) {
-			ennemy.update(step, playerPos);
-		}
+		collisionManager.setEnemies(waveManager.getCurrentEnemies());
 
 		attackObjectManager.update(step);
 		collisionManager.handleCollisions();

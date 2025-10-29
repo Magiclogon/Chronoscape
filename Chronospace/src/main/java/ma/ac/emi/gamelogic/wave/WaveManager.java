@@ -14,6 +14,7 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
+import ma.ac.emi.math.Vector2D;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class WaveManager {
         System.out.println("Created sample wave config at " + filepath);
     }
 
-    public void update(double deltaTime) {
+    public void update(double deltaTime, Vector2D playerPos) {
         switch (state) {
             case WAITING:
                 waveTimer += deltaTime;
@@ -79,7 +80,7 @@ public class WaveManager {
             case ACTIVE:
                 Wave currentWave = getCurrentWave();
                 if (currentWave != null) {
-                    currentWave.update(deltaTime);
+                    currentWave.update(deltaTime, playerPos);
                     if (currentWave.isCompleted()) {
                         onWaveCompleted();
                     }
