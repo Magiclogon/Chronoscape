@@ -6,7 +6,7 @@ import ma.ac.emi.gamelogic.attack.AOE;
 
 @Getter
 @Setter
-public abstract class MeleeAOE extends Weapon {
+public abstract class MeleeAOE extends Weapon{
     
 	@Override
 	public void attack() {

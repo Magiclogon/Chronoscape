@@ -16,6 +16,9 @@ public class AK47 extends RangeSingleHit{
 		setRange(500);
 		setAttackSpeed(10); //bullets/s
 		setDamage(2);
+		setMagazineSize(30);
+		setReloadingTime(3);
+		
 	}
 
 	@Override

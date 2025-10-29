@@ -17,13 +17,14 @@ public abstract class RangeAOE extends Weapon {
 	
 	@Override
 	public void attack() {
-		if(getTsla() >= 1/getAttackSpeed()) {
+		if(getTsla() >= 1/getAttackSpeed() && getAmmo() > 0) {
 			ProjectileAOE shotted = new ProjectileAOE(
 					getPos(), 
 					getDir(),
 					getProjectileType(),
 					this);
 			attackObjectManager.addObject(shotted);
+			setAmmo(getAmmo()-1);
 			setTsla(0);
 		}
 	}
