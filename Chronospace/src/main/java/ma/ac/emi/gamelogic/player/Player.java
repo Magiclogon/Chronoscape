@@ -21,7 +21,6 @@ public class Player extends LivingEntity {
 	private double money;
 	private Gender gender;
 	private Inventory inventory;
-	private Weapon weapon;
 
 
 	public Player(Vector2D pos, double speed) {
@@ -66,8 +65,5 @@ public class Player extends LivingEntity {
 		this.weapon = weapon;
 		this.weapon.snapTo(this);
 	}
-	
-	public void attack() {
-		weapon.attack();
-	}
+
 }
