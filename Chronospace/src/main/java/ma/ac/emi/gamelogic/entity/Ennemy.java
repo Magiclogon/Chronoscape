@@ -25,6 +25,8 @@ public class Ennemy extends LivingEntity {
 		
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
+		
+		
 	}
 
 	@Override
