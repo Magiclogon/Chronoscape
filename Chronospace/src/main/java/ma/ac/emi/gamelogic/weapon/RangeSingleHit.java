@@ -29,6 +29,4 @@ public abstract class RangeSingleHit extends Weapon {
 	public void update(double step) {
 		super.update(step);
 	}
-
-
 }

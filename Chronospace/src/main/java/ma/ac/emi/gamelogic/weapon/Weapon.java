@@ -1,6 +1,7 @@
 package ma.ac.emi.gamelogic.weapon;
 
-import java.awt.Graphics;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,21 @@ public abstract class Weapon {
     	tsla = 0;
     }
     
-    public abstract void draw(Graphics g);
+    public void draw(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
+		AffineTransform oldTransform = g2d.getTransform();
+
+		double theta = Math.atan2(getDir().getY(), getDir().getX());
+
+		g2d.translate(getPos().getX(), getPos().getY());
+		g2d.rotate(theta);
+
+		g2d.setColor(Color.GRAY);
+		g2d.fillRect(0, 0, 16, 8);
+
+		g2d.setTransform(oldTransform);
+	}
+
     public abstract void attack();
     
     public void update(double step) {

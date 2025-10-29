@@ -46,8 +46,5 @@ public class GamePanel extends JPanel {
 		world.draw(g2d);
 
 		g2d.setTransform(oldTransform);
-		
-		
-		
 	}
 }

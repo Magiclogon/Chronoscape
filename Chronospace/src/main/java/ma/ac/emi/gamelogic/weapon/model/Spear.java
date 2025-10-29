@@ -11,11 +11,4 @@ public class Spear extends MeleeSingleHit{
 		setDamage(10);
 		setRange(32);
 	}
-
-	@Override
-	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
