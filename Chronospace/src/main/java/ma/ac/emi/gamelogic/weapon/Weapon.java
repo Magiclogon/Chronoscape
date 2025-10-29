@@ -21,6 +21,10 @@ public abstract class Weapon {
     protected Vector2D dir;
 	protected Entity bearer;
 	protected double tsla; //Time Since Last Attack
+	protected int ammo;
+	protected int magazineSize;
+	protected double tssr; //Time Since Start Reloading
+	protected double reloadingTime;
 	
 	protected AOEType aoeType;
 	protected AttackObjectManager attackObjectManager;
@@ -40,6 +44,17 @@ public abstract class Weapon {
 		setPos(getBearer().getPos());
 		pointAt(MouseHandler.getInstance().getMouseWorldPos());
 		setTsla(getTsla() + step);
+		
+		if(getAmmo() == 0) {
+			setTssr(getTssr() + step);
+		}
+		
+		if(tssr >= reloadingTime) {
+			setAmmo(getMagazineSize());
+			setTssr(0);
+		}
+		
+		System.out.println(getAmmo());
 	}
     
     public void snapTo(Entity entity) {

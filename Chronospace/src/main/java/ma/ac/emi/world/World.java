@@ -57,7 +57,7 @@ public class World {
 
 		player = new Player(new Vector2D(w * GamePanel.TILE_SIZE / 2,
 				h * GamePanel.TILE_SIZE / 2), 100);
-		player.setWeapon(spear);
+		player.setWeapon(ak);
 
 		ennemies = new ArrayList<>();
 

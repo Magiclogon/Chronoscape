@@ -14,13 +14,14 @@ public abstract class RangeSingleHit extends Weapon {
 	}
 	
 	public void attack() {
-		if(getTsla() >= 1/getAttackSpeed()) {
+		if(getTsla() >= 1/getAttackSpeed() && getAmmo() > 0) {
 			ProjectileSingleHit shotted = new ProjectileSingleHit(
 					getPos(), 
 					getDir(),
 					getProjectileType(),
 					this);
 			attackObjectManager.addObject(shotted);
+			setAmmo(getAmmo() -1);
 			setTsla(0);
 		}
 	}
