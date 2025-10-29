@@ -17,7 +17,6 @@ public abstract class LivingEntity extends Entity {
     public LivingEntity(Vector2D pos, double speed) {
         super(pos);
         this.speed = speed;
-        
     }
 
     public void applyDamage(double damage) {

@@ -7,14 +7,11 @@ import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.math.Vector2D;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Getter
 @Setter
-public class Wave {
+public class Wave extends WaveNotifier {
     private int number;
     private int enemiesNumber;
     private List<Ennemy> enemies;
@@ -27,6 +24,7 @@ public class Wave {
     private int enemiesSpawned;
     private WaveSpawnState spawnState;
     private Random random;
+    private List<Vector2D> spawnPoints;
     private int worldWidth;
     private int worldHeight;
 
@@ -43,6 +41,7 @@ public class Wave {
         this.enemiesSpawned = 0;
         this.spawnState = WaveSpawnState.NOT_STARTED;
         this.random = new Random();
+        spawnPoints = new ArrayList<>();
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
     }
@@ -67,6 +66,11 @@ public class Wave {
                 spawnState = WaveSpawnState.SPAWN_COMPLETE;
             }
         }
+
+        enemies.forEach(e -> {
+            if(e.getHp() <= 0) spawnPoints.add(e.getPos());
+        });
+        notifyListeners();
 
         enemies.removeIf(enemy -> enemy.getHp() <= 0);
         for(Ennemy e: enemies) {
@@ -159,5 +163,10 @@ public class Wave {
 
     private enum WaveSpawnState {
         NOT_STARTED, SPAWNING, SPAWN_COMPLETE
+    }
+
+    @Override
+    public List<Vector2D> getState() {
+        return spawnPoints;
     }
 }
