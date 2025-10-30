@@ -6,17 +6,19 @@ import java.util.List;
 
 import javax.swing.*;
 
+import ma.ac.emi.gamecontrol.GameController;
+
 public class LevelSelection extends JPanel{
 	private JLabel title;
 	private List<JButton> levelsButtons;
 	
-	public LevelSelection(Window window) {
+	public LevelSelection() {
 		title = new JLabel();
 		
 		levelsButtons = new ArrayList<>();
 		for(int i = 1; i <= 4; i++) {
 			JButton levelButton = new JButton("Level "+ i);
-			levelButton.addActionListener((e) -> window.startGame());
+			levelButton.addActionListener((e) -> GameController.getInstance().startGame());
 			levelsButtons.add(levelButton);
 		}
 		

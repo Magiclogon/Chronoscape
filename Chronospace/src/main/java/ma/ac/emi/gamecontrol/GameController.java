@@ -1,73 +1,101 @@
 package ma.ac.emi.gamecontrol;
 
-import lombok.Getter;
-import lombok.Setter;
-import ma.ac.emi.UI.GameUIPanel;
+import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
-@Setter
-@Getter
 public class GameController implements Runnable {
+	private static final long SIM_STEP = (long)(Math.pow(10, 9)/60);
+    private static GameController instance;
 
-	public static final long SIM_STEP = (long)(Math.pow(10, 9) / 60);
+    public static GameController getInstance() {
+        if (instance == null)
+            instance = new GameController();
+        return instance;
+    }
 
-	private final World world;
-	private final GamePanel gamePanel;
-	private final GameUIPanel gameUIPanel;
-	private Camera camera;
-	private Thread gameThread;
+    private final Window window;
+    private World world;
+    private GamePanel gamePanel;
+    private GameUIPanel gameUIPanel;
+    private Camera camera;
+    private Thread gameThread;
+    private GameState state = GameState.MENU;
 
-	public GameController() {
-		world = new World(50, 50);
-		gamePanel = new GamePanel(world);
-		gameUIPanel = new GameUIPanel(world);
+    private GameController() {
+        window = new Window(this);
+        showMainMenu();
+    }
 
-		double camWidth = 640;
-		double camHeight = 480;
+    public void showMainMenu() {
+        state = GameState.MENU;
+        window.showScreen("MENU");
+    }
 
-		camera = new Camera(new Vector2D(), camWidth, camHeight, gamePanel, world.getPlayer());
-		camera.snapTo(world.getPlayer());
+    public void showDifficultyMenu() {
+        state = GameState.DIFFICULTY_SELECT;
+        window.showScreen("DIFFICULTY");
+    }
 
-		gamePanel.setCamera(camera);
-		MouseHandler.getInstance().setCamera(camera);
-	}
+    public void showLevelSelection() {
+        state = GameState.LEVEL_SELECT;
+        window.showScreen("LEVEL_SELECT");
+    }
 
-	public void startGameThread() {
-		gameThread = new Thread(this);
-		gameThread.start();
-	}
+    public void startGame() {
+        state = GameState.PLAYING;
 
-	@Override
-	public void run() {
-		long latestTime = System.nanoTime();
-		long deltaTime;
-		long accumTime = 0;
+        world = new World(50, 50);
+        gamePanel = new GamePanel(world);
+        gameUIPanel = new GameUIPanel(world);
 
-		do {
-			deltaTime = System.nanoTime() - latestTime;
-			latestTime += deltaTime;
-			accumTime += deltaTime;
+        camera = new Camera(new Vector2D(), 640, 480, gamePanel, world.getPlayer());
+        camera.snapTo(world.getPlayer());
+        gamePanel.setCamera(camera);
+        
+        MouseHandler.getInstance().setCamera(camera);
 
-			while(accumTime > SIM_STEP) {
-				update(SIM_STEP / Math.pow(10, 9));
-				accumTime -= SIM_STEP;
-			}
-			gamePanel.repaint();
-			gameUIPanel.repaint();
+        window.showGame(gamePanel, gameUIPanel);
+        startGameThread();
+    }
+    
+    public void startGameThread() {
+        if (gameThread != null && gameThread.isAlive()) return;
+        gameThread = new Thread(this);
+        gameThread.start();
+    }
 
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		} while(true);
-	}
+    @Override
+    public void run() {
+        long latestTime = System.nanoTime();
+        long deltaTime;
+        long accumTime = 0;
 
-	public void update(double step) {
-		world.update(step);
-		camera.update(step);
-	}
+        while (state == GameState.PLAYING) {
+            deltaTime = System.nanoTime() - latestTime;
+            latestTime += deltaTime;
+            accumTime += deltaTime;
+
+            while (accumTime > SIM_STEP) {
+                update(SIM_STEP / Math.pow(10, 9));
+                accumTime -= SIM_STEP;
+            }
+
+            gamePanel.repaint();
+            gameUIPanel.repaint();
+
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void update(double step) {
+        world.update(step);
+        camera.update(step);
+    }
 }

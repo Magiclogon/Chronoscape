@@ -1,20 +1,23 @@
 package ma.ac.emi.UI;
 
 import javax.swing.*;
+
+import ma.ac.emi.gamecontrol.GameController;
+
 import java.awt.*;
 
 public class DifficultyMenu extends JPanel{
     private JLabel title;
     private JButton easyButton, mediumButton, hardButton, anwarButton;
 
-    public DifficultyMenu(Window window) {
+    public DifficultyMenu() {
         title = new JLabel();
         easyButton = new JButton("Easy Button");
         mediumButton = new JButton("Medium Button");
         hardButton = new JButton("Hard Button");
         anwarButton = new JButton("Anwar Button");
         
-        easyButton.addActionListener((e) -> window.showLevelSelection());
+        easyButton.addActionListener((e) -> GameController.getInstance().showLevelSelection());
 
         title.setForeground(Color.RED);
         title.setFont(new Font("Arial", Font.BOLD, 28));
