@@ -1,84 +1,58 @@
 package ma.ac.emi.UI;
 
-import java.awt.Dimension;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import ma.ac.emi.gamecontrol.GameController; // <-- Import Controller
-import ma.ac.emi.gamecontrol.GamePanel;
+import java.awt.*;
+import javax.swing.*;
+import ma.ac.emi.gamecontrol.*;
 
 public class Window extends JFrame {
-	private MainMenu mainMenu;
-	private LevelSelection levelSelection;
-	private DifficultyMenu difficultyMenu;
-	private GameController gameController;
+    private final CardLayout layout;
+    private final JPanel mainPanel;
 
-	public Window() {
-		mainMenu = new MainMenu(this);
-		difficultyMenu = new DifficultyMenu(this);
-		levelSelection = new LevelSelection(this);
-		gameController = new GameController();
+    // Screens
+    private final MainMenu mainMenu;
+    private final DifficultyMenu difficultyMenu;
+    private final LevelSelection levelSelection;
 
-		this.setSize(500, 500);
-		this.setLocationRelativeTo(null);
-		this.setResizable(true);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    public Window(GameController controller) {
+        layout = new CardLayout();
+        mainPanel = new JPanel(layout);
 
-		add(mainMenu);
-		this.setVisible(true);
-	}
+        mainMenu = new MainMenu();
+        difficultyMenu = new DifficultyMenu();
+        levelSelection = new LevelSelection();
 
-	private void showComponent(JComponent component) {
-		this.getContentPane().removeAll();
-		this.add(component);
-		this.revalidate();
-		this.repaint();
-	}
+        mainPanel.add(mainMenu, "MENU");
+        mainPanel.add(difficultyMenu, "DIFFICULTY");
+        mainPanel.add(levelSelection, "LEVEL_SELECT");
 
-	private void showPanel(JPanel panel) {
-		showComponent(panel);
-	}
+        add(mainPanel);
 
-	public void showLevelSelection() {
-		showPanel(levelSelection);
-	}
+        setSize(1280, 720);
+        setLocationRelativeTo(null);
+        setResizable(true);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setVisible(true);
+    }
 
-	public void showDifficultyMenu() {
-		showPanel(difficultyMenu);
-	}
+    public void showScreen(String name) {
+        layout.show(mainPanel, name);
+        revalidate();
+        repaint();
+    }
 
-	public void startGame() {
-		GamePanel gamePanel = gameController.getGamePanel();
-		GameUIPanel gameUIPanel = gameController.getGameUIPanel();
+    public void showGame(GamePanel gamePanel, GameUIPanel uiPanel) {
+        // You can still use a JLayeredPane for the actual gameplay
+        JLayeredPane layeredPane = new JLayeredPane();
+        Dimension size = getContentPane().getSize();
+        layeredPane.setPreferredSize(size);
 
-		JLayeredPane layeredPane = new JLayeredPane();
+        gamePanel.setBounds(0, 0, size.width, size.height);
+        uiPanel.setBounds(0, 0, size.width, size.height);
 
-		Dimension size = this.getContentPane().getSize();
-		layeredPane.setPreferredSize(size);
+        layeredPane.add(gamePanel, Integer.valueOf(0));
+        layeredPane.add(uiPanel, Integer.valueOf(1));
 
-		gamePanel.setBounds(0, 0, size.width, size.height);
-		gameUIPanel.setBounds(0, 0, size.width, size.height);
-
-		layeredPane.add(gamePanel, Integer.valueOf(0));
-		layeredPane.add(gameUIPanel, Integer.valueOf(1));
-
-		// Adjust in real time
-		layeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
-			@Override
-			public void componentResized(java.awt.event.ComponentEvent e) {
-				Dimension newSize = layeredPane.getSize();
-				gamePanel.setBounds(0, 0, newSize.width, newSize.height);
-				gameUIPanel.setBounds(0, 0, newSize.width, newSize.height);
-				gamePanel.revalidate();
-				gamePanel.repaint();
-			}
-		});
-
-		showComponent(layeredPane);
-
-		SwingUtilities.invokeLater(gameController::startGameThread);
-	}
+        mainPanel.add(layeredPane, "GAME");
+        layout.show(mainPanel, "GAME");
+    }
 }
