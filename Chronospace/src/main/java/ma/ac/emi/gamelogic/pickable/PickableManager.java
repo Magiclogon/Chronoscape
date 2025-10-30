@@ -9,6 +9,7 @@ import ma.ac.emi.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Getter
 @Setter
@@ -16,10 +17,12 @@ public class PickableManager implements WaveListener {
     private WaveNotifier waveNotifier;
     private List<Pickable> pickables;
     private World world;
+    private Random random;
 
     public PickableManager(World world) {
         this.world = world;
         pickables = new ArrayList<>();
+        random = new Random();
     }
 
     public void addPickable(Pickable pickable) {
@@ -44,7 +47,27 @@ public class PickableManager implements WaveListener {
 
     @Override
     public void onNotify() {
-        List<Vector2D> state = waveNotifier.getState();
+        List<Vector2D> spawnPoints = waveNotifier.getState();
 
+        for (Vector2D pos : spawnPoints) {
+            Pickable pickable = createRandomPickable(pos);
+            if (pickable != null) {
+                addPickable(pickable);
+            }
+        }
+    }
+
+    private Pickable createRandomPickable(Vector2D position) {
+        double roll = random.nextDouble();
+
+        Pickable pickable;
+        if (roll < 0.70) {
+            pickable = new HpPickable(20.0);
+        } else {
+            pickable = new MoneyPickable(10);
+        }
+
+        pickable.setPos(position);
+        return pickable;
     }
 }

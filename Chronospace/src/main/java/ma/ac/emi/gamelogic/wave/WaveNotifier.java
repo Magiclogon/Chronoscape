@@ -23,7 +23,7 @@ public abstract class WaveNotifier {
 
     public void notifyListeners() {
         for (WaveListener listener : listeners) {
-            listener.update();
+            listener.onNotify();
         }
     }
 
