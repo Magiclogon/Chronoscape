@@ -67,10 +67,17 @@ public class Wave extends WaveNotifier {
             }
         }
 
+        // dead enemies positions
+        List<Vector2D> deadEnemyPositions = new ArrayList<>();
         enemies.forEach(e -> {
-            if(e.getHp() <= 0) spawnPoints.add(e.getPos());
+            if(e.getHp() <= 0) deadEnemyPositions.add(e.getPos());
         });
-        notifyListeners();
+
+        // Notify
+        if (!deadEnemyPositions.isEmpty()) {
+            System.out.println("Number of points: " + deadEnemyPositions.size());
+            notifyListeners(deadEnemyPositions);
+        }
 
         enemies.removeIf(enemy -> enemy.getHp() <= 0);
         for(Ennemy e: enemies) {
@@ -163,10 +170,5 @@ public class Wave extends WaveNotifier {
 
     private enum WaveSpawnState {
         NOT_STARTED, SPAWNING, SPAWN_COMPLETE
-    }
-
-    @Override
-    public List<Vector2D> getState() {
-        return spawnPoints;
     }
 }

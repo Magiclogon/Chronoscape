@@ -87,6 +87,7 @@ public class World {
 		collisionManager.setPlayer(player);
 		collisionManager.setEnemies(new ArrayList<Ennemy>());
 		collisionManager.setAttackObjectManager(attackObjectManager);
+		collisionManager.setPickableManager(pickableManager);
 	}
 
 	public void update(double step) {

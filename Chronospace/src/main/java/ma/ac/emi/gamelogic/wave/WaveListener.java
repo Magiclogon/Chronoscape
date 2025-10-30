@@ -1,7 +1,10 @@
 package ma.ac.emi.gamelogic.wave;
 
+import ma.ac.emi.math.Vector2D;
+import java.util.List;
+
 public interface WaveListener {
     void subscribe(WaveNotifier waveNotifier);
     void unsubscribe(WaveNotifier waveNotifier);
-    void onNotify();
+    void onNotify(List<Vector2D> spawnPoints);
 }

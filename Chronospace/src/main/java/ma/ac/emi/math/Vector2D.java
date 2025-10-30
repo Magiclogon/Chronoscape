@@ -5,9 +5,11 @@ import java.awt.geom.Point2D;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 public class Vector2D {
 	private double x, y;
 	
@@ -53,10 +55,4 @@ public class Vector2D {
 	    transform.transform(src, dst);
 	    return new Vector2D(dst.x, dst.y);
 	}
-	
-	@Override
-	public String toString() {
-		return "(" + getX() + "," + getY() + ")";
-	}
-	
 }

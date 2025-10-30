@@ -46,10 +46,11 @@ public class PickableManager implements WaveListener {
     }
 
     @Override
-    public void onNotify() {
-        List<Vector2D> spawnPoints = waveNotifier.getState();
+    public void onNotify(List<Vector2D> spawnPoints) {
+        System.out.println("Notified with " + spawnPoints.size() + " spawn points");
 
         for (Vector2D pos : spawnPoints) {
+            System.out.println(pos);
             Pickable pickable = createRandomPickable(pos);
             if (pickable != null) {
                 addPickable(pickable);

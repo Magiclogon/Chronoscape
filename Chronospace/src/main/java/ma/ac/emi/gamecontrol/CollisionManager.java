@@ -8,6 +8,8 @@ import ma.ac.emi.gamelogic.attack.AOE;
 import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.pickable.Pickable;
+import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 
 @Getter
@@ -16,6 +18,7 @@ public class CollisionManager {
 	private Player player;
 	private List<Ennemy> enemies;
 	private AttackObjectManager attackObjectManager;
+	private PickableManager pickableManager;
 	
 	public void handleCollisions() {
 		for(AttackObject attackObject : attackObjectManager.getEnemyObjects()) {
@@ -29,6 +32,12 @@ public class CollisionManager {
 				if(enemy.getBound().intersects(attackObject.getBound()) && attackObject.isActive()) {
 					attackObject.applyEffect(enemy);
 				}
+			}
+		}
+		for(Pickable pickable : pickableManager.getPickables()) {
+			if(player.getBound().intersects(pickable.getBound()) && !pickable.isPickedUp()) {
+				pickable.applyEffect(player);
+				pickable.setPickedUp(true);
 			}
 		}
 	}
