@@ -46,7 +46,7 @@ public class WaveManager {
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
-        this.timeBetweenWaves = 10.0;
+        this.timeBetweenWaves = 4;
         this.waveTimer = 0;
     }
 
@@ -95,6 +95,7 @@ public class WaveManager {
 
     public void startNextWave() {
         if (currentWaveNumber < waves.size()) {
+            System.out.println("Starting wave " + (currentWaveNumber + 1) + " of " + waves.size());
             Wave wave = waves.get(currentWaveNumber);
             wave.spawn();
             currentWaveNumber++;
@@ -110,6 +111,7 @@ public class WaveManager {
     }
 
     private void onWaveCompleted() {
+        System.out.println("Wave " + currentWaveNumber + " completed");
         if (currentWaveNumber >= waves.size()) {
             state = WaveState.COMPLETED;
         } else {

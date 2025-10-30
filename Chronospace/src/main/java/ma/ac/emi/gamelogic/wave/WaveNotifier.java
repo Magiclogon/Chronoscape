@@ -1,8 +1,6 @@
 package ma.ac.emi.gamelogic.wave;
 
 import ma.ac.emi.math.Vector2D;
-
-import java.net.http.WebSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,11 +19,9 @@ public abstract class WaveNotifier {
         listeners.remove(listener);
     }
 
-    public void notifyListeners() {
+    protected void notifyListeners(List<Vector2D> spawnPoints) {
         for (WaveListener listener : listeners) {
-            listener.onNotify();
+            listener.onNotify(spawnPoints);
         }
     }
-
-    public abstract List<Vector2D> getState();
 }

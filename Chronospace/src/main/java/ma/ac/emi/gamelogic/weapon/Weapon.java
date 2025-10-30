@@ -68,15 +68,19 @@ public abstract class Weapon {
 			setAmmo(getMagazineSize());
 			setTssr(0);
 		}
-		
-		System.out.println(getAmmo());
 	}
     
     public void snapTo(Entity entity) {
 		setBearer(entity);
-		
 	}
-    
+
+	public void reload() {
+		if (ammo == magazineSize || tssr > 0) return;
+
+		System.out.println("Reloading weapon...");
+		tssr = 0; 
+	}
+
     public void pointAt(Vector2D target) {
     	setDir(target.sub(getPos()).normalize());
     }

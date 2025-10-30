@@ -25,8 +25,6 @@ public class Ennemy extends LivingEntity {
 		
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
-		
-		
 	}
 
 	@Override
@@ -41,6 +39,5 @@ public class Ennemy extends LivingEntity {
 		
 		g.setColor(Color.yellow);
 		g.drawRect(bound.x, bound.y, bound.width, bound.height);
-		
 	}
 }

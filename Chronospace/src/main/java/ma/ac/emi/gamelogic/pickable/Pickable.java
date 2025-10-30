@@ -13,24 +13,14 @@ public abstract class Pickable {
     protected Vector2D pos;
     protected double probability;
     protected boolean isPickedUp;
+    protected Rectangle bound;
 
     public Pickable() {
         this.isPickedUp = false;
+        this.bound = new Rectangle(10, 10);
     }
 
-    public void draw(java.awt.Graphics g) {
-        if (isPickedUp) return;
-
-        if (this instanceof HpPickable) {
-            g.setColor(Color.RED);
-        } else if (this instanceof MoneyPickable) {
-            g.setColor(Color.YELLOW);
-        } else {
-            g.setColor(Color.WHITE);
-        }
-
-        g.fillOval((int)pos.getX(), (int)pos.getY(), 10, 10);
-    }
+    public abstract void draw(java.awt.Graphics g);
 
     public abstract void applyEffect(Player player);
 }
