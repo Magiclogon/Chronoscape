@@ -60,5 +60,4 @@ public class AttackObjectManager {
 		return getAttackObjects().stream().filter((o) -> o.isFromPlayer()).toList();
 
     }
-    
 }

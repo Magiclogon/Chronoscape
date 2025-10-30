@@ -15,6 +15,7 @@ import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
+import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
@@ -33,6 +34,7 @@ public class World {
 	private Rectangle bound;
 	private AttackObjectManager attackObjectManager;
 	private CollisionManager collisionManager;
+	private PickableManager pickableManager;
 
 	public World(int w, int h) {
 		width = w;
@@ -41,6 +43,7 @@ public class World {
 
 		collisionManager = new CollisionManager();
 		attackObjectManager = new AttackObjectManager(this);
+		pickableManager = new PickableManager(this);
 
 		AK47 ak = new AK47();
 		ak.setAttackObjectManager(this.attackObjectManager);
@@ -74,6 +77,11 @@ public class World {
 			} catch (IOException ex) {
 				System.err.println("Failed to create sample config: " + ex.getMessage());
 			}
+		}
+
+		// Subscribe each wave
+		for (Wave wave : waveManager.getWaves()) {
+			pickableManager.subscribe(wave);
 		}
 
 		collisionManager.setPlayer(player);
@@ -111,5 +119,7 @@ public class World {
 				ennemy.draw(g);
 			}
 		}
+
+		pickableManager.getPickables().forEach(p -> p.draw(g));
 	}
 }
