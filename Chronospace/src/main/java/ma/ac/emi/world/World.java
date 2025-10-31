@@ -19,10 +19,8 @@ import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
-import ma.ac.emi.gamelogic.weapon.model.AK47;
-import ma.ac.emi.gamelogic.weapon.model.RPG7;
-import ma.ac.emi.gamelogic.weapon.model.Spear;
-import ma.ac.emi.gamelogic.weapon.model.Sword;
+import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.gamelogic.weapon.WeaponFactory;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -40,26 +38,19 @@ public class World {
 		width = w;
 		height = h;
 		bound = new Rectangle(w*GamePanel.TILE_SIZE, h*GamePanel.TILE_SIZE);
+		
+		WeaponFactory.initialize("weapons.json");
 
 		collisionManager = new CollisionManager();
 		attackObjectManager = new AttackObjectManager(this);
 		pickableManager = new PickableManager(this);
 
-		AK47 ak = new AK47();
-		ak.setAttackObjectManager(this.attackObjectManager);
-
-		RPG7 rpg7 = new RPG7();
-		rpg7.setAttackObjectManager(this.attackObjectManager);
-
-		Sword sword = new Sword();
-		sword.setAttackObjectManager(attackObjectManager);
-		
-		Spear spear = new Spear();
-		spear.setAttackObjectManager(attackObjectManager);
+		Weapon weapon = WeaponFactory.createWeapon("hammer");
+		weapon.setAttackObjectManager(this.attackObjectManager);
 
 		player = new Player(new Vector2D(w * GamePanel.TILE_SIZE / 2,
 				h * GamePanel.TILE_SIZE / 2), 100);
-		player.setWeapon(ak);
+		player.setWeapon(weapon);
 
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);

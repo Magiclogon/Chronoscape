@@ -24,7 +24,7 @@ public class ProjectileAOE extends Projectile{
 	}
 	
 	public void spawnAoe() {
-		RangeAOE weapon = (RangeAOE) getWeapon();
+		Weapon weapon = getWeapon();
 		AOE aoe = new AOE(getPos(), weapon.getAoeType(), weapon);
 		weapon.getAttackObjectManager().addObject(aoe);
 	}

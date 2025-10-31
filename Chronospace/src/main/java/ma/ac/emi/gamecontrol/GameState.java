@@ -6,5 +6,6 @@ public enum GameState {
     SHOP,
     GAME_OVER, 
     DIFFICULTY_SELECT, 
-    LEVEL_SELECT
+    LEVEL_SELECT, 
+    STOPPED
 }
