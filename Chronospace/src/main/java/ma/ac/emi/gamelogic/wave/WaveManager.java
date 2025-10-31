@@ -2,12 +2,15 @@ package ma.ac.emi.gamelogic.wave;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -116,6 +119,7 @@ public class WaveManager {
             state = WaveState.COMPLETED;
         } else {
             state = WaveState.WAITING;
+            SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
             waveTimer = 0;
         }
     }

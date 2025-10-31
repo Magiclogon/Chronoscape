@@ -1,0 +1,74 @@
+{
+  "weapons": [
+    {
+      "id": "ak47",
+      "name": "AK-47",
+      "attackType": "RangeSingleHit",
+      "damage": 30,
+      "range": 500,
+      "attackSpeed": 10,
+      "magazineSize": 30,
+      "reloadingTime": 2.5,
+      "projectileType": "bullet",
+      "projectileSpeed": 800,
+      "projectileWidth": 4,
+      "projectileHeight": 2
+    },
+    {
+      "id": "rpg7",
+      "name": "RPG-7",
+      "attackType": "RangeAOE",
+      "damage": 150,
+      "range": 1000,
+      "attackSpeed": 0.5,
+      "magazineSize": 1,
+      "reloadingTime": 4.0,
+      "projectileType": "rocket",
+      "projectileSpeed": 400,
+      "projectileWidth": 8,
+      "projectileHeight": 8,
+
+      "aoeType": "explosion",
+      "aoeSprite": "assets/effects/explosion.png",
+      "aoeBoundWidth": 100,
+      "aoeBoundHeight": 100,
+      "aoeEffectRate": 2.0,
+      "aoeAgeMax": 1.5
+    },
+    {
+      "id": "sword",
+      "name": "Sword",
+      "attackType": "MeleeSingleHit",
+      "damage": 45,
+      "range": 30,
+      "attackSpeed": 2,
+      "magazineSize": 999,
+      "reloadingTime": 0,
+      "projectileType": "slash",
+      "projectileSpeed": 500,
+      "projectileWidth": 4,
+      "projectileHeight": 4
+    },
+    {
+      "id": "hammer",
+      "name": "War Hammer",
+      "attackType": "MeleeAOE",
+      "damage": 60,
+      "range": 40,
+      "attackSpeed": 1.5,
+      "magazineSize": 999,
+      "reloadingTime": 0,
+      "projectileType": "shockwave",
+      "projectileSpeed": 400,
+      "projectileWidth": 10,
+      "projectileHeight": 10,
+
+      "aoeType": "groundSlam",
+      "aoeSprite": "assets/effects/ground_slam.png",
+      "aoeBoundWidth": 32,
+      "aoeBoundHeight": 32,
+      "aoeEffectRate": 1.2,
+      "aoeAgeMax": 1.0
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 package ma.ac.emi.UI;
 
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+
 import javax.swing.*;
 import ma.ac.emi.gamecontrol.*;
 
@@ -12,18 +15,25 @@ public class Window extends JFrame {
     private final MainMenu mainMenu;
     private final DifficultyMenu difficultyMenu;
     private final LevelSelection levelSelection;
+    private final ShopUI shopUI;
+    
+    private final JLayeredPane gamePane;
 
-    public Window(GameController controller) {
+    public Window() {
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
 
         mainMenu = new MainMenu();
         difficultyMenu = new DifficultyMenu();
         levelSelection = new LevelSelection();
+        shopUI = new ShopUI();
+        gamePane = new JLayeredPane();
 
         mainPanel.add(mainMenu, "MENU");
         mainPanel.add(difficultyMenu, "DIFFICULTY");
         mainPanel.add(levelSelection, "LEVEL_SELECT");
+        mainPanel.add(shopUI, "SHOP");
+        mainPanel.add(gamePane, "GAME");
 
         add(mainPanel);
 
@@ -41,18 +51,40 @@ public class Window extends JFrame {
     }
 
     public void showGame(GamePanel gamePanel, GameUIPanel uiPanel) {
-        // You can still use a JLayeredPane for the actual gameplay
-        JLayeredPane layeredPane = new JLayeredPane();
-        Dimension size = getContentPane().getSize();
-        layeredPane.setPreferredSize(size);
+    	gamePane.removeAll();
+        gamePanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+        
+        gamePane.addComponentListener(new ComponentListener() {
 
-        gamePanel.setBounds(0, 0, size.width, size.height);
-        uiPanel.setBounds(0, 0, size.width, size.height);
+			@Override
+			public void componentResized(ComponentEvent e) {
+				gamePanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+		        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+				
+			}
 
-        layeredPane.add(gamePanel, Integer.valueOf(0));
-        layeredPane.add(uiPanel, Integer.valueOf(1));
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
 
-        mainPanel.add(layeredPane, "GAME");
-        layout.show(mainPanel, "GAME");
+			@Override
+			public void componentShown(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
+        
+        gamePane.add(gamePanel, Integer.valueOf(0));
+        gamePane.add(uiPanel, Integer.valueOf(1));
     }
 }

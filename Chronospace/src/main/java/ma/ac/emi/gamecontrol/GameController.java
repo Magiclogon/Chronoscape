@@ -1,11 +1,15 @@
 package ma.ac.emi.gamecontrol;
 
+import lombok.Getter;
+import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
 
+@Getter
+@Setter
 public class GameController implements Runnable {
 	private static final long SIM_STEP = (long)(Math.pow(10, 9)/60);
     private static GameController instance;
@@ -25,7 +29,7 @@ public class GameController implements Runnable {
     private GameState state = GameState.MENU;
 
     private GameController() {
-        window = new Window(this);
+        window = new Window();
         showMainMenu();
     }
 
@@ -43,6 +47,22 @@ public class GameController implements Runnable {
         state = GameState.LEVEL_SELECT;
         window.showScreen("LEVEL_SELECT");
     }
+    
+    public void showGame() {
+    	state = GameState.PLAYING;
+    	window.showScreen("GAME");
+    }
+    
+    public void showShop() {
+    	state = GameState.SHOP;
+    	window.showScreen("SHOP");
+    }
+    
+    public void resumeGame() {
+        state = GameState.PLAYING;
+        startGameThread();
+    }
+
 
     public void startGame() {
         state = GameState.PLAYING;
@@ -58,11 +78,22 @@ public class GameController implements Runnable {
         MouseHandler.getInstance().setCamera(camera);
 
         window.showGame(gamePanel, gameUIPanel);
+        showGame();
         startGameThread();
     }
     
-    public void startGameThread() {
-        if (gameThread != null && gameThread.isAlive()) return;
+    	public void startGameThread() {
+        if (gameThread != null && gameThread.isAlive()) {
+            // Stop current loop safely
+            state = GameState.STOPPED;
+            try {
+                gameThread.join(); // wait for it to stop
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Start a fresh loop
         gameThread = new Thread(this);
         gameThread.start();
     }
