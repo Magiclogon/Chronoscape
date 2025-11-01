@@ -1,0 +1,28 @@
+{
+  "aoes": [
+    {
+      "id": "explosion",
+      "sprite": "assets/effects/explosion.png",
+      "boundWidth": 100,
+      "boundHeight": 100,
+      "effectRate": 2.0,
+      "ageMax": 1.5
+    },
+    {
+      "id": "groundSlam",
+      "sprite": "assets/effects/ground_slam.png",
+      "boundWidth": 80,
+      "boundHeight": 80,
+      "effectRate": 1.2,
+      "ageMax": 1.0
+    },
+    {
+      "id": "poisonCloud",
+      "sprite": "assets/effects/poison_cloud.png",
+      "boundWidth": 120,
+      "boundHeight": 120,
+      "effectRate": 0.8,
+      "ageMax": 3.0
+    }
+  ]
+}

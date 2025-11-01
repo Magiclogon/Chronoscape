@@ -1,0 +1,134 @@
+{
+  "items": [
+    {
+      "type": "weapon",
+      "id": "ak47",
+      "name": "AK-47",
+      "description": "Automatic rifle with high fire rate.",
+      "rarity": "RARE",
+      "basePrice": 500,
+      "attackType": "RangeSingleHit",
+      "damage": 30,
+      "range": 500,
+      "attackSpeed": 10,
+      "projectileType": "bullet",
+      "reloadingTime": 2.5
+    },
+    {
+      "type": "weapon",
+      "id": "hammer",
+      "name": "War Hammer",
+      "description": "Crush enemies with a powerful ground slam.",
+      "rarity": "EPIC",
+      "basePrice": 800,
+      "attackType": "MeleeAOE",
+      "damage": 60,
+      "range": 40,
+      "attackSpeed": 1.5,
+      "aoeType": "groundSlam"
+    },
+    {
+      "type": "weapon",
+      "id": "sword",
+      "name": "Knight’s Sword",
+      "description": "Balanced melee weapon for close combat.",
+      "rarity": "RARE",
+      "basePrice": 350,
+      "attackType": "MeleeSingleHit",
+      "damage": 45,
+      "range": 35,
+      "attackSpeed": 2.0,
+      "projectileType": "slash"
+    },
+    {
+      "type": "weapon",
+      "id": "rpg7",
+      "name": "RPG-7",
+      "description": "Fires a rocket that explodes on impact.",
+      "rarity": "LEGENDARY",
+      "basePrice": 1200,
+      "attackType": "RangeAOE",
+      "damage": 150,
+      "range": 1000,
+      "attackSpeed": 0.5,
+      "projectileType": "rocket",
+      "reloadingTime": 4.0,
+      "aoeType": "explosion"
+    },
+    {
+      "type": "weapon",
+      "id": "bow",
+      "name": "Hunter’s Bow",
+      "description": "Simple but precise ranged weapon.",
+      "rarity": "COMMON",
+      "basePrice": 250,
+      "attackType": "RangeSingleHit",
+      "damage": 20,
+      "range": 400,
+      "attackSpeed": 3.0,
+      "projectileType": "arrow",
+      "reloadingTime": 1.2
+    },
+
+    {
+      "type": "statModifier",
+      "id": "hp_boost",
+      "name": "Vitality Amulet",
+      "description": "Increases max health by 20%.",
+      "rarity": "RARE",
+      "basePrice": 300,
+      "stat": "health",
+      "modifier": 1.2
+    },
+    {
+      "type": "statModifier",
+      "id": "speed_boots",
+      "name": "Swift Boots",
+      "description": "Increases movement speed by 15%.",
+      "rarity": "COMMON",
+      "basePrice": 250,
+      "stat": "speed",
+      "modifier": 1.15
+    },
+    {
+      "type": "statModifier",
+      "id": "damage_ring",
+      "name": "Ring of Power",
+      "description": "Increases attack damage by 25%.",
+      "rarity": "EPIC",
+      "basePrice": 600,
+      "stat": "attack",
+      "modifier": 1.25
+    },
+    {
+      "type": "statModifier",
+      "id": "armor_plate",
+      "name": "Iron Armor Plate",
+      "description": "Reduces damage taken by 10%.",
+      "rarity": "COMMON",
+      "basePrice": 200,
+      "stat": "defense",
+      "modifier": 1.1
+    },
+    {
+      "type": "statModifier",
+      "id": "critical_eye",
+      "name": "Eye of Precision",
+      "description": "Increases critical hit chance by 10%.",
+      "rarity": "RARE",
+      "basePrice": 400,
+      "stat": "critChance",
+      "modifier": 1.1
+    },
+    {
+      "type": "statModifier",
+      "id": "regeneration_charm",
+      "name": "Regeneration Charm",
+      "description": "Grants passive health regeneration.",
+      "rarity": "EPIC",
+      "basePrice": 750,
+      "stat": "regen",
+      "modifier": 1.3
+    }
+  ]
+}

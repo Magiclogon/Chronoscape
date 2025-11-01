@@ -12,7 +12,9 @@ public class KeyHandler{
 	private boolean left, right, up, down;
 	private static KeyHandler instance;
 	
-	public KeyHandler() {}
+	private KeyHandler() {
+		init();
+	}
 	
 	public static KeyHandler getInstance() {
 		if(instance == null) {
@@ -169,5 +171,12 @@ public class KeyHandler{
             }
         });
     }
+
+	public void init() {
+		setLeft(false);
+		setRight(false);
+		setUp(false);
+		setDown(false);
+	}
 
 }

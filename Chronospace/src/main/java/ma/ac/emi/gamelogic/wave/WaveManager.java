@@ -33,7 +33,7 @@ public class WaveManager {
     private WaveFactory waveFactory;
     private WaveConfigLoader configLoader;
     private WaveState state;
-    private double timeBetweenWaves;
+    private double waveDelay;
     private double waveTimer;
     private int worldWidth;
     private int worldHeight;
@@ -49,7 +49,7 @@ public class WaveManager {
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
-        this.timeBetweenWaves = 4;
+        this.waveDelay = 3;
         this.waveTimer = 0;
     }
 
@@ -75,7 +75,7 @@ public class WaveManager {
         switch (state) {
             case WAITING:
                 waveTimer += deltaTime;
-                if (waveTimer >= timeBetweenWaves) {
+                if (waveTimer >= waveDelay) {
                     startNextWave();
                 }
                 break;
@@ -85,7 +85,10 @@ public class WaveManager {
                 if (currentWave != null) {
                     currentWave.update(deltaTime, playerPos);
                     if (currentWave.isCompleted()) {
-                        onWaveCompleted();
+                    	waveTimer += deltaTime;
+                        if (waveTimer >= waveDelay) {
+                            onWaveCompleted();
+                        }
                     }
                 }
                 break;
@@ -109,7 +112,7 @@ public class WaveManager {
 
     public void forceStartNextWave() {
         if (state == WaveState.WAITING) {
-            waveTimer = timeBetweenWaves;
+            waveTimer = waveDelay;
         }
     }
 
@@ -119,8 +122,8 @@ public class WaveManager {
             state = WaveState.COMPLETED;
         } else {
             state = WaveState.WAITING;
-            SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
             waveTimer = 0;
+            SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
         }
     }
 
@@ -154,7 +157,7 @@ public class WaveManager {
 
     public double getTimeUntilNextWave() {
         if (state == WaveState.WAITING) {
-            return Math.max(0, timeBetweenWaves - waveTimer);
+            return Math.max(0, waveDelay - waveTimer);
         }
         return 0;
     }

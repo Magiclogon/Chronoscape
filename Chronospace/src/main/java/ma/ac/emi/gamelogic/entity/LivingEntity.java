@@ -13,15 +13,12 @@ public abstract class LivingEntity extends Entity {
     protected double strength;
     protected double regenerationSpeed;
     protected double speed;
-    protected Weapon weapon;
 
     public LivingEntity(Vector2D pos, double speed) {
         super(pos);
         this.speed = speed;
     }
     
-    public void attack() {
-    	this.weapon.attack();
-    }
+    public abstract void attack();
 
 }

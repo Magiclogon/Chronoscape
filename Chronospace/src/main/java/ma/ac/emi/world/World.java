@@ -4,6 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,9 @@ import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.ItemDefinition;
+import ma.ac.emi.gamelogic.shop.ItemLoader;
+import ma.ac.emi.gamelogic.shop.Rarity;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -33,7 +37,8 @@ public class World {
 	private AttackObjectManager attackObjectManager;
 	private CollisionManager collisionManager;
 	private PickableManager pickableManager;
-
+	
+	
 	public World(int w, int h) {
 		width = w;
 		height = h;
@@ -79,11 +84,13 @@ public class World {
 		collisionManager.setEnemies(new ArrayList<Ennemy>());
 		collisionManager.setAttackObjectManager(attackObjectManager);
 		collisionManager.setPickableManager(pickableManager);
+		
+		
 	}
 
 	public void update(double step) {
 		player.update(step);
-
+		
 		// Update wave manager
 		waveManager.update(step, player.getPos());
 
