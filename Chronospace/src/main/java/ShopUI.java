@@ -1,4 +1,4 @@
-package ma.ac.emi.UI;
+
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -20,45 +20,43 @@ import java.awt.*;
  */
 public class ShopUI extends JPanel {
 
+    private final GameController gameController;
 
     private JLabel moneyLabel;
     private JPanel availableItemsPanel;
     private JPanel weaponSlotsPanel;
     private JPanel statItemsPanel;
     private JPanel statsPanel;
-    private JButton nextWaveButton;
 
     public ShopUI() {
+        this.gameController = GameController.getInstance();
 
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(30, 30, 30));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Top
-        nextWaveButton = new JButton("Next Wave");
-        nextWaveButton.addActionListener((e) -> {
-        	GameController.getInstance().resumeGame();
-        });
-        add(createTopPanel(), BorderLayout.NORTH);
+        // Top: money panel
+        add(createMoneyPanel(), BorderLayout.NORTH);
 
         // Center: available items + player stats
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         centerPanel.setBackground(new Color(30, 30, 30));
         centerPanel.add(createAvailableItemsPanel());
-        centerPanel.add(createInventoryPanel());
+        centerPanel.add(createStatsPanel());
         add(centerPanel, BorderLayout.CENTER);
 
         // Bottom: inventory
-        add(createStatsPanel(), BorderLayout.EAST);
-        
-        
-        
+        add(createInventoryPanel(), BorderLayout.SOUTH);
+
+        refresh();
     }
 
-    private JPanel createTopPanel() {
+    // -------------------------------
+    // REGION: Panel Creation Methods
+    // -------------------------------
+
+    private JPanel createMoneyPanel() {
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // padding
         panel.setBackground(Color.BLACK);
 
         moneyLabel = new JLabel();
@@ -66,8 +64,6 @@ public class ShopUI extends JPanel {
         moneyLabel.setFont(new Font("Arial", Font.BOLD, 20));
 
         panel.add(moneyLabel);
-        panel.add(Box.createHorizontalGlue()); // pushes button to the right
-        panel.add(nextWaveButton);
         return panel;
     }
 
@@ -103,34 +99,16 @@ public class ShopUI extends JPanel {
 
         weaponSlotsPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         weaponSlotsPanel.setBackground(new Color(60, 60, 60));
-        weaponSlotsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Weapons",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
+        weaponSlotsPanel.setBorder(BorderFactory.createTitledBorder("Weapons"));
 
         statItemsPanel = new JPanel(new GridLayout(2, 4, 10, 10));
         statItemsPanel.setBackground(new Color(60, 60, 60));
-        statItemsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Items",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
+        statItemsPanel.setBorder(BorderFactory.createTitledBorder("Stat Items"));
 
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel bottomPanel = new JPanel(new GridLayout(2, 1, 10, 10));
         bottomPanel.setBackground(new Color(40, 40, 40));
-        bottomPanel.add(statItemsPanel);
         bottomPanel.add(weaponSlotsPanel);
+        bottomPanel.add(statItemsPanel);
 
         inventoryPanel.add(bottomPanel, BorderLayout.CENTER);
         return inventoryPanel;
@@ -149,13 +127,16 @@ public class ShopUI extends JPanel {
                         Color.WHITE
                 )
         );
-        statsPanel.setPreferredSize(new Dimension(250, 700));
         return statsPanel;
     }
 
+    // -------------------------------
+    // REGION: Refresh Logic
+    // -------------------------------
+
     public void refresh() {
-        Player player = GameController.getInstance().getWorld().getPlayer();
-        ShopManager shop = GameController.getInstance().getShopManager();
+        Player player = gameController.getWorld().getPlayer();
+        ShopManager shop = gameController.getShopManager();
 
         // Update money
         moneyLabel.setText("Money: " + player.getMoney() + "g");
@@ -168,9 +149,9 @@ public class ShopUI extends JPanel {
 
         // Update weapon slots
         weaponSlotsPanel.removeAll();
-        weaponSlotsPanel.add(createSlotLabel(player.getWeapon().getName()));
-        //weaponSlotsPanel.add(createSlotLabel(player.getSecondaryWeapon().getName()));
-        //weaponSlotsPanel.add(createSlotLabel(player.getMeleeWeapon().getName()));
+        /*for (WeaponItem weapon : player.getWeapons()) {
+            weaponSlotsPanel.add(createSlotLabel(weapon.getName()));
+        }*/
 
         // Update stat modifier items
         statItemsPanel.removeAll();
@@ -189,6 +170,10 @@ public class ShopUI extends JPanel {
         repaint();
     }
 
+    // -------------------------------
+    // REGION: UI Helpers
+    // -------------------------------
+
     private JButton createItemButton(ShopItem item) {
         JButton button = new JButton("<html><b>" + item.getItemDefintion().getName() + "</b><br>" + item.getItemDefintion().getBasePrice() + "g</html>");
         button.setFocusPainted(false);
@@ -197,7 +182,7 @@ public class ShopUI extends JPanel {
         button.setFont(new Font("Arial", Font.PLAIN, 12));
 
         button.addActionListener(e -> {
-            //GameController.getInstance().getShopManager().purchaseItem(item);
+            //gameController.getShopManager().purchaseItem(item);
             refresh();
         });
 

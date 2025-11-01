@@ -1,0 +1,41 @@
+{
+  "singleHit": [
+    {
+      "id": "bullet",
+      "sprite": "assets/projectiles/bullet.png",
+      "speed": 800,
+      "width": 4,
+      "height": 2,
+      "lifetime": 2.0
+    },
+    {
+      "id": "arrow",
+      "sprite": "assets/projectiles/arrow.png",
+      "speed": 700,
+      "width": 3,
+      "height": 10,
+      "lifetime": 3.0
+    }
+  ],
+
+  "aoe": [
+    {
+      "id": "rocket",
+      "sprite": "assets/projectiles/rocket.png",
+      "speed": 400,
+      "width": 8,
+      "height": 8,
+      "lifetime": 2.0,
+      "aoeId": "explosion"
+    },
+    {
+      "id": "hammerShockwave",
+      "sprite": "assets/projectiles/hammer_wave.png",
+      "speed": 250,
+      "width": 20,
+      "height": 20,
+      "lifetime": 1.0,
+      "aoeId": "groundSlam"
+    }
+  ]
+}

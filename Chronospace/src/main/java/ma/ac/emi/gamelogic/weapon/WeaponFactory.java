@@ -74,6 +74,7 @@ public class WeaponFactory {
         String attackType = weaponData.get("attackType").getAsString();
         weapon.setAttackStrategy(STRATEGIES.get(attackType));
         
+        weapon.setName(weaponData.get("name").getAsString());
         // Load stats
         weapon.setDamage(weaponData.get("damage").getAsDouble());
         weapon.setRange(weaponData.get("range").getAsDouble());

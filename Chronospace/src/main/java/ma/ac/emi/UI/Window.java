@@ -43,6 +43,10 @@ public class Window extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
+    
+    public void refreshShop() {
+    	shopUI.refresh();
+    }
 
     public void showScreen(String name) {
         layout.show(mainPanel, name);

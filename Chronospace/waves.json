@@ -2,7 +2,7 @@
   {
     "waveNumber": 1,
     "enemies": {
-      "common": 10
+      "common": 0
     },
     "spawnDelay": 0.5,
     "isBossWave": false

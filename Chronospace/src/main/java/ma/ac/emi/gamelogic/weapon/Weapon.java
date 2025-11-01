@@ -16,6 +16,7 @@ import ma.ac.emi.math.Vector2D;
 @Getter
 @Setter
 public class Weapon {
+	protected String name;
     protected double damage;
     protected double range;
     protected double attackSpeed;

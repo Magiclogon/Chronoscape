@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamelogic.shop.ItemLoader;
+import ma.ac.emi.gamelogic.shop.ShopManager;
+import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
@@ -27,6 +30,8 @@ public class GameController implements Runnable {
     private Camera camera;
     private Thread gameThread;
     private GameState state = GameState.MENU;
+    
+    private ShopManager shopManager;
 
     private GameController() {
         window = new Window();
@@ -49,23 +54,28 @@ public class GameController implements Runnable {
     }
     
     public void showGame() {
-    	state = GameState.PLAYING;
     	window.showScreen("GAME");
     }
     
     public void showShop() {
     	state = GameState.SHOP;
+    	shopManager.refreshAvailableItems();
+    	window.refreshShop();
     	window.showScreen("SHOP");
     }
     
     public void resumeGame() {
         state = GameState.PLAYING;
+        KeyHandler.getInstance().init();
+        showGame();
         startGameThread();
     }
 
 
     public void startGame() {
         state = GameState.PLAYING;
+		ItemLoader.getInstance().loadItems("items.json");		
+
 
         world = new World(50, 50);
         gamePanel = new GamePanel(world);
@@ -74,6 +84,8 @@ public class GameController implements Runnable {
         camera = new Camera(new Vector2D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
+        
+        shopManager = new ShopManager();
         
         MouseHandler.getInstance().setCamera(camera);
 
