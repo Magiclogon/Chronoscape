@@ -1,13 +1,14 @@
 package ma.ac.emi.gamelogic.attack;
 
-import ma.ac.emi.gamelogic.attack.type.ProjectileType;
+import ma.ac.emi.gamelogic.attack.type.AOEFactory;
+import ma.ac.emi.gamelogic.attack.type.ProjectileAOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 
 public class ProjectileAOE extends Projectile{
 
-	public ProjectileAOE(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon) {
+	public ProjectileAOE(Vector2D pos, Vector2D dir, ProjectileAOEDefinition projectileType, Weapon weapon) {
 		super(pos, dir, projectileType, weapon);
 		// TODO Auto-generated constructor stub
 	}
@@ -23,8 +24,10 @@ public class ProjectileAOE extends Projectile{
 	}
 	
 	public void spawnAoe() {
-		Weapon weapon = getWeapon();
-		AOE aoe = new AOE(getPos(), weapon.getAoeType(), weapon);
+		AOE aoe = AOEFactory.getInstance().createAOE(
+				((ProjectileAOEDefinition)getProjectileType()).getAoeId(), 
+				pos, 
+				getWeapon());
 		weapon.getAttackObjectManager().addObject(aoe);
 	}
 

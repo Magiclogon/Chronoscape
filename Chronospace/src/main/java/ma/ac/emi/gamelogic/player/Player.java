@@ -22,16 +22,21 @@ public class Player extends LivingEntity {
 	private Gender gender;
 	private Inventory inventory;
 	private Weapon weapon, secondaryWeapon, meleeWeapon;
+	
+	private static Player instance;
 
-
-	public Player(Vector2D pos, double speed) {
-		super(pos, speed);
+	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector2D();
 		hp = 50;
 		hpMax = 100;
 		money = 0;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+	}
+	
+	public static Player getInstance() {
+		if(instance == null) instance = new Player();
+		return instance;
 	}
 
 	@Override
@@ -51,7 +56,7 @@ public class Player extends LivingEntity {
 		
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
-		weapon.update(step);
+		if(weapon != null) weapon.update(step);
 	}
 
 	@Override
@@ -59,17 +64,24 @@ public class Player extends LivingEntity {
 		g.setColor(Color.GREEN);
 		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		
-		weapon.draw(g);
+		if(weapon != null) weapon.draw(g);
 	}
 	
 	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 		this.weapon.snapTo(this);
 	}
+	
+	public boolean hasWeapon(Weapon weapon) {
+		return this.weapon.equals(weapon) || 
+				this.secondaryWeapon.equals(weapon) ||
+				this.meleeWeapon.equals(weapon);
+	}
 
 	@Override
 	public void attack() {
-		this.weapon.attack();
+		if(weapon != null) this.weapon.attack();
 	}
+	
 
 }

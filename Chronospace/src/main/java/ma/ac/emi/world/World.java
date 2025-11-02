@@ -48,10 +48,9 @@ public class World {
 	public World(int w, int h) {
 		width = w;
 		height = h;
+
 		bound = new Rectangle(w * GamePanel.TILE_SIZE, h * GamePanel.TILE_SIZE);
 		obstacles = new ArrayList<>();
-
-		WeaponFactory.initialize("weapons.json");
 
 		collisionManager = new CollisionManager();
 		attackObjectManager = new AttackObjectManager(this);
@@ -60,12 +59,10 @@ public class World {
 		// Initialize pathfinder for AI
 		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
 
-		Weapon weapon = WeaponFactory.createWeapon("hammer");
-		weapon.setAttackObjectManager(this.attackObjectManager);
-
-		player = new Player(new Vector2D(w * GamePanel.TILE_SIZE / 2,
-				h * GamePanel.TILE_SIZE / 2), 100);
-		player.setWeapon(weapon);
+		player = Player.getInstance();
+		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
+		player.setSpeed(100);
+		//player.setWeapon(weapon);
 
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);

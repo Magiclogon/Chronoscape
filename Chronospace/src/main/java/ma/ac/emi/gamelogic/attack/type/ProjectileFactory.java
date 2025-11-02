@@ -1,20 +1,10 @@
 package ma.ac.emi.gamelogic.attack.type;
 
-import java.awt.Image;
-import java.util.HashMap;
-import java.util.Map;
+import ma.ac.emi.gamelogic.attack.Projectile;
+import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.math.Vector2D;
 
-public class ProjectileFactory{
-    private static final Map<String, ProjectileType> types = new HashMap<>();
-
-    public static ProjectileType getProjectileType(String key, Image sprite, double baseSpeed, int boundWidth, int boundHeight) {
-        ProjectileType type = types.get(key);
-        if (type == null) {
-            type = new ProjectileType(sprite, baseSpeed, boundWidth, boundHeight);
-            types.put(key, type);
-        }
-        return type;
-    }
-
-
+public interface ProjectileFactory {
+	Projectile createProjectile(String id, Vector2D pos, Vector2D dir, Weapon weapon);
+       
 }

@@ -1,18 +1,25 @@
 package ma.ac.emi.gamelogic.attack.type;
 
-import java.awt.Image;
-import java.util.HashMap;
-import java.util.Map;
+import ma.ac.emi.gamelogic.attack.AOE;
+import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.math.Vector2D;
 
 public class AOEFactory {
-	private static final Map<String, AOEType> types = new HashMap<>();
+	private static AOEFactory instance;
+	private AOEFactory() {}
+	
+	public static AOEFactory getInstance() {
+		if(instance == null) instance = new AOEFactory();
+		return instance;
+	}
 
-    public static AOEType getAOEType(String key, Image sprite, int boundWidth, int boundHeight, double effectRate, double ageMax) {
-        AOEType type = types.get(key);
-        if (type == null) {
-            type = new AOEType(sprite, boundWidth, boundHeight, effectRate, ageMax);
-            types.put(key, type);
-        }
-        return type;
-    }
+	public AOE createAOE(String id, Vector2D pos, Weapon weapon) {
+		AOEDefinition def = AOELoader.getInstance().get(id);
+		if (def == null) {
+	        throw new IllegalArgumentException("Unknown AOE id: " + id);
+	    }
+	
+	    return new AOE(pos, def, weapon);
+	}
+
 }

@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 
 import ma.ac.emi.gamelogic.attack.type.AOEFactory;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 
 public class WeaponFactory {
 	private static final Map<String, AttackStrategy> STRATEGIES = new HashMap<>();
@@ -68,11 +69,11 @@ public class WeaponFactory {
     }
     
     private static Weapon createFromJson(JsonObject weaponData) {
-        Weapon weapon = new Weapon();
+        WeaponItemDefinition weapon = new WeaponItemDefinition();
         
         // Load strategy
         String attackType = weaponData.get("attackType").getAsString();
-        weapon.setAttackStrategy(STRATEGIES.get(attackType));
+        weapon.setAttackStrategy(attackType);
         
         weapon.setName(weaponData.get("name").getAsString());
         // Load stats
@@ -80,8 +81,9 @@ public class WeaponFactory {
         weapon.setRange(weaponData.get("range").getAsDouble());
         weapon.setAttackSpeed(weaponData.get("attackSpeed").getAsDouble());
         weapon.setMagazineSize(weaponData.get("magazineSize").getAsInt());
-        weapon.setAmmo(weapon.getMagazineSize());
+        //weapon.setAmmo(weapon.getMagazineSize());
         weapon.setReloadingTime(weaponData.get("reloadingTime").getAsDouble());
+        
         
         // Load projectile type (if any)
         if (weaponData.has("projectileType")) {

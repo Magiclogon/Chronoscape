@@ -11,12 +11,12 @@ import ma.ac.emi.world.World;
 @Getter
 @Setter
 public abstract class AttackObject extends Entity{
-	private boolean active;    
-    private Weapon weapon;
-    private boolean fromPlayer;
+	protected boolean active;    
+    protected Weapon weapon;
+    protected boolean fromPlayer;
     
    	public AttackObject(Vector2D pos, Weapon weapon) {
-		super(pos);
+   		this.pos = pos;
 		this.active = true;
 		this.weapon = weapon;
 		fromPlayer = weapon.isFromPlayer();

@@ -3,47 +3,48 @@ package ma.ac.emi.gamelogic.weapon;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.attack.type.AOEType;
-import ma.ac.emi.gamelogic.attack.type.ProjectileType;
-import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
+import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
+import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
+import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Weapon {
-	protected String name;
-    protected double damage;
-    protected double range;
-    protected double attackSpeed;
+	protected WeaponItemDefinition definition;
+	
     protected Vector2D pos;
     protected Vector2D dir;
-    protected Entity bearer;
+    protected LivingEntity bearer;
     protected double tsla;
     protected int ammo;
-    protected int magazineSize;
     protected double tssr;
-    protected double reloadingTime;
-    protected ProjectileType projectileType;
-    protected AOEType aoeType;
     protected AttackObjectManager attackObjectManager;
     
-    // Strategy pattern
     protected AttackStrategy attackStrategy;
-    
-    public Weapon() {
+        
+    public Weapon(WeaponItemDefinition definition) {
+    	this.definition = definition;
         pos = new Vector2D();
         dir = new Vector2D();
         tsla = 0;
+        tssr = 0;
+        
+        attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
     }
     
     public void attack() {
-        if (attackStrategy != null) {
-            attackStrategy.execute(this);
+        if (getAttackStrategy() != null) {
+            getAttackStrategy().execute(this);
         }
     }
     
@@ -68,18 +69,18 @@ public class Weapon {
             setTssr(getTssr() + step);
         }
         
-        if (tssr >= reloadingTime) {
-            setAmmo(getMagazineSize());
+        if (tssr >= definition.getReloadingTime()) {
+            setAmmo(definition.getMagazineSize());
             setTssr(0);
         }
     }
     
-    public void snapTo(Entity entity) {
+    public void snapTo(LivingEntity entity) {
         setBearer(entity);
     }
 
     public void reload() {
-        if (ammo == magazineSize || tssr > 0) return;
+        if (ammo == definition.getMagazineSize() || tssr > 0) return;
         System.out.println("Reloading weapon...");
         tssr = 0;
     }

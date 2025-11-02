@@ -1,12 +1,18 @@
 package ma.ac.emi.gamelogic.shop;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class WeaponItemDefinition extends ItemDefinition {
-    private String attackType;
-    private float damage;
-    private float range;
-    private float attackSpeed;
-    private String projectileType;
-    private float reloadingTime;
+    private String attackStrategy;
+    private double damage;
+    private double range;
+    private double attackSpeed;
+    private String projectileId;
+    private double reloadingTime;
+    private int magazineSize;
     
 	@Override
 	public ShopItem getItem() {

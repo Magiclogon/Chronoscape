@@ -1,31 +1,42 @@
 {
   "singleHit": [
+  	{
+  	  "id": "noneSingle",
+      "sprite": "assets/projectiles/none.png",
+      "speed": 800,
+      "width": 2,
+      "height": 2
+  	},
     {
       "id": "bullet",
       "sprite": "assets/projectiles/bullet.png",
       "speed": 800,
       "width": 4,
-      "height": 2,
-      "lifetime": 2.0
+      "height": 2
     },
     {
       "id": "arrow",
       "sprite": "assets/projectiles/arrow.png",
       "speed": 700,
       "width": 3,
-      "height": 10,
-      "lifetime": 3.0
+      "height": 10
     }
   ],
 
   "aoe": [
+  	{
+  	  "id": "noneAoe",
+      "sprite": "assets/projectiles/none.png",
+      "speed": 800,
+      "width": 2,
+      "height": 2
+  	},
     {
       "id": "rocket",
       "sprite": "assets/projectiles/rocket.png",
       "speed": 400,
       "width": 8,
       "height": 8,
-      "lifetime": 2.0,
       "aoeId": "explosion"
     },
     {
@@ -34,7 +45,6 @@
       "speed": 250,
       "width": 20,
       "height": 20,
-      "lifetime": 1.0,
       "aoeId": "groundSlam"
     }
   ]

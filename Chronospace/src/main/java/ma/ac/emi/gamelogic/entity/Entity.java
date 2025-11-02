@@ -13,10 +13,6 @@ public abstract class Entity{
 	protected Vector2D velocity;
 	
 	protected Rectangle bound;
-		
-	public Entity(Vector2D pos) {
-		this.pos = pos;
-	}
 	
 	public abstract void update(double step);
 	

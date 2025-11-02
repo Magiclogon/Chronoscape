@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.attack.type.AOEType;
+import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
@@ -15,10 +15,10 @@ import ma.ac.emi.math.Vector2D;
 @Getter
 @Setter
 public class AOE extends AttackObject{
-	private AOEType aoeType;
+	private AOEDefinition aoeType;
 	private double currentAge, lastAge;
 	
-	public AOE(Vector2D pos, AOEType aoeType, Weapon weapon) {
+	public AOE(Vector2D pos, AOEDefinition aoeType, Weapon weapon) {
 		super(pos, weapon);
 		
 		this.aoeType = aoeType;
@@ -53,7 +53,7 @@ public class AOE extends AttackObject{
 		double closestInfCoolDownMultiple = Math.floor(getCurrentAge()/coolDown) * coolDown;
 		
 		if(getLastAge() <= closestInfCoolDownMultiple && getCurrentAge() >= closestInfCoolDownMultiple) {
-			entity.setHp(Math.max(0, entity.getHp() - getWeapon().getDamage()));
+			entity.setHp(Math.max(0, entity.getHp() - getWeapon().getDefinition().getDamage()));
 		}
 		
 	}
