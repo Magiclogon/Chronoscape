@@ -9,10 +9,12 @@ import java.awt.*;
 @Getter
 @Setter
 public class HpPickable extends Pickable {
+    private double baseHpGain;
     private double hpGain;
 
-    public HpPickable(double hpGain) {
-        super();
+    public HpPickable(double hpGain, double dropProbability) {
+        super(dropProbability);
+        this.baseHpGain = hpGain;
         this.hpGain = hpGain;
     }
 
@@ -20,12 +22,20 @@ public class HpPickable extends Pickable {
     public void applyEffect(Player player) {
         double currentHp = player.getHp();
         double maxHp = player.getHpMax();
-
         double newHp = Math.min(currentHp + hpGain, maxHp);
         player.setHp(newHp);
-
-        System.out.println("Player healed");
+        System.out.println("Player healed by " + hpGain);
         this.isPickedUp = true;
+    }
+
+    @Override
+    public void adjustForDifficulty(double difficultyMultiplier) {
+        this.hpGain = baseHpGain * difficultyMultiplier;
+    }
+
+    @Override
+    public Pickable createInstance() {
+        return new HpPickable(baseHpGain, dropProbability);
     }
 
     @Override
@@ -33,7 +43,6 @@ public class HpPickable extends Pickable {
         if (isPickedUp) return;
         g.setColor(Color.RED);
         g.fillOval((int)pos.getX(), (int)pos.getY(), 10, 10);
-
         g.setColor(Color.GREEN);
         bound.setLocation((int) pos.getX(), (int) pos.getY());
         g.drawRect(bound.x, bound.y, bound.width, bound.height);
