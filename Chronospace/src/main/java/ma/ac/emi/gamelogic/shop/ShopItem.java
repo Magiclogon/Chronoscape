@@ -14,6 +14,7 @@ public abstract class ShopItem {
 	
 	public ShopItem(ItemDefinition itemDefinition) {
 		this.itemDefinition = itemDefinition;
+		price = itemDefinition.getBasePrice();
 	}
 
     public abstract void apply(Player player);

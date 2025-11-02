@@ -73,7 +73,19 @@
       "reloadingTime": 1.2,
       "magazineSize": 1
     },
-
+	{
+      "type": "weapon",
+      "id": "fists",
+      "name": "Normal Fists",
+      "description": "Your good old fists.",
+      "rarity": "COMMON",
+      "basePrice": 1,
+      "attackStrategy": "MeleeSingleHit",
+      "damage": 5,
+      "range": 35,
+      "attackSpeed": 1.0,
+      "projectileId": "noneSingle"
+    },
     {
       "type": "statModifier",
       "id": "hp_boost",

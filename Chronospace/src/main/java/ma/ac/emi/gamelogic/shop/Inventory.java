@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Inventory {
     private List<ShopItem> purchasedItems;
     private Map<String, List<StatModifier>> activeEffects;
@@ -41,5 +46,13 @@ public class Inventory {
             total = modifier.apply(total);
         }
         return total;
+    }
+    
+    public List<ShopItem> getWeaponItems(){
+    	return getPurchasedItems().stream().filter((item) -> item instanceof WeaponItem).toList();
+    }
+    
+    public List<ShopItem> getStatModifierItems(){
+    	return getPurchasedItems().stream().filter((item) -> item instanceof StatModifierItem).toList();
     }
 }

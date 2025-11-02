@@ -3,12 +3,18 @@ package ma.ac.emi.UI;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 
+import ma.ac.emi.UI.shopElements.InventoryItemButton;
+import ma.ac.emi.UI.shopElements.InventoryScrollable;
+import ma.ac.emi.UI.shopElements.ShopItemButton;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ShopItem;
 import ma.ac.emi.gamelogic.shop.ShopManager;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Collections;
 
 /**
  * ShopUI handles the visual representation of the in-game shop.
@@ -19,14 +25,16 @@ import java.awt.*;
  *  - Player stats
  */
 public class ShopUI extends JPanel {
-
-
+	public final Dimension inventoryButtonSize = new Dimension(75, 75);
+	
     private JLabel moneyLabel;
     private JPanel availableItemsPanel;
-    private JPanel weaponSlotsPanel;
-    private JPanel statItemsPanel;
+    private InventoryScrollable weaponPane;
+    private InventoryScrollable activeWeaponsPane;
+    private InventoryScrollable statItemsPane;
     private JPanel statsPanel;
     private JButton nextWaveButton;
+    private JButton rerollButton;
 
     public ShopUI() {
 
@@ -34,21 +42,31 @@ public class ShopUI extends JPanel {
         setBackground(new Color(30, 30, 30));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Top
         nextWaveButton = new JButton("Next Wave");
         nextWaveButton.addActionListener((e) -> {
         	GameController.getInstance().resumeGame();
         });
         add(createTopPanel(), BorderLayout.NORTH);
 
-        // Center: available items + player stats
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+        JPanel centerPanel = new JPanel();
+        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(new Color(30, 30, 30));
         centerPanel.add(createAvailableItemsPanel());
+        
+        JPanel rerollPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
+        rerollPanel.setBackground(new Color(60, 60, 60));
+        rerollButton = new JButton("Reroll");
+        rerollButton.addActionListener((e) -> {
+        	GameController.getInstance().getShopManager().refreshAvailableItems();
+        	refresh();
+        });
+        rerollPanel.add(rerollButton);
+        
+        centerPanel.add(rerollPanel);
         centerPanel.add(createInventoryPanel());
         add(centerPanel, BorderLayout.CENTER);
 
-        // Bottom: inventory
+   
         add(createStatsPanel(), BorderLayout.EAST);
         
         
@@ -73,6 +91,8 @@ public class ShopUI extends JPanel {
 
     private JPanel createAvailableItemsPanel() {
         availableItemsPanel = new JPanel(new GridLayout(0, 3, 10, 10));
+        availableItemsPanel.setPreferredSize(new Dimension(availableItemsPanel.getPreferredSize().width,
+        			500));
         availableItemsPanel.setBackground(new Color(50, 50, 50));
         availableItemsPanel.setBorder(
                 BorderFactory.createTitledBorder(
@@ -100,37 +120,18 @@ public class ShopUI extends JPanel {
                         Color.WHITE
                 )
         );
+        
+        weaponPane = new InventoryScrollable(this, "Weapons");
 
-        weaponSlotsPanel = new JPanel(new GridLayout(1, 3, 10, 10));
-        weaponSlotsPanel.setBackground(new Color(60, 60, 60));
-        weaponSlotsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Weapons",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
+        statItemsPane = new InventoryScrollable(this, "Stat Items");
+        
+        activeWeaponsPane = new InventoryScrollable(this, "Active Weapons");
 
-        statItemsPanel = new JPanel(new GridLayout(2, 4, 10, 10));
-        statItemsPanel.setBackground(new Color(60, 60, 60));
-        statItemsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Items",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
-
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 3, 10, 10));
         bottomPanel.setBackground(new Color(40, 40, 40));
-        bottomPanel.add(statItemsPanel);
-        bottomPanel.add(weaponSlotsPanel);
+        bottomPanel.add(statItemsPane);
+        bottomPanel.add(weaponPane);
+        bottomPanel.add(activeWeaponsPane);
 
         inventoryPanel.add(bottomPanel, BorderLayout.CENTER);
         return inventoryPanel;
@@ -158,22 +159,28 @@ public class ShopUI extends JPanel {
         ShopManager shop = GameController.getInstance().getShopManager();
 
         // Update money
-        moneyLabel.setText("Money: " + player.getMoney() + "g");
+        moneyLabel.setText("Money: " + player.getMoney() + "$");
 
         // Update available items
         availableItemsPanel.removeAll();
         for (ShopItem item : shop.getAvailableItems()) {
-            availableItemsPanel.add(createItemButton(item));
+            availableItemsPanel.add(new ShopItemButton(this, item));
         }
 
-        // Update weapon slots
-        weaponSlotsPanel.removeAll();
-        //weaponSlotsPanel.add(createSlotLabel(player.getWeapon().getDefinition().getName()));
-        //weaponSlotsPanel.add(createSlotLabel(player.getSecondaryWeapon().getName()));
-        //weaponSlotsPanel.add(createSlotLabel(player.getMeleeWeapon().getName()));
-
+        // Update active weapon slots
+        activeWeaponsPane.getPanel().removeAll();
+        activeWeaponsPane.add(new InventoryItemButton(this, player.getWeapon().getDefinition()));
+        activeWeaponsPane.add(new InventoryItemButton(this, player.getSecondaryWeapon().getDefinition()));
+        activeWeaponsPane.add(new InventoryItemButton(this, player.getMeleeWeapon().getDefinition()));
+        
+        //Update weapons in inventory
+        weaponPane.getPanel().removeAll();
+        for(int i = 0; i < 27; i++) {
+        	weaponPane.add(new InventoryItemButton(this, null));
+        }
+        
         // Update stat modifier items
-        statItemsPanel.removeAll();
+        statItemsPane.removeAll();
         /*for (Item item : player.getStatItems()) {
             statItemsPanel.add(createSlotLabel(item.getName()));
         }*/
@@ -189,20 +196,6 @@ public class ShopUI extends JPanel {
         repaint();
     }
 
-    private JButton createItemButton(ShopItem item) {
-        JButton button = new JButton("<html><b>" + item.getItemDefinition().getName() + "</b><br>" + item.getPrice() + "g</html>");
-        button.setFocusPainted(false);
-        button.setBackground(new Color(80, 80, 80));
-        button.setForeground(Color.WHITE);
-        button.setFont(new Font("Arial", Font.PLAIN, 12));
-
-        button.addActionListener(e -> {
-            GameController.getInstance().getShopManager().purchaseItem(item);
-            refresh();
-        });
-
-        return button;
-    }
 
     private JLabel createSlotLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);

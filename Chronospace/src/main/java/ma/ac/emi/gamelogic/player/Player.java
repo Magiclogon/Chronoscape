@@ -30,8 +30,12 @@ public class Player extends LivingEntity {
 		velocity = new Vector2D();
 		hp = 50;
 		hpMax = 100;
-		money = 0;
+		money = 1000;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		
+		weapon = new Weapon(null);
+		secondaryWeapon = new Weapon(null);
+		meleeWeapon = new Weapon(null);
 	}
 	
 	public static Player getInstance() {

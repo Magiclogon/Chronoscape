@@ -39,7 +39,10 @@ public class Weapon {
         tsla = 0;
         tssr = 0;
         
-        attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+        if(definition != null) {
+        	attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+            setAmmo(definition.getMagazineSize());
+        }
     }
     
     public void attack() {

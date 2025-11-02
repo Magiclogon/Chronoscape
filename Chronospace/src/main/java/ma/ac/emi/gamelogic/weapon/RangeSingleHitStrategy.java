@@ -6,7 +6,7 @@ import ma.ac.emi.gamelogic.attack.type.ProjectileSingleHitFactory;
 public class RangeSingleHitStrategy implements AttackStrategy {
     @Override
     public void execute(Weapon weapon) {
-    	if (weapon.getTsla() >= 1/weapon.getDefinition().getAttackSpeed()) {
+    	if (weapon.getTsla() >= 1/weapon.getDefinition().getAttackSpeed() && weapon.getAmmo()>0) {
         	ProjectileSingleHit projectile = (ProjectileSingleHit) ProjectileSingleHitFactory.getInstance().createProjectile(
         			weapon.getDefinition().getProjectileId(),
         			weapon.getPos(),

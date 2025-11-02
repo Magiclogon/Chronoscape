@@ -39,7 +39,7 @@ public class ShopManager {
     
     public void refreshAvailableItems() {
     	setAvailableItems(new ArrayList<>());
-    	Map<Rarity, List<ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
+    	Map<Rarity, Map<String, ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
     	int chanceSum = 0;
     	for(Rarity rarity : Rarity.values()) {
     		chanceSum += rarity.getChance();
@@ -68,12 +68,11 @@ public class ShopManager {
     	}
     }
     
-    private ItemDefinition pickRandomItem(List<ItemDefinition> items) {
+    private ItemDefinition pickRandomItem(Map<String, ItemDefinition> items) {
     	if(items.size() == 0) return null;
     	Random r = new Random();
-    	System.out.println(items.size());
     	int index = r.nextInt(items.size());
-    	return items.get(index);
+    	return items.values().toArray(new ItemDefinition[items.values().size()])[index];
     }
 
     public boolean purchaseItem(ShopItem item) {

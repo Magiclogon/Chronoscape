@@ -49,7 +49,7 @@ public class WaveManager {
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
-        this.waveDelay = 3;
+        this.waveDelay = 1;
         this.waveTimer = 0;
     }
 

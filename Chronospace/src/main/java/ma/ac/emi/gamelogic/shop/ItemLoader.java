@@ -5,12 +5,12 @@ import java.io.FileReader;
 import java.util.*;
 
 public class ItemLoader {
-    private Map<Rarity, List<ItemDefinition>> itemsByRarity = new EnumMap<>(Rarity.class);
+    private Map<Rarity, Map<String, ItemDefinition>> itemsByRarity = new EnumMap<>(Rarity.class);
     private static ItemLoader instance;
 
     private ItemLoader() {
         for (Rarity r : Rarity.values())
-            itemsByRarity.put(r, new ArrayList<>());
+            itemsByRarity.put(r, new HashMap<>());
 
     }
     
@@ -43,7 +43,7 @@ public class ItemLoader {
                 }
 
                 if (def != null)
-                    itemsByRarity.get(def.getRarity()).add(def);
+                    itemsByRarity.get(def.getRarity()).put(def.getId(), def);
             }
 
         } catch (Exception e) {
@@ -51,11 +51,11 @@ public class ItemLoader {
         }
     }
 
-    public Map<Rarity, List<ItemDefinition>> getItemsByRarity() {
+    public Map<Rarity, Map<String, ItemDefinition>> getItemsByRarity() {
         return itemsByRarity;
     }
 
-    public List<ItemDefinition> getItemsOfRarity(Rarity rarity) {
-        return itemsByRarity.getOrDefault(rarity, Collections.emptyList());
+    public Map<String, ItemDefinition> getItemsOfRarity(Rarity rarity) {
+        return itemsByRarity.getOrDefault(rarity, Collections.emptyMap());
     }
 }
