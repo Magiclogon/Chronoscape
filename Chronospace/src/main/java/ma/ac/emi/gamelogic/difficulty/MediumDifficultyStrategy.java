@@ -12,11 +12,16 @@ public class MediumDifficultyStrategy implements DifficultyStrategy {
 
     @Override
     public void adjustPickableDrop(Pickable pickable) {
-        // Decrease drop rates for hard mode
+        pickable.adjustForDifficulty(1);
     }
 
     @Override
     public void adjustEnemiesNumberWave(Wave wave) {
         // Increase enemy number
+    }
+
+    @Override
+    public double getPickableMultiplier() {
+        return 1;
     }
 }

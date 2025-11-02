@@ -18,16 +18,26 @@ public class PickableManager implements WaveListener {
     private List<Pickable> pickables;
     private World world;
     private Random random;
+    private List<Pickable> pickableTypes;
+    private double difficultyMultiplier;
 
     public PickableManager(World world) {
         this.world = world;
-        pickables = new ArrayList<>();
-        random = new Random();
+        this.pickables = new ArrayList<>();
+        this.random = new Random();
+        this.pickableTypes = new ArrayList<>();
+        this.difficultyMultiplier = 1.0;
+        initializePickableTypes();
+    }
+
+    private void initializePickableTypes() {
+        // Base stats of pickables
+        pickableTypes.add(new HpPickable(20.0, 0.70));
+        pickableTypes.add(new MoneyPickable(10, 0.30));
     }
 
     public void addPickable(Pickable pickable) {
         pickables.add(pickable);
-
     }
 
     public void removePickable(Pickable pickable) {
@@ -50,7 +60,6 @@ public class PickableManager implements WaveListener {
         System.out.println("Notified with " + spawnPoints.size() + " spawn points");
 
         for (Vector2D pos : spawnPoints) {
-            System.out.println(pos);
             Pickable pickable = createRandomPickable(pos);
             if (pickable != null) {
                 addPickable(pickable);
@@ -59,16 +68,29 @@ public class PickableManager implements WaveListener {
     }
 
     private Pickable createRandomPickable(Vector2D position) {
-        double roll = random.nextDouble();
-
-        Pickable pickable;
-        if (roll < 0.70) {
-            pickable = new HpPickable(20.0);
-        } else {
-            pickable = new MoneyPickable(10);
+        if (pickableTypes.isEmpty()) {
+            return null;
         }
 
-        pickable.setPos(position);
-        return pickable;
+        // calculer proba totale
+        double totalProbability = 0.0;
+        for (Pickable type : pickableTypes) {
+            totalProbability += type.getDropProbability();
+        }
+
+        // Roll for pickable
+        double roll = random.nextDouble() * totalProbability;
+        double cumulative = 0.0;
+
+        for (Pickable type : pickableTypes) {
+            cumulative += type.getDropProbability();
+            if (roll <= cumulative) {
+                Pickable pickable = type.createInstance();
+                pickable.setPos(position);
+                pickable.adjustForDifficulty(difficultyMultiplier);
+                return pickable;
+            }
+        }
+        return null;
     }
 }

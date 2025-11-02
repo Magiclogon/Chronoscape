@@ -10,10 +10,15 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.gamelogic.ai.MeleeAIBehavior;
+import ma.ac.emi.gamelogic.ai.PathFinder;
+import ma.ac.emi.gamelogic.ai.RangedAIBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.entity.RangedEnnemy;
+import ma.ac.emi.gamelogic.entity.SpeedsterEnnemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
@@ -37,19 +42,22 @@ public class World {
 	private AttackObjectManager attackObjectManager;
 	private CollisionManager collisionManager;
 	private PickableManager pickableManager;
-	
-	
+	private PathFinder pathfinder;
+	private List<Rectangle> obstacles; // Future use for obstacles
+
 	public World(int w, int h) {
 		width = w;
 		height = h;
-		bound = new Rectangle(w*GamePanel.TILE_SIZE, h*GamePanel.TILE_SIZE);
-		
+
+		bound = new Rectangle(w * GamePanel.TILE_SIZE, h * GamePanel.TILE_SIZE);
+		obstacles = new ArrayList<>();
+
 		collisionManager = new CollisionManager();
 		attackObjectManager = new AttackObjectManager(this);
 		pickableManager = new PickableManager(this);
 
-		//Weapon weapon = WeaponFactory.createWeapon("hammer");
-		//weapon.setAttackObjectManager(this.attackObjectManager);
+		// Initialize pathfinder for AI
+		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
 
 		player = Player.getInstance();
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
@@ -83,37 +91,97 @@ public class World {
 		collisionManager.setEnemies(new ArrayList<Ennemy>());
 		collisionManager.setAttackObjectManager(attackObjectManager);
 		collisionManager.setPickableManager(pickableManager);
-		
-		
+
+		// initialize AI
+		initializeEnemyAI();
+	}
+
+	private void initializeEnemyAI() {
+		for (Wave wave : waveManager.getWaves()) {
+			for (Ennemy enemy : wave.getEnemies()) {
+				setupEnemyAI(enemy);
+			}
+		}
+	}
+
+	private void setupEnemyAI(Ennemy enemy) {
+		if (enemy instanceof RangedEnnemy) {
+			enemy.setAiBehavior(new RangedAIBehavior(pathfinder, 150, 200));
+		} else if (enemy instanceof SpeedsterEnnemy) {
+			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, 5));
+		} else {
+			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, 5));
+		}
+	}
+
+	// declare a place as an obstacle
+	public void addObstacle(Rectangle obstacle) {
+		obstacles.add(obstacle);
+	}
+
+	// check if a place contains an obstacle
+	public boolean isObstacle(int gridX, int gridY) {
+
+		if (gridX < 0 || gridY < 0 || gridX >= width || gridY >= height) {
+			return true;
+		}
+
+		Rectangle checkRect = new Rectangle(
+				gridX * GamePanel.TILE_SIZE,
+				gridY * GamePanel.TILE_SIZE,
+				GamePanel.TILE_SIZE,
+				GamePanel.TILE_SIZE
+		);
+
+		for (Rectangle obstacle : obstacles) {
+			if (checkRect.intersects(obstacle)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	public void update(double step) {
 		player.update(step);
-		
+
 		// Update wave manager
 		waveManager.update(step, player.getPos());
 
-		// Get enemies from current wave
-		collisionManager.setEnemies(waveManager.getCurrentEnemies());
+		// ensure enemies have AI
+		List<Ennemy> currentEnemies = waveManager.getCurrentEnemies();
+		for (Ennemy enemy : currentEnemies) {
+			if (enemy.getAiBehavior() == null) {
+				setupEnemyAI(enemy);
+			}
+		}
+		collisionManager.setEnemies(currentEnemies);
 
 		attackObjectManager.update(step);
 		collisionManager.handleCollisions();
 	}
 
 	public void draw(Graphics g) {
+		// Draw grid
 		g.setColor(Color.black);
-		for(int i = 0; i < height; i++) {
-			for(int j = 0; j < width; j++) {
-				g.drawRect(j*GamePanel.TILE_SIZE, i*GamePanel.TILE_SIZE,
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				g.drawRect(j * GamePanel.TILE_SIZE, i * GamePanel.TILE_SIZE,
 						GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 			}
+		}
+
+		// Draw obstacles (if any)
+		g.setColor(Color.DARK_GRAY);
+		for (Rectangle obstacle : obstacles) {
+			g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 		}
 
 		attackObjectManager.draw(g);
 
 		player.draw(g);
-		for(Wave wave: waveManager.getWaves()) {
-			for(Ennemy ennemy : wave.getEnemies()) {
+		for (Wave wave : waveManager.getWaves()) {
+			for (Ennemy ennemy : wave.getEnemies()) {
 				ennemy.draw(g);
 			}
 		}
