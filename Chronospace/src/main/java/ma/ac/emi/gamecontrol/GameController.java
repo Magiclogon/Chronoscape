@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamelogic.attack.type.AOELoader;
+import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.input.KeyHandler;
@@ -16,7 +19,7 @@ import ma.ac.emi.world.World;
 public class GameController implements Runnable {
 	private static final long SIM_STEP = (long)(Math.pow(10, 9)/60);
     private static GameController instance;
-
+    
     public static GameController getInstance() {
         if (instance == null)
             instance = new GameController();
@@ -24,6 +27,7 @@ public class GameController implements Runnable {
     }
 
     private final Window window;
+    private Player player;
     private World world;
     private GamePanel gamePanel;
     private GameUIPanel gameUIPanel;
@@ -35,6 +39,10 @@ public class GameController implements Runnable {
 
     private GameController() {
         window = new Window();
+		ItemLoader.getInstance().loadItems("items.json");		
+		ProjectileLoader.getInstance().load("projectiles.json");
+		AOELoader.getInstance().load("aoe.json");
+        shopManager = new ShopManager(Player.getInstance());
         showMainMenu();
     }
 
@@ -74,8 +82,6 @@ public class GameController implements Runnable {
 
     public void startGame() {
         state = GameState.PLAYING;
-		ItemLoader.getInstance().loadItems("items.json");		
-
 
         world = new World(50, 50);
         gamePanel = new GamePanel(world);
@@ -84,9 +90,7 @@ public class GameController implements Runnable {
         camera = new Camera(new Vector2D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
-        
-        shopManager = new ShopManager();
-        
+                
         MouseHandler.getInstance().setCamera(camera);
 
         window.showGame(gamePanel, gameUIPanel);

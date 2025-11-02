@@ -9,10 +9,11 @@ import ma.ac.emi.gamelogic.player.Player;
 @Setter
 @EqualsAndHashCode
 public abstract class ShopItem {
-	protected ItemDefinition itemDefintion;
+	protected ItemDefinition itemDefinition;
+	protected double price;
 	
 	public ShopItem(ItemDefinition itemDefinition) {
-		this.itemDefintion = itemDefinition;
+		this.itemDefinition = itemDefinition;
 	}
 
     public abstract void apply(Player player);

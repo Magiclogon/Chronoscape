@@ -16,8 +16,10 @@ import lombok.Setter;
 public class ShopManager {
 	private final int SLOTNUM = 6;
     private List<ShopItem> availableItems;
+    private Player player;
 
-    public ShopManager() {
+    public ShopManager(Player player) {
+    	this.player = player;
         this.availableItems = new ArrayList<>();
         refreshAvailableItems();
 
@@ -42,7 +44,8 @@ public class ShopManager {
     	for(Rarity rarity : Rarity.values()) {
     		chanceSum += rarity.getChance();
     	}
-    	for(int i = 0; i < SLOTNUM; i++) {
+    	int i = 0;
+    	while(i < SLOTNUM) {
     		double r = Math.random()*chanceSum;
     		ItemDefinition item = null;
     		if(r < Rarity.COMMON.getChance()) {
@@ -58,10 +61,10 @@ public class ShopManager {
     			item = pickRandomItem(itemsMap.get(Rarity.LEGENDARY));
     		}
     		
-    		if(item == null) continue;
-    		if(availableItems.contains(item.getItem())) continue;
+    		if(item == null || availableItems.contains(item.getItem())) continue;
     		
     		availableItems.add(item.getItem());
+    		i++;
     	}
     }
     
@@ -73,9 +76,9 @@ public class ShopManager {
     	return items.get(index);
     }
 
-    public boolean purchaseItem(Player player, ShopItem item) {
-        if (player.getMoney() >= item.getItemDefintion().getBasePrice()) {
-            player.setMoney(player.getMoney() - item.getItemDefintion().getBasePrice());
+    public boolean purchaseItem(ShopItem item) {
+        if (player.getMoney() >= item.getPrice()) {
+            player.setMoney(player.getMoney() - item.getPrice());
             item.apply(player);
             player.getInventory().addItem(item);
             return true;

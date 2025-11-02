@@ -10,7 +10,8 @@ public class Ennemy extends LivingEntity {
 	protected Weapon weapon;
 
 	public Ennemy(Vector2D pos, double speed) {
-		super(pos, speed);
+		this.pos = pos;
+		this.speed = speed;
 		this.velocity = new Vector2D();
 		hpMax = 100;
 		hp = 100;

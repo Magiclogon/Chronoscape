@@ -168,7 +168,7 @@ public class ShopUI extends JPanel {
 
         // Update weapon slots
         weaponSlotsPanel.removeAll();
-        weaponSlotsPanel.add(createSlotLabel(player.getWeapon().getName()));
+        //weaponSlotsPanel.add(createSlotLabel(player.getWeapon().getDefinition().getName()));
         //weaponSlotsPanel.add(createSlotLabel(player.getSecondaryWeapon().getName()));
         //weaponSlotsPanel.add(createSlotLabel(player.getMeleeWeapon().getName()));
 
@@ -190,14 +190,14 @@ public class ShopUI extends JPanel {
     }
 
     private JButton createItemButton(ShopItem item) {
-        JButton button = new JButton("<html><b>" + item.getItemDefintion().getName() + "</b><br>" + item.getItemDefintion().getBasePrice() + "g</html>");
+        JButton button = new JButton("<html><b>" + item.getItemDefinition().getName() + "</b><br>" + item.getPrice() + "g</html>");
         button.setFocusPainted(false);
         button.setBackground(new Color(80, 80, 80));
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Arial", Font.PLAIN, 12));
 
         button.addActionListener(e -> {
-            //GameController.getInstance().getShopManager().purchaseItem(item);
+            GameController.getInstance().getShopManager().purchaseItem(item);
             refresh();
         });
 

@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.attack.type.ProjectileType;
+import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -17,11 +17,11 @@ import ma.ac.emi.world.World;
 @Getter
 @Setter
 public abstract class Projectile extends AttackObject{
-	private ProjectileType projectileType; 
+	private ProjectileDefinition projectileType; 
 	private Vector2D startingPos;
     private double radius = 2;
     
-    public Projectile(Vector2D pos, Vector2D dir, ProjectileType projectileType, Weapon weapon) {
+    public Projectile(Vector2D pos, Vector2D dir, ProjectileDefinition projectileType, Weapon weapon) {
     	super(pos, weapon);
     	this.projectileType = projectileType;
     	this.startingPos = pos;
@@ -54,7 +54,7 @@ public abstract class Projectile extends AttackObject{
     }
     
     public boolean isOutOfRange() {
-    	return getPos().sub(getStartingPos()).norm() > getWeapon().getRange();
+    	return getPos().sub(getStartingPos()).norm() > getWeapon().getDefinition().getRange();
     }
 
 	@Override

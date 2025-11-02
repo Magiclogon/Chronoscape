@@ -7,12 +7,13 @@
       "description": "Automatic rifle with high fire rate.",
       "rarity": "RARE",
       "basePrice": 500,
-      "attackType": "RangeSingleHit",
+      "attackStrategy": "RangeSingleHit",
       "damage": 30,
       "range": 500,
       "attackSpeed": 10,
-      "projectileType": "bullet",
-      "reloadingTime": 2.5
+      "projectileId": "bullet",
+      "reloadingTime": 2.5,
+      "magazineSize": 50
     },
     {
       "type": "weapon",
@@ -21,11 +22,12 @@
       "description": "Crush enemies with a powerful ground slam.",
       "rarity": "EPIC",
       "basePrice": 800,
-      "attackType": "MeleeAOE",
+      "attackStrategy": "MeleeAOE",
       "damage": 60,
       "range": 40,
       "attackSpeed": 1.5,
-      "aoeType": "groundSlam"
+      "aoeType": "groundSlam",
+      "projectileId": "noneAoe"
     },
     {
       "type": "weapon",
@@ -34,11 +36,11 @@
       "description": "Balanced melee weapon for close combat.",
       "rarity": "RARE",
       "basePrice": 350,
-      "attackType": "MeleeSingleHit",
+      "attackStrategy": "MeleeSingleHit",
       "damage": 45,
       "range": 35,
       "attackSpeed": 2.0,
-      "projectileType": "slash"
+      "projectileId": "noneSingle"
     },
     {
       "type": "weapon",
@@ -47,12 +49,13 @@
       "description": "Fires a rocket that explodes on impact.",
       "rarity": "LEGENDARY",
       "basePrice": 1200,
-      "attackType": "RangeAOE",
+      "attackStrategy": "RangeAOE",
       "damage": 150,
       "range": 1000,
       "attackSpeed": 0.5,
-      "projectileType": "rocket",
+      "projectileId": "rocket",
       "reloadingTime": 4.0,
+      "magazineSize": 1,
       "aoeType": "explosion"
     },
     {
@@ -62,12 +65,13 @@
       "description": "Simple but precise ranged weapon.",
       "rarity": "COMMON",
       "basePrice": 250,
-      "attackType": "RangeSingleHit",
+      "attackStrategy": "RangeSingleHit",
       "damage": 20,
       "range": 400,
       "attackSpeed": 3.0,
-      "projectileType": "arrow",
-      "reloadingTime": 1.2
+      "projectileId": "arrow",
+      "reloadingTime": 1.2,
+      "magazineSize": 1
     },
 
     {

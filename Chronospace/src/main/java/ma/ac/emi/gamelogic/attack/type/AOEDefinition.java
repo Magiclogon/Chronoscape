@@ -7,12 +7,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AOEType extends AttackObjectType{
+public class AOEDefinition extends AttackObjectType{
 	private double effectRate;
 	private double ageMax;
 
-	public AOEType(Image sprite, int boundWidth, int boundHeight, double effectRate, double ageMax) {
-		super(sprite, boundWidth, boundHeight);
+	public AOEDefinition(String id, Image sprite, int boundWidth, int boundHeight, double effectRate, double ageMax) {
+		super(id, sprite, boundWidth, boundHeight);
 		this.effectRate = effectRate;
 		this.ageMax = ageMax;
 	}

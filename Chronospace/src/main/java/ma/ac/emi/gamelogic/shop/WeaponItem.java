@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.shop;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
@@ -19,10 +20,16 @@ public class WeaponItem extends ShopItem {
         Weapon weapon = createWeapon();
         weapon = upgradeWeapon(weapon);
         // Apply weapon to player
+        
+        player.setWeapon(weapon);
     }
 
     private Weapon createWeapon() {
-		return null;
+    	System.out.println(getItemDefinition().getBasePrice());
+    	System.out.println(((WeaponItemDefinition)getItemDefinition()).getProjectileId());
+    	Weapon weapon = new Weapon((WeaponItemDefinition)getItemDefinition());
+    	weapon.setAttackObjectManager(GameController.getInstance().getWorld().getAttackObjectManager());
+		return weapon;
      
     }
 
