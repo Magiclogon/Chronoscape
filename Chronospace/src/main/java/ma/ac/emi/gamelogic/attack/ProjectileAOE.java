@@ -2,7 +2,6 @@ package ma.ac.emi.gamelogic.attack;
 
 import ma.ac.emi.gamelogic.attack.type.ProjectileType;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
-import ma.ac.emi.gamelogic.weapon.RangeAOE;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 

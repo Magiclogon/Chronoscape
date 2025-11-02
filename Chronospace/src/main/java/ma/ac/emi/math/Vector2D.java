@@ -48,7 +48,11 @@ public class Vector2D {
 	public Vector2D normalize() {
 		return new Vector2D(this.getX() / norm(), this.getY() / norm());
 	}
-	
+
+	public double distance(Vector2D v) {
+		return Math.sqrt(Math.pow(this.getX() - v.getX(), 2) + Math.pow(this.getY() - v.getY(), 2));
+	}
+
 	public Vector2D applyTransform(AffineTransform transform) {
 	    Point2D.Double src = new Point2D.Double(x, y);
 	    Point2D.Double dst = new Point2D.Double();

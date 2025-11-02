@@ -8,4 +8,5 @@ public interface DifficultyStrategy {
     void adjustEnemyStats(Ennemy enemy);
     void adjustPickableDrop(Pickable pickable);
     void adjustEnemiesNumberWave(Wave wave);
+    double getPickableMultiplier();
 }
