@@ -2,13 +2,15 @@ package ma.ac.emi.gamelogic.weapon;
 
 import ma.ac.emi.gamelogic.attack.ProjectileSingleHit;
 import ma.ac.emi.gamelogic.attack.type.ProjectileSingleHitFactory;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 
 public class RangeSingleHitStrategy implements AttackStrategy {
     @Override
     public void execute(Weapon weapon) {
-    	if (weapon.getTsla() >= 1/weapon.getDefinition().getAttackSpeed() && weapon.getAmmo()>0) {
+    	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
+        if (weapon.getTsla() >= 1/definition.getAttackSpeed() && weapon.getAmmo()>0) {
         	ProjectileSingleHit projectile = (ProjectileSingleHit) ProjectileSingleHitFactory.getInstance().createProjectile(
-        			weapon.getDefinition().getProjectileId(),
+        			definition.getProjectileId(),
         			weapon.getPos(),
         			weapon.getDir(),
         			weapon

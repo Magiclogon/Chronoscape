@@ -10,6 +10,7 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
@@ -54,7 +55,8 @@ public abstract class Projectile extends AttackObject{
     }
     
     public boolean isOutOfRange() {
-    	return getPos().sub(getStartingPos()).norm() > getWeapon().getDefinition().getRange();
+    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
+    	return getPos().sub(getStartingPos()).norm() > definition.getRange();
     }
 
 	@Override

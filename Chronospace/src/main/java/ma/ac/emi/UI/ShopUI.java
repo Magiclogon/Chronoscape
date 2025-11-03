@@ -10,6 +10,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ShopItem;
 import ma.ac.emi.gamelogic.shop.ShopManager;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -29,10 +30,13 @@ public class ShopUI extends JPanel {
 	
     private JLabel moneyLabel;
     private JPanel availableItemsPanel;
+    private JPanel statsPanel;
+    private JPanel itemDescriptionPanel;
+
     private InventoryScrollable weaponPane;
     private InventoryScrollable activeWeaponsPane;
     private InventoryScrollable statItemsPane;
-    private JPanel statsPanel;
+    
     private JButton nextWaveButton;
     private JButton rerollButton;
 
@@ -66,8 +70,11 @@ public class ShopUI extends JPanel {
         centerPanel.add(createInventoryPanel());
         add(centerPanel, BorderLayout.CENTER);
 
-   
-        add(createStatsPanel(), BorderLayout.EAST);
+        JPanel descriptionPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+        descriptionPanel.setBackground(new Color(60,60,60));
+        descriptionPanel.add(createStatsPanel());
+        descriptionPanel.add(createItemDescriptionPanel());
+        add(descriptionPanel, BorderLayout.EAST);
         
         
         
@@ -109,6 +116,7 @@ public class ShopUI extends JPanel {
 
     private JPanel createInventoryPanel() {
         JPanel inventoryPanel = new JPanel(new BorderLayout(10, 10));
+        inventoryPanel.setPreferredSize(new Dimension(inventoryPanel.getPreferredSize().width, 400));
         inventoryPanel.setBackground(new Color(40, 40, 40));
         inventoryPanel.setBorder(
                 BorderFactory.createTitledBorder(
@@ -153,6 +161,23 @@ public class ShopUI extends JPanel {
         statsPanel.setPreferredSize(new Dimension(250, 700));
         return statsPanel;
     }
+    
+    public JPanel createItemDescriptionPanel() {
+    	itemDescriptionPanel = new JPanel();
+    	itemDescriptionPanel.setBackground(new Color(50, 50, 50));
+    	itemDescriptionPanel.setBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.GRAY),
+                        "Item description",
+                        TitledBorder.LEADING,
+                        TitledBorder.TOP,
+                        new Font("Arial", Font.BOLD, 14),
+                        Color.WHITE
+                )
+        );
+    	itemDescriptionPanel.setPreferredSize(new Dimension(250, 700));
+    	return itemDescriptionPanel;
+    }
 
     public void refresh() {
         Player player = GameController.getInstance().getWorld().getPlayer();
@@ -169,14 +194,13 @@ public class ShopUI extends JPanel {
 
         // Update active weapon slots
         activeWeaponsPane.getPanel().removeAll();
-        activeWeaponsPane.add(new InventoryItemButton(this, player.getWeapon().getDefinition()));
-        activeWeaponsPane.add(new InventoryItemButton(this, player.getSecondaryWeapon().getDefinition()));
-        activeWeaponsPane.add(new InventoryItemButton(this, player.getMeleeWeapon().getDefinition()));
+        for(WeaponItem item : player.getInventory().getEquippedWeapons())
+        	activeWeaponsPane.add(new InventoryItemButton(this, item));
         
         //Update weapons in inventory
         weaponPane.getPanel().removeAll();
-        for(int i = 0; i < 27; i++) {
-        	weaponPane.add(new InventoryItemButton(this, null));
+        for(ShopItem item : player.getInventory().getWeaponItems()) {
+        	weaponPane.add(new InventoryItemButton(this, item));
         }
         
         // Update stat modifier items
@@ -187,10 +211,7 @@ public class ShopUI extends JPanel {
 
         // Update stats
         statsPanel.removeAll();
-        //statsPanel.add(createStatLabel("Attack: " + player.getAttack()));
-        //statsPanel.add(createStatLabel("Defense: " + player.getDefense()));
         statsPanel.add(createStatLabel("Speed: " + player.getSpeed()));
-        //statsPanel.add(createStatLabel("Health: " + player.getHealth()));
 
         revalidate();
         repaint();
@@ -212,4 +233,35 @@ public class ShopUI extends JPanel {
         label.setFont(new Font("Arial", Font.PLAIN, 14));
         return label;
     }
+    
+    public void showItemDetails(ShopItem item) {
+        itemDescriptionPanel.removeAll();
+
+        JLabel nameLabel = new JLabel(item.getItemDefinition().getName());
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        nameLabel.setForeground(Color.WHITE);
+
+        JLabel descLabel = new JLabel("<html>" + item.getItemDefinition().getDescription() + "</html>");
+        descLabel.setForeground(Color.LIGHT_GRAY);
+        descLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        JLabel rarityLabel = new JLabel("Rarity: " + item.getItemDefinition().getRarity());
+        rarityLabel.setForeground(Color.CYAN);
+
+        JLabel priceLabel = new JLabel("Price: $" + item.getPrice());
+        priceLabel.setForeground(Color.YELLOW);
+
+        itemDescriptionPanel.setBackground(new Color(40, 40, 40));
+        itemDescriptionPanel.setLayout(new BoxLayout(itemDescriptionPanel, BoxLayout.Y_AXIS));
+        itemDescriptionPanel.add(nameLabel);
+        itemDescriptionPanel.add(Box.createVerticalStrut(5));
+        itemDescriptionPanel.add(descLabel);
+        itemDescriptionPanel.add(Box.createVerticalStrut(10));
+        itemDescriptionPanel.add(rarityLabel);
+        itemDescriptionPanel.add(priceLabel);
+
+        itemDescriptionPanel.revalidate();
+        itemDescriptionPanel.repaint();
+    }
+
 }

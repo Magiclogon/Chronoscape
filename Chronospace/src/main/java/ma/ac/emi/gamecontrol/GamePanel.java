@@ -24,6 +24,7 @@ public class GamePanel extends JPanel {
 	public GamePanel(World world) {
 		addMouseListener(MouseHandler.getInstance());
 		addMouseMotionListener(MouseHandler.getInstance());
+		addMouseWheelListener(MouseHandler.getInstance());
 		this.world = world;
 		KeyHandler.getInstance().setupKeyBindings(this);
 	}

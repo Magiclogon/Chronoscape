@@ -79,7 +79,6 @@ public class ShopManager {
         if (player.getMoney() >= item.getPrice()) {
             player.setMoney(player.getMoney() - item.getPrice());
             item.apply(player);
-            player.getInventory().addItem(item);
             return true;
         }
         return false;

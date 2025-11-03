@@ -24,6 +24,7 @@ import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.Rarity;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
@@ -58,14 +59,14 @@ public class World {
 		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
 		
 		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.COMMON).get("fists");
-		Weapon fists = new Weapon(fistsDef);
-		fists.setAttackObjectManager(this.attackObjectManager);
+		WeaponItem fists = new WeaponItem(fistsDef);
 
 		player = Player.getInstance();
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
 		player.setSpeed(100);
-        player.setWeapon(fists);
-
+        player.setAttackObjectManager(this.attackObjectManager);
+        player.getInventory().equipWeapon(fists, 0);
+        player.initWeapons();
 
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);

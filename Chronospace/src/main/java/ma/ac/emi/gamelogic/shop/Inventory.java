@@ -11,11 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Inventory {
+	public static final int MAX_EQU = 3;
     private List<ShopItem> purchasedItems;
+    private WeaponItem[] equippedWeapons;
     private Map<String, List<StatModifier>> activeEffects;
 
     public Inventory() {
         this.purchasedItems = new ArrayList<>();
+        this.equippedWeapons = new WeaponItem[MAX_EQU];
         this.activeEffects = new HashMap<>();
     }
 
@@ -48,6 +51,10 @@ public class Inventory {
         return total;
     }
     
+    public void equipWeapon(WeaponItem item, int index) {
+    	this.equippedWeapons[index] = item;
+    }
+    
     public List<ShopItem> getWeaponItems(){
     	return getPurchasedItems().stream().filter((item) -> item instanceof WeaponItem).toList();
     }
@@ -55,4 +62,5 @@ public class Inventory {
     public List<ShopItem> getStatModifierItems(){
     	return getPurchasedItems().stream().filter((item) -> item instanceof StatModifierItem).toList();
     }
+    
 }

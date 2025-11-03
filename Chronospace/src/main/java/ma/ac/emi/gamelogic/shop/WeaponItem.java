@@ -17,17 +17,13 @@ public class WeaponItem extends ShopItem {
 
     @Override
     public void apply(Player player) {
-        Weapon weapon = createWeapon();
-        weapon = upgradeWeapon(weapon);
-        // Apply weapon to player
-        
-        player.setWeapon(weapon);
+    	player.getInventory().addItem(this);
     }
 
     private Weapon createWeapon() {
     	System.out.println(getItemDefinition().getBasePrice());
     	System.out.println(((WeaponItemDefinition)getItemDefinition()).getProjectileId());
-    	Weapon weapon = new Weapon((WeaponItemDefinition)getItemDefinition());
+    	Weapon weapon = new Weapon(this);
     	weapon.setAttackObjectManager(GameController.getInstance().getWorld().getAttackObjectManager());
 		return weapon;
      
