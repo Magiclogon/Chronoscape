@@ -27,7 +27,7 @@
       "range": 40,
       "attackSpeed": 1.5,
       "aoeType": "groundSlam",
-      "projectileId": "noneAoe"
+      "projectileId": "hammerShockwave"
     },
     {
       "type": "weapon",
@@ -78,7 +78,7 @@
       "id": "fists",
       "name": "Normal Fists",
       "description": "Your good old fists.",
-      "rarity": "COMMON",
+      "rarity": "LEGENDARY",
       "basePrice": 1,
       "attackStrategy": "MeleeSingleHit",
       "damage": 5,

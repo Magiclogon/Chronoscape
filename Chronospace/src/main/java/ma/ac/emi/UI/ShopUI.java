@@ -48,6 +48,7 @@ public class ShopUI extends JPanel {
 
         nextWaveButton = new JButton("Next Wave");
         nextWaveButton.addActionListener((e) -> {
+        	Player.getInstance().initWeapons();
         	GameController.getInstance().resumeGame();
         });
         add(createTopPanel(), BorderLayout.NORTH);
@@ -204,10 +205,10 @@ public class ShopUI extends JPanel {
         }
         
         // Update stat modifier items
-        statItemsPane.removeAll();
-        /*for (Item item : player.getStatItems()) {
-            statItemsPanel.add(createSlotLabel(item.getName()));
-        }*/
+        statItemsPane.getPanel().removeAll();
+        for(ShopItem item : player.getInventory().getStatModifierItems()) {
+        	statItemsPane.add(new InventoryItemButton(this, item));
+        }
 
         // Update stats
         statsPanel.removeAll();
@@ -259,6 +260,57 @@ public class ShopUI extends JPanel {
         itemDescriptionPanel.add(Box.createVerticalStrut(10));
         itemDescriptionPanel.add(rarityLabel);
         itemDescriptionPanel.add(priceLabel);
+
+        //If the item is a WeaponItem, show its equip state
+        if (item instanceof WeaponItem) {
+            WeaponItem weaponItem = (WeaponItem) item;
+
+            JLabel equipLabel = new JLabel("Equipped State:");
+            equipLabel.setForeground(Color.WHITE);
+            equipLabel.setFont(new Font("Arial", Font.BOLD, 13));
+
+            JComboBox<String> equipStateBox = new JComboBox<>();
+            equipStateBox.addItem("Unequipped");
+
+            // Suppose your player has 3 weapon slots
+            for (int i = 0; i < 3; i++) {
+                equipStateBox.addItem("Slot " + i);
+            }
+
+            // Get equipped slot index
+            Integer equippedIndex = Player.getInstance().isWeaponEquipped(weaponItem);
+            if (equippedIndex != null && equippedIndex >= 0) {
+                equipStateBox.setSelectedIndex(equippedIndex + 1); 
+            } else {
+                equipStateBox.setSelectedIndex(0);
+            }
+            
+            //Limit the size so it doesn’t stretch across the whole panel
+            Dimension comboSize = new Dimension(150, 25); 
+            equipStateBox.setMaximumSize(comboSize);
+            equipStateBox.setPreferredSize(comboSize);
+            equipStateBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            itemDescriptionPanel.add(Box.createVerticalStrut(5));
+            itemDescriptionPanel.add(equipLabel);
+            itemDescriptionPanel.add(Box.createVerticalStrut(3));
+            itemDescriptionPanel.add(equipStateBox);
+            
+            equipStateBox.addActionListener(e -> {
+                int selectedIndex = equipStateBox.getSelectedIndex();
+                Player player = Player.getInstance();
+
+                if (selectedIndex == 0) {
+                    player.getInventory().unequipWeapon(weaponItem);
+                } else {
+                    int slotIndex = selectedIndex - 1;
+                    player.getInventory().equipWeapon(weaponItem, slotIndex);
+                }
+
+                refresh();
+            });
+
+        }
 
         itemDescriptionPanel.revalidate();
         itemDescriptionPanel.repaint();

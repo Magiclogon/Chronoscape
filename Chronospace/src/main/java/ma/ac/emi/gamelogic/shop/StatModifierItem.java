@@ -10,7 +10,7 @@ public class StatModifierItem  extends ShopItem{
 
 	@Override
 	public void apply(Player player) {
-		
+		player.getInventory().addItem(this);
 	}
 
 }

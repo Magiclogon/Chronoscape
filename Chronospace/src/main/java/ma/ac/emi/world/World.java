@@ -58,13 +58,14 @@ public class World {
 		// Initialize pathfinder for AI
 		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
 		
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.COMMON).get("fists");
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
 		WeaponItem fists = new WeaponItem(fistsDef);
 
 		player = Player.getInstance();
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
 		player.setSpeed(100);
         player.setAttackObjectManager(this.attackObjectManager);
+        player.getInventory().addItem(fists);
         player.getInventory().equipWeapon(fists, 0);
         player.initWeapons();
 

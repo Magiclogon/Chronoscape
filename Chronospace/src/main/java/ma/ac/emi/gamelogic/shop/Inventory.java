@@ -52,8 +52,27 @@ public class Inventory {
     }
     
     public void equipWeapon(WeaponItem item, int index) {
+    	if(!getPurchasedItems().contains(item)) {
+			return;
+		}
+    	unequipWeapon(getEquippedWeapons()[index]);
     	this.equippedWeapons[index] = item;
+    	getPurchasedItems().remove(item);
     }
+    
+
+	public void unequipWeapon(WeaponItem weaponItem) {
+		for(int i = 0; i < Inventory.MAX_EQU; i++) {
+			if(getEquippedWeapons()[i] == null) continue;
+			if(getEquippedWeapons()[i].equals(weaponItem)) {
+				getEquippedWeapons()[i] = null;
+				if(!getPurchasedItems().contains(weaponItem)) {
+					getPurchasedItems().add(weaponItem);
+				}
+				return;
+			}
+		}
+	}
     
     public List<ShopItem> getWeaponItems(){
     	return getPurchasedItems().stream().filter((item) -> item instanceof WeaponItem).toList();
@@ -62,5 +81,6 @@ public class Inventory {
     public List<ShopItem> getStatModifierItems(){
     	return getPurchasedItems().stream().filter((item) -> item instanceof StatModifierItem).toList();
     }
+
     
 }

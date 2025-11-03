@@ -75,8 +75,7 @@ public class Player extends LivingEntity {
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
 		
-		weaponIndex = MouseHandler.getInstance().getMouseWheelRot() % 3;
-		
+		weaponIndex = Math.floorMod(MouseHandler.getInstance().getMouseWheelRot(), 3);
 		if(equippedWeapons[weaponIndex] != null) equippedWeapons[weaponIndex].update(step);
 	}
 
@@ -100,6 +99,16 @@ public class Player extends LivingEntity {
 	@Override
 	public void attack() {
 		if(equippedWeapons[weaponIndex] != null) this.equippedWeapons[weaponIndex].attack();
+	}
+
+	public Integer isWeaponEquipped(WeaponItem item) {
+		for(int i = 0; i < Inventory.MAX_EQU; i++) {
+			if(getInventory().getEquippedWeapons()[i] == null) continue;
+			if(getInventory().getEquippedWeapons()[i].equals(item)) {
+				return i;
+			}
+		}
+		return null;
 	}
 	
 

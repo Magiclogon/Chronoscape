@@ -24,13 +24,6 @@
   ],
 
   "aoe": [
-  	{
-  	  "id": "noneAoe",
-      "sprite": "assets/projectiles/none.png",
-      "speed": 800,
-      "width": 2,
-      "height": 2
-  	},
     {
       "id": "rocket",
       "sprite": "assets/projectiles/rocket.png",

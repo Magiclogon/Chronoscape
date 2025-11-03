@@ -2,11 +2,9 @@ package ma.ac.emi.gamelogic.shop;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.EqualsAndHashCode;
-
+ 
 @Getter
 @Setter
-@EqualsAndHashCode
 public abstract class ItemDefinition {
     private String id;
     private String name;
@@ -17,5 +15,12 @@ public abstract class ItemDefinition {
     
     public abstract ShopItem getItem();
     
+    @Override
+    public boolean equals(Object o) {
+    	if(o instanceof ItemDefinition item) {
+    		return item.getId().equals(getId());
+    	}
+    	return false;
+    }
    
 }
