@@ -2,8 +2,10 @@ package ma.ac.emi.gamelogic.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.AIBehavior;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 import java.awt.*;
@@ -14,6 +16,8 @@ public class Ennemy extends LivingEntity {
 	protected double damage;
 	protected Weapon weapon;
 	protected AIBehavior aiBehavior;
+	
+	protected AttackObjectManager attackObjectManager;
 
 	public Ennemy(Vector2D pos, double speed) {
 		this.pos = pos;
@@ -23,6 +27,12 @@ public class Ennemy extends LivingEntity {
 		hp = 100;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		hp = 30;
+		
+	}
+	
+	public void initWeapon() {
+		getWeapon().setAttackObjectManager(getAttackObjectManager());
+		getWeapon().snapTo(this);
 	}
 
 	public void update(double step, Vector2D targetPos) {
@@ -35,6 +45,10 @@ public class Ennemy extends LivingEntity {
 			if (aiBehavior.shouldAttack(this, targetPos)) {
 				attack();
 			}
+			
+			if(getWeapon() != null) {
+				getWeapon().pointAt(targetPos);
+			}
 		} else {
 			// basic
 			Vector2D direction = (targetPos.sub(getPos())).normalize();
@@ -45,6 +59,10 @@ public class Ennemy extends LivingEntity {
 
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
+		
+		if(getWeapon() != null) {
+			getWeapon().update(step);
+		}
 	}
 
 	@Override
@@ -52,14 +70,7 @@ public class Ennemy extends LivingEntity {
 
 	@Override
 	public void draw(Graphics g) {
-		if(hp > 0) {
-			g.setColor(Color.RED);
-			g.fillRect((int)(pos.getX()), (int)(pos.getY()),
-					GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		}
-
-		g.setColor(Color.yellow);
-		g.drawRect(bound.x, bound.y, bound.width, bound.height);
+		if(getWeapon() != null) getWeapon().draw(g);;
 	}
 
 	@Override

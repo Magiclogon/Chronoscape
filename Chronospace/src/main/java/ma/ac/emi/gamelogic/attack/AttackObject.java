@@ -23,7 +23,7 @@ public abstract class AttackObject extends Entity{
 	}
    	
     public boolean isOutOfWorld(World world) {
-    	return !(world.getBound().contains(this.getBound()));
+    	return !(world.getBound().intersects(this.getBound()));
     }
     
     public abstract void applyEffect(LivingEntity entity);

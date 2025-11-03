@@ -17,12 +17,17 @@ public class ShopManager {
 	private final int SLOTNUM = 6;
     private List<ShopItem> availableItems;
     private Player player;
+    private int rerollPrice;
 
     public ShopManager(Player player) {
     	this.player = player;
-        this.availableItems = new ArrayList<>();
+        init();
+    }
+    
+    public void init() {
+    	this.availableItems = new ArrayList<>();
+        this.rerollPrice = 0;
         refreshAvailableItems();
-
     }
 
     public void addItem(ShopItem item) {
@@ -38,6 +43,7 @@ public class ShopManager {
     }
     
     public void refreshAvailableItems() {
+    	if(rerollPrice > player.getMoney()) return;
     	setAvailableItems(new ArrayList<>());
     	Map<Rarity, Map<String, ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
     	int chanceSum = 0;
@@ -66,6 +72,10 @@ public class ShopManager {
     		availableItems.add(item.getItem());
     		i++;
     	}
+    	
+    	this.player.setMoney(player.getMoney() - rerollPrice);
+    	if(rerollPrice == 0) rerollPrice += 5;
+    	else rerollPrice *= 1.2;
     }
     
     private ItemDefinition pickRandomItem(Map<String, ItemDefinition> items) {

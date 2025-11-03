@@ -4,12 +4,17 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.*;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class KeyHandler{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean left, right, up, down;
+	private boolean left, right, up, down, switchWeapon;
 	private static KeyHandler instance;
 	
 	private KeyHandler() {
@@ -21,38 +26,6 @@ public class KeyHandler{
 			instance = new KeyHandler();
 		}
 		return instance;
-	}
-
-	public  boolean isLeft() {
-		return left;
-	}
-
-	public void setLeft(boolean left) {
-		this.left = left;
-	}
-
-	public  boolean isRight() {
-		return right;
-	}
-
-	public  void setRight(boolean right) {
-		this.right = right;
-	}
-
-	public  boolean isUp() {
-		return up;
-	}
-
-	public  void setUp(boolean up) {
-		this.up = up;
-	}
-
-	public  boolean isDown() {
-		return down;
-	}
-
-	public  void setDown(boolean down) {
-		this.down = down;
 	}
 
     public void setupKeyBindings(JComponent component) {
@@ -170,6 +143,26 @@ public class KeyHandler{
             	setDown(false);
             }
         });
+        
+        // E pressed - Switch Weapon (single action trigger)
+        inputMap.put(KeyStroke.getKeyStroke("pressed E"), "E Pressed");
+        actionMap.put("E Pressed", new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			@Override
+            public void actionPerformed(ActionEvent e) {
+                setSwitchWeapon(true);
+            }
+        });
+        
+
+    }
+    
+    public boolean consumeSwitchWeapon() {
+        if (switchWeapon) {
+            switchWeapon = false;
+            return true;
+        }
+        return false;
     }
 
 	public void init() {

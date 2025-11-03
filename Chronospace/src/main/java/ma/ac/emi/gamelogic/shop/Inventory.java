@@ -52,9 +52,7 @@ public class Inventory {
     }
     
     public void equipWeapon(WeaponItem item, int index) {
-    	if(!getPurchasedItems().contains(item)) {
-			return;
-		}
+    	unequipWeapon(item); 							//if item already equiped in a different slot
     	unequipWeapon(getEquippedWeapons()[index]);
     	this.equippedWeapons[index] = item;
     	getPurchasedItems().remove(item);

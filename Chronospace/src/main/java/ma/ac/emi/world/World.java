@@ -52,27 +52,15 @@ public class World {
 		obstacles = new ArrayList<>();
 
 		collisionManager = new CollisionManager();
+		collisionManager.setWorld(this);
+		
 		attackObjectManager = new AttackObjectManager(this);
 		pickableManager = new PickableManager(this);
-
-		// Initialize pathfinder for AI
-		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
-		
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
-		WeaponItem fists = new WeaponItem(fistsDef);
-
-		player = Player.getInstance();
-		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
-		player.setSpeed(100);
-        player.setAttackObjectManager(this.attackObjectManager);
-        player.getInventory().addItem(fists);
-        player.getInventory().equipWeapon(fists, 0);
-        player.initWeapons();
-
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);
 
 		waveManager = new WaveManager(difficulty, specieFactory, width, height);
+		waveManager.setAttackObjectManager(attackObjectManager);
 
 		// Try to load waves from config file
 		try {
@@ -86,6 +74,23 @@ public class World {
 				System.err.println("Failed to create sample config: " + ex.getMessage());
 			}
 		}
+		
+
+		// Initialize pathfinder for AI
+		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
+		
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
+		WeaponItem fists = new WeaponItem(fistsDef);
+
+		player = Player.getInstance();
+		player.setAttackObjectManager(attackObjectManager);
+		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
+		player.setSpeed(100);
+        player.getInventory().addItem(fists);
+        player.getInventory().equipWeapon(fists, 0);
+        player.initWeapons();
+
+		
 
 		// Subscribe each wave
 		for (Wave wave : waveManager.getWaves()) {
