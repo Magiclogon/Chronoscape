@@ -3,6 +3,8 @@ package ma.ac.emi.input;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
@@ -13,16 +15,16 @@ import ma.ac.emi.math.Vector2D;
 
 @Getter
 @Setter
-public class MouseHandler implements MouseMotionListener, MouseListener{
+public class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener{
 	private static MouseHandler instance;
 	private Vector2D mouseScreenPos, mouseWorldPos;
 	private boolean mouseDown;
-	
+	private int mouseWheelRot;
 	private Camera camera;
 	
 	private MouseHandler() {
 		mouseScreenPos = new Vector2D();
-		
+		mouseWheelRot = 0;
 	}
 	
 	public static MouseHandler getInstance() {
@@ -90,6 +92,12 @@ public class MouseHandler implements MouseMotionListener, MouseListener{
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		double rotation = Math.signum(e.getPreciseWheelRotation());
+		mouseWheelRot += rotation;
 	}
 
 }

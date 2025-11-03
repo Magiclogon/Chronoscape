@@ -12,6 +12,7 @@ import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
@@ -20,7 +21,7 @@ import ma.ac.emi.math.Vector2D;
 @Setter
 @EqualsAndHashCode
 public class Weapon {
-	protected WeaponItemDefinition definition;
+	protected WeaponItem weaponItem;
 	
     protected Vector2D pos;
     protected Vector2D dir;
@@ -32,14 +33,18 @@ public class Weapon {
     
     protected AttackStrategy attackStrategy;
         
-    public Weapon(WeaponItemDefinition definition) {
-    	this.definition = definition;
+    public Weapon(WeaponItem weaponItem) {
+    	this.weaponItem = weaponItem;
         pos = new Vector2D();
         dir = new Vector2D();
         tsla = 0;
         tssr = 0;
         
-        attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+        if(weaponItem != null) {
+        	WeaponItemDefinition definition = (WeaponItemDefinition) weaponItem.getItemDefinition();
+        	attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+            setAmmo(definition.getMagazineSize());
+        }
     }
     
     public void attack() {
@@ -69,8 +74,8 @@ public class Weapon {
             setTssr(getTssr() + step);
         }
         
-        if (tssr >= definition.getReloadingTime()) {
-            setAmmo(definition.getMagazineSize());
+        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime()) {
+            setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
             setTssr(0);
         }
     }
@@ -80,7 +85,7 @@ public class Weapon {
     }
 
     public void reload() {
-        if (ammo == definition.getMagazineSize() || tssr > 0) return;
+        if (ammo == ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() || tssr > 0) return;
         System.out.println("Reloading weapon...");
         tssr = 0;
     }

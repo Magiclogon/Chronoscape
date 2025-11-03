@@ -27,7 +27,6 @@ public class GameController implements Runnable {
     }
 
     private final Window window;
-    private Player player;
     private World world;
     private GamePanel gamePanel;
     private GameUIPanel gameUIPanel;
@@ -42,6 +41,7 @@ public class GameController implements Runnable {
 		ItemLoader.getInstance().loadItems("items.json");		
 		ProjectileLoader.getInstance().load("projectiles.json");
 		AOELoader.getInstance().load("aoe.json");
+		
         shopManager = new ShopManager(Player.getInstance());
         showMainMenu();
     }

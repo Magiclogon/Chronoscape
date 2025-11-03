@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -23,13 +22,13 @@ import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.shop.ItemDefinition;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.Rarity;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.gamelogic.weapon.WeaponFactory;
 import ma.ac.emi.math.Vector2D;
 
 @Getter
@@ -58,11 +57,17 @@ public class World {
 
 		// Initialize pathfinder for AI
 		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
+		
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
+		WeaponItem fists = new WeaponItem(fistsDef);
 
 		player = Player.getInstance();
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
 		player.setSpeed(100);
-		//player.setWeapon(weapon);
+        player.setAttackObjectManager(this.attackObjectManager);
+        player.getInventory().addItem(fists);
+        player.getInventory().equipWeapon(fists, 0);
+        player.initWeapons();
 
 		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
 		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);

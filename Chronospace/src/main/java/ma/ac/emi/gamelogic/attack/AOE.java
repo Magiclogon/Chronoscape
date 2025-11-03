@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 
@@ -53,7 +54,8 @@ public class AOE extends AttackObject{
 		double closestInfCoolDownMultiple = Math.floor(getCurrentAge()/coolDown) * coolDown;
 		
 		if(getLastAge() <= closestInfCoolDownMultiple && getCurrentAge() >= closestInfCoolDownMultiple) {
-			entity.setHp(Math.max(0, entity.getHp() - getWeapon().getDefinition().getDamage()));
+	    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
+			entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
 		}
 		
 	}

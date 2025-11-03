@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.attack;
 
 import ma.ac.emi.gamelogic.attack.type.ProjectileSingleHitDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 
@@ -12,8 +13,9 @@ public class ProjectileSingleHit extends Projectile{
 
 	@Override
 	public void applyEffect(LivingEntity entity) {
-		entity.setHp(Math.max(0, entity.getHp() - this.getWeapon().getDefinition().getDamage()));
-		System.out.println("Target hit, damage: " + this.getWeapon().getDefinition().getDamage() + ", remaining hp: " + entity.getHp());
+    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
+		entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+		System.out.println("Target hit, damage: " + definition.getDamage() + ", remaining hp: " + entity.getHp());
 		super.applyEffect(entity);
 	}
 
