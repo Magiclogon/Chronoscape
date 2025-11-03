@@ -60,7 +60,7 @@ public class ShopUI extends JPanel {
         
         JPanel rerollPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         rerollPanel.setBackground(new Color(60, 60, 60));
-        rerollButton = new JButton("Reroll");
+        rerollButton = new JButton();
         rerollButton.addActionListener((e) -> {
         	GameController.getInstance().getShopManager().refreshAvailableItems();
         	refresh();
@@ -186,7 +186,8 @@ public class ShopUI extends JPanel {
 
         // Update money
         moneyLabel.setText("Money: " + player.getMoney() + "$");
-
+        rerollButton.setText("Reroll ("+GameController.getInstance().getShopManager().getRerollPrice() + "$)");
+        
         // Update available items
         availableItemsPanel.removeAll();
         for (ShopItem item : shop.getAvailableItems()) {

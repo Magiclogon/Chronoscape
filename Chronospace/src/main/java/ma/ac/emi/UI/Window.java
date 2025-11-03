@@ -15,7 +15,7 @@ public class Window extends JFrame {
     private final MainMenu mainMenu;
     private final DifficultyMenu difficultyMenu;
     private final LevelSelection levelSelection;
-    private final ShopUI shopUI;
+    private ShopUI shopUI;
     
     private final JLayeredPane gamePane;
 
@@ -26,14 +26,14 @@ public class Window extends JFrame {
         mainMenu = new MainMenu();
         difficultyMenu = new DifficultyMenu();
         levelSelection = new LevelSelection();
-        shopUI = new ShopUI();
         gamePane = new JLayeredPane();
-
+        shopUI = new ShopUI();
+        
         mainPanel.add(mainMenu, "MENU");
         mainPanel.add(difficultyMenu, "DIFFICULTY");
         mainPanel.add(levelSelection, "LEVEL_SELECT");
-        mainPanel.add(shopUI, "SHOP");
         mainPanel.add(gamePane, "GAME");
+        mainPanel.add(shopUI, "SHOP");
 
         add(mainPanel);
 
