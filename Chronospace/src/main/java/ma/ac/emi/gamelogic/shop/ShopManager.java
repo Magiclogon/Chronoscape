@@ -38,10 +38,6 @@ public class ShopManager {
         availableItems.remove(item);
     }
 
-    public List<ShopItem> getAvailableItems() {
-        return availableItems;
-    }
-    
     public void refreshAvailableItems() {
     	if(rerollPrice > player.getMoney()) return;
     	setAvailableItems(new ArrayList<>());
@@ -79,7 +75,7 @@ public class ShopManager {
     }
     
     private ItemDefinition pickRandomItem(Map<String, ItemDefinition> items) {
-    	if(items.size() == 0) return null;
+    	if(items.isEmpty()) return null;
     	Random r = new Random();
     	int index = r.nextInt(items.size());
     	return items.values().toArray(new ItemDefinition[items.values().size()])[index];
@@ -132,5 +128,4 @@ public class ShopManager {
     		i++;
     	}
 	}
-
 }

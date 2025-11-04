@@ -11,14 +11,13 @@ public class ItemLoader {
     private ItemLoader() {
         for (Rarity r : Rarity.values())
             itemsByRarity.put(r, new HashMap<>());
-
     }
-    
+
     public static ItemLoader getInstance() {
-    	if(instance == null) {
-    		instance = new ItemLoader();
-    	}
-    	return instance;
+        if(instance == null) {
+            instance = new ItemLoader();
+        }
+        return instance;
     }
 
     public void loadItems(String filePath) {
@@ -39,6 +38,9 @@ public class ItemLoader {
                         break;
                     case "statModifier":
                         def = gson.fromJson(obj, StatModifierItemDefinition.class);
+                        break;
+                    case "upgrade":
+                        def = gson.fromJson(obj, UpgradeItemDefinition.class);
                         break;
                 }
 

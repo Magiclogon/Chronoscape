@@ -32,7 +32,7 @@
     {
       "type": "weapon",
       "id": "sword",
-      "name": "Knight’s Sword",
+      "name": "Knight's Sword",
       "description": "Balanced melee weapon for close combat.",
       "rarity": "RARE",
       "basePrice": 350,
@@ -61,7 +61,7 @@
     {
       "type": "weapon",
       "id": "bow",
-      "name": "Hunter’s Bow",
+      "name": "Hunter's Bow",
       "description": "Simple but precise ranged weapon.",
       "rarity": "COMMON",
       "basePrice": 250,
@@ -73,7 +73,7 @@
       "reloadingTime": 1.2,
       "magazineSize": 1
     },
-	{
+    {
       "type": "weapon",
       "id": "fists",
       "name": "Normal Fists",
@@ -145,6 +145,126 @@
       "basePrice": 750,
       "stat": "regen",
       "modifier": 1.3
+    },
+    {
+      "type": "upgrade",
+      "id": "weapon_damage_boost",
+      "name": "Damage Amplifier",
+      "description": "Increases weapon damage by 30%.",
+      "rarity": "RARE",
+      "basePrice": 450,
+      "upgradeType": "WEAPON",
+      "weaponStat": "DAMAGE",
+      "multiplier": 1.3,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "attack_speed_boost",
+      "name": "Rapid Fire Module",
+      "description": "Increases weapon attack speed by 25%.",
+      "rarity": "RARE",
+      "basePrice": 400,
+      "upgradeType": "WEAPON",
+      "weaponStat": "ATTACK_SPEED",
+      "multiplier": 1.25,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "range_extender",
+      "name": "Range Extender",
+      "description": "Increases weapon range by 40%.",
+      "rarity": "EPIC",
+      "basePrice": 550,
+      "upgradeType": "WEAPON",
+      "weaponStat": "RANGE",
+      "multiplier": 1.4,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "extended_magazine",
+      "name": "Extended Magazine",
+      "description": "Increases magazine size by 50%.",
+      "rarity": "COMMON",
+      "basePrice": 300,
+      "upgradeType": "WEAPON",
+      "weaponStat": "MAGAZINE_SIZE",
+      "multiplier": 1.5,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "quick_reload",
+      "name": "Quick Reload Kit",
+      "description": "Reduces reload time by 30%.",
+      "rarity": "RARE",
+      "basePrice": 400,
+      "upgradeType": "WEAPON",
+      "weaponStat": "RELOAD_TIME",
+      "multiplier": 1.3,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "health_increase",
+      "name": "Vitality Serum",
+      "description": "Permanently increases max health by 50%.",
+      "rarity": "EPIC",
+      "basePrice": 700,
+      "upgradeType": "PLAYER",
+      "playerStat": "MAX_HEALTH",
+      "multiplier": 1.5,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "speed_increase",
+      "name": "Agility Enhancer",
+      "description": "Increases movement speed by 20%.",
+      "rarity": "RARE",
+      "basePrice": 500,
+      "upgradeType": "PLAYER",
+      "playerStat": "MOVEMENT_SPEED",
+      "multiplier": 1.2,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "armor_upgrade",
+      "name": "Reinforced Armor",
+      "description": "Reduces incoming damage by 20%.",
+      "rarity": "EPIC",
+      "basePrice": 650,
+      "upgradeType": "PLAYER",
+      "playerStat": "DEFENSE",
+      "multiplier": 1.2,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "regen_upgrade",
+      "name": "Healing Factor",
+      "description": "Grants passive health regeneration.",
+      "rarity": "LEGENDARY",
+      "basePrice": 1000,
+      "upgradeType": "PLAYER",
+      "playerStat": "HEALTH_REGEN",
+      "multiplier": 2.0,
+      "stackable": true
+    },
+    {
+      "type": "upgrade",
+      "id": "ultimate_weapon_upgrade",
+      "name": "Legendary Weapon Core",
+      "description": "Dramatically increases all weapon stats by 50%.",
+      "rarity": "LEGENDARY",
+      "basePrice": 2000,
+      "upgradeType": "WEAPON",
+      "weaponStat": "DAMAGE",
+      "multiplier": 1.5,
+      "stackable": false
     }
   ]
 }
