@@ -2,12 +2,14 @@ package ma.ac.emi.gamelogic.shop;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
 @Getter
 @Setter
+@ToString
 public class WeaponItem extends ShopItem {
     private double upgradeMultiplier;
     

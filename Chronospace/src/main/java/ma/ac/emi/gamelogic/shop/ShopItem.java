@@ -2,10 +2,12 @@ package ma.ac.emi.gamelogic.shop;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import ma.ac.emi.gamelogic.player.Player;
 
 @Getter
 @Setter
+@ToString
 public abstract class ShopItem {
 	protected ItemDefinition itemDefinition;
 	protected double price;
@@ -24,5 +26,4 @@ public abstract class ShopItem {
     	}
     	return false;
     }
-    
 }
