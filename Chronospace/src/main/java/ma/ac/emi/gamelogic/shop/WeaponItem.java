@@ -33,5 +33,4 @@ public class WeaponItem extends ShopItem {
         // Apply upgrades based on upgradeMultiplier
         return weapon;
     }
-
 }

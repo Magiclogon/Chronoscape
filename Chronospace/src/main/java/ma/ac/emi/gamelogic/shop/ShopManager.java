@@ -22,7 +22,6 @@ public class ShopManager {
     	this.player = player;
         this.availableItems = new ArrayList<>();
         refreshAvailableItems();
-
     }
 
     public void addItem(ShopItem item) {
@@ -33,10 +32,6 @@ public class ShopManager {
         availableItems.remove(item);
     }
 
-    public List<ShopItem> getAvailableItems() {
-        return availableItems;
-    }
-    
     public void refreshAvailableItems() {
     	setAvailableItems(new ArrayList<>());
     	Map<Rarity, Map<String, ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
@@ -69,7 +64,7 @@ public class ShopManager {
     }
     
     private ItemDefinition pickRandomItem(Map<String, ItemDefinition> items) {
-    	if(items.size() == 0) return null;
+    	if(items.isEmpty()) return null;
     	Random r = new Random();
     	int index = r.nextInt(items.size());
     	return items.values().toArray(new ItemDefinition[items.values().size()])[index];
@@ -122,5 +117,4 @@ public class ShopManager {
     		i++;
     	}
 	}
-
 }
