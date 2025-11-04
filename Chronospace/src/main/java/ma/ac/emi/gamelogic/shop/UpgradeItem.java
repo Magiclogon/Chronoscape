@@ -22,6 +22,8 @@ public class UpgradeItem extends ShopItem {
                 break;
             case PLAYER:
                 applyPlayerUpgrade(player, def);
+                System.out.println("Player gained " + def.getMultiplier() + " " + def.getPlayerStat().name());
+                System.out.println("HP Max: " + player.getHpMax() + " HP: " + player.getHp());
                 break;
         }
 
@@ -77,8 +79,6 @@ public class UpgradeItem extends ShopItem {
             case MAX_HEALTH:
                 double currentMax = player.getHpMax();
                 player.setHpMax(currentMax * def.getMultiplier());
-                // Also heal the player by the increased amount
-                player.setHp(player.getHp() + (player.getHpMax() - currentMax));
                 break;
 
             case MOVEMENT_SPEED:
@@ -94,7 +94,6 @@ public class UpgradeItem extends ShopItem {
                 player.getInventory().addHealthRegenRate(def.getMultiplier());
                 break;
         }
-
         player.getInventory().addPlayerUpgrade(this);
     }
 }

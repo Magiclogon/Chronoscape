@@ -116,11 +116,11 @@ public class World {
 
 	private void setupEnemyAI(Ennemy enemy) {
 		if (enemy instanceof RangedEnnemy) {
-			enemy.setAiBehavior(new RangedAIBehavior(pathfinder, 150, 200));
+			enemy.setAiBehavior(new RangedAIBehavior(pathfinder, 150, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
 		} else if (enemy instanceof SpeedsterEnnemy) {
-			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, 5));
+			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
 		} else {
-			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, 5));
+			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
 		}
 	}
 

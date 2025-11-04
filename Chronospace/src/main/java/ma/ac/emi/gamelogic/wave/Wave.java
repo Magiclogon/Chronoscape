@@ -103,26 +103,8 @@ public class Wave extends WaveNotifier {
         // Spawn at edges of the world
         int side = random.nextInt(4); // 0=top, 1=right, 2=bottom, 3=left
         double x, y;
-
-        switch (side) {
-            case 0: // Top
-                x = random.nextDouble() * worldWidth * 16;
-                y = -50;
-                break;
-            case 1: // Right
-                x = worldWidth * 16 + 50;
-                y = random.nextDouble() * worldHeight * 16;
-                break;
-            case 2: // Bottom
-                x = random.nextDouble() * worldWidth * 16;
-                y = worldHeight * 16 + 50;
-                break;
-            case 3: // Left
-            default:
-                x = -50;
-                y = random.nextDouble() * worldHeight * 16;
-                break;
-        }
+        x = random.nextDouble() * worldWidth * 16;
+        y = random.nextDouble() * worldHeight * 16;
 
         enemy.setPos(new Vector2D(x, y));
     }

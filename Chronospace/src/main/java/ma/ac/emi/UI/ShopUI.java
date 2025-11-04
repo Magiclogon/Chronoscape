@@ -20,14 +20,14 @@ import java.util.Collections;
 /**
  * ShopUI handles the visual representation of the in-game shop.
  * It displays:
- *  - Player money
- *  - Available items for purchase
- *  - Inventory (weapons + stat items)
- *  - Player stats
+ * - Player money
+ * - Available items for purchase
+ * - Inventory (weapons + stat items)
+ * - Player stats
  */
 public class ShopUI extends JPanel {
-	public final Dimension inventoryButtonSize = new Dimension(75, 75);
-	
+    public final Dimension inventoryButtonSize = new Dimension(75, 75);
+
     private JLabel moneyLabel;
     private JPanel availableItemsPanel;
     private JPanel statsPanel;
@@ -36,7 +36,7 @@ public class ShopUI extends JPanel {
     private InventoryScrollable weaponPane;
     private InventoryScrollable activeWeaponsPane;
     private InventoryScrollable statItemsPane;
-    
+
     private JButton nextWaveButton;
     private JButton rerollButton;
 
@@ -48,8 +48,8 @@ public class ShopUI extends JPanel {
 
         nextWaveButton = new JButton("Next Wave");
         nextWaveButton.addActionListener((e) -> {
-        	Player.getInstance().initWeapons();
-        	GameController.getInstance().resumeGame();
+            Player.getInstance().initWeapons();
+            GameController.getInstance().resumeGame();
         });
         add(createTopPanel(), BorderLayout.NORTH);
 
@@ -57,16 +57,16 @@ public class ShopUI extends JPanel {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(new Color(30, 30, 30));
         centerPanel.add(createAvailableItemsPanel());
-        
+
         JPanel rerollPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         rerollPanel.setBackground(new Color(60, 60, 60));
         rerollButton = new JButton();
         rerollButton.addActionListener((e) -> {
-        	GameController.getInstance().getShopManager().refreshAvailableItems();
-        	refresh();
+            GameController.getInstance().getShopManager().refreshAvailableItems();
+            refresh();
         });
         rerollPanel.add(rerollButton);
-        
+
         centerPanel.add(rerollPanel);
         centerPanel.add(createInventoryPanel());
         add(centerPanel, BorderLayout.CENTER);
@@ -76,9 +76,6 @@ public class ShopUI extends JPanel {
         descriptionPanel.add(createStatsPanel());
         descriptionPanel.add(createItemDescriptionPanel());
         add(descriptionPanel, BorderLayout.EAST);
-        
-        
-        
     }
 
     private JPanel createTopPanel() {
@@ -100,7 +97,7 @@ public class ShopUI extends JPanel {
     private JPanel createAvailableItemsPanel() {
         availableItemsPanel = new JPanel(new GridLayout(0, 3, 10, 10));
         availableItemsPanel.setPreferredSize(new Dimension(availableItemsPanel.getPreferredSize().width,
-        			500));
+                500));
         availableItemsPanel.setBackground(new Color(50, 50, 50));
         availableItemsPanel.setBorder(
                 BorderFactory.createTitledBorder(
@@ -129,11 +126,11 @@ public class ShopUI extends JPanel {
                         Color.WHITE
                 )
         );
-        
+
         weaponPane = new InventoryScrollable(this, "Weapons");
 
         statItemsPane = new InventoryScrollable(this, "Stat Items");
-        
+
         activeWeaponsPane = new InventoryScrollable(this, "Active Weapons");
 
         JPanel bottomPanel = new JPanel(new GridLayout(1, 3, 10, 10));
@@ -162,11 +159,11 @@ public class ShopUI extends JPanel {
         statsPanel.setPreferredSize(new Dimension(250, 700));
         return statsPanel;
     }
-    
+
     public JPanel createItemDescriptionPanel() {
-    	itemDescriptionPanel = new JPanel();
-    	itemDescriptionPanel.setBackground(new Color(50, 50, 50));
-    	itemDescriptionPanel.setBorder(
+        itemDescriptionPanel = new JPanel();
+        itemDescriptionPanel.setBackground(new Color(50, 50, 50));
+        itemDescriptionPanel.setBorder(
                 BorderFactory.createTitledBorder(
                         BorderFactory.createLineBorder(Color.GRAY),
                         "Item description",
@@ -176,8 +173,8 @@ public class ShopUI extends JPanel {
                         Color.WHITE
                 )
         );
-    	itemDescriptionPanel.setPreferredSize(new Dimension(250, 700));
-    	return itemDescriptionPanel;
+        itemDescriptionPanel.setPreferredSize(new Dimension(250, 700));
+        return itemDescriptionPanel;
     }
 
     public void refresh() {
@@ -187,7 +184,7 @@ public class ShopUI extends JPanel {
         // Update money
         moneyLabel.setText("Money: " + player.getMoney() + "$");
         rerollButton.setText("Reroll ("+GameController.getInstance().getShopManager().getRerollPrice() + "$)");
-        
+
         // Update available items
         availableItemsPanel.removeAll();
         for (ShopItem item : shop.getAvailableItems()) {
@@ -197,23 +194,26 @@ public class ShopUI extends JPanel {
         // Update active weapon slots
         activeWeaponsPane.getPanel().removeAll();
         for(WeaponItem item : player.getInventory().getEquippedWeapons())
-        	activeWeaponsPane.add(new InventoryItemButton(this, item));
-        
+            activeWeaponsPane.add(new InventoryItemButton(this, item));
+
         //Update weapons in inventory
         weaponPane.getPanel().removeAll();
         for(ShopItem item : player.getInventory().getWeaponItems()) {
-        	weaponPane.add(new InventoryItemButton(this, item));
+            weaponPane.add(new InventoryItemButton(this, item));
         }
-        
+
         // Update stat modifier items
         statItemsPane.getPanel().removeAll();
-        for(ShopItem item : player.getInventory().getStatModifierItems()) {
-        	statItemsPane.add(new InventoryItemButton(this, item));
+        for(ShopItem item : player.getInventory().getUpgradeItems()) {
+            statItemsPane.add(new InventoryItemButton(this, item));
         }
 
         // Update stats
         statsPanel.removeAll();
         statsPanel.add(createStatLabel("Speed: " + player.getSpeed()));
+        statsPanel.add(createStatLabel("Strength: " + player.getStrength()));
+        statsPanel.add(createStatLabel("Max HP: " + player.getHpMax()));
+        statsPanel.add(createStatLabel("HP: " + player.getHp()));
 
         revalidate();
         repaint();
@@ -235,7 +235,7 @@ public class ShopUI extends JPanel {
         label.setFont(new Font("Arial", Font.PLAIN, 14));
         return label;
     }
-    
+
     public void showItemDetails(ShopItem item) {
         itemDescriptionPanel.removeAll();
 
@@ -262,59 +262,12 @@ public class ShopUI extends JPanel {
         itemDescriptionPanel.add(rarityLabel);
         itemDescriptionPanel.add(priceLabel);
 
-        //If the item is a WeaponItem, show its equip state
-        if (item instanceof WeaponItem) {
-            WeaponItem weaponItem = (WeaponItem) item;
-
-            JLabel equipLabel = new JLabel("Equipped State:");
-            equipLabel.setForeground(Color.WHITE);
-            equipLabel.setFont(new Font("Arial", Font.BOLD, 13));
-
-            JComboBox<String> equipStateBox = new JComboBox<>();
-            equipStateBox.addItem("Unequipped");
-
-            // Suppose your player has 3 weapon slots
-            for (int i = 0; i < 3; i++) {
-                equipStateBox.addItem("Slot " + i);
-            }
-
-            // Get equipped slot index
-            Integer equippedIndex = Player.getInstance().isWeaponEquipped(weaponItem);
-            if (equippedIndex != null && equippedIndex >= 0) {
-                equipStateBox.setSelectedIndex(equippedIndex + 1); 
-            } else {
-                equipStateBox.setSelectedIndex(0);
-            }
-            
-            //Limit the size so it doesn’t stretch across the whole panel
-            Dimension comboSize = new Dimension(150, 25); 
-            equipStateBox.setMaximumSize(comboSize);
-            equipStateBox.setPreferredSize(comboSize);
-            equipStateBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            itemDescriptionPanel.add(Box.createVerticalStrut(5));
-            itemDescriptionPanel.add(equipLabel);
-            itemDescriptionPanel.add(Box.createVerticalStrut(3));
-            itemDescriptionPanel.add(equipStateBox);
-            
-            equipStateBox.addActionListener(e -> {
-                int selectedIndex = equipStateBox.getSelectedIndex();
-                Player player = Player.getInstance();
-
-                if (selectedIndex == 0) {
-                    player.getInventory().unequipWeapon(weaponItem);
-                } else {
-                    int slotIndex = selectedIndex - 1;
-                    player.getInventory().equipWeapon(weaponItem, slotIndex);
-                }
-
-                refresh();
-            });
-
-        }
+        // --- JCOMBOBOX CODE REMOVED ---
+        // The entire 'if (item instanceof WeaponItem)' block was here.
+        // It is no longer needed because equipping is handled by
+        // dragging the InventoryItemButton to the InventoryScrollable panels.
 
         itemDescriptionPanel.revalidate();
         itemDescriptionPanel.repaint();
     }
-
 }

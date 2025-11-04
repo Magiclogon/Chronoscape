@@ -67,7 +67,7 @@
       "basePrice": 250,
       "attackStrategy": "RangeSingleHit",
       "damage": 20,
-      "range": 400,
+      "range": 200,
       "attackSpeed": 3.0,
       "projectileId": "arrow",
       "reloadingTime": 1.2,
@@ -85,66 +85,6 @@
       "range": 35,
       "attackSpeed": 1.0,
       "projectileId": "noneSingle"
-    },
-    {
-      "type": "statModifier",
-      "id": "hp_boost",
-      "name": "Vitality Amulet",
-      "description": "Increases max health by 20%.",
-      "rarity": "RARE",
-      "basePrice": 300,
-      "stat": "health",
-      "modifier": 1.2
-    },
-    {
-      "type": "statModifier",
-      "id": "speed_boots",
-      "name": "Swift Boots",
-      "description": "Increases movement speed by 15%.",
-      "rarity": "COMMON",
-      "basePrice": 250,
-      "stat": "speed",
-      "modifier": 1.15
-    },
-    {
-      "type": "statModifier",
-      "id": "damage_ring",
-      "name": "Ring of Power",
-      "description": "Increases attack damage by 25%.",
-      "rarity": "EPIC",
-      "basePrice": 600,
-      "stat": "attack",
-      "modifier": 1.25
-    },
-    {
-      "type": "statModifier",
-      "id": "armor_plate",
-      "name": "Iron Armor Plate",
-      "description": "Reduces damage taken by 10%.",
-      "rarity": "COMMON",
-      "basePrice": 200,
-      "stat": "defense",
-      "modifier": 1.1
-    },
-    {
-      "type": "statModifier",
-      "id": "critical_eye",
-      "name": "Eye of Precision",
-      "description": "Increases critical hit chance by 10%.",
-      "rarity": "RARE",
-      "basePrice": 400,
-      "stat": "critChance",
-      "modifier": 1.1
-    },
-    {
-      "type": "statModifier",
-      "id": "regeneration_charm",
-      "name": "Regeneration Charm",
-      "description": "Grants passive health regeneration.",
-      "rarity": "EPIC",
-      "basePrice": 750,
-      "stat": "regen",
-      "modifier": 1.3
     },
     {
       "type": "upgrade",
