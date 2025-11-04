@@ -87,12 +87,10 @@ public class UpgradeItem extends ShopItem {
                 break;
 
             case DEFENSE:
-                // Store defense multiplier for damage calculation
                 player.getInventory().addDefenseMultiplier(def.getMultiplier());
                 break;
 
             case HEALTH_REGEN:
-                // Store regen rate for passive healing
                 player.getInventory().addHealthRegenRate(def.getMultiplier());
                 break;
         }
