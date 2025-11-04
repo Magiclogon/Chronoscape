@@ -10,6 +10,7 @@ import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.pickable.Pickable;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.world.World;
 
 @Getter
 @Setter
@@ -18,6 +19,7 @@ public class CollisionManager {
 	private List<Ennemy> enemies;
 	private AttackObjectManager attackObjectManager;
 	private PickableManager pickableManager;
+	private World world;
 	
 	public void handleCollisions() {
 		for(AttackObject attackObject : attackObjectManager.getEnemyObjects()) {
@@ -39,5 +41,7 @@ public class CollisionManager {
 				pickable.setPickedUp(true);
 			}
 		}
+		
+		player.clamp(world.getBound());
 	}
 }

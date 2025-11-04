@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.wave;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
@@ -37,6 +38,8 @@ public class WaveManager {
     private double waveTimer;
     private int worldWidth;
     private int worldHeight;
+    
+    private AttackObjectManager attackObjectManager;
 
     public WaveManager(DifficultyStrategy difficulty, EnnemySpecieFactory specieFactory,
                        int worldWidth, int worldHeight) {
@@ -60,6 +63,7 @@ public class WaveManager {
         for (WaveConfig config : configs) {
             Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
                     worldWidth, worldHeight);
+            wave.setAttackObjectManager(attackObjectManager);
             waves.add(wave);
         }
 

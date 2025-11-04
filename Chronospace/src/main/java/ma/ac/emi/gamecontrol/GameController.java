@@ -67,7 +67,7 @@ public class GameController implements Runnable {
     
     public void showShop() {
     	state = GameState.SHOP;
-    	shopManager.refreshAvailableItems();
+    	shopManager.init();
     	window.refreshShop();
     	window.showScreen("SHOP");
     }

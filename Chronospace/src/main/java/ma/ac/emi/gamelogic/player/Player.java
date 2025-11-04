@@ -5,6 +5,7 @@ import java.awt.*;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
@@ -30,13 +31,13 @@ public class Player extends LivingEntity {
 	private static Player instance;
 	
 	private AttackObjectManager attackObjectManager;
-
+	
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector2D();
 		hp = 50;
 		hpMax = 100;
-		money = 1000;
+		money = 10000;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		weaponIndex = 0;
 		
@@ -75,8 +76,13 @@ public class Player extends LivingEntity {
 		bound.x = (int) getPos().getX();
 		bound.y = (int) getPos().getY();
 		
-		weaponIndex = Math.floorMod(MouseHandler.getInstance().getMouseWheelRot(), 3);
-		if(equippedWeapons[weaponIndex] != null) equippedWeapons[weaponIndex].update(step);
+		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
+			weaponIndex = Math.floorMod(weaponIndex+1, 3);
+		}
+		if(equippedWeapons[weaponIndex] != null) {
+			equippedWeapons[weaponIndex].pointAt(MouseHandler.getInstance().getMouseWorldPos());
+			equippedWeapons[weaponIndex].update(step);
+		}
 	}
 
 	@Override
@@ -109,6 +115,11 @@ public class Player extends LivingEntity {
 			}
 		}
 		return null;
+	}
+	
+	public void clamp(Rectangle bound) {
+		setPos(new Vector2D(Math.min(bound.width-getBound().width, Math.max(0, getPos().getX())),
+				Math.min(bound.height-getBound().height, Math.max(0, getPos().getY()))));
 	}
 	
 

@@ -64,7 +64,6 @@ public class Weapon {
     
     public void update(double step) {
         setPos(getBearer().getPos());
-        pointAt(MouseHandler.getInstance().getMouseWorldPos());
         setTsla(getTsla() + step);
         
         if (getAmmo() == 0) {

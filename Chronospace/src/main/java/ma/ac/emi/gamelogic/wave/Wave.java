@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.wave;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
@@ -27,6 +28,8 @@ public class Wave extends WaveNotifier {
     private List<Vector2D> spawnPoints;
     private int worldWidth;
     private int worldHeight;
+    
+    private AttackObjectManager attackObjectManager;
 
     public Wave(int number, int enemiesNumber, EnnemySpecieFactory specieFactory,
                 DifficultyStrategy difficulty, int worldWidth, int worldHeight) {
@@ -87,7 +90,9 @@ public class Wave extends WaveNotifier {
 
     private void spawnEnemy() {
         Ennemy enemy = spawnFromComposition();
-
+        enemy.setAttackObjectManager(getAttackObjectManager());
+        enemy.initWeapon();
+        
         if (enemy != null) {
             setRandomSpawnPosition(enemy);
             enemies.add(enemy);
