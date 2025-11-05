@@ -178,7 +178,7 @@ public class ShopUI extends JPanel {
     }
 
     public void refresh() {
-        Player player = GameController.getInstance().getWorld().getPlayer();
+        Player player = GameController.getInstance().getWorldManager().getCurrentWorld().getPlayer();
         ShopManager shop = GameController.getInstance().getShopManager();
 
         // Update money

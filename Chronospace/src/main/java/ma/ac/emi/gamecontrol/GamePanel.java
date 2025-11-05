@@ -18,7 +18,7 @@ public class GamePanel extends JPanel {
 
 	public static final int TILE_SIZE = 16;
 
-	private final World world;
+	private World world;
 	private Camera camera;
 
 	public GamePanel(World world) {

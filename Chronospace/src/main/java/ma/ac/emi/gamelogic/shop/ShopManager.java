@@ -3,7 +3,6 @@ package ma.ac.emi.gamelogic.shop;
 import ma.ac.emi.gamelogic.player.Player;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -64,6 +63,9 @@ public class ShopManager {
     		}
     		
     		if(item == null || availableItems.contains(item.getItem())) continue;
+    		if(item instanceof WeaponItemDefinition) {
+    			if(((WeaponItemDefinition)item).isBought()) continue;
+    		}
     		
     		availableItems.add(item.getItem());
     		i++;

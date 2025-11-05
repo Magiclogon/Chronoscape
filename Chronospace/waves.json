@@ -1,48 +1,49 @@
-[
-  {
-    "waveNumber": 1,
-    "enemies": {
-      "common": 0
+{
+  "worlds": [
+    {
+      "worldNumber": 1,
+      "worldWidth": 50,
+      "worldHeight": 50,
+      "waves": [
+        {
+          "waveNumber": 1,
+          "enemies": { "common": 0 },
+          "spawnDelay": 0.5,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 2,
+          "enemies": { "common": 1, "ranged": 3 },
+          "spawnDelay": 0.5,
+          "isBossWave": false
+        }
+      ]
     },
-    "spawnDelay": 0.5,
-    "isBossWave": false
-  },
-  {
-    "waveNumber": 2,
-    "enemies": {
-      "common": 12,
-      "ranged": 3
-    },
-    "spawnDelay": 0.5,
-    "isBossWave": false
-  },
-  {
-    "waveNumber": 3,
-    "enemies": {
-      "speedster": 5,
-      "common": 10
-    },
-    "spawnDelay": 0.4,
-    "isBossWave": false
-  },
-  {
-    "waveNumber": 4,
-    "enemies": {
-      "speedster": 6,
-      "common": 8,
-      "tank": 2
-    },
-    "spawnDelay": 0.4,
-    "isBossWave": false
-  },
-  {
-    "waveNumber": 5,
-    "enemies": {
-      "speedster": 5,
-      "boss": 1,
-      "ranged": 3
-    },
-    "spawnDelay": 0.3,
-    "isBossWave": true
-  }
-]
+    { 
+	  "worldNumber": 2,
+	  "worldWidth": 30,
+	  "worldHeight": 60,
+	  "waves": [ 
+    	{
+          "waveNumber": 1,
+          "enemies": { "speedster": 5, "common": 10 },
+          "spawnDelay": 0.4,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 2,
+          "enemies": { "speedster": 6, "common": 8, "tank": 2 },
+          "spawnDelay": 0.4,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 3,
+          "enemies": { "speedster": 5, "boss": 1, "ranged": 3 },
+          "spawnDelay": 0.3,
+          "isBossWave": true
+        }
+      ]
+    }
+    
+  ]
+}

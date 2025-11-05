@@ -32,7 +32,6 @@ public class WaveManager {
     private DifficultyStrategy difficulty;
     private EnnemySpecieFactory specieFactory;
     private WaveFactory waveFactory;
-    private WaveConfigLoader configLoader;
     private WaveState state;
     private double waveDelay;
     private double waveTimer;
@@ -48,31 +47,11 @@ public class WaveManager {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.waveFactory = new WaveFactory();
-        this.configLoader = new WaveConfigLoader();
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
         this.waveDelay = 1;
         this.waveTimer = 0;
-    }
-
-    public void loadWavesFromConfig(String filepath) throws IOException {
-        List<WaveConfig> configs = configLoader.loadWavesFromFile(filepath);
-        waves.clear();
-
-        for (WaveConfig config : configs) {
-            Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
-                    worldWidth, worldHeight);
-            wave.setAttackObjectManager(attackObjectManager);
-            waves.add(wave);
-        }
-
-        System.out.println("Loaded " + waves.size() + " waves from " + filepath);
-    }
-
-    public void createSampleConfigFile(String filepath) throws IOException {
-        configLoader.createSampleConfigFile(filepath);
-        System.out.println("Created sample wave config at " + filepath);
     }
 
     public void update(double deltaTime, Vector2D playerPos) {
@@ -98,6 +77,9 @@ public class WaveManager {
                 break;
 
             case COMPLETED:
+            	SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
+            	GameController.getInstance().nextWorld();
+            	break;
             case LOST:
                 break;
         }
