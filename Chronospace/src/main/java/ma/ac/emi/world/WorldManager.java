@@ -27,12 +27,14 @@ import ma.ac.emi.math.Vector2D;
 @Setter
 public class WorldManager {
 	private List<World> worlds;
-	private World currentWorld;
 	private WaveConfigLoader configLoader;
 	private WaveFactory waveFactory;
 	private DifficultyStrategy difficulty;
 	private EnnemySpecieFactory specieFactory;
 	private Player player;
+	
+	private World currentWorld;
+	private int currentWorldIndex;
 	
 	public WorldManager(DifficultyStrategy difficulty, EnnemySpecieFactory factory) {
 		this.difficulty = difficulty;
@@ -51,7 +53,8 @@ public class WorldManager {
 			e.printStackTrace();
 		}
 		
-        currentWorld = worlds.get(0);
+		currentWorldIndex = 0;
+        currentWorld = worlds.get(currentWorldIndex);
         
         WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
 		WeaponItem fists = new WeaponItem(fistsDef);
@@ -98,10 +101,10 @@ public class WorldManager {
 	}
 	
 	public void nextWorld() {
-		int currentIndex = worlds.indexOf(currentWorld);
-		System.out.println(currentIndex);
-		currentWorld = worlds.get( (currentIndex+ 1) % worlds.size());
-		System.out.println("Next " +  worlds.indexOf(currentWorld));
+		currentWorldIndex++;
+		if(currentWorldIndex < worlds.size()) {
+			currentWorld = worlds.get(currentWorldIndex);
+		}
 				
 		player.setAttackObjectManager(currentWorld.getAttackObjectManager());
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*currentWorld.getWidth()/2, GamePanel.TILE_SIZE*currentWorld.getHeight()/2));

@@ -18,6 +18,7 @@ public class WeaponItem extends ShopItem {
     @Override
     public void apply(Player player) {
     	player.getInventory().addItem(this);
+    	((WeaponItemDefinition) getItemDefinition()).setBought(true);
     }
 
     private Weapon createWeapon() {

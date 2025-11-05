@@ -13,7 +13,8 @@ public class WeaponItemDefinition extends ItemDefinition {
     private String projectileId;
     private double reloadingTime;
     private int magazineSize;
-    
+    private boolean bought = false;
+
 	@Override
 	public ShopItem getItem() {
 		return new WeaponItem(this);

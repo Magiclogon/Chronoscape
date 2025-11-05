@@ -63,6 +63,9 @@ public class ShopManager {
     		}
     		
     		if(item == null || availableItems.contains(item.getItem())) continue;
+    		if(item instanceof WeaponItemDefinition) {
+    			if(((WeaponItemDefinition)item).isBought()) continue;
+    		}
     		
     		availableItems.add(item.getItem());
     		i++;

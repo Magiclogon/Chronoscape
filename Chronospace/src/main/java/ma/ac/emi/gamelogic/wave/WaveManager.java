@@ -54,25 +54,6 @@ public class WaveManager {
         this.waveTimer = 0;
     }
 
-    /*public void loadWavesFromConfig(String filepath) throws IOException {
-        List<WaveConfig> configs = configLoader.loadWavesFromFile(filepath, worldNum);
-        waves.clear();
-
-        for (WaveConfig config : configs) {
-            Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
-                    worldWidth, worldHeight);
-            wave.setAttackObjectManager(attackObjectManager);
-            waves.add(wave);
-        }
-
-        System.out.println("Loaded " + waves.size() + " waves from " + filepath);
-    }*/
-
-    /*public void createSampleConfigFile(String filepath) throws IOException {
-        configLoader.createSampleConfigFile(filepath);
-        System.out.println("Created sample wave config at " + filepath);
-    }*/
-
     public void update(double deltaTime, Vector2D playerPos) {
         switch (state) {
             case WAITING:
@@ -96,7 +77,9 @@ public class WaveManager {
                 break;
 
             case COMPLETED:
-            	GameController.getInstance().nextWorld();;
+            	SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
+            	GameController.getInstance().nextWorld();
+            	break;
             case LOST:
                 break;
         }
