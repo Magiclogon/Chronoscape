@@ -6,6 +6,8 @@ import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
+import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
+import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
@@ -13,6 +15,7 @@ import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
+import ma.ac.emi.world.WorldManager;
 
 @Getter
 @Setter
@@ -27,7 +30,7 @@ public class GameController implements Runnable {
     }
 
     private final Window window;
-    private World world;
+    private WorldManager worldManager;
     private GamePanel gamePanel;
     private GameUIPanel gameUIPanel;
     private Camera camera;
@@ -43,7 +46,13 @@ public class GameController implements Runnable {
 		AOELoader.getInstance().load("aoe.json");
 		
         shopManager = new ShopManager(Player.getInstance());
+        worldManager = new WorldManager(new EasyDifficultyStrategy(), new VampireFactory(new EasyDifficultyStrategy()));
         showMainMenu();
+    }
+    
+    public void nextWorld() {
+    	worldManager.nextWorld();
+    	gamePanel.setWorld(worldManager.getCurrentWorld());
     }
 
     public void showMainMenu() {
@@ -82,8 +91,8 @@ public class GameController implements Runnable {
 
     public void startGame() {
         state = GameState.PLAYING;
-
-        world = new World(50, 50);
+        
+        World world = worldManager.getCurrentWorld();
         gamePanel = new GamePanel(world);
         gameUIPanel = new GameUIPanel(world);
 
@@ -142,7 +151,7 @@ public class GameController implements Runnable {
     }
 
     public void update(double step) {
-        world.update(step);
+        worldManager.update(step);
         camera.update(step);
     }
 }

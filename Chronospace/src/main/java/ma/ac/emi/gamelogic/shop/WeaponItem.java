@@ -24,7 +24,7 @@ public class WeaponItem extends ShopItem {
     	System.out.println(getItemDefinition().getBasePrice());
     	System.out.println(((WeaponItemDefinition)getItemDefinition()).getProjectileId());
     	Weapon weapon = new Weapon(this);
-    	weapon.setAttackObjectManager(GameController.getInstance().getWorld().getAttackObjectManager());
+    	weapon.setAttackObjectManager(GameController.getInstance().getWorldManager().getCurrentWorld().getAttackObjectManager());
 		return weapon;
      
     }

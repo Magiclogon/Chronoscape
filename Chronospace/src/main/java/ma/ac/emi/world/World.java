@@ -43,6 +43,9 @@ public class World {
 	private PickableManager pickableManager;
 	private PathFinder pathfinder;
 	private List<Rectangle> obstacles; // Future use for obstacles
+	
+	private DifficultyStrategy difficulty;
+	private EnnemySpecieFactory specieFactory;
 
 	public World(int w, int h) {
 		width = w;
@@ -50,52 +53,19 @@ public class World {
 
 		bound = new Rectangle(w * GamePanel.TILE_SIZE, h * GamePanel.TILE_SIZE);
 		obstacles = new ArrayList<>();
-
+		
 		collisionManager = new CollisionManager();
 		collisionManager.setWorld(this);
 		
 		attackObjectManager = new AttackObjectManager(this);
 		pickableManager = new PickableManager(this);
-		DifficultyStrategy difficulty = new EasyDifficultyStrategy();
-		EnnemySpecieFactory specieFactory = new VampireFactory(difficulty);
 
 		waveManager = new WaveManager(difficulty, specieFactory, width, height);
 		waveManager.setAttackObjectManager(attackObjectManager);
-
-		// Try to load waves from config file
-		try {
-			waveManager.loadWavesFromConfig("waves.json");
-		} catch (IOException e) {
-			System.err.println("Could not load waves.json, creating sample file...");
-			try {
-				waveManager.createSampleConfigFile("waves.json");
-				System.out.println("Sample waves file created. Please configure waves.json");
-			} catch (IOException ex) {
-				System.err.println("Failed to create sample config: " + ex.getMessage());
-			}
-		}
 		
 
 		// Initialize pathfinder for AI
 		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
-		
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
-		WeaponItem fists = new WeaponItem(fistsDef);
-
-		player = Player.getInstance();
-		player.setAttackObjectManager(attackObjectManager);
-		player.setPos(new Vector2D(GamePanel.TILE_SIZE*w/2, GamePanel.TILE_SIZE*h/2));
-		player.setSpeed(100);
-        player.getInventory().addItem(fists);
-        player.getInventory().equipWeapon(fists, 0);
-        player.initWeapons();
-
-		
-
-		// Subscribe each wave
-		for (Wave wave : waveManager.getWaves()) {
-			pickableManager.subscribe(wave);
-		}
 
 		collisionManager.setPlayer(player);
 		collisionManager.setEnemies(new ArrayList<Ennemy>());

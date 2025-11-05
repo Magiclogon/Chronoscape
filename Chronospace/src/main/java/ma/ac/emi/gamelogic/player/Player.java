@@ -65,6 +65,7 @@ public class Player extends LivingEntity {
 			attack();
 		}
 		velocity.init();
+		
 		if(KeyHandler.getInstance().isLeft()) velocity.setX(-1*speed);
 		if(KeyHandler.getInstance().isRight()) {
 			velocity.setX(speed);

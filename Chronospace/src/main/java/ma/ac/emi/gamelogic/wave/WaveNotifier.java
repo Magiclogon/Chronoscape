@@ -20,6 +20,7 @@ public abstract class WaveNotifier {
     }
 
     protected void notifyListeners(List<Vector2D> spawnPoints) {
+    	System.out.println("Notifying pickables");
         for (WaveListener listener : listeners) {
             listener.onNotify(spawnPoints);
         }

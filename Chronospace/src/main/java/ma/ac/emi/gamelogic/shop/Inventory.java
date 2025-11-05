@@ -46,7 +46,7 @@ public class Inventory {
 
     public boolean hasItem(String itemId) {
         return purchasedItems.stream()
-                .anyMatch(item -> item.getItemDefinition().getId().equals(itemId));
+                .anyMatch(item -> item.getItemDefinition().getId().equals(itemId)); 
     }
 
     public double getTotalStatModifier(String stat) {

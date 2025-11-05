@@ -4,11 +4,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import ma.ac.emi.world.WaveData;
+import ma.ac.emi.world.WorldConfig;
+
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaveConfigLoader {
     private final Gson gson;
@@ -17,23 +22,22 @@ public class WaveConfigLoader {
         this.gson = new GsonBuilder().setPrettyPrinting().create();
     }
 
-    // load wave config from json
-    public List<WaveConfig> loadWavesFromFile(String filepath) throws IOException {
+    public List<WorldConfig> loadWorldsFromFile(String filepath) throws IOException {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filepath);
              InputStreamReader reader = new InputStreamReader(
                      inputStream != null ? inputStream : new FileInputStream(filepath),
                      StandardCharsets.UTF_8)) {
 
-            Type listType = new TypeToken<List<WaveConfig>>(){}.getType();
-            List<WaveConfig> configs = gson.fromJson(reader, listType);
-
-            if (configs == null) {
-                configs = new ArrayList<>();
+            WaveData waveData = gson.fromJson(reader, WaveData.class);
+            if (waveData == null || waveData.getWorlds() == null) {
+                return new ArrayList<>();
             }
 
-            return configs;
+            return waveData.getWorlds();
         }
     }
+
+
 
     // save config to json
     public void saveWavesToFile(List<WaveConfig> waves, String filepath) throws IOException {

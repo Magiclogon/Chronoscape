@@ -21,7 +21,10 @@ public class CollisionManager {
 	private PickableManager pickableManager;
 	private World world;
 	
+	
 	public void handleCollisions() {
+		player = Player.getInstance();
+
 		for(AttackObject attackObject : attackObjectManager.getEnemyObjects()) {
 			if(player.getBound().intersects(attackObject.getBound()) && attackObject.isActive()) {
 				attackObject.applyEffect(player);
