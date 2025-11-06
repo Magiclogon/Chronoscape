@@ -4,6 +4,7 @@
       "worldNumber": 1,
       "worldWidth": 50,
       "worldHeight": 50,
+      "specieType": "vampire",
       "waves": [
         {
           "waveNumber": 1,
@@ -23,6 +24,7 @@
 	  "worldNumber": 2,
 	  "worldWidth": 30,
 	  "worldHeight": 60,
+	  "specieType": "zombie",
 	  "waves": [ 
     	{
           "waveNumber": 1,
