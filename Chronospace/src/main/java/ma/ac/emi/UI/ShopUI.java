@@ -20,10 +20,10 @@ import java.util.Collections;
 /**
  * ShopUI handles the visual representation of the in-game shop.
  * It displays:
- * - Player money
- * - Available items for purchase
- * - Inventory (weapons + stat items)
- * - Player stats
+ *  - Player money
+ *  - Available items for purchase
+ *  - Inventory (weapons + stat items)
+ *  - Player stats
  */
 public class ShopUI extends JPanel {
     public final Dimension inventoryButtonSize = new Dimension(75, 75);
@@ -76,6 +76,9 @@ public class ShopUI extends JPanel {
         descriptionPanel.add(createStatsPanel());
         descriptionPanel.add(createItemDescriptionPanel());
         add(descriptionPanel, BorderLayout.EAST);
+
+
+
     }
 
     private JPanel createTopPanel() {
@@ -211,9 +214,6 @@ public class ShopUI extends JPanel {
         // Update stats
         statsPanel.removeAll();
         statsPanel.add(createStatLabel("Speed: " + player.getSpeed()));
-        statsPanel.add(createStatLabel("Strength: " + player.getStrength()));
-        statsPanel.add(createStatLabel("Max HP: " + player.getHpMax()));
-        statsPanel.add(createStatLabel("HP: " + player.getHp()));
 
         revalidate();
         repaint();
@@ -262,12 +262,59 @@ public class ShopUI extends JPanel {
         itemDescriptionPanel.add(rarityLabel);
         itemDescriptionPanel.add(priceLabel);
 
-        // --- JCOMBOBOX CODE REMOVED ---
-        // The entire 'if (item instanceof WeaponItem)' block was here.
-        // It is no longer needed because equipping is handled by
-        // dragging the InventoryItemButton to the InventoryScrollable panels.
+        //If the item is a WeaponItem, show its equip state
+        if (item instanceof WeaponItem) {
+            WeaponItem weaponItem = (WeaponItem) item;
+
+            JLabel equipLabel = new JLabel("Equipped State:");
+            equipLabel.setForeground(Color.WHITE);
+            equipLabel.setFont(new Font("Arial", Font.BOLD, 13));
+
+            JComboBox<String> equipStateBox = new JComboBox<>();
+            equipStateBox.addItem("Unequipped");
+
+            // Suppose your player has 3 weapon slots
+            for (int i = 0; i < 3; i++) {
+                equipStateBox.addItem("Slot " + i);
+            }
+
+            // Get equipped slot index
+            Integer equippedIndex = Player.getInstance().isWeaponEquipped(weaponItem);
+            if (equippedIndex != null && equippedIndex >= 0) {
+                equipStateBox.setSelectedIndex(equippedIndex + 1);
+            } else {
+                equipStateBox.setSelectedIndex(0);
+            }
+
+            //Limit the size so it doesn’t stretch across the whole panel
+            Dimension comboSize = new Dimension(150, 25);
+            equipStateBox.setMaximumSize(comboSize);
+            equipStateBox.setPreferredSize(comboSize);
+            equipStateBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+            itemDescriptionPanel.add(Box.createVerticalStrut(5));
+            itemDescriptionPanel.add(equipLabel);
+            itemDescriptionPanel.add(Box.createVerticalStrut(3));
+            itemDescriptionPanel.add(equipStateBox);
+
+            equipStateBox.addActionListener(e -> {
+                int selectedIndex = equipStateBox.getSelectedIndex();
+                Player player = Player.getInstance();
+
+                if (selectedIndex == 0) {
+                    player.getInventory().unequipWeapon(weaponItem);
+                } else {
+                    int slotIndex = selectedIndex - 1;
+                    player.getInventory().equipWeapon(weaponItem, slotIndex);
+                }
+
+                refresh();
+            });
+
+        }
 
         itemDescriptionPanel.revalidate();
         itemDescriptionPanel.repaint();
     }
+
 }

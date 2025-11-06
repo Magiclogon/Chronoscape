@@ -1,9 +1,7 @@
 package ma.ac.emi.gamelogic.shop;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +12,6 @@ public class Inventory {
     public static final int MAX_EQU = 3;
     private List<ShopItem> purchasedItems;
     private WeaponItem[] equippedWeapons;
-    private Map<String, List<StatModifier>> activeEffects;
 
     // track upgrades
     private List<UpgradeItem> weaponUpgrades;
@@ -25,7 +22,6 @@ public class Inventory {
     public Inventory() {
         this.purchasedItems = new ArrayList<>();
         this.equippedWeapons = new WeaponItem[MAX_EQU];
-        this.activeEffects = new HashMap<>();
         this.weaponUpgrades = new ArrayList<>();
         this.playerUpgrades = new ArrayList<>();
         this.defenseMultiplier = 1.0;
@@ -47,18 +43,6 @@ public class Inventory {
     public boolean hasItem(String itemId) {
         return purchasedItems.stream()
                 .anyMatch(item -> item.getItemDefinition().getId().equals(itemId)); 
-    }
-
-    public double getTotalStatModifier(String stat) {
-        if (!activeEffects.containsKey(stat)) {
-            return 1.0;
-        }
-
-        double total = 1.0;
-        for (StatModifier modifier : activeEffects.get(stat)) {
-            total = modifier.apply(total);
-        }
-        return total;
     }
 
     public void equipWeapon(WeaponItem item, int index) {
@@ -89,10 +73,6 @@ public class Inventory {
         return getPurchasedItems().stream().filter((item) -> item instanceof WeaponItem).toList();
     }
 
-    public List<ShopItem> getStatModifierItems(){
-        return getPurchasedItems().stream().filter((item) -> item instanceof StatModifierItem).toList();
-    }
-
     public List<ShopItem> getUpgradeItems(){
         return getPurchasedItems().stream().filter((item) -> item instanceof UpgradeItem).toList();
     }
@@ -117,38 +97,66 @@ public class Inventory {
     private void applyWeaponUpgradesToItem(WeaponItem weapon) {
         for (UpgradeItem upgrade : weaponUpgrades) {
             UpgradeItemDefinition def = (UpgradeItemDefinition) upgrade.getItemDefinition();
-            applyUpgradeToWeapon(weapon, def);
+
+            // Apply all weapon modifications from this upgrade
+            for (UpgradeItemDefinition.Modification mod : def.getWeaponModifications()) {
+                applyModificationToWeapon(weapon, mod);
+            }
         }
     }
 
-    private void applyUpgradeToWeapon(WeaponItem weapon, UpgradeItemDefinition def) {
+    private void applyModificationToWeapon(WeaponItem weapon, UpgradeItemDefinition.Modification mod) {
         WeaponItemDefinition weaponDef = (WeaponItemDefinition) weapon.getItemDefinition();
+        WeaponItemDefinition newWeaponDef = new WeaponItemDefinition(weaponDef);
 
-        switch (def.getWeaponStat()) {
-            case DAMAGE:
-                double newDamage = weaponDef.getDamage() * def.getMultiplier();
-                weaponDef.setDamage(newDamage);
-                break;
+        try {
+            UpgradeItemDefinition.WeaponStat weaponStat =
+                    UpgradeItemDefinition.WeaponStat.valueOf(mod.getStat().toUpperCase());
 
-            case ATTACK_SPEED:
-                double newAttackSpeed = weaponDef.getAttackSpeed() * def.getMultiplier();
-                weaponDef.setAttackSpeed(newAttackSpeed);
-                break;
+            switch (weaponStat) {
+                case DAMAGE:
+                    double damage = applyOperation(newWeaponDef.getDamage(), mod.getValue(), mod.getOperation());
+                    newWeaponDef.setDamage(damage);
+                    break;
 
-            case RANGE:
-                double newRange = weaponDef.getRange() * def.getMultiplier();
-                weaponDef.setRange(newRange);
-                break;
+                case ATTACK_SPEED:
+                    double attackSpeed = applyOperation(newWeaponDef.getAttackSpeed(), mod.getValue(), mod.getOperation());
+                    newWeaponDef.setAttackSpeed(attackSpeed);
+                    break;
 
-            case MAGAZINE_SIZE:
-                int newMagSize = (int) (weaponDef.getMagazineSize() * def.getMultiplier());
-                weaponDef.setMagazineSize(newMagSize);
-                break;
+                case RANGE:
+                    double range = applyOperation(newWeaponDef.getRange(), mod.getValue(), mod.getOperation());
+                    newWeaponDef.setRange(range);
+                    break;
 
-            case RELOAD_TIME:
-                double newReloadTime = weaponDef.getReloadingTime() / def.getMultiplier();
-                weaponDef.setReloadingTime(newReloadTime);
-                break;
+                case MAGAZINE_SIZE:
+                    int magSize = (int) applyOperation(newWeaponDef.getMagazineSize(), mod.getValue(), mod.getOperation());
+                    newWeaponDef.setMagazineSize(magSize);
+                    break;
+
+                case RELOAD_TIME:
+                    double reloadTime = applyOperation(newWeaponDef.getReloadingTime(), mod.getValue(), mod.getOperation());
+                    newWeaponDef.setReloadingTime(reloadTime);
+                    break;
+            }
+
+            weapon.setItemDefinition(newWeaponDef);
+
+        } catch (IllegalArgumentException e) {
+            System.err.println("Unknown weapon stat: " + mod.getStat());
+        }
+    }
+
+    private double applyOperation(double currentValue, double modValue, UpgradeItemDefinition.OperationType operation) {
+        switch (operation) {
+            case MULTIPLY:
+                return currentValue * modValue;
+            case ADD:
+                return currentValue + modValue;
+            case DIVIDE:
+                return currentValue / modValue;
+            default:
+                return currentValue;
         }
     }
 

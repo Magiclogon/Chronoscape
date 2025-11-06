@@ -1,8 +1,7 @@
 package ma.ac.emi.gamelogic.shop;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import ma.ac.emi.gamelogic.weapon.Weapon;
 
 @Getter
 @Setter
@@ -21,4 +20,22 @@ public class WeaponItemDefinition extends ItemDefinition {
 	public ShopItem getItem() {
 		return new WeaponItem(this);
 	}
+
+    public WeaponItemDefinition(WeaponItemDefinition other) {
+        this.setId(other.getId());
+        this.setName(other.getName());
+        this.setDescription(other.getDescription());
+        this.setBasePrice(other.getBasePrice());
+        this.setIconPath(other.getIconPath());
+        this.setRarity(other.getRarity());
+
+        this.attackStrategy = other.attackStrategy;
+        this.damage = other.damage;
+        this.range = other.range;
+        this.attackSpeed = other.attackSpeed;
+        this.projectileId = other.projectileId;
+        this.reloadingTime = other.reloadingTime;
+        this.magazineSize = other.magazineSize;
+    }
+
 }

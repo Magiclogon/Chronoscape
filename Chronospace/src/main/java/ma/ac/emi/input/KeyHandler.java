@@ -171,5 +171,4 @@ public class KeyHandler{
 		setUp(false);
 		setDown(false);
 	}
-
 }
