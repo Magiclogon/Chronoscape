@@ -93,10 +93,15 @@
       "description": "Increases weapon damage by 30%.",
       "rarity": "RARE",
       "basePrice": 450,
-      "upgradeType": "WEAPON",
-      "weaponStat": "DAMAGE",
-      "multiplier": 1.3,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.3,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -105,10 +110,15 @@
       "description": "Increases weapon attack speed by 25%.",
       "rarity": "RARE",
       "basePrice": 400,
-      "upgradeType": "WEAPON",
-      "weaponStat": "ATTACK_SPEED",
-      "multiplier": 1.25,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -117,10 +127,15 @@
       "description": "Increases weapon range by 40%.",
       "rarity": "EPIC",
       "basePrice": 550,
-      "upgradeType": "WEAPON",
-      "weaponStat": "RANGE",
-      "multiplier": 1.4,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.4,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -129,10 +144,15 @@
       "description": "Increases magazine size by 50%.",
       "rarity": "COMMON",
       "basePrice": 300,
-      "upgradeType": "WEAPON",
-      "weaponStat": "MAGAZINE_SIZE",
-      "multiplier": 1.5,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -141,10 +161,15 @@
       "description": "Reduces reload time by 30%.",
       "rarity": "RARE",
       "basePrice": 400,
-      "upgradeType": "WEAPON",
-      "weaponStat": "RELOAD_TIME",
-      "multiplier": 1.3,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 1.3,
+          "operation": "DIVIDE"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -153,10 +178,15 @@
       "description": "Permanently increases max health by 50%.",
       "rarity": "EPIC",
       "basePrice": 700,
-      "upgradeType": "PLAYER",
-      "playerStat": "MAX_HEALTH",
-      "multiplier": 1.5,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -165,10 +195,15 @@
       "description": "Increases movement speed by 20%.",
       "rarity": "RARE",
       "basePrice": 500,
-      "upgradeType": "PLAYER",
-      "playerStat": "MOVEMENT_SPEED",
-      "multiplier": 1.2,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
@@ -177,34 +212,363 @@
       "description": "Reduces incoming damage by 20%.",
       "rarity": "EPIC",
       "basePrice": 650,
-      "upgradeType": "PLAYER",
-      "playerStat": "DEFENSE",
-      "multiplier": 1.2,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
       "id": "regen_upgrade",
       "name": "Healing Factor",
-      "description": "Grants passive health regeneration.",
+      "description": "Grants passive health regeneration of 2 HP/s.",
       "rarity": "LEGENDARY",
       "basePrice": 1000,
-      "upgradeType": "PLAYER",
-      "playerStat": "HEALTH_REGEN",
-      "multiplier": 2.0,
-      "stackable": true
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "HEALTH_REGEN",
+          "value": 2.0,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "berserker_mode",
+      "name": "Berserker Mode",
+      "description": "Increases damage by 50% and attack speed by 30%, but reduces defense by 30%.",
+      "rarity": "EPIC",
+      "basePrice": 800,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.3,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 0.7,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "glass_cannon",
+      "name": "Glass Cannon",
+      "description": "Doubles weapon damage and increases attack speed by 50%, but cuts max health in half.",
+      "rarity": "LEGENDARY",
+      "basePrice": 2000,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 2.0,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.5,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "tactical_enhancement",
+      "name": "Tactical Enhancement Suite",
+      "description": "Multiple improvements: +20% damage, +40% range, +15% speed, +25% health.",
+      "rarity": "LEGENDARY",
+      "basePrice": 1500,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.4,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "speed_demon",
+      "name": "Speed Demon",
+      "description": "Increases movement speed by 50% and halves reload time, but reduces max health by 20%.",
+      "rarity": "EPIC",
+      "basePrice": 750,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 2.0,
+          "operation": "DIVIDE"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.8,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "heavy_armor",
+      "name": "Heavy Armor Plating",
+      "description": "Increases defense by 50% but reduces movement speed by 25%.",
+      "rarity": "EPIC",
+      "basePrice": 850,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.75,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "vampiric_touch",
+      "name": "Vampiric Touch",
+      "description": "Grants 3 HP/s regeneration but reduces max health by 15%.",
+      "rarity": "LEGENDARY",
+      "basePrice": 1100,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "HEALTH_REGEN",
+          "value": 3.0,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.85,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "balanced_warrior",
+      "name": "Balanced Warrior Training",
+      "description": "Small improvements across all stats: +10% to damage, attack speed, health, and movement speed.",
+      "rarity": "RARE",
+      "basePrice": 600,
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "sniper_kit",
+      "name": "Sniper's Kit",
+      "description": "Greatly increases range and damage but reduces attack speed.",
+      "rarity": "EPIC",
+      "basePrice": 900,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 2.0,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.4,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.6,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "upgrade",
       "id": "ultimate_weapon_upgrade",
       "name": "Legendary Weapon Core",
-      "description": "Dramatically increases all weapon stats by 50%.",
+      "description": "Dramatically increases all weapon stats: +50% damage, +30% speed, +40% range, +50% magazine.",
       "rarity": "LEGENDARY",
-      "basePrice": 2000,
-      "upgradeType": "WEAPON",
-      "weaponStat": "DAMAGE",
-      "multiplier": 1.5,
-      "stackable": false
+      "basePrice": 2500,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.3,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.4,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 1.5,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "tank_mode",
+      "name": "Tank Mode",
+      "description": "Massive health and defense boost, but slower movement and attack speed.",
+      "rarity": "LEGENDARY",
+      "basePrice": 1800,
+      "stackable": false,
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 2.0,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 1.8,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.6,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.7,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "critical_striker",
+      "name": "Critical Striker",
+      "description": "Adds flat damage bonus and increases attack speed, but increases reload time.",
+      "rarity": "RARE",
+      "basePrice": 550,
+      "stackable": true,
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 10.0,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        }
+      ]
     }
   ]
 }
