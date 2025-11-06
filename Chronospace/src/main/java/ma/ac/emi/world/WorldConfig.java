@@ -12,6 +12,7 @@ import ma.ac.emi.gamelogic.wave.WaveConfig;
 public class WorldConfig {
     private int worldNumber;
     private int worldWidth, worldHeight; //in tiles
+    private String specieType;
     private List<WaveConfig> waves;
 
 }

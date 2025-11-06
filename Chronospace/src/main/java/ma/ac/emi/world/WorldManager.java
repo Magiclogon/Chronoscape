@@ -36,11 +36,14 @@ public class WorldManager {
 	private World currentWorld;
 	private int currentWorldIndex;
 	
-	public WorldManager(DifficultyStrategy difficulty, EnnemySpecieFactory factory) {
+	private EndlessWorldGenerator endlessGenerator;
+	
+	public WorldManager(DifficultyStrategy difficulty, EnnemySpecieFactory specieFactory) {
 		this.difficulty = difficulty;
-		this.specieFactory = factory;
+		this.specieFactory = specieFactory;
 		this.configLoader = new WaveConfigLoader();
 		this.waveFactory = new WaveFactory();
+		this.endlessGenerator = new EndlessWorldGenerator(10, 1.15, waveFactory, difficulty);
 		
 		this.player = Player.getInstance();
 		
@@ -75,7 +78,7 @@ public class WorldManager {
         for(WorldConfig worldConfig: configs) {
         	World world = new World(worldConfig.getWorldWidth(), worldConfig.getWorldHeight());
         	world.setDifficulty(difficulty);
-        	world.setSpecieFactory(specieFactory);
+        	world.setSpecieFactory(EnemySpecies.SPECIES.get(worldConfig.getSpecieType()));
         	for (WaveConfig config : worldConfig.getWaves()) {
                 Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
                         worldConfig.getWorldWidth(), worldConfig.getWorldHeight());
@@ -104,8 +107,10 @@ public class WorldManager {
 		currentWorldIndex++;
 		if(currentWorldIndex < worlds.size()) {
 			currentWorld = worlds.get(currentWorldIndex);
+		}else {
+			currentWorld = endlessGenerator.generateWorld(currentWorldIndex);
 		}
-				
+		System.out.println(currentWorld.getSpecieFactory().getClass().getName());
 		player.setAttackObjectManager(currentWorld.getAttackObjectManager());
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*currentWorld.getWidth()/2, GamePanel.TILE_SIZE*currentWorld.getHeight()/2));
 		player.initWeapons();

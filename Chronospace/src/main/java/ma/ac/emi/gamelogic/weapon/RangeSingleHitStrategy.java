@@ -15,7 +15,6 @@ public class RangeSingleHitStrategy implements AttackStrategy {
         			weapon.getDir(),
         			weapon
         		);
-        	System.out.println("attaking");
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.setAmmo(weapon.getAmmo() - 1);
             weapon.setTsla(0);
