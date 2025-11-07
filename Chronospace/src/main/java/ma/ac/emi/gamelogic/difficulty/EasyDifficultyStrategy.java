@@ -8,7 +8,7 @@ import ma.ac.emi.gamelogic.wave.Wave;
 public class EasyDifficultyStrategy implements DifficultyStrategy {
     @Override
     public void adjustEnemyStats(Ennemy enemy) {
-        // Increase enemy stats for hard mode
+        
     }
 
     @Override

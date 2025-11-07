@@ -1,13 +1,14 @@
 package ma.ac.emi.gamelogic.factory;
 
-import lombok.AllArgsConstructor;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.*;
 import ma.ac.emi.math.Vector2D;
 
-@AllArgsConstructor
-public class VampireFactory implements EnnemySpecieFactory {
-    DifficultyStrategy difficulty;
+public class VampireFactory extends EnnemySpecieFactory {
+    public VampireFactory(DifficultyStrategy difficulty) {
+		super(difficulty);
+		// TODO Auto-generated constructor stub
+	}
 
     @Override
     public Ennemy createCommon() {

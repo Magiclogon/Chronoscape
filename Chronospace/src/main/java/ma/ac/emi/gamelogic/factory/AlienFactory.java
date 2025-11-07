@@ -4,8 +4,11 @@ import ma.ac.emi.gamelogic.entity.*;
 import ma.ac.emi.math.Vector2D;
 
 
-public class AlienFactory implements EnnemySpecieFactory{
-    DifficultyStrategy difficulty;
+public class AlienFactory extends EnnemySpecieFactory{
+    public AlienFactory(DifficultyStrategy difficulty) {
+		super(difficulty);
+		// TODO Auto-generated constructor stub
+	}
 
     @Override
     public Ennemy createCommon() {

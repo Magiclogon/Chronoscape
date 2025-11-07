@@ -29,9 +29,7 @@ public class Player extends LivingEntity {
 	private int weaponIndex;
 	
 	private static Player instance;
-	
-	private AttackObjectManager attackObjectManager;
-	
+		
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector2D();

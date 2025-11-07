@@ -4,8 +4,11 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.*;
 import ma.ac.emi.math.Vector2D;
 
-public class ZombieFactory implements EnnemySpecieFactory {
-    DifficultyStrategy difficulty;
+public class ZombieFactory extends EnnemySpecieFactory {
+    public ZombieFactory(DifficultyStrategy difficulty) {
+		super(difficulty);
+		// TODO Auto-generated constructor stub
+	}
 
     @Override
     public Ennemy createCommon() {

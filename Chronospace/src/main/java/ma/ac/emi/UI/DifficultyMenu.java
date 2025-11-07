@@ -3,6 +3,9 @@ package ma.ac.emi.UI;
 import javax.swing.*;
 
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
+import ma.ac.emi.gamelogic.difficulty.HardDifficultyStrategy;
+import ma.ac.emi.gamelogic.difficulty.MediumDifficultyStrategy;
 
 import java.awt.*;
 
@@ -17,7 +20,26 @@ public class DifficultyMenu extends JPanel{
         hardButton = new JButton("Hard Button");
         anwarButton = new JButton("Anwar Button");
         
-        easyButton.addActionListener((e) -> GameController.getInstance().showLevelSelection());
+        easyButton.addActionListener((e) -> {
+        	GameController.getInstance().setDifficulty(new EasyDifficultyStrategy());
+        	GameController.getInstance().showLevelSelection();
+        });
+        
+        mediumButton.addActionListener((e) -> {
+        	GameController.getInstance().setDifficulty(new MediumDifficultyStrategy());
+        	GameController.getInstance().showLevelSelection();
+        });
+
+        hardButton.addActionListener((e) -> {
+        	GameController.getInstance().setDifficulty(new HardDifficultyStrategy());
+        	GameController.getInstance().showLevelSelection();
+        });
+
+        anwarButton.addActionListener((e) -> {
+        	GameController.getInstance().setDifficulty(new HardDifficultyStrategy());
+        	GameController.getInstance().showLevelSelection();
+        });
+
 
         title.setForeground(Color.RED);
         title.setFont(new Font("Arial", Font.BOLD, 28));

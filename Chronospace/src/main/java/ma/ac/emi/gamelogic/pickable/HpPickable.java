@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.pickable;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.player.Player;
 
 import java.awt.*;
@@ -44,7 +45,7 @@ public class HpPickable extends Pickable {
         g.setColor(Color.RED);
         g.fillOval((int)pos.getX(), (int)pos.getY(), 10, 10);
         g.setColor(Color.GREEN);
-        bound.setLocation((int) pos.getX(), (int) pos.getY());
         g.drawRect(bound.x, bound.y, bound.width, bound.height);
     }
+
 }

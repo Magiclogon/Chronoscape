@@ -4,17 +4,18 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
+import ma.ac.emi.world.WorldContext;
 
 import java.util.*;
 
 @Setter
 @Getter
 public class PathFinder {
-    private World world;
+    private WorldContext context;
     private int tileSize;
 
-    public PathFinder(World world, int tileSize) {
-        this.world = world;
+    public PathFinder(WorldContext context, int tileSize) {
+        this.context = context;
         this.tileSize = tileSize;
     }
 
@@ -99,7 +100,7 @@ public class PathFinder {
 
     private boolean isObstacle(Node node) {
         // Check if position is obstacle in world
-        return world.isObstacle((int)node.pos.getX(), (int)node.pos.getY());
+        return context.isObstacle((int)node.pos.getX(), (int)node.pos.getY());
     }
 
     private List<Vector2D> reconstructPath(Map<Node, Node> cameFrom, Node current) {

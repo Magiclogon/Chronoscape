@@ -1,12 +1,18 @@
 package ma.ac.emi.gamecontrol;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
@@ -39,15 +45,20 @@ public class GameController implements Runnable {
     
     private ShopManager shopManager;
 
+    private DifficultyStrategy difficulty;
+    private List<DifficultyObserver> difficultyObservers;
+    
     private GameController() {
         window = new Window();
 		ItemLoader.getInstance().loadItems("items.json");		
 		ProjectileLoader.getInstance().load("projectiles.json");
 		AOELoader.getInstance().load("aoe.json");
 		
+		difficultyObservers = new ArrayList<>();
         shopManager = new ShopManager(Player.getInstance());
-        worldManager = new WorldManager(new EasyDifficultyStrategy(), new VampireFactory(new EasyDifficultyStrategy()));
+
         showMainMenu();
+
     }
     
     public void nextWorld() {
@@ -93,6 +104,7 @@ public class GameController implements Runnable {
     
 
 	public void restartGame() {
+        worldManager = new WorldManager(difficulty);
 		worldManager.init();
 		shopManager.init();
 		startGame();
@@ -165,5 +177,18 @@ public class GameController implements Runnable {
         worldManager.update(step);
         camera.update(step);
     }
+    
+    public void setDifficulty(DifficultyStrategy difficulty) {
+    	this.difficulty = difficulty;
+    	notifyDifficultyObservers();
+    }
+    
+    public void notifyDifficultyObservers() {
+    	difficultyObservers.forEach((o) -> o.refreshDifficulty(difficulty));
+    }
+
+	public void addDifficultyObserver(DifficultyObserver observer) {
+		this.difficultyObservers.add(observer);
+	}
 
 }

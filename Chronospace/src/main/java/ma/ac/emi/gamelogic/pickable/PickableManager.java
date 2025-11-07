@@ -2,32 +2,38 @@ package ma.ac.emi.gamelogic.pickable;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.wave.WaveListener;
 import ma.ac.emi.gamelogic.wave.WaveNotifier;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
+import ma.ac.emi.world.WorldContext;
 
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Getter
 @Setter
-public class PickableManager implements WaveListener {
+public class PickableManager implements WaveListener, DifficultyObserver{
     private WaveNotifier waveNotifier;
     private List<Pickable> pickables;
-    private World world;
+    private WorldContext context;
     private Random random;
     private List<Pickable> pickableTypes;
-    private double difficultyMultiplier;
+    private DifficultyStrategy difficulty;
 
-    public PickableManager(World world) {
-        this.world = world;
+    public PickableManager(WorldContext context) {
+        this.context = context;
         this.pickables = new ArrayList<>();
         this.random = new Random();
         this.pickableTypes = new ArrayList<>();
-        this.difficultyMultiplier = 1.0;
         initializePickableTypes();
+        
+        GameController.getInstance().addDifficultyObserver(this);
     }
 
     private void initializePickableTypes() {
@@ -87,10 +93,24 @@ public class PickableManager implements WaveListener {
             if (roll <= cumulative) {
                 Pickable pickable = type.createInstance();
                 pickable.setPos(position);
-                pickable.adjustForDifficulty(difficultyMultiplier);
+                getDifficulty().adjustPickableDrop(pickable);
                 return pickable;
             }
         }
         return null;
     }
+
+	public void update(double step) {
+		getPickables().forEach((p) -> p.update(step));
+	}
+	
+	public void draw(Graphics g) {
+		getPickables().forEach((p) -> p.draw(g));
+
+	}
+
+	@Override
+	public void refreshDifficulty(DifficultyStrategy difficutly) {
+		this.difficulty = difficutly;
+	}
 }

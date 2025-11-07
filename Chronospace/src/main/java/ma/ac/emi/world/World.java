@@ -1,8 +1,6 @@
 package ma.ac.emi.world;
 
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -14,70 +12,59 @@ import ma.ac.emi.gamelogic.ai.PathFinder;
 import ma.ac.emi.gamelogic.ai.RangedAIBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.RangedEnnemy;
 import ma.ac.emi.gamelogic.entity.SpeedsterEnnemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
-import ma.ac.emi.gamelogic.factory.VampireFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.gamelogic.shop.ItemLoader;
-import ma.ac.emi.gamelogic.shop.Rarity;
-import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
-import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
 
 @Getter
 @Setter
 public class World {
-	private int width, height;
-	private Player player;
-	private WaveManager waveManager;
-	private Rectangle bound;
-	private AttackObjectManager attackObjectManager;
-	private CollisionManager collisionManager;
-	private PickableManager pickableManager;
-	private PathFinder pathfinder;
-	private List<Rectangle> obstacles; // Future use for obstacles
-	
-	private DifficultyStrategy difficulty;
-	private EnnemySpecieFactory specieFactory;
+	private final WorldContext context;
+	private final CollisionManager collisionManager;
 
-	public World(int w, int h) {
-		width = w;
-		height = h;
+	public World(int width, int height, EnnemySpecieFactory specieFactory) {
+		// Create context with all shared data
+		context = new WorldContext(width, height, specieFactory);
 
-		bound = new Rectangle(w * GamePanel.TILE_SIZE, h * GamePanel.TILE_SIZE);
-		obstacles = new ArrayList<>();
+		// Initialize managers that depend on context
+		initializeManagers();
+
+		// Initialize collision manager
+		collisionManager = new CollisionManager(context);
+	}
+
+	private void initializeManagers() {
+		// Create attack object manager
+		AttackObjectManager attackObjectManager = new AttackObjectManager(context);
+		context.setAttackObjectManager(attackObjectManager);
 		
-		collisionManager = new CollisionManager();
-		collisionManager.setWorld(this);
-		
-		attackObjectManager = new AttackObjectManager(this);
-		pickableManager = new PickableManager(this);
+		// Create pickable manager
+		PickableManager pickableManager = new PickableManager(context);
+		context.setPickableManager(pickableManager);
 
-		waveManager = new WaveManager(difficulty, width, height);
+		// Create wave manager
+		WaveManager waveManager = new WaveManager(context.getWorldWidth(), context.getWorldHeight());
 		waveManager.setAttackObjectManager(attackObjectManager);
-		
+		context.setWaveManager(waveManager);
 
 		// Initialize pathfinder for AI
-		pathfinder = new PathFinder(this, GamePanel.TILE_SIZE);
+		PathFinder pathfinder = new PathFinder(context, GamePanel.TILE_SIZE);
+		context.setPathFinder(pathfinder);
+	}
 
-		collisionManager.setPlayer(player);
-		collisionManager.setEnemies(new ArrayList<Ennemy>());
-		collisionManager.setAttackObjectManager(attackObjectManager);
-		collisionManager.setPickableManager(pickableManager);
-
-		// initialize AI
+	public void setPlayer(Player player) {
+		context.setPlayer(player);
 		initializeEnemyAI();
 	}
 
 	private void initializeEnemyAI() {
-		for (Wave wave : waveManager.getWaves()) {
+		for (Wave wave : context.getWaveManager().getWaves()) {
 			for (Ennemy enemy : wave.getEnemies()) {
 				setupEnemyAI(enemy);
 			}
@@ -85,63 +72,64 @@ public class World {
 	}
 
 	private void setupEnemyAI(Ennemy enemy) {
+		PathFinder pathfinder = context.getPathFinder();
+		
 		if (enemy instanceof RangedEnnemy) {
-			enemy.setAiBehavior(new RangedAIBehavior(pathfinder, 150, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
+			enemy.setAiBehavior(new RangedAIBehavior(
+				pathfinder, 
+				150, 
+				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+			));
 		} else if (enemy instanceof SpeedsterEnnemy) {
-			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
+			enemy.setAiBehavior(new MeleeAIBehavior(
+				pathfinder, 
+				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+			));
 		} else {
-			enemy.setAiBehavior(new MeleeAIBehavior(pathfinder, ((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()));
+			enemy.setAiBehavior(new MeleeAIBehavior(
+				pathfinder, 
+				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+			));
 		}
 	}
 
-	// declare a place as an obstacle
+	// Delegate to context
 	public void addObstacle(Rectangle obstacle) {
-		obstacles.add(obstacle);
+		context.addObstacle(obstacle);
 	}
 
-	// check if a place contains an obstacle
 	public boolean isObstacle(int gridX, int gridY) {
-
-		if (gridX < 0 || gridY < 0 || gridX >= width || gridY >= height) {
-			return true;
-		}
-
-		Rectangle checkRect = new Rectangle(
-				gridX * GamePanel.TILE_SIZE,
-				gridY * GamePanel.TILE_SIZE,
-				GamePanel.TILE_SIZE,
-				GamePanel.TILE_SIZE
-		);
-
-		for (Rectangle obstacle : obstacles) {
-			if (checkRect.intersects(obstacle)) {
-				return true;
-			}
-		}
-
-		return false;
+		return context.isObstacle(gridX, gridY);
 	}
 
 	public void update(double step) {
-		player.update(step);
+		Player player = context.getPlayer();
+		if (player != null) {
+			player.update(step);
+		}
 
 		// Update wave manager
+		WaveManager waveManager = context.getWaveManager();
 		waveManager.update(step, player.getPos());
 
-		// ensure enemies have AI
+		// Ensure enemies have AI
 		List<Ennemy> currentEnemies = waveManager.getCurrentEnemies();
 		for (Ennemy enemy : currentEnemies) {
 			if (enemy.getAiBehavior() == null) {
 				setupEnemyAI(enemy);
 			}
 		}
-		collisionManager.setEnemies(currentEnemies);
-
-		attackObjectManager.update(step);
+		
+		context.getPickableManager().update(step);
+		// Update managers
+		context.getAttackObjectManager().update(step);
 		collisionManager.handleCollisions();
 	}
 
 	public void draw(Graphics g) {
+		int width = context.getWorldWidth();
+		int height = context.getWorldHeight();
+		
 		// Draw grid
 		g.setColor(Color.black);
 		for (int i = 0; i < height; i++) {
@@ -151,21 +139,59 @@ public class World {
 			}
 		}
 
-		// Draw obstacles (if any)
+		// Draw obstacles
 		g.setColor(Color.DARK_GRAY);
-		for (Rectangle obstacle : obstacles) {
+		for (Rectangle obstacle : context.getObstacles()) {
 			g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 		}
 
-		attackObjectManager.draw(g);
-
-		player.draw(g);
-		for (Wave wave : waveManager.getWaves()) {
+		// Draw game objects
+		context.getAttackObjectManager().draw(g);
+		
+		Player player = context.getPlayer();
+		if (player != null) {
+			player.draw(g);
+		}
+		
+		for (Wave wave : context.getWaveManager().getWaves()) {
 			for (Ennemy ennemy : wave.getEnemies()) {
 				ennemy.draw(g);
 			}
 		}
 
-		pickableManager.getPickables().forEach(p -> p.draw(g));
+		context.getPickableManager().draw(g);;
+	}
+	
+	// Convenience getters that delegate to context
+	public int getWidth() {
+		return context.getWorldWidth();
+	}
+	
+	public int getHeight() {
+		return context.getWorldHeight();
+	}
+	
+	public Player getPlayer() {
+		return context.getPlayer();
+	}
+	
+	public WaveManager getWaveManager() {
+		return context.getWaveManager();
+	}
+	
+	public AttackObjectManager getAttackObjectManager() {
+		return context.getAttackObjectManager();
+	}
+	
+	public PickableManager getPickableManager() {
+		return context.getPickableManager();
+	}
+	
+	public EnnemySpecieFactory getSpecieFactory() {
+		return context.getSpecieFactory();
+	}
+	
+	public void setSpecieFactory(EnnemySpecieFactory factory) {
+		context.setSpecieFactory(factory);
 	}
 }

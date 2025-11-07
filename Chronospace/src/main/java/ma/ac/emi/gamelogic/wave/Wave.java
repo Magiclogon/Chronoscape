@@ -2,7 +2,9 @@ package ma.ac.emi.gamelogic.wave;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
@@ -12,12 +14,11 @@ import java.util.*;
 
 @Getter
 @Setter
-public class Wave extends WaveNotifier {
+public class Wave extends WaveNotifier implements DifficultyObserver{
     private int number;
     private int enemiesNumber;
     private List<Ennemy> enemies;
     private EnnemySpecieFactory specieFactory;
-    private DifficultyStrategy difficulty;
     private Map<String, Integer> enemyComposition;
     private boolean isBossWave;
     private double spawnDelay;
@@ -28,15 +29,14 @@ public class Wave extends WaveNotifier {
     private List<Vector2D> spawnPoints;
     private int worldWidth;
     private int worldHeight;
+    private double enemyNumberMultiplier;
     
     private AttackObjectManager attackObjectManager;
 
-    public Wave(int number, int enemiesNumber, EnnemySpecieFactory specieFactory,
-                DifficultyStrategy difficulty, int worldWidth, int worldHeight) {
+    public Wave(int number, int enemiesNumber, EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight) {
         this.number = number;
         this.enemiesNumber = enemiesNumber;
         this.specieFactory = specieFactory;
-        this.difficulty = difficulty;
         this.enemies = new ArrayList<>();
         this.isBossWave = false;
         this.spawnDelay = 0.5;
@@ -47,6 +47,10 @@ public class Wave extends WaveNotifier {
         spawnPoints = new ArrayList<>();
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+        
+        this.enemyNumberMultiplier = 1;
+        
+        GameController.getInstance().addDifficultyObserver(this);
     }
 
     public void spawn() {
@@ -158,4 +162,9 @@ public class Wave extends WaveNotifier {
     private enum WaveSpawnState {
         NOT_STARTED, SPAWNING, SPAWN_COMPLETE
     }
+
+	@Override
+	public void refreshDifficulty(DifficultyStrategy difficutly) {
+		difficutly.adjustEnemiesNumberWave(this);
+	}
 }
