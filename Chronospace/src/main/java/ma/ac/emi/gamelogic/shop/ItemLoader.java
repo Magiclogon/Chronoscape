@@ -1,6 +1,7 @@
 package ma.ac.emi.gamelogic.shop;
 
 import com.google.gson.*;
+
 import java.io.FileReader;
 import java.util.*;
 
@@ -60,4 +61,25 @@ public class ItemLoader {
     public Map<String, ItemDefinition> getItemsOfRarity(Rarity rarity) {
         return itemsByRarity.getOrDefault(rarity, Collections.emptyMap());
     }
+
+	public Map<Rarity, Map<String, ItemDefinition>> getItemsCopy() {
+		Map<Rarity, Map<String, ItemDefinition>> deepCopy = new HashMap<>();
+
+		for (Map.Entry<Rarity, Map<String, ItemDefinition>> rarityEntry : itemsByRarity.entrySet()) {
+		    Map<String, ItemDefinition> innerMapCopy = new HashMap<>();
+
+		    for (Map.Entry<String, ItemDefinition> itemEntry : rarityEntry.getValue().entrySet()) {
+		        ItemDefinition original = itemEntry.getValue();
+
+		        // Create a manual deep copy depending on subclass type
+		        ItemDefinition copy = original.clone();
+
+		        innerMapCopy.put(itemEntry.getKey(), copy);
+		    }
+
+		    deepCopy.put(rarityEntry.getKey(), innerMapCopy);
+		}
+
+		return deepCopy;
+	}
 }

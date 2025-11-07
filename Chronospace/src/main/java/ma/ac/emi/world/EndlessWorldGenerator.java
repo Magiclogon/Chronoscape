@@ -51,7 +51,7 @@ public class EndlessWorldGenerator {
 		world.setSpecieFactory(specieFactory);
 		
 		for(int i = 0; i < WAVES_PER_WORLD; i++) {
-			Wave wave = waveFactory.createWave(generateWave(i, currentWorldIndex), difficulty, new VampireFactory(difficulty), worldWidth, worldHeight);
+			Wave wave = waveFactory.createWave(generateWave(i, currentWorldIndex), difficulty, world.getSpecieFactory(), worldWidth, worldHeight);
 			wave.setAttackObjectManager(world.getAttackObjectManager());
             world.getWaveManager().addWave(wave);
             world.getPickableManager().subscribe(wave);

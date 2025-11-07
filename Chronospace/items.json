@@ -13,7 +13,8 @@
       "attackSpeed": 10,
       "projectileId": "bullet",
       "reloadingTime": 2.5,
-      "magazineSize": 50
+      "magazineSize": 50,
+      "stackable": false
     },
     {
       "type": "weapon",
@@ -27,7 +28,8 @@
       "range": 40,
       "attackSpeed": 1.5,
       "aoeType": "groundSlam",
-      "projectileId": "hammerShockwave"
+      "projectileId": "hammerShockwave",
+      "stackable": false
     },
     {
       "type": "weapon",
@@ -40,7 +42,8 @@
       "damage": 45,
       "range": 35,
       "attackSpeed": 2.0,
-      "projectileId": "noneSingle"
+      "projectileId": "noneSingle",
+      "stackable": false
     },
     {
       "type": "weapon",
@@ -56,7 +59,8 @@
       "projectileId": "rocket",
       "reloadingTime": 4.0,
       "magazineSize": 1,
-      "aoeType": "explosion"
+      "aoeType": "explosion",
+      "stackable": false
     },
     {
       "type": "weapon",
@@ -71,7 +75,8 @@
       "attackSpeed": 3.0,
       "projectileId": "arrow",
       "reloadingTime": 1.2,
-      "magazineSize": 1
+      "magazineSize": 1,
+      "stackable": false
     },
     {
       "type": "weapon",
@@ -84,7 +89,8 @@
       "damage": 5,
       "range": 35,
       "attackSpeed": 1.0,
-      "projectileId": "noneSingle"
+      "projectileId": "noneSingle",
+      "stackable": false
     },
     {
       "type": "upgrade",

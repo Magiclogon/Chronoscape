@@ -81,12 +81,22 @@ public class GameController implements Runnable {
     	window.showScreen("SHOP");
     }
     
+    public void showGameOver() {
+    	state = GameState.GAME_OVER;
+    	window.showScreen("GAMEOVER");
+    }
+    
     public void resumeGame() {
         state = GameState.PLAYING;
-        KeyHandler.getInstance().init();
-        showGame();
-        startGameThread();
+        startGame();
     }
+    
+
+	public void restartGame() {
+		worldManager.init();
+		shopManager.init();
+		startGame();
+	}
 
 
     public void startGame() {
@@ -99,7 +109,8 @@ public class GameController implements Runnable {
         camera = new Camera(new Vector2D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
-                
+        
+        KeyHandler.getInstance().init();
         MouseHandler.getInstance().setCamera(camera);
 
         window.showGame(gamePanel, gameUIPanel);
@@ -107,20 +118,20 @@ public class GameController implements Runnable {
         startGameThread();
     }
     
-    	public void startGameThread() {
-        if (gameThread != null && gameThread.isAlive()) {
-            // Stop current loop safely
-            state = GameState.STOPPED;
-            try {
-                gameThread.join(); // wait for it to stop
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Start a fresh loop
-        gameThread = new Thread(this);
-        gameThread.start();
+	public void startGameThread() {
+	    if (gameThread != null && gameThread.isAlive()) {
+	        // Stop current loop safely
+	        state = GameState.STOPPED;
+	        try {
+	            gameThread.join(); // wait for it to stop
+	        } catch (InterruptedException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	
+	    // Start a fresh loop
+	    gameThread = new Thread(this);
+	    gameThread.start();
     }
 
     @Override
@@ -154,4 +165,5 @@ public class GameController implements Runnable {
         worldManager.update(step);
         camera.update(step);
     }
+
 }

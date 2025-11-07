@@ -30,7 +30,6 @@ public class WorldManager {
 	private WaveConfigLoader configLoader;
 	private WaveFactory waveFactory;
 	private DifficultyStrategy difficulty;
-	private EnnemySpecieFactory specieFactory;
 	private Player player;
 	
 	private World currentWorld;
@@ -40,11 +39,14 @@ public class WorldManager {
 	
 	public WorldManager(DifficultyStrategy difficulty, EnnemySpecieFactory specieFactory) {
 		this.difficulty = difficulty;
-		this.specieFactory = specieFactory;
 		this.configLoader = new WaveConfigLoader();
 		this.waveFactory = new WaveFactory();
 		this.endlessGenerator = new EndlessWorldGenerator(10, 1.15, waveFactory, difficulty);
 		
+		init();
+	}
+	
+	public void init() {
 		this.player = Player.getInstance();
 		
 		worlds = new ArrayList<>();
@@ -58,17 +60,11 @@ public class WorldManager {
 		
 		currentWorldIndex = 0;
         currentWorld = worlds.get(currentWorldIndex);
-        
-        WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
-		WeaponItem fists = new WeaponItem(fistsDef);
-		
+
 		player.setAttackObjectManager(currentWorld.getAttackObjectManager());
 		player.setPos(new Vector2D(GamePanel.TILE_SIZE*currentWorld.getWidth()/2, GamePanel.TILE_SIZE*currentWorld.getHeight()/2));
-		player.setSpeed(100);
-        player.getInventory().addItem(fists);
-        player.getInventory().equipWeapon(fists, 0);
-        player.initWeapons();
-        
+
+		player.init();
         currentWorld.setPlayer(player);
 	}
 	
@@ -80,7 +76,7 @@ public class WorldManager {
         	world.setDifficulty(difficulty);
         	world.setSpecieFactory(EnemySpecies.SPECIES.get(worldConfig.getSpecieType()));
         	for (WaveConfig config : worldConfig.getWaves()) {
-                Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
+                Wave wave = waveFactory.createWave(config, difficulty, world.getSpecieFactory(),
                         worldConfig.getWorldWidth(), worldConfig.getWorldHeight());
                 wave.setAttackObjectManager(world.getAttackObjectManager());
                 world.getWaveManager().addWave(wave);

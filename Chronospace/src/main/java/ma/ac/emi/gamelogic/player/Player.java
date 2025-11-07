@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.player;
 
 import java.awt.*;
 
+import javax.swing.SwingUtilities;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
@@ -10,8 +12,6 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
-import ma.ac.emi.gamelogic.shop.Inventory;
-import ma.ac.emi.gamelogic.shop.ShopItem;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
@@ -35,18 +35,29 @@ public class Player extends LivingEntity {
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector2D();
-		hp = 50;
-		hpMax = 100;
-		money = 10000;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		weaponIndex = 0;
-		
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 	}
 	
 	public static Player getInstance() {
 		if(instance == null) instance = new Player();
 		return instance;
+	}
+	
+	public void init() {
+		hp = 50;
+		hpMax = 100;
+		money = 10000;
+		speed = 100;
+		weaponIndex = 0;
+		
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
+		WeaponItem fists = new WeaponItem(fistsDef);
+		
+		getInventory().init();
+        getInventory().addItem(fists);
+        getInventory().equipWeapon(fists, 0);
+        initWeapons();
 	}
 	
 	public void initWeapons() {
@@ -61,6 +72,9 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
+		if(getHp() <= 0) {
+			SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+		}
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack();
 		}
