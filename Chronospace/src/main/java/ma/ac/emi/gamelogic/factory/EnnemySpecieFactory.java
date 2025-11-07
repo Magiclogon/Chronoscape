@@ -1,11 +1,29 @@
 package ma.ac.emi.gamelogic.factory;
 
+import lombok.Getter;
+import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 
-public interface EnnemySpecieFactory {
-    Ennemy createCommon();
-    Ennemy createSpeedster();
-    Ennemy createTank();
-    Ennemy createRanged();
-    Ennemy createBoss();
+@Getter
+@Setter
+public abstract class EnnemySpecieFactory implements DifficultyObserver{
+	protected DifficultyStrategy difficulty;
+	
+	public EnnemySpecieFactory(DifficultyStrategy difficulty) {
+		this.difficulty = difficulty;
+		GameController.getInstance().addDifficultyObserver(this);
+	}
+	
+	@Override
+	public void refreshDifficulty(DifficultyStrategy difficulty) {
+		setDifficulty(difficulty);
+	}
+    public abstract Ennemy createCommon();
+    public abstract Ennemy createSpeedster();
+    public abstract Ennemy createTank();
+    public abstract Ennemy createRanged();
+    public abstract Ennemy createBoss();
 }

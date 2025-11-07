@@ -8,9 +8,14 @@ import java.util.Random;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
+import ma.ac.emi.gamelogic.factory.AlienFactory;
+import ma.ac.emi.gamelogic.factory.AmericanFactory;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.factory.VampireFactory;
+import ma.ac.emi.gamelogic.factory.ZombieFactory;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
@@ -18,6 +23,15 @@ import ma.ac.emi.gamelogic.wave.WaveFactory;
 @Getter
 @Setter
 public class EndlessWorldGenerator {
+	public static final Map<String, EnnemySpecieFactory> SPECIES = new HashMap<>();
+
+	static {
+		SPECIES.put("vampire", new VampireFactory(new EasyDifficultyStrategy()));
+		SPECIES.put("zombie", new ZombieFactory(new EasyDifficultyStrategy()));
+		SPECIES.put("american", new AmericanFactory(new EasyDifficultyStrategy()));
+		SPECIES.put("alien", new AlienFactory(new EasyDifficultyStrategy()));
+    }
+	
 	public final int MIN_WORLD_WIDTH = 30, MAX_WORLD_WIDTH = 70, MIN_WORLD_HEIGHT = 30, MAX_WORLD_HEIGHT = 70;
 	public final int WAVES_PER_WORLD = 10;
 	
@@ -36,6 +50,11 @@ public class EndlessWorldGenerator {
         this.waveFactory = waveFactory;
         this.difficulty = difficulty;
         this.random = new Random();
+        
+        for(EnnemySpecieFactory factory : SPECIES.values()) {
+        	factory.setDifficulty(difficulty);
+        }
+
         initSpeciesList();
     }
 	
@@ -46,12 +65,11 @@ public class EndlessWorldGenerator {
 		EnnemySpecieFactory specieFactory = specieFactories.remove(random.nextInt(specieFactories.size()));
 		int worldWidth = random.nextInt(MAX_WORLD_WIDTH-MIN_WORLD_WIDTH)+MIN_WORLD_WIDTH;
 		int worldHeight = random.nextInt(MAX_WORLD_HEIGHT-MIN_WORLD_HEIGHT)+MIN_WORLD_HEIGHT;
-		World world = new World(worldWidth, worldHeight);
-		world.setDifficulty(difficulty);
+		World world = new World(worldWidth, worldHeight, specieFactory);
 		world.setSpecieFactory(specieFactory);
 		
 		for(int i = 0; i < WAVES_PER_WORLD; i++) {
-			Wave wave = waveFactory.createWave(generateWave(i, currentWorldIndex), difficulty, world.getSpecieFactory(), worldWidth, worldHeight);
+			Wave wave = waveFactory.createWave(generateWave(i, currentWorldIndex), world.getSpecieFactory(), worldWidth, worldHeight);
 			wave.setAttackObjectManager(world.getAttackObjectManager());
             world.getWaveManager().addWave(wave);
             world.getPickableManager().subscribe(wave);
@@ -87,6 +105,6 @@ public class EndlessWorldGenerator {
 	
 	private void initSpeciesList() {
 		specieFactories = new ArrayList<>();
-        specieFactories.addAll(EnemySpecies.SPECIES.values());
+        specieFactories.addAll(SPECIES.values());
 	}
 }

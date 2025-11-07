@@ -19,7 +19,6 @@ import javax.swing.SwingUtilities;
 public class WaveManager {
     private int currentWaveNumber;
     private List<Wave> waves;
-    private DifficultyStrategy difficulty;
     private WaveFactory waveFactory;
     private WaveState state;
     private double waveDelay;
@@ -29,9 +28,7 @@ public class WaveManager {
     
     private AttackObjectManager attackObjectManager;
 
-    public WaveManager(DifficultyStrategy difficulty,
-                       int worldWidth, int worldHeight) {
-        this.difficulty = difficulty;
+    public WaveManager(int worldWidth, int worldHeight) {
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.waveFactory = new WaveFactory();

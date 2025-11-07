@@ -21,11 +21,12 @@ public class ShopManager {
 
     public ShopManager(Player player) {
     	this.player = player;
+    	itemsMap = ItemLoader.getInstance().getItemsCopy();
+
         init();
     }
     
     public void init() {
-    	itemsMap = ItemLoader.getInstance().getItemsCopy();
     	this.availableItems = new ArrayList<>();
         this.rerollPrice = 0;
         refreshAvailableItems();

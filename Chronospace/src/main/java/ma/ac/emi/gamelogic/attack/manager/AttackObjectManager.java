@@ -1,6 +1,7 @@
 package ma.ac.emi.gamelogic.attack.manager;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,15 +9,16 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.world.World;
+import ma.ac.emi.world.WorldContext;
 
 @Getter
 @Setter
 public class AttackObjectManager {
 	private List<AttackObject> attackObjects;
-	private World world;
+	private WorldContext context;
     
-    public AttackObjectManager(World world) {
-    	this.world = world;
+    public AttackObjectManager(WorldContext context) {
+    	this.context = context;
     	attackObjects = new ArrayList<>();
     }
 
@@ -28,7 +30,7 @@ public class AttackObjectManager {
     public void update(double step) {
         for (AttackObject attackObject : attackObjects) {
         	attackObject.update(step);
-        	if(attackObject.isOutOfWorld(world)) {
+        	if(attackObject.isOutOfWorld(context)) {
             	attackObject.setActive(false);
             }
         }

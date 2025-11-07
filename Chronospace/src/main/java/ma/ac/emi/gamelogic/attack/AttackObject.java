@@ -7,6 +7,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 import ma.ac.emi.world.World;
+import ma.ac.emi.world.WorldContext;
 
 @Getter
 @Setter
@@ -22,8 +23,8 @@ public abstract class AttackObject extends Entity{
 		fromPlayer = weapon.isFromPlayer();
 	}
    	
-    public boolean isOutOfWorld(World world) {
-    	return !(world.getBound().intersects(this.getBound()));
+    public boolean isOutOfWorld(WorldContext context) {
+    	return !(context.getWorldBounds().intersects(this.getBound()));
     }
     
     public abstract void applyEffect(LivingEntity entity);

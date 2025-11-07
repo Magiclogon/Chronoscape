@@ -6,19 +6,19 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.AIBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector2D;
 import java.awt.*;
 
 @Setter
 @Getter
-public class Ennemy extends LivingEntity {
+public class Ennemy extends LivingEntity implements DifficultyObserver{
 	protected double damage;
 	protected Weapon weapon;
 	protected AIBehavior aiBehavior;
 	
-	protected AttackObjectManager attackObjectManager;
-
 	public Ennemy(Vector2D pos, double speed) {
 		this.pos = pos;
 		this.speed = speed;
@@ -28,6 +28,7 @@ public class Ennemy extends LivingEntity {
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		hp = 30;
 		
+		GameController.getInstance().addDifficultyObserver(this);
 	}
 	
 	public void initWeapon() {
@@ -78,5 +79,10 @@ public class Ennemy extends LivingEntity {
 		if (this.weapon != null) {
 			this.weapon.attack();
 		}
+	}
+
+	@Override
+	public void refreshDifficulty(DifficultyStrategy difficutly) {
+		difficutly.adjustEnemyStats(this);
 	}
 }
