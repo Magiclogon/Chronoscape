@@ -17,6 +17,7 @@ public class ShopManager {
     private List<ShopItem> availableItems;
     private Player player;
     private int rerollPrice;
+    private Map<Rarity, Map<String, ItemDefinition>> itemsMap;
 
     public ShopManager(Player player) {
     	this.player = player;
@@ -24,6 +25,7 @@ public class ShopManager {
     }
     
     public void init() {
+    	itemsMap = ItemLoader.getInstance().getItemsCopy();
     	this.availableItems = new ArrayList<>();
         this.rerollPrice = 0;
         refreshAvailableItems();
@@ -40,7 +42,6 @@ public class ShopManager {
     public void refreshAvailableItems() {
     	if(rerollPrice > player.getMoney()) return;
     	setAvailableItems(new ArrayList<>());
-    	Map<Rarity, Map<String, ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
     	int chanceSum = 0;
     	for(Rarity rarity : Rarity.values()) {
     		chanceSum += rarity.getChance();
@@ -63,9 +64,7 @@ public class ShopManager {
     		}
     		
     		if(item == null || availableItems.contains(item.getItem())) continue;
-    		if(item instanceof WeaponItemDefinition) {
-    			if(((WeaponItemDefinition)item).isBought()) continue;
-    		}
+    		if(!item.isStackable() && item.isBought()) continue;
     		
     		availableItems.add(item.getItem());
     		i++;
@@ -87,6 +86,14 @@ public class ShopManager {
         if (player.getMoney() >= item.getPrice()) {
             player.setMoney(player.getMoney() - item.getPrice());
             item.apply(player);
+            for(Map<String, ItemDefinition> defs: itemsMap.values()) {
+        		for(ItemDefinition def: defs.values()) {
+        			if(def.equals(item.getItemDefinition())) {
+        				def.setBought(true);
+        				break;
+        			}
+        		}
+        	}
             refreshItem(item);
             return true;
         }
@@ -101,7 +108,6 @@ public class ShopManager {
 				break;
 			}
 		}
-		Map<Rarity, Map<String, ItemDefinition>> itemsMap = ItemLoader.getInstance().getItemsByRarity();
     	int chanceSum = 0;
     	for(Rarity rarity : Rarity.values()) {
     		chanceSum += rarity.getChance();

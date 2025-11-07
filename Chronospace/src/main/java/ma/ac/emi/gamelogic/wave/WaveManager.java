@@ -6,23 +6,13 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
+import ma.ac.emi.math.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-import lombok.Getter;
-import lombok.Setter;
-import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
-import ma.ac.emi.math.Vector2D;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
@@ -30,7 +20,6 @@ public class WaveManager {
     private int currentWaveNumber;
     private List<Wave> waves;
     private DifficultyStrategy difficulty;
-    private EnnemySpecieFactory specieFactory;
     private WaveFactory waveFactory;
     private WaveState state;
     private double waveDelay;
@@ -40,10 +29,9 @@ public class WaveManager {
     
     private AttackObjectManager attackObjectManager;
 
-    public WaveManager(DifficultyStrategy difficulty, EnnemySpecieFactory specieFactory,
+    public WaveManager(DifficultyStrategy difficulty,
                        int worldWidth, int worldHeight) {
         this.difficulty = difficulty;
-        this.specieFactory = specieFactory;
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
         this.waveFactory = new WaveFactory();
@@ -155,12 +143,6 @@ public class WaveManager {
     }
 
     public void addWave(Wave wave) {
-        waves.add(wave);
-    }
-
-    public void addWaveConfig(WaveConfig config) {
-        Wave wave = waveFactory.createWave(config, difficulty, specieFactory,
-                worldWidth, worldHeight);
         waves.add(wave);
     }
 

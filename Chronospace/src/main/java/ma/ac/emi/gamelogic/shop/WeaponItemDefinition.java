@@ -6,7 +6,7 @@ import ma.ac.emi.gamelogic.weapon.Weapon;
 @Getter
 @Setter
 @ToString
-public class WeaponItemDefinition extends ItemDefinition {
+public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private String attackStrategy;
     private double damage;
     private double range;
@@ -14,7 +14,6 @@ public class WeaponItemDefinition extends ItemDefinition {
     private String projectileId;
     private double reloadingTime;
     private int magazineSize;
-    private boolean bought = false;
 
 	@Override
 	public ShopItem getItem() {
@@ -36,6 +35,13 @@ public class WeaponItemDefinition extends ItemDefinition {
         this.projectileId = other.projectileId;
         this.reloadingTime = other.reloadingTime;
         this.magazineSize = other.magazineSize;
+    }
+    
+    
+    @Override
+    public WeaponItemDefinition clone() {
+		return new WeaponItemDefinition(this);
+    	
     }
 
 }

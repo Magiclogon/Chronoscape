@@ -20,12 +20,7 @@ public class Inventory {
     private double healthRegenRate;
 
     public Inventory() {
-        this.purchasedItems = new ArrayList<>();
-        this.equippedWeapons = new WeaponItem[MAX_EQU];
-        this.weaponUpgrades = new ArrayList<>();
-        this.playerUpgrades = new ArrayList<>();
-        this.defenseMultiplier = 1.0;
-        this.healthRegenRate = 0.0;
+    	init();
     }
 
     public void addItem(ShopItem item) {
@@ -163,4 +158,13 @@ public class Inventory {
     public double calculateDamageReduction(double incomingDamage) {
         return incomingDamage / defenseMultiplier;
     }
+
+	public void init() {
+        this.purchasedItems = new ArrayList<>();
+        this.equippedWeapons = new WeaponItem[MAX_EQU];
+        this.weaponUpgrades = new ArrayList<>();
+        this.playerUpgrades = new ArrayList<>();
+        this.defenseMultiplier = 1.0;
+        this.healthRegenRate = 0.0;		
+	}
 }

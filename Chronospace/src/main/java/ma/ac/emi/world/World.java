@@ -60,7 +60,7 @@ public class World {
 		attackObjectManager = new AttackObjectManager(this);
 		pickableManager = new PickableManager(this);
 
-		waveManager = new WaveManager(difficulty, specieFactory, width, height);
+		waveManager = new WaveManager(difficulty, width, height);
 		waveManager.setAttackObjectManager(attackObjectManager);
 		
 
