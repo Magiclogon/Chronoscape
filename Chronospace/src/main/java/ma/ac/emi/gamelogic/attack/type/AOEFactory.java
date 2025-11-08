@@ -2,7 +2,7 @@ package ma.ac.emi.gamelogic.attack.type;
 
 import ma.ac.emi.gamelogic.attack.AOE;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 public class AOEFactory {
 	private static AOEFactory instance;
@@ -13,7 +13,7 @@ public class AOEFactory {
 		return instance;
 	}
 
-	public AOE createAOE(String id, Vector2D pos, Weapon weapon) {
+	public AOE createAOE(String id, Vector3D pos, Weapon weapon) {
 		AOEDefinition def = AOELoader.getInstance().get(id);
 		if (def == null) {
 	        throw new IllegalArgumentException("Unknown AOE id: " + id);

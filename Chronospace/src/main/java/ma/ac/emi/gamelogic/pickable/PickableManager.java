@@ -7,7 +7,7 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.wave.WaveListener;
 import ma.ac.emi.gamelogic.wave.WaveNotifier;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
@@ -62,10 +62,10 @@ public class PickableManager implements WaveListener, DifficultyObserver{
     }
 
     @Override
-    public void onNotify(List<Vector2D> spawnPoints) {
+    public void onNotify(List<Vector3D> spawnPoints) {
         System.out.println("Notified with " + spawnPoints.size() + " spawn points");
 
-        for (Vector2D pos : spawnPoints) {
+        for (Vector3D pos : spawnPoints) {
             Pickable pickable = createRandomPickable(pos);
             if (pickable != null) {
                 addPickable(pickable);
@@ -73,7 +73,7 @@ public class PickableManager implements WaveListener, DifficultyObserver{
         }
     }
 
-    private Pickable createRandomPickable(Vector2D position) {
+    private Pickable createRandomPickable(Vector3D position) {
         if (pickableTypes.isEmpty()) {
             return null;
         }

@@ -11,19 +11,19 @@ import java.awt.geom.NoninvertibleTransformException;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
 public class MouseHandler implements MouseMotionListener, MouseListener, MouseWheelListener{
 	private static MouseHandler instance;
-	private Vector2D mouseScreenPos, mouseWorldPos;
+	private Vector3D mouseScreenPos, mouseWorldPos;
 	private boolean mouseDown;
 	private int mouseWheelRot;
 	private Camera camera;
 	
 	private MouseHandler() {
-		mouseScreenPos = new Vector2D();
+		mouseScreenPos = new Vector3D();
 		mouseWheelRot = 0;
 	}
 	
@@ -46,7 +46,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 		setMouseWorldPos(getMouseScreenPos().applyTransform(inverseCamTransform));
 	}
 	
-	public Vector2D getMouseWorldPos() {
+	public Vector3D getMouseWorldPos() {
 		calculateMouseWorldPos();
 		return mouseWorldPos;
 	}
@@ -68,12 +68,12 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		setMouseScreenPos(new Vector2D(e.getX(), e.getY()));
+		setMouseScreenPos(new Vector3D(e.getX(), e.getY()));
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		setMouseScreenPos(new Vector2D(e.getX(), e.getY()));
+		setMouseScreenPos(new Vector3D(e.getX(), e.getY()));
 	}
 
 	@Override

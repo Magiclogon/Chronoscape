@@ -1,13 +1,13 @@
 package ma.ac.emi.gamelogic.dto;
 
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 
 public class PlayerDTO {
-    private Vector2D position;
+    private Vector3D position;
 
-    public PlayerDTO(Vector2D position) {
+    public PlayerDTO(Vector3D position) {
         this.position = position;
     }
 

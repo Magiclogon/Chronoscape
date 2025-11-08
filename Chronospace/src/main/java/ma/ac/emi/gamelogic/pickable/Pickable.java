@@ -6,7 +6,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.awt.*;
 

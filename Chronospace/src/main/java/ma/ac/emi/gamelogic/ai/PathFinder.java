@@ -2,7 +2,7 @@ package ma.ac.emi.gamelogic.ai;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
@@ -20,7 +20,7 @@ public class PathFinder {
     }
 
     // Simple A* pathfinding
-    public List<Vector2D> findPath(Vector2D start, Vector2D goal) {
+    public List<Vector3D> findPath(Vector3D start, Vector3D goal) {
         Node startNode = new Node(toGrid(start));
         Node goalNode = new Node(toGrid(goal));
 
@@ -64,15 +64,15 @@ public class PathFinder {
         return new ArrayList<>(); // No path found
     }
 
-    private Vector2D toGrid(Vector2D pos) {
-        return new Vector2D(
+    private Vector3D toGrid(Vector3D pos) {
+        return new Vector3D(
                 Math.floor(pos.getX() / tileSize),
                 Math.floor(pos.getY() / tileSize)
         );
     }
 
-    private Vector2D toWorld(Vector2D gridPos) {
-        return new Vector2D(
+    private Vector3D toWorld(Vector3D gridPos) {
+        return new Vector3D(
                 gridPos.getX() * tileSize + tileSize / 2,
                 gridPos.getY() * tileSize + tileSize / 2
         );
@@ -85,13 +85,13 @@ public class PathFinder {
 
     private List<Node> getNeighbors(Node node) {
         List<Node> neighbors = new ArrayList<>();
-        Vector2D[] directions = {
-                new Vector2D(0, 1), new Vector2D(1, 0),
-                new Vector2D(0, -1), new Vector2D(-1, 0)
+        Vector3D[] directions = {
+                new Vector3D(0, 1), new Vector3D(1, 0),
+                new Vector3D(0, -1), new Vector3D(-1, 0)
         };
 
-        for (Vector2D dir : directions) {
-            Vector2D newPos = node.pos.add(dir);
+        for (Vector3D dir : directions) {
+            Vector3D newPos = node.pos.add(dir);
             neighbors.add(new Node(newPos));
         }
 
@@ -103,8 +103,8 @@ public class PathFinder {
         return context.isObstacle((int)node.pos.getX(), (int)node.pos.getY());
     }
 
-    private List<Vector2D> reconstructPath(Map<Node, Node> cameFrom, Node current) {
-        List<Vector2D> path = new ArrayList<>();
+    private List<Vector3D> reconstructPath(Map<Node, Node> cameFrom, Node current) {
+        List<Vector3D> path = new ArrayList<>();
 
         while (cameFrom.containsKey(current)) {
             path.add(0, toWorld(current.pos));
@@ -115,10 +115,10 @@ public class PathFinder {
     }
 
     private static class Node implements Comparable<Node> {
-        Vector2D pos;
+        Vector3D pos;
         double fScore;
 
-        Node(Vector2D pos) {
+        Node(Vector3D pos) {
             this.pos = pos;
             this.fScore = Double.MAX_VALUE;
         }

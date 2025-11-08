@@ -1,9 +1,9 @@
 package ma.ac.emi.gamelogic.ai;
 
 import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 public interface AIBehavior {
-    Vector2D calculateMovement(Ennemy enemy, Vector2D playerPos, double step);
-    boolean shouldAttack(Ennemy enemy, Vector2D playerPos);
+    Vector3D calculateMovement(Ennemy enemy, Vector3D playerPos, double step);
+    boolean shouldAttack(Ennemy enemy, Vector3D playerPos);
 }

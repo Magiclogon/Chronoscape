@@ -5,7 +5,7 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
@@ -16,7 +16,7 @@ public abstract class AttackObject extends Entity{
     protected Weapon weapon;
     protected boolean fromPlayer;
     
-   	public AttackObject(Vector2D pos, Weapon weapon) {
+   	public AttackObject(Vector3D pos, Weapon weapon) {
    		this.pos = pos;
 		this.active = true;
 		this.weapon = weapon;

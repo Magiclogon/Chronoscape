@@ -19,7 +19,7 @@ import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldManager;
 
@@ -118,7 +118,7 @@ public class GameController implements Runnable {
         gamePanel = new GamePanel(world);
         gameUIPanel = new GameUIPanel(world);
 
-        camera = new Camera(new Vector2D(), 640, 480, gamePanel, world.getPlayer());
+        camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
         
@@ -189,6 +189,7 @@ public class GameController implements Runnable {
 
 	public void addDifficultyObserver(DifficultyObserver observer) {
 		this.difficultyObservers.add(observer);
+		if(difficulty != null) notifyDifficultyObservers();
 	}
 
 }

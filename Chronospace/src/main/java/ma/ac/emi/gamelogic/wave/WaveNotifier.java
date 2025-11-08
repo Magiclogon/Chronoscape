@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.wave;
 
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +19,7 @@ public abstract class WaveNotifier {
         listeners.remove(listener);
     }
 
-    protected void notifyListeners(List<Vector2D> spawnPoints) {
+    protected void notifyListeners(List<Vector3D> spawnPoints) {
     	System.out.println("Notifying pickables");
         for (WaveListener listener : listeners) {
             listener.onNotify(spawnPoints);

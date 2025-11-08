@@ -15,7 +15,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.gamelogic.shop.*;
 
 @Setter
@@ -32,7 +32,7 @@ public class Player extends LivingEntity {
 		
 	private Player() {
 		inventory = new Inventory();
-		velocity = new Vector2D();
+		velocity = new Vector3D();
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 	}
@@ -131,7 +131,7 @@ public class Player extends LivingEntity {
 	}
 	
 	public void clamp(Rectangle bound) {
-		setPos(new Vector2D(Math.min(bound.width-getBound().width, Math.max(0, getPos().getX())),
+		setPos(new Vector3D(Math.min(bound.width-getBound().width, Math.max(0, getPos().getX())),
 				Math.min(bound.height-getBound().height, Math.max(0, getPos().getY()))));
 	}
 	

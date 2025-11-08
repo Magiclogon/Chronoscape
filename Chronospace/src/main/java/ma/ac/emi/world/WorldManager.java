@@ -16,7 +16,7 @@ import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveConfigLoader;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
@@ -24,7 +24,6 @@ public class WorldManager {
 	private List<World> worlds;
 	private WaveConfigLoader configLoader;
 	private WaveFactory waveFactory;
-	private DifficultyStrategy difficulty;
 	private Player player;
 	
 	private World currentWorld;
@@ -35,7 +34,6 @@ public class WorldManager {
 	public WorldManager(DifficultyStrategy difficulty) {
 		this.configLoader = new WaveConfigLoader();
 		this.waveFactory = new WaveFactory();
-		this.difficulty = difficulty;
 		init();
 	}
 	
@@ -44,7 +42,7 @@ public class WorldManager {
 		this.player = Player.getInstance();
 		
 		// Initialize endless generator with difficulty
-		this.endlessGenerator = new EndlessWorldGenerator(10, 1.15, waveFactory, difficulty);
+		this.endlessGenerator = new EndlessWorldGenerator(10, 1.15, waveFactory);
 		
 		worlds = new ArrayList<>();
 		
@@ -70,7 +68,7 @@ public class WorldManager {
 		player.setAttackObjectManager(currentWorld.getAttackObjectManager());
 		
 		// Position player in center of world
-		Vector2D centerPos = new Vector2D(
+		Vector3D centerPos = new Vector3D(
 			GamePanel.TILE_SIZE * currentWorld.getWidth() / 2,
 			GamePanel.TILE_SIZE * currentWorld.getHeight() / 2
 		);
