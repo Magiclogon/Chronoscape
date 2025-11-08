@@ -45,12 +45,6 @@ public class AttackObjectManager {
         attackObjects.removeIf(attackObject -> !attackObject.isActive());
        
     }
-
-    public void draw(Graphics g) {
-        for (AttackObject attackObject : attackObjects) {
-        	attackObject.draw(g);
-        }
-    }
     
     public List<AttackObject> getEnemyObjects(){
 		return getAttackObjects().stream().filter((o) -> !o.isFromPlayer()).toList();

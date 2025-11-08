@@ -7,14 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class ItemDefinition implements Cloneable{
-    private String id;
-    private String name;
-    private String description;
-    private int basePrice;
-    private String iconPath;
-    private Rarity rarity;
-    private boolean stackable;
-    private boolean bought;
+    protected String id;
+    protected String name;
+    protected String description;
+    protected int basePrice;
+    protected String iconPath;
+    protected Rarity rarity;
+    protected boolean stackable;
+    protected boolean bought;
     
     public abstract ShopItem getItem();
 
