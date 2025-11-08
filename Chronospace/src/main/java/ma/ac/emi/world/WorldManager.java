@@ -40,7 +40,7 @@ public class WorldManager {
 	public void init() {
 		// Get difficulty from GameController
 		this.player = Player.getInstance();
-		
+
 		// Initialize endless generator with difficulty
 		this.endlessGenerator = new EndlessWorldGenerator(10, 1.15, waveFactory);
 		
@@ -51,19 +51,15 @@ public class WorldManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		// Set up first world
-		currentWorldIndex = 0;
-		currentWorld = worlds.get(currentWorldIndex);
-		
-		// Initialize player for the first world
+		currentWorldIndex = -1;
+
+		nextWorld();
 		player.init();
-		setupPlayerForWorld();
+
 	}
 	
 	private void setupPlayerForWorld() {
 		if (currentWorld == null) return;
-		
 		// Set player's attack object manager to current world's
 		player.setAttackObjectManager(currentWorld.getAttackObjectManager());
 		
@@ -73,6 +69,7 @@ public class WorldManager {
 			GamePanel.TILE_SIZE * currentWorld.getHeight() / 2
 		);
 		player.setPos(centerPos);
+
 		// Set player in world context
 		currentWorld.setPlayer(player);
 	}
@@ -129,10 +126,11 @@ public class WorldManager {
 	
 	public void nextWorld() {
 		currentWorldIndex++;
-		
+
 		// Get next world (or generate endless world)
 		if (currentWorldIndex < worlds.size()) {
 			currentWorld = worlds.get(currentWorldIndex);
+			GameController.getInstance().getGamePanel().addDrawable(currentWorld);
 		} else {
 			currentWorld = endlessGenerator.generateWorld(currentWorldIndex);
 		}
@@ -140,11 +138,14 @@ public class WorldManager {
 		System.out.println("Switched to world with species: " + 
 			currentWorld.getSpecieFactory().getClass().getName());
 		
+
 		// Setup player for new world
 		setupPlayerForWorld();
 		
 		// Reinitialize player weapons (if needed)
 		player.initWeapons();
+
+
 	}
 	
 }

@@ -20,6 +20,7 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 	protected AIBehavior aiBehavior;
 	
 	public Ennemy(Vector3D pos, double speed) {
+		super();
 		this.pos = pos;
 		this.speed = speed;
 		this.velocity = new Vector3D();
@@ -71,7 +72,6 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 
 	@Override
 	public void draw(Graphics g) {
-		if(getWeapon() != null) getWeapon().draw(g);;
 	}
 
 	@Override
@@ -85,4 +85,7 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 	public void refreshDifficulty(DifficultyStrategy difficutly) {
 		difficutly.adjustEnemyStats(this);
 	}
+
+
+
 }

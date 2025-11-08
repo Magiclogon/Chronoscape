@@ -34,7 +34,6 @@ public class AttackObjectManager {
             	attackObject.setActive(false);
             }
         }
-        
         List<AttackObject> copy = new ArrayList<>(getAttackObjects());
         copy.forEach((object) -> {
         	if(!(object.isActive())) {

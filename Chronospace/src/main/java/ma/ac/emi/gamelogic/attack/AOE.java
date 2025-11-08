@@ -59,8 +59,5 @@ public class AOE extends AttackObject{
 		}
 		
 	}
-	
-	@Override
-	public void onDesactivate() {}
 
 }

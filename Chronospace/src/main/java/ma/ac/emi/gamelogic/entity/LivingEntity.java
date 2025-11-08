@@ -9,7 +9,11 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 @Getter
 public abstract class LivingEntity extends Entity {
-    protected double hp;
+    public LivingEntity() {
+		super(true);
+	}
+
+	protected double hp;
     protected double hpMax;
     protected double strength;
     protected double regenerationSpeed;

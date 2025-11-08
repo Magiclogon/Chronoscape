@@ -13,8 +13,8 @@ public class HpPickable extends Pickable {
     private double baseHpGain;
     private double hpGain;
 
-    public HpPickable(double hpGain, double dropProbability) {
-        super(dropProbability);
+    public HpPickable(double hpGain, double dropProbability, boolean drawn) {
+        super(dropProbability, drawn);
         this.baseHpGain = hpGain;
         this.hpGain = hpGain;
     }
@@ -36,7 +36,7 @@ public class HpPickable extends Pickable {
 
     @Override
     public Pickable createInstance() {
-        return new HpPickable(baseHpGain, dropProbability);
+        return new HpPickable(baseHpGain, dropProbability, true);
     }
 
     @Override

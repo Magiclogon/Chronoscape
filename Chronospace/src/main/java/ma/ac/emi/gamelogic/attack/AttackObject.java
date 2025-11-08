@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.attack;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -17,6 +18,7 @@ public abstract class AttackObject extends Entity{
     protected boolean fromPlayer;
     
    	public AttackObject(Vector3D pos, Weapon weapon) {
+   		super(true);
    		this.pos = pos;
 		this.active = true;
 		this.weapon = weapon;
@@ -29,6 +31,9 @@ public abstract class AttackObject extends Entity{
     
     public abstract void applyEffect(LivingEntity entity);
     
-    public abstract void onDesactivate();
+    public void onDesactivate() {
+		GameController.getInstance().getGamePanel().removeDrawable(this);
+
+    }
     
 }
