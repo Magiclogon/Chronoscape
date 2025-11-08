@@ -15,6 +15,8 @@ public abstract class ItemDefinition {
     private Rarity rarity;
     
     public abstract ShopItem getItem();
+
+    public abstract String getStatsDescription();
     
     @Override
     public boolean equals(Object o) {

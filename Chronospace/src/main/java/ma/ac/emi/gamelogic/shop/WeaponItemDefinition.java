@@ -21,6 +21,18 @@ public class WeaponItemDefinition extends ItemDefinition {
 		return new WeaponItem(this);
 	}
 
+    @Override
+    public String getStatsDescription() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Weapon Stats:\n");
+        sb.append("• Damage: ").append(String.format("%.1f", damage)).append("\n");
+        sb.append("• Range: ").append(String.format("%.1f", range)).append("\n");
+        sb.append("• Attack Speed: ").append(String.format("%.2f", attackSpeed)).append("/s\n");
+        sb.append("• Magazine Size: ").append(magazineSize).append("\n");
+        sb.append("• Reload Time: ").append(String.format("%.2f", reloadingTime)).append("s\n");
+        return sb.toString();
+    }
+
     public WeaponItemDefinition(WeaponItemDefinition other) {
         this.setId(other.getId());
         this.setName(other.getName());

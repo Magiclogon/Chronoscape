@@ -3,7 +3,7 @@ package ma.ac.emi.UI.shopElements;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.JButton;
+import javax.swing.*;
 
 import ma.ac.emi.UI.ShopUI;
 import ma.ac.emi.gamecontrol.GameController;
@@ -23,6 +23,10 @@ public class ShopItemButton extends JButton{
         setBackground(new Color(80, 80, 80));
         setForeground(Color.WHITE);
         setFont(new Font("Arial", Font.PLAIN, 12));
+
+        String statsDescription = item.getItemDefinition().getStatsDescription();
+        String htmlStats = "<html>" + statsDescription.replace("\n", "<br>") + "</html>";
+        setToolTipText(htmlStats);
 
         addActionListener(e -> {
             GameController.getInstance().getShopManager().purchaseItem(item);
