@@ -19,9 +19,4 @@ public class ProjectileSingleHit extends Projectile{
 		super.applyEffect(entity);
 	}
 
-	@Override
-	public void onDesactivate() {
-		// TODO Auto-generated method stub
-		
-	}
 }

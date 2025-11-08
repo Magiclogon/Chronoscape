@@ -14,14 +14,12 @@ public abstract class EnnemySpecieFactory implements DifficultyObserver{
 	
 	public EnnemySpecieFactory() {
 		GameController.getInstance().addDifficultyObserver(this);
-        System.out.println("manager added");
 
 	}
 	
 	@Override
 	public void refreshDifficulty(DifficultyStrategy difficulty) {
 		setDifficulty(difficulty);
-		System.out.println("difficulty set");
 	}
     public abstract Ennemy createCommon();
     public abstract Ennemy createSpeedster();

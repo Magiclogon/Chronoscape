@@ -11,11 +11,8 @@ import java.awt.*;
 import javax.swing.JPanel;
 
 public class GameUIPanel extends JPanel{
-
-	private World world;
 	
-	public GameUIPanel(World world) {
-		this.world = world;
+	public GameUIPanel() {
 		this.setOpaque(false);
 	}
 	
@@ -25,7 +22,7 @@ public class GameUIPanel extends JPanel{
 
 		Graphics2D g2 = (Graphics2D) g;
 
-		Player player = world.getPlayer();
+		Player player = Player.getInstance();
 		Inventory inventory = player.getInventory();
 
 		int panelWidth = getWidth();

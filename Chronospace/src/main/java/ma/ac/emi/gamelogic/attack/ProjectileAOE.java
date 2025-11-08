@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.attack;
 
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.type.AOEFactory;
 import ma.ac.emi.gamelogic.attack.type.ProjectileAOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -33,6 +34,7 @@ public class ProjectileAOE extends Projectile{
 
 	@Override
 	public void onDesactivate() {
+		super.onDesactivate();
 		spawnAoe();
 	}
 	

@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.math.Vector3D;
@@ -45,8 +46,8 @@ public class Camera {
 		double camY = targetPos.getY() - (this.height / 2.0);
 
 		// get world borders from panel
-		double worldPixelWidth = gamePanel.getWorld().getWidth() * GamePanel.TILE_SIZE;
-		double worldPixelHeight = gamePanel.getWorld().getHeight() * GamePanel.TILE_SIZE;
+		double worldPixelWidth = GameController.getInstance().getWorldManager().getCurrentWorld().getWidth() * GamePanel.TILE_SIZE;
+		double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
 
 		// bloquer cam aux bordures
 		camX = Math.max(0, Math.min(camX, worldPixelWidth - this.width));

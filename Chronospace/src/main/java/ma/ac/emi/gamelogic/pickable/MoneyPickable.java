@@ -12,8 +12,8 @@ public class MoneyPickable extends Pickable {
     private int baseMoneyGain;
     private int moneyGain;
 
-    public MoneyPickable(int moneyGain, double dropProbability) {
-        super(dropProbability);
+    public MoneyPickable(int moneyGain, double dropProbability, boolean drawn) {
+        super(dropProbability, drawn);
         this.baseMoneyGain = moneyGain;
         this.moneyGain = moneyGain;
     }
@@ -32,7 +32,7 @@ public class MoneyPickable extends Pickable {
 
     @Override
     public Pickable createInstance() {
-        return new MoneyPickable(baseMoneyGain, dropProbability);
+        return new MoneyPickable(baseMoneyGain, dropProbability, true);
     }
 
     @Override

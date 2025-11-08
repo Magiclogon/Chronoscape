@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
@@ -16,21 +17,20 @@ import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
-@EqualsAndHashCode
-public class Weapon {
+public class Weapon extends Entity{
 	protected WeaponItem weaponItem;
 	
-    protected Vector3D pos;
-    protected Vector3D dir;
-    protected LivingEntity bearer;
-    protected double tsla;
-    protected int ammo;
-    protected double tssr;
-    protected AttackObjectManager attackObjectManager;
+    private Vector3D dir;
+    private LivingEntity bearer;
+    private double tsla;
+    private int ammo;
+    private double tssr;
+    private AttackObjectManager attackObjectManager;
     
     protected AttackStrategy attackStrategy;
         
     public Weapon(WeaponItem weaponItem) {
+    	super(true);
     	this.weaponItem = weaponItem;
         pos = new Vector3D();
         dir = new Vector3D();

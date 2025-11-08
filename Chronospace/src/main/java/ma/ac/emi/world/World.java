@@ -11,8 +11,8 @@ import ma.ac.emi.gamelogic.ai.MeleeAIBehavior;
 import ma.ac.emi.gamelogic.ai.PathFinder;
 import ma.ac.emi.gamelogic.ai.RangedAIBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.RangedEnnemy;
 import ma.ac.emi.gamelogic.entity.SpeedsterEnnemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
@@ -24,11 +24,12 @@ import ma.ac.emi.gamelogic.wave.WaveManager;
 
 @Getter
 @Setter
-public class World {
+public class World extends Entity{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
 
 	public World(int width, int height, EnnemySpecieFactory specieFactory) {
+		super(false);
 		// Create context with all shared data
 		context = new WorldContext(width, height, specieFactory);
 

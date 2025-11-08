@@ -60,6 +60,10 @@ public class Player extends LivingEntity {
 	
 	public void initWeapons() {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
+			if(getEquippedWeapons()[i] == null) continue;
+			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[i]);
+		}
+		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
 			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
 			weapon.setAttackObjectManager(attackObjectManager);
@@ -90,7 +94,10 @@ public class Player extends LivingEntity {
 		bound.y = (int) getPos().getY();
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
+			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[weaponIndex]);
 			weaponIndex = Math.floorMod(weaponIndex+1, 3);
+			GameController.getInstance().getGamePanel().addDrawable(equippedWeapons[weaponIndex]);
+
 		}
 		if(equippedWeapons[weaponIndex] != null) {
 			equippedWeapons[weaponIndex].pointAt(MouseHandler.getInstance().getMouseWorldPos());
@@ -103,7 +110,6 @@ public class Player extends LivingEntity {
 		g.setColor(Color.GREEN);
 		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		
-		if(equippedWeapons[weaponIndex] != null) equippedWeapons[weaponIndex].draw(g);
 	}
 	
 	public void setWeapon(Weapon weapon) {

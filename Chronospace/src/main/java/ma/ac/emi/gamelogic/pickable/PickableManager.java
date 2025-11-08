@@ -38,8 +38,8 @@ public class PickableManager implements WaveListener, DifficultyObserver{
 
     private void initializePickableTypes() {
         // Base stats of pickables
-        pickableTypes.add(new HpPickable(20.0, 0.70));
-        pickableTypes.add(new MoneyPickable(10, 0.30));
+        pickableTypes.add(new HpPickable(20.0, 0.70, false));
+        pickableTypes.add(new MoneyPickable(10, 0.30, false));
     }
 
     public void addPickable(Pickable pickable) {

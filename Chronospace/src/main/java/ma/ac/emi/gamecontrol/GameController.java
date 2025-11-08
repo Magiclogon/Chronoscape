@@ -55,15 +55,17 @@ public class GameController implements Runnable {
 		AOELoader.getInstance().load("aoe.json");
 		
 		difficultyObservers = new ArrayList<>();
-        shopManager = new ShopManager(Player.getInstance());
+		
+        gamePanel = new GamePanel();
+        gameUIPanel = new GameUIPanel();
 
         showMainMenu();
 
     }
     
     public void nextWorld() {
+    	gamePanel.removeAllDrawables();
     	worldManager.nextWorld();
-    	gamePanel.setWorld(worldManager.getCurrentWorld());
     }
 
     public void showMainMenu() {
@@ -104,8 +106,9 @@ public class GameController implements Runnable {
     
 
 	public void restartGame() {
+		gamePanel.removeAllDrawables();
+        shopManager = new ShopManager(Player.getInstance());
         worldManager = new WorldManager(difficulty);
-		worldManager.init();
 		shopManager.init();
 		startGame();
 	}
@@ -115,8 +118,6 @@ public class GameController implements Runnable {
         state = GameState.PLAYING;
         
         World world = worldManager.getCurrentWorld();
-        gamePanel = new GamePanel(world);
-        gameUIPanel = new GameUIPanel(world);
 
         camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
