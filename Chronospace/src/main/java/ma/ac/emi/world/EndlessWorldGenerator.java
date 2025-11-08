@@ -26,10 +26,10 @@ public class EndlessWorldGenerator {
 	public static final Map<String, EnnemySpecieFactory> SPECIES = new HashMap<>();
 
 	static {
-		SPECIES.put("vampire", new VampireFactory(new EasyDifficultyStrategy()));
-		SPECIES.put("zombie", new ZombieFactory(new EasyDifficultyStrategy()));
-		SPECIES.put("american", new AmericanFactory(new EasyDifficultyStrategy()));
-		SPECIES.put("alien", new AlienFactory(new EasyDifficultyStrategy()));
+		SPECIES.put("vampire", VampireFactory.getInstance());
+		SPECIES.put("zombie", ZombieFactory.getInstance());
+		SPECIES.put("american", AmericanFactory.getInstance());
+		SPECIES.put("alien", AlienFactory.getInstance());
     }
 	
 	public final int MIN_WORLD_WIDTH = 30, MAX_WORLD_WIDTH = 70, MIN_WORLD_HEIGHT = 30, MAX_WORLD_HEIGHT = 70;
@@ -40,21 +40,15 @@ public class EndlessWorldGenerator {
 	private Random random;
 	
 	private WaveFactory waveFactory;
-	private DifficultyStrategy difficulty;
 	
 	private List<EnnemySpecieFactory> specieFactories;
 	
-	public EndlessWorldGenerator(int baseEnemyCount, double difficultyMultiplier, WaveFactory waveFactory, DifficultyStrategy difficulty) {
+	public EndlessWorldGenerator(int baseEnemyCount, double difficultyMultiplier, WaveFactory waveFactory) {
         this.baseEnemyCount = baseEnemyCount;
         this.difficultyMultiplier = difficultyMultiplier;
         this.waveFactory = waveFactory;
-        this.difficulty = difficulty;
         this.random = new Random();
         
-        for(EnnemySpecieFactory factory : SPECIES.values()) {
-        	factory.setDifficulty(difficulty);
-        }
-
         initSpeciesList();
     }
 	

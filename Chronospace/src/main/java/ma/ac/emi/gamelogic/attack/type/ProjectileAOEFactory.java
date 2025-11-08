@@ -3,7 +3,7 @@ package ma.ac.emi.gamelogic.attack.type;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.attack.ProjectileAOE;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 public class ProjectileAOEFactory implements ProjectileFactory{
 	private static ProjectileAOEFactory instance;
@@ -15,7 +15,7 @@ public class ProjectileAOEFactory implements ProjectileFactory{
 	}
 
 	@Override
-	public Projectile createProjectile(String id, Vector2D pos, Vector2D dir, Weapon weapon) {
+	public Projectile createProjectile(String id, Vector3D pos, Vector3D dir, Weapon weapon) {
 		ProjectileAOEDefinition def = (ProjectileAOEDefinition) ProjectileLoader.getInstance().get(id);
 		if (def == null) {
 	        throw new IllegalArgumentException("Unknown projectile id: " + id);

@@ -6,7 +6,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class WaveManager {
         this.waveTimer = 0;
     }
 
-    public void update(double deltaTime, Vector2D playerPos) {
+    public void update(double deltaTime, Vector3D playerPos) {
         switch (state) {
             case WAITING:
                 waveTimer += deltaTime;

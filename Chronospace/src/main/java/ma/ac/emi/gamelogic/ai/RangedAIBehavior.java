@@ -3,7 +3,7 @@ package ma.ac.emi.gamelogic.ai;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class RangedAIBehavior implements AIBehavior {
     private double optimalRange;
     private double attackRange;
     private double minRange;
-    private Vector2D currentTarget;
+    private Vector3D currentTarget;
 
     public RangedAIBehavior(PathFinder pathfinder, double optimalRange, double attackRange) {
         this.pathfinder = pathfinder;
@@ -24,12 +24,12 @@ public class RangedAIBehavior implements AIBehavior {
     }
 
     @Override
-    public Vector2D calculateMovement(Ennemy enemy, Vector2D playerPos, double step) {
+    public Vector3D calculateMovement(Ennemy enemy, Vector3D playerPos, double step) {
         double distance = enemy.getPos().distance(playerPos);
 
         // Too close - retreat
         if (distance < minRange) {
-            Vector2D retreatDirection = enemy.getPos().sub(playerPos).normalize();
+            Vector3D retreatDirection = enemy.getPos().sub(playerPos).normalize();
             return retreatDirection;
         }
 
@@ -41,7 +41,7 @@ public class RangedAIBehavior implements AIBehavior {
 
             // Use pathfinding for longer distances
             if (currentTarget == null || currentTarget.distance(enemy.getPos()) < 10) {
-                List<Vector2D> path = pathfinder.findPath(enemy.getPos(), playerPos);
+                List<Vector3D> path = pathfinder.findPath(enemy.getPos(), playerPos);
                 if (!path.isEmpty()) {
                     currentTarget = path.get(0);
                 } else {
@@ -52,13 +52,13 @@ public class RangedAIBehavior implements AIBehavior {
         }
 
         // At optimal range - strafe (move perpendicular)
-        Vector2D toPlayer = playerPos.sub(enemy.getPos());
-        Vector2D perpendicular = new Vector2D(-toPlayer.getY(), toPlayer.getX()).normalize();
+        Vector3D toPlayer = playerPos.sub(enemy.getPos());
+        Vector3D perpendicular = new Vector3D(-toPlayer.getY(), toPlayer.getX()).normalize();
         return perpendicular;
     }
 
     @Override
-    public boolean shouldAttack(Ennemy enemy, Vector2D playerPos) {
+    public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
         double distance = enemy.getPos().distance(playerPos);
         return distance <= attackRange && distance >= minRange;
     }

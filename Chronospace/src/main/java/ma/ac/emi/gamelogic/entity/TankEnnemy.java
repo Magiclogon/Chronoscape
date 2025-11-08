@@ -4,12 +4,12 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.awt.*;
 
 public class TankEnnemy extends Ennemy{
-    public TankEnnemy(Vector2D pos, double speed) {
+    public TankEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
     

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Setter
 @Getter

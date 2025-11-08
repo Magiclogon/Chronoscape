@@ -15,9 +15,9 @@ public class EnemySpecies {
 	public static final Map<String, EnnemySpecieFactory> SPECIES = new HashMap<>();
 
 	static {
-		SPECIES.put("vampire", new VampireFactory(GameController.getInstance().getDifficulty()));
-		SPECIES.put("zombie", new ZombieFactory(GameController.getInstance().getDifficulty()));
-		SPECIES.put("american", new AmericanFactory(GameController.getInstance().getDifficulty()));
-		SPECIES.put("alien", new AlienFactory(GameController.getInstance().getDifficulty()));
+		SPECIES.put("vampire", VampireFactory.getInstance());
+		SPECIES.put("zombie", ZombieFactory.getInstance());
+		SPECIES.put("american", AmericanFactory.getInstance());
+		SPECIES.put("alien", AlienFactory.getInstance());
     }
 }

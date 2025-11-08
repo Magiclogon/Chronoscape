@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Setter
 @Getter
 public class Camera {
 	private double scalingFactor = 0.3;
-	private Vector2D pos;
+	private Vector3D pos;
 	private double width;
 	private double height;
 	private AffineTransform camTransform;
@@ -21,7 +21,7 @@ public class Camera {
 	private GamePanel gamePanel;
 	private Entity followed;
 
-	public Camera(Vector2D pos, double w, double h, GamePanel gamePanel, Entity followed ) {
+	public Camera(Vector3D pos, double w, double h, GamePanel gamePanel, Entity followed ) {
 		this.pos = pos;
 		this.width = w;
 		this.height = h;
@@ -38,7 +38,7 @@ public class Camera {
 		this.width = gamePanel.getWidth()*scalingFactor;
 		this.height = gamePanel.getHeight()*scalingFactor;		
 
-		Vector2D targetPos = followed.getPos();
+		Vector3D targetPos = followed.getPos();
 
 		// center on player
 		double camX = targetPos.getX() - (this.width / 2.0);

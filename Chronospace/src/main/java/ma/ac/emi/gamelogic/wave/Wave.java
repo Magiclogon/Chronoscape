@@ -8,7 +8,7 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.util.*;
 
@@ -26,7 +26,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
     private int enemiesSpawned;
     private WaveSpawnState spawnState;
     private Random random;
-    private List<Vector2D> spawnPoints;
+    private List<Vector3D> spawnPoints;
     private int worldWidth;
     private int worldHeight;
     private double enemyNumberMultiplier;
@@ -59,7 +59,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         enemiesSpawned = 0;
     }
 
-    public void update(double deltaTime, Vector2D playerPos) {
+    public void update(double deltaTime, Vector3D playerPos) {
         if (spawnState == WaveSpawnState.SPAWNING) {
             spawnTimer += deltaTime;
 
@@ -75,7 +75,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         }
 
         // dead enemies positions
-        List<Vector2D> deadEnemyPositions = new ArrayList<>();
+        List<Vector3D> deadEnemyPositions = new ArrayList<>();
         enemies.forEach(e -> {
             if(e.getHp() <= 0) deadEnemyPositions.add(e.getPos());
         });
@@ -110,7 +110,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         x = random.nextDouble() * worldWidth * 16;
         y = random.nextDouble() * worldHeight * 16;
 
-        enemy.setPos(new Vector2D(x, y));
+        enemy.setPos(new Vector3D(x, y));
     }
 
     private Ennemy spawnFromComposition() {

@@ -3,7 +3,7 @@ package ma.ac.emi.gamelogic.ai;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 public class MeleeAIBehavior implements AIBehavior {
     private PathFinder pathfinder;
     private double attackRange;
-    private Vector2D currentTarget;
+    private Vector3D currentTarget;
 
     public MeleeAIBehavior(PathFinder pathfinder, double attackRange) {
         this.pathfinder = pathfinder;
@@ -20,7 +20,7 @@ public class MeleeAIBehavior implements AIBehavior {
     }
 
     @Override
-    public Vector2D calculateMovement(Ennemy enemy, Vector2D playerPos, double step) {
+    public Vector3D calculateMovement(Ennemy enemy, Vector3D playerPos, double step) {
         double distance = enemy.getPos().distance(playerPos);
 
         // si très proche, se déplacer directement
@@ -30,7 +30,7 @@ public class MeleeAIBehavior implements AIBehavior {
 
         // use pathfinding
         if (currentTarget == null || currentTarget.distance(enemy.getPos()) < 10) {
-            List<Vector2D> path = pathfinder.findPath(enemy.getPos(), playerPos);
+            List<Vector3D> path = pathfinder.findPath(enemy.getPos(), playerPos);
             if (!path.isEmpty()) {
                 currentTarget = path.get(0);
             } else {
@@ -42,7 +42,7 @@ public class MeleeAIBehavior implements AIBehavior {
     }
 
     @Override
-    public boolean shouldAttack(Ennemy enemy, Vector2D playerPos) {
+    public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
         return enemy.getPos().distance(playerPos) <= attackRange;
     }
 }

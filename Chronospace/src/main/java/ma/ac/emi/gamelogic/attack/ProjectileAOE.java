@@ -4,11 +4,11 @@ import ma.ac.emi.gamelogic.attack.type.AOEFactory;
 import ma.ac.emi.gamelogic.attack.type.ProjectileAOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 public class ProjectileAOE extends Projectile{
 
-	public ProjectileAOE(Vector2D pos, Vector2D dir, ProjectileAOEDefinition projectileType, Weapon weapon) {
+	public ProjectileAOE(Vector3D pos, Vector3D dir, ProjectileAOEDefinition projectileType, Weapon weapon) {
 		super(pos, dir, projectileType, weapon);
 		// TODO Auto-generated constructor stub
 	}

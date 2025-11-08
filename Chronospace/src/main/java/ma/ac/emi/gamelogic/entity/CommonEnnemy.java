@@ -3,12 +3,12 @@ package ma.ac.emi.gamelogic.entity;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 import java.awt.*;
 
 public class CommonEnnemy extends Ennemy{
-    public CommonEnnemy(Vector2D pos, double speed) {
+    public CommonEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
     

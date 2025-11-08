@@ -11,7 +11,7 @@ import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
@@ -19,7 +19,7 @@ public class AOE extends AttackObject{
 	private AOEDefinition aoeType;
 	private double currentAge, lastAge;
 	
-	public AOE(Vector2D pos, AOEDefinition aoeType, Weapon weapon) {
+	public AOE(Vector3D pos, AOEDefinition aoeType, Weapon weapon) {
 		super(pos, weapon);
 		
 		this.aoeType = aoeType;

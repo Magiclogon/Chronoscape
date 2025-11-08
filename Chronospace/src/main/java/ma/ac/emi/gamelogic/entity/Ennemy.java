@@ -9,7 +9,7 @@ import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import java.awt.*;
 
 @Setter
@@ -19,10 +19,10 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 	protected Weapon weapon;
 	protected AIBehavior aiBehavior;
 	
-	public Ennemy(Vector2D pos, double speed) {
+	public Ennemy(Vector3D pos, double speed) {
 		this.pos = pos;
 		this.speed = speed;
-		this.velocity = new Vector2D();
+		this.velocity = new Vector3D();
 		hpMax = 100;
 		hp = 100;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
@@ -36,11 +36,11 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 		getWeapon().snapTo(this);
 	}
 
-	public void update(double step, Vector2D targetPos) {
+	public void update(double step, Vector3D targetPos) {
 		velocity.init();
 
 		if (aiBehavior != null) {
-			Vector2D direction = aiBehavior.calculateMovement(this, targetPos, step);
+			Vector3D direction = aiBehavior.calculateMovement(this, targetPos, step);
 			setVelocity(direction.mult(getSpeed()));
 
 			if (aiBehavior.shouldAttack(this, targetPos)) {
@@ -52,7 +52,7 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 			}
 		} else {
 			// basic
-			Vector2D direction = (targetPos.sub(getPos())).normalize();
+			Vector3D direction = (targetPos.sub(getPos())).normalize();
 			setVelocity(direction.mult(getSpeed()));
 		}
 

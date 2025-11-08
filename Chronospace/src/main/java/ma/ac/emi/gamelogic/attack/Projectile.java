@@ -12,17 +12,17 @@ import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 
 @Getter
 @Setter
 public abstract class Projectile extends AttackObject{
 	private ProjectileDefinition projectileType; 
-	private Vector2D startingPos;
+	private Vector3D startingPos;
     private double radius = 2;
     
-    public Projectile(Vector2D pos, Vector2D dir, ProjectileDefinition projectileType, Weapon weapon) {
+    public Projectile(Vector3D pos, Vector3D dir, ProjectileDefinition projectileType, Weapon weapon) {
     	super(pos, weapon);
     	this.projectileType = projectileType;
     	this.startingPos = pos;

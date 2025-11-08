@@ -9,7 +9,7 @@ import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 
 @Getter

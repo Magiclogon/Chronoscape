@@ -12,7 +12,7 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.input.MouseHandler;
-import ma.ac.emi.math.Vector2D;
+import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
@@ -20,8 +20,8 @@ import ma.ac.emi.math.Vector2D;
 public class Weapon {
 	protected WeaponItem weaponItem;
 	
-    protected Vector2D pos;
-    protected Vector2D dir;
+    protected Vector3D pos;
+    protected Vector3D dir;
     protected LivingEntity bearer;
     protected double tsla;
     protected int ammo;
@@ -32,8 +32,8 @@ public class Weapon {
         
     public Weapon(WeaponItem weaponItem) {
     	this.weaponItem = weaponItem;
-        pos = new Vector2D();
-        dir = new Vector2D();
+        pos = new Vector3D();
+        dir = new Vector3D();
         tsla = 0;
         tssr = 0;
         
@@ -86,7 +86,7 @@ public class Weapon {
         tssr = 0;
     }
 
-    public void pointAt(Vector2D target) {
+    public void pointAt(Vector3D target) {
         setDir(target.sub(getPos()).normalize());
     }
     
