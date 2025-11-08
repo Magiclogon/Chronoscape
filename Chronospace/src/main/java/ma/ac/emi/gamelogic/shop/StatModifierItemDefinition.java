@@ -8,5 +8,10 @@ public class StatModifierItemDefinition extends ItemDefinition {
 	public ShopItem getItem() {
 		return new StatModifierItem(this);
 	}
+
+	@Override
+	public String getStatsDescription() {
+		return "Modifier: " + modifier + " " + stat;
+	}
     
 }
