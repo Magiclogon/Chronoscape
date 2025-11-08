@@ -139,28 +139,6 @@ public class World extends Entity{
 						GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 			}
 		}
-
-		// Draw obstacles
-		g.setColor(Color.DARK_GRAY);
-		for (Rectangle obstacle : context.getObstacles()) {
-			g.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
-		}
-
-		// Draw game objects
-		context.getAttackObjectManager().draw(g);
-		
-		Player player = context.getPlayer();
-		if (player != null) {
-			player.draw(g);
-		}
-		
-		for (Wave wave : context.getWaveManager().getWaves()) {
-			for (Ennemy ennemy : wave.getEnemies()) {
-				ennemy.draw(g);
-			}
-		}
-
-		context.getPickableManager().draw(g);;
 	}
 	
 	// Convenience getters that delegate to context

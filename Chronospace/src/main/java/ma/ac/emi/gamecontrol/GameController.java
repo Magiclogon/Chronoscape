@@ -118,7 +118,7 @@ public class GameController implements Runnable {
         state = GameState.PLAYING;
         
         World world = worldManager.getCurrentWorld();
-
+        world.getPickableManager().init();
         camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);

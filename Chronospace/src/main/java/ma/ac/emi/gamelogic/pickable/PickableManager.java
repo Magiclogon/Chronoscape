@@ -28,12 +28,17 @@ public class PickableManager implements WaveListener, DifficultyObserver{
 
     public PickableManager(WorldContext context) {
         this.context = context;
+ 
+        GameController.getInstance().addDifficultyObserver(this);
+    }
+    
+    public void init() {
+    	if(pickables != null) pickables.forEach(p -> GameController.getInstance().getGamePanel().removeDrawable(p));
         this.pickables = new ArrayList<>();
         this.random = new Random();
         this.pickableTypes = new ArrayList<>();
         initializePickableTypes();
         
-        GameController.getInstance().addDifficultyObserver(this);
     }
 
     private void initializePickableTypes() {
@@ -104,10 +109,6 @@ public class PickableManager implements WaveListener, DifficultyObserver{
 		getPickables().forEach((p) -> p.update(step));
 	}
 	
-	public void draw(Graphics g) {
-		getPickables().forEach((p) -> p.draw(g));
-
-	}
 
 	@Override
 	public void refreshDifficulty(DifficultyStrategy difficutly) {
