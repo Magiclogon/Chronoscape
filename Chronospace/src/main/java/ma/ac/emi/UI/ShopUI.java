@@ -16,6 +16,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ShopUI handles the visual representation of the in-game shop.
@@ -76,9 +78,6 @@ public class ShopUI extends JPanel {
         descriptionPanel.add(createStatsPanel());
         descriptionPanel.add(createItemDescriptionPanel());
         add(descriptionPanel, BorderLayout.EAST);
-
-
-
     }
 
     private JPanel createTopPanel() {
@@ -181,44 +180,68 @@ public class ShopUI extends JPanel {
     }
 
     public void refresh() {
+
         Player player = GameController.getInstance().getWorldManager().getCurrentWorld().getPlayer();
         ShopManager shop = GameController.getInstance().getShopManager();
 
-        // Update money
+        // === Update money and reroll ===
         moneyLabel.setText("Money: " + player.getMoney() + "$");
-        rerollButton.setText("Reroll ("+GameController.getInstance().getShopManager().getRerollPrice() + "$)");
+        rerollButton.setText("Reroll (" + shop.getRerollPrice() + "$)");
 
-        // Update available items
+        // === Update available shop items ===
         availableItemsPanel.removeAll();
         for (ShopItem item : shop.getAvailableItems()) {
             availableItemsPanel.add(new ShopItemButton(this, item));
         }
 
-        // Update active weapon slots
+        // === Update equipped weapons ===
         activeWeaponsPane.getPanel().removeAll();
-        for(WeaponItem item : player.getInventory().getEquippedWeapons())
-            activeWeaponsPane.add(new InventoryItemButton(this, item));
+        for (WeaponItem item : player.getInventory().getEquippedWeapons()) {
+            activeWeaponsPane.add(new InventoryItemButton(this, item, 1));
+        }
 
-        //Update weapons in inventory
+        // === Update inventory weapons (stack same items) ===
         weaponPane.getPanel().removeAll();
-        for(ShopItem item : player.getInventory().getWeaponItems()) {
-            weaponPane.add(new InventoryItemButton(this, item));
+        Map<String, Integer> weaponCounts = new HashMap<>();
+        Map<String, ShopItem> weaponRefs = new HashMap<>();
+
+        for (ShopItem item : player.getInventory().getWeaponItems()) {
+            String id = item.getItemDefinition().getId();
+            weaponCounts.put(id, weaponCounts.getOrDefault(id, 0) + 1);
+            weaponRefs.putIfAbsent(id, item);
         }
 
-        // Update stat modifier items
+        for (String id : weaponCounts.keySet()) {
+            ShopItem ref = weaponRefs.get(id);
+            int count = weaponCounts.get(id);
+            weaponPane.add(new InventoryItemButton(this, ref, count));
+        }
+
+        // === Update stat upgrade items (stack same items) ===
         statItemsPane.getPanel().removeAll();
-        for(ShopItem item : player.getInventory().getUpgradeItems()) {
-            statItemsPane.add(new InventoryItemButton(this, item));
+        Map<String, Integer> statCounts = new HashMap<>();
+        Map<String, ShopItem> statRefs = new HashMap<>();
+
+        for (ShopItem item : player.getInventory().getUpgradeItems()) {
+            String id = item.getItemDefinition().getId();
+            statCounts.put(id, statCounts.getOrDefault(id, 0) + 1);
+            statRefs.putIfAbsent(id, item);
         }
 
-        // Update stats
+        for (String id : statCounts.keySet()) {
+            ShopItem ref = statRefs.get(id);
+            int count = statCounts.get(id);
+            statItemsPane.add(new InventoryItemButton(this, ref, count));
+        }
+
+        // === Update player stats ===
         statsPanel.removeAll();
         statsPanel.add(createStatLabel("Speed: " + player.getSpeed()));
+        // Add more stats here if available, e.g. health, damage, etc.
 
         revalidate();
         repaint();
     }
-
 
     private JLabel createSlotLabel(String text) {
         JLabel label = new JLabel(text, SwingConstants.CENTER);
@@ -307,11 +330,42 @@ public class ShopUI extends JPanel {
                     int slotIndex = selectedIndex - 1;
                     player.getInventory().equipWeapon(weaponItem, slotIndex);
                 }
-
                 refresh();
             });
-
         }
+
+        itemDescriptionPanel.add(Box.createVerticalStrut(20));
+        JSeparator separator = new JSeparator();
+        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        itemDescriptionPanel.add(separator);
+        itemDescriptionPanel.add(Box.createVerticalStrut(10));
+
+        JPanel sellPanel = new JPanel();
+        sellPanel.setBackground(new Color(50, 50, 50));
+        sellPanel.setLayout(new BoxLayout(sellPanel, BoxLayout.Y_AXIS));
+        sellPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel sellLabel = new JLabel("Sell this item:");
+        sellLabel.setForeground(Color.WHITE);
+        sellLabel.setFont(new Font("Arial", Font.BOLD, 13));
+
+        JButton sellButton = new JButton("Sell");
+        sellButton.setBackground(new Color(200, 50, 50));
+        sellButton.setForeground(Color.WHITE);
+        sellButton.setFocusPainted(false);
+        sellButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sellButton.setMaximumSize(new Dimension(120, 30));
+
+        sellButton.addActionListener(e -> {
+            GameController.getInstance().getShopManager().sellItem(item);
+            refresh();
+        });
+
+        sellPanel.add(sellLabel);
+        sellPanel.add(Box.createVerticalStrut(5));
+        sellPanel.add(sellButton);
+
+        itemDescriptionPanel.add(sellPanel);
 
         itemDescriptionPanel.revalidate();
         itemDescriptionPanel.repaint();
