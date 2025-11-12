@@ -15,7 +15,11 @@ public abstract class LivingEntity extends Entity {
 
 	protected double hp;
     protected double hpMax;
+    protected double baseHP;
+    protected double baseHPMax;
+    protected double baseSpeed;
     protected double strength;
+    protected double baseStrength;
     protected double regenerationSpeed;
     protected double speed;
     
