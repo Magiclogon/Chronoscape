@@ -11,9 +11,7 @@ import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
-import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.factory.VampireFactory;
+import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
@@ -44,12 +42,15 @@ public class GameController implements Runnable {
     private GameState state = GameState.MENU;
     
     private ShopManager shopManager;
+    private ParticleSystem particleSystem;
 
     private DifficultyStrategy difficulty;
     private List<DifficultyObserver> difficultyObservers;
     
     private GameController() {
         window = new Window();
+        particleSystem = new ParticleSystem();
+        particleSystem.loadFromJson("particles.json");
 		ItemLoader.getInstance().loadItems("items.json");		
 		ProjectileLoader.getInstance().load("projectiles.json");
 		AOELoader.getInstance().load("aoe.json");
@@ -107,6 +108,8 @@ public class GameController implements Runnable {
 
 	public void restartGame() {
 		gamePanel.removeAllDrawables();
+		gamePanel.addDrawable(Player.getInstance());
+		Player.getInstance().setDrawn(true);
         shopManager = new ShopManager(Player.getInstance());
         worldManager = new WorldManager(difficulty);
 		shopManager.init();
@@ -119,6 +122,8 @@ public class GameController implements Runnable {
         
         World world = worldManager.getCurrentWorld();
         world.getPickableManager().init();
+    	particleSystem.init();
+
         camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
@@ -177,6 +182,9 @@ public class GameController implements Runnable {
     public void update(double step) {
         worldManager.update(step);
         camera.update(step);
+        particleSystem.update(step);
+        
+        GameTime.addTime(step);
     }
     
     public void setDifficulty(DifficultyStrategy difficulty) {

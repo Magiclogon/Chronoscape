@@ -130,6 +130,7 @@ public class WorldManager {
 		// Get next world (or generate endless world)
 		if (currentWorldIndex < worlds.size()) {
 			currentWorld = worlds.get(currentWorldIndex);
+			currentWorld.setDrawn(true);
 			GameController.getInstance().getGamePanel().addDrawable(currentWorld);
 		} else {
 			currentWorld = endlessGenerator.generateWorld(currentWorldIndex);
