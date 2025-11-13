@@ -51,8 +51,10 @@ public class GamePanel extends JPanel {
 		
 		g2d.setTransform(newTransform);
 		
+		
 		Collections.sort(drawables);
 		drawables.forEach((drawable) -> drawable.draw(g2d));
+		drawables.removeIf(d -> !d.isDrawn());
 
 		g2d.setTransform(oldTransform);
 	}
@@ -61,11 +63,11 @@ public class GamePanel extends JPanel {
 		this.drawables.add(entity);
 	}
 
-	public void removeDrawable(Entity enemy) {
-		this.drawables.remove(enemy);
+	public void removeDrawable(Entity entity) {
+		entity.setDrawn(false);
 	}
 	
 	public void removeAllDrawables() {
-		this.drawables.removeAll(drawables);
+		drawables.forEach(d -> d.setDrawn(false));
 	}
 }

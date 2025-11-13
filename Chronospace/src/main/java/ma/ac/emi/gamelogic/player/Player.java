@@ -9,6 +9,7 @@ import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -102,6 +103,10 @@ public class Player extends LivingEntity {
 		if(equippedWeapons[weaponIndex] != null) {
 			equippedWeapons[weaponIndex].pointAt(MouseHandler.getInstance().getMouseWorldPos());
 			equippedWeapons[weaponIndex].update(step);
+		}
+		
+		if (velocity.norm() != 0) {
+		    GameController.getInstance().getParticleSystem().spawnEffect("smoke", pos, this, GameTime.get());
 		}
 	}
 

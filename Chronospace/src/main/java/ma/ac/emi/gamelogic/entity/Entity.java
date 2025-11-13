@@ -12,9 +12,11 @@ import ma.ac.emi.math.Vector3D;
 public abstract class Entity implements GameDrawable{
 	protected Vector3D pos;
 	protected Vector3D velocity;
+	protected boolean drawn;
 	
 	protected Rectangle bound;
 	public Entity(boolean drawn) {
+		this.drawn = drawn;
 		if(drawn) GameController.getInstance().getGamePanel().addDrawable(this);
 		pos = new Vector3D();
 	}

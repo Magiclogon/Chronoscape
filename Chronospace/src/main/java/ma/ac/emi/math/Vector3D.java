@@ -25,6 +25,10 @@ public class Vector3D {
 		this.x = x; this.y = y; this.z = 0;
 	}
 	
+	public Vector3D(Vector3D v) {
+		this(v.getX(), v.getY(), v.getZ());
+	}
+	
 	public void init() {
 		setX(0); setY(0); setZ(0);
 	}
@@ -62,5 +66,9 @@ public class Vector3D {
 	    Point2D.Double dst = new Point2D.Double();
 	    transform.transform(src, dst);
 	    return new Vector3D(dst.x, dst.y);
+	}
+	
+	public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
+		return a.add(b.sub(a).mult(t));
 	}
 }

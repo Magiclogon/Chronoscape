@@ -36,25 +36,25 @@ public class Camera {
 		}
 
 		// camera match panel aspect ratio
-		this.width = gamePanel.getWidth()*scalingFactor;
+		this.width = gamePanel.getWidth()*scalingFactor; 
 		this.height = gamePanel.getHeight()*scalingFactor;		
 
 		Vector3D targetPos = followed.getPos();
-
-		// center on player
-		double camX = targetPos.getX() - (this.width / 2.0);
-		double camY = targetPos.getY() - (this.height / 2.0);
+		Vector3D relativeCamCenter = new Vector3D(this.width/2, this.height/2);
+		
+		targetPos = targetPos.sub(relativeCamCenter);
+		
+		setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
 
 		// get world borders from panel
 		double worldPixelWidth = GameController.getInstance().getWorldManager().getCurrentWorld().getWidth() * GamePanel.TILE_SIZE;
 		double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
 
 		// bloquer cam aux bordures
-		camX = Math.max(0, Math.min(camX, worldPixelWidth - this.width));
-		camY = Math.max(0, Math.min(camY, worldPixelHeight - this.height));
+		this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
+		this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
+		
 
-		this.pos.setX(camX);
-		this.pos.setY(camY);
 	}
 	
 	public void calculateTransform() {
@@ -65,6 +65,7 @@ public class Camera {
 
 	public void snapTo(Entity entity) {
 		followed = entity;
+		this.pos = entity.getPos();
 	}
 	
 	public AffineTransform getCamTransform() {
