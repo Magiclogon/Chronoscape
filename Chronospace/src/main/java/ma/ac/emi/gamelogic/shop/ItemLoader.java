@@ -82,4 +82,12 @@ public class ItemLoader {
 
 		return deepCopy;
 	}
+
+    public ItemDefinition getBaseItemDefinition(String id) {
+        for (Map<String, ItemDefinition> map : itemsByRarity.values()) {
+            if (map.containsKey(id))
+                return map.get(id);
+        }
+        return null;
+    }
 }

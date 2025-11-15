@@ -68,10 +68,13 @@ public class Player extends LivingEntity {
 	}
 	
 	public void init() {
-		hp = 50;
-		hpMax = 100;
+		baseHP = 100;
+		baseHPMax = 100;
+		baseSpeed = 200;
+
+		resetBaseStats();
+		hp = baseHP;
 		money = 10000;
-		speed = 200;
 		weaponIndex = 0;
 		
 		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
@@ -82,6 +85,11 @@ public class Player extends LivingEntity {
         getInventory().equipWeapon(fists, 0);
         initWeapons();
         
+	}
+
+	public void resetBaseStats() {
+		hpMax = baseHPMax;
+		speed = baseSpeed;
 	}
 	
 	public void initWeapons() {

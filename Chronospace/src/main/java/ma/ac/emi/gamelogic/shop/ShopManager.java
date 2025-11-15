@@ -96,10 +96,21 @@ public class ShopManager {
         		}
         	}
             refreshItem(item);
+
+			player.getInventory().recalculateAllUpgrades(player);
+
             return true;
         }
         return false;
     }
+
+	public boolean sellItem(ShopItem item) {
+		if(!player.getInventory().hasItem(item.getItemDefinition().getId())) return false;
+		player.setMoney(player.getMoney() + item.getPrice() * 0.70);
+		player.getInventory().removeItem(item);
+		player.getInventory().recalculateAllUpgrades(player);
+		return true;
+	}
 
 	public void refreshItem(ShopItem item) {
 		int index = -1;
