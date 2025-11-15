@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
+import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.MeleeAIBehavior;
 import ma.ac.emi.gamelogic.ai.PathFinder;
@@ -24,7 +25,7 @@ import ma.ac.emi.gamelogic.wave.WaveManager;
 
 @Getter
 @Setter
-public class World extends Entity{
+public class World extends GameObject{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
 

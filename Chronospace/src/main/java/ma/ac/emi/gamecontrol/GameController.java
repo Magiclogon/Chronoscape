@@ -66,6 +66,8 @@ public class GameController implements Runnable {
     
     public void nextWorld() {
     	gamePanel.removeAllDrawables();
+		gamePanel.addDrawable(Player.getInstance());
+		Player.getInstance().setDrawn(true);
     	worldManager.nextWorld();
     }
 

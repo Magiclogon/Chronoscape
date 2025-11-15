@@ -4,28 +4,20 @@ import java.awt.*;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
 @Getter
-public abstract class Entity implements GameDrawable{
-	protected Vector3D pos;
+public abstract class Entity extends GameObject{
 	protected Vector3D velocity;
-	protected boolean drawn;
+	protected StateMachine stateMachine;
 	
 	protected Rectangle bound;
 	public Entity(boolean drawn) {
-		this.drawn = drawn;
-		if(drawn) GameController.getInstance().getGamePanel().addDrawable(this);
-		pos = new Vector3D();
-	}
-	
-	public abstract void update(double step);
-	
-	@Override
-	public int compareTo(Entity e) {
-		return (int)Math.signum(getPos().getY() - e.getPos().getY());
+		super(drawn);
 	}
 	
 }
