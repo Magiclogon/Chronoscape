@@ -24,11 +24,8 @@ public abstract class Entity implements GameDrawable{
 	public abstract void update(double step);
 	
 	@Override
-	public int compareTo(Object o) {
-		if(o instanceof Entity entity) {
-			return (int)Math.signum(getPos().getY() - entity.getPos().getY());
-		}
-		return 0;
+	public int compareTo(Entity e) {
+		return (int)Math.signum(getPos().getY() - e.getPos().getY());
 	}
 	
 }
