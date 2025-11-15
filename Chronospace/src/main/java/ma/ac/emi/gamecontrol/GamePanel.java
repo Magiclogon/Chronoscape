@@ -18,7 +18,7 @@ import ma.ac.emi.input.MouseHandler;
 @Setter
 public class GamePanel extends JPanel {
 
-	public static final int TILE_SIZE = 16;
+	public static final int TILE_SIZE = 32;
 	public List<GameObject> drawables;
 	private Camera camera;
 

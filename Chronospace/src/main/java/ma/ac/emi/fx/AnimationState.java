@@ -9,6 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnimationState {
+	public final double DEFAULT_FRAME_RATE = 12;
 	private String title;
 	private List<Frame> frames;
 	
@@ -27,13 +28,18 @@ public class AnimationState {
 		frames = new ArrayList<>();
 		currentFrameIndex = 0;
 		timeTracker = 0;
-		doesLoop = false;
-		defaultSprite = new Sprite();
+		doesLoop = true;
+		this.defaultSprite = defaultSprite;
 
 	}
 	
-	public void addFrame(Frame frame) {
-		this.frames.add(frame);
+	public void addFrame(Sprite sprite, double frameTime) {
+		this.frames.add(new Frame(sprite, frameTime));
+	}
+	
+	public void addFrame(Sprite sprite) {
+		double frameTime = 1/DEFAULT_FRAME_RATE;
+		this.frames.add(new Frame(sprite, frameTime));
 	}
 	
 	public void update(double step) {

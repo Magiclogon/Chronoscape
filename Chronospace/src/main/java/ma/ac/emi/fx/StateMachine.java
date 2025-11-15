@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import lombok.Getter;
+
+@Getter
 public class StateMachine {
 	private class StateTrigger{
 		private String trigger;
@@ -33,23 +36,34 @@ public class StateMachine {
 	}
 	
 	private Map<StateTrigger, String> stateTransfers;
-	private List<AnimationState> animateStates;
+	private List<AnimationState> animationStates;
 	private AnimationState currentAnimationState;
 	private String defaultState;
 	
 	public StateMachine() {
 		stateTransfers = new HashMap<>();
-		animateStates = new ArrayList<>();
+		animationStates = new ArrayList<>();
 		currentAnimationState = null;
 		defaultState = "";
 	}
 	
 	public void addAnimationState(AnimationState state) {
-		this.animateStates.add(state);
+		this.animationStates.add(state);
 	}
 	
 	public void addStateTransfer(String trigger, String fromState, String toState) {
 		this.stateTransfers.put(new StateTrigger(trigger, fromState), toState);
+	}
+	
+	public void setDefaultState(String defaultState) {
+		for(AnimationState state : animationStates) {
+			if(state.getTitle().equals(defaultState)) {
+				defaultState = state.getTitle();
+				if(currentAnimationState == null) currentAnimationState = state;
+				return;
+			}
+		}
+		System.out.println("Unable to find the animation state.");
 	}
 	
 	public void trigger(String trigger) {
@@ -57,9 +71,9 @@ public class StateMachine {
 			if(stateTrigger.equals(new StateTrigger(trigger, currentAnimationState.getTitle()))) {
 				String nextStateTitle = stateTransfers.get(stateTrigger);
 				if(nextStateTitle != null) {
-					for(int i = 0; i < animateStates.size(); i++) {
-						if(animateStates.get(i).getTitle().equals(nextStateTitle)) {
-							currentAnimationState = animateStates.get(i);
+					for(int i = 0; i < animationStates.size(); i++) {
+						if(animationStates.get(i).getTitle().equals(nextStateTitle)) {
+							currentAnimationState = animationStates.get(i);
 							break;
 						}
 					}
@@ -67,11 +81,22 @@ public class StateMachine {
 				return;
 			}
 		}
+		
+		System.out.println("Unable to find the trigger '" + trigger + "'.");
 	}
 	
 	public void update(double step) {
 		if(currentAnimationState != null) {
 			currentAnimationState.update(step);
 		}
+	}
+	
+	public AnimationState getAnimationStateByTitle(String title) {
+		for(AnimationState state : animationStates) {
+			if(state.getTitle().equals(title)) {
+				return state;
+			}
+		}
+		return null;
 	}
 }

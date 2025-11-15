@@ -1,17 +1,23 @@
 package ma.ac.emi.gamelogic.player;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.Color;
 
 import javax.swing.SwingUtilities;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.camera.Camera;
+import ma.ac.emi.fx.AnimationState;
+import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.fx.Frame;
+import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamecontrol.GameTime;
-import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.input.KeyHandler;
@@ -36,6 +42,24 @@ public class Player extends LivingEntity {
 		velocity = new Vector3D();
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
+		
+		spriteSheet = new SpriteSheet(AssetsLoader.getSprite("player/running animation test.png"), 
+				GamePanel.TILE_SIZE, 
+				GamePanel.TILE_SIZE);
+		setupAnimations();
+	}
+	
+	private void setupAnimations() {
+		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
+		AnimationState run_right = stateMachine.getAnimationStateByTitle("Running_Right");
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, 6)) {
+			idle_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, 6)) {
+			run_right.addFrame(sprite);
+		}
 	}
 	
 	public static Player getInstance() {
@@ -46,7 +70,7 @@ public class Player extends LivingEntity {
 	public void init() {
 		baseHP = 100;
 		baseHPMax = 100;
-		baseSpeed = 100;
+		baseSpeed = 200;
 
 		resetBaseStats();
 		hp = baseHP;
@@ -60,6 +84,7 @@ public class Player extends LivingEntity {
         getInventory().addItem(fists);
         getInventory().equipWeapon(fists, 0);
         initWeapons();
+        
 	}
 
 	public void resetBaseStats() {
@@ -79,7 +104,9 @@ public class Player extends LivingEntity {
 			weapon.snapTo(this);
 			equippedWeapons[i] = weapon;
 		}
+		setActiveWeapon(equippedWeapons[weaponIndex]);
 	}
+	
 
 	@Override
 	public void update(double step) {
@@ -90,13 +117,29 @@ public class Player extends LivingEntity {
 			attack();
 		}
 		velocity.init();
+		if(!isIdle()) stateMachine.trigger("Stop");
 		
-		if(KeyHandler.getInstance().isLeft()) velocity.setX(-1*speed);
+		if(KeyHandler.getInstance().isUp()) {
+			if(!isIdle()) stateMachine.trigger("Stop");
+			stateMachine.trigger("Run");
+			velocity.setY(-1*speed);
+		}
+		if(KeyHandler.getInstance().isDown()) {
+			if(!isIdle()) stateMachine.trigger("Stop");
+			stateMachine.trigger("Run");
+			velocity.setY(speed);
+		}
+		if(KeyHandler.getInstance().isLeft()) {
+			if(!isIdle()) stateMachine.trigger("Stop");
+			stateMachine.trigger("Run");
+			velocity.setX(-1*speed);
+		}
 		if(KeyHandler.getInstance().isRight()) {
+			if(!isIdle()) stateMachine.trigger("Stop");
+			stateMachine.trigger("Run");
 			velocity.setX(speed);
 		}
-		if(KeyHandler.getInstance().isUp()) velocity.setY(-1*speed);
-		if(KeyHandler.getInstance().isDown()) velocity.setY(speed);
+		
 		setPos(pos.add(velocity.mult(step)));
 		
 		bound.x = (int) getPos().getX();
@@ -108,14 +151,17 @@ public class Player extends LivingEntity {
 			GameController.getInstance().getGamePanel().addDrawable(equippedWeapons[weaponIndex]);
 
 		}
-		if(equippedWeapons[weaponIndex] != null) {
-			equippedWeapons[weaponIndex].pointAt(MouseHandler.getInstance().getMouseWorldPos());
-			equippedWeapons[weaponIndex].update(step);
+		if(activeWeapon != null) {
+			activeWeapon.pointAt(MouseHandler.getInstance().getMouseWorldPos());
+			activeWeapon.update(step);
 		}
 		
-		if (velocity.norm() != 0) {
+		if (!isIdle()) {
 		    GameController.getInstance().getParticleSystem().spawnEffect("smoke", pos, this, GameTime.get());
 		}
+		
+		changeStateDirection();
+		stateMachine.update(step);
 	}
 
 	@Override
@@ -123,11 +169,17 @@ public class Player extends LivingEntity {
 		g.setColor(Color.GREEN);
 		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		
+		g.setColor(Color.black);
+		g.drawString(stateMachine.getCurrentAnimationState().getTitle(), (int)(pos.getX()), (int)(pos.getY()));
+		
+		g.drawString(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()), (int)(pos.getX()), (int)(pos.getY()+10));
+		
+		g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)(pos.getX()), (int)(pos.getY()), null);
 	}
 	
 	public void setWeapon(Weapon weapon) {
-		this.equippedWeapons[weaponIndex] = weapon;
-		this.equippedWeapons[weaponIndex].snapTo(this);
+		this.activeWeapon = weapon;
+		this.activeWeapon.snapTo(this);
 	}
 	
 	public boolean hasWeapon(WeaponItem weaponItem) {
@@ -136,7 +188,7 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void attack() {
-		if(equippedWeapons[weaponIndex] != null) this.equippedWeapons[weaponIndex].attack();
+		if(activeWeapon != null) this.activeWeapon.attack();
 	}
 
 	public Integer isWeaponEquipped(WeaponItem item) {

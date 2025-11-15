@@ -4,12 +4,14 @@ import java.awt.Rectangle;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
 public abstract class GameObject implements GameDrawable{
 	protected Vector3D pos;
+	protected SpriteSheet spriteSheet;
 	protected boolean drawn;
 	
 	protected Rectangle bound;

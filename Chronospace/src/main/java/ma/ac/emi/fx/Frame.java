@@ -10,9 +10,10 @@ import lombok.Setter;
 public class Frame {
 	private Sprite sprite;
 	private double frameTime;
-	
+		
 	public Frame(Sprite sprite, double frameTime) {
-		this.sprite = sprite;
+		if(sprite != null) this.sprite = sprite;
+		else this.sprite = new Sprite();
 		this.frameTime = frameTime;
 	}
 }

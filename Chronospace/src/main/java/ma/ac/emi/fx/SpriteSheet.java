@@ -21,8 +21,8 @@ public class SpriteSheet {
     private Map<String, Sprite> cache = new HashMap<>();
 
     
-    public SpriteSheet(String path, int tileWidth, int tileHeight) {
-        sheet = new Sprite(path);
+    public SpriteSheet(Sprite sheet, int tileWidth, int tileHeight) {
+        this.sheet = sheet;
 
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;

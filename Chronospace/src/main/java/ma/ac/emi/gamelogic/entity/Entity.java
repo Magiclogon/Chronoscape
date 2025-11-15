@@ -18,6 +18,7 @@ public abstract class Entity extends GameObject{
 	protected Rectangle bound;
 	public Entity(boolean drawn) {
 		super(drawn);
+		stateMachine = new StateMachine();
 	}
 	
 }
