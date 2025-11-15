@@ -32,7 +32,6 @@ public class Particle extends Entity{
             alive = false;
             return;
         }
-        System.out.println(pos.getZ());
         pos = pos.add(velocity.mult(step));
     }
 

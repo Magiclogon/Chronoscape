@@ -14,7 +14,6 @@ public class ParticleDefinition {
     private int particleCount;
     private double size;
 
-    // Optional: a helper method for validation or defaults
     public void applyDefaults() {
         if (particleCount <= 0) particleCount = 10;
         if (lifetime <= 0) lifetime = 1.0;

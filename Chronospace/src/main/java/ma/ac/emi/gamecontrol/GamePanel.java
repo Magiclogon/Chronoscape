@@ -10,20 +10,16 @@ import java.util.Collections;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
-import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.entity.Entity;
-import ma.ac.emi.gamelogic.entity.GameDrawable;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
-import ma.ac.emi.math.Vector3D;
-import ma.ac.emi.world.World;
+
 
 @Getter
 @Setter
 public class GamePanel extends JPanel {
 
 	public static final int TILE_SIZE = 16;
-	public List<Entity> drawables;
+	public List<GameObject> drawables;
 	private Camera camera;
 
 	public GamePanel() {
@@ -51,7 +47,6 @@ public class GamePanel extends JPanel {
 		
 		g2d.setTransform(newTransform);
 		
-		
 		Collections.sort(drawables);
 		drawables.forEach((drawable) -> drawable.draw(g2d));
 		drawables.removeIf(d -> !d.isDrawn());
@@ -59,12 +54,12 @@ public class GamePanel extends JPanel {
 		g2d.setTransform(oldTransform);
 	}
 
-	public void addDrawable(Entity entity) {
-		this.drawables.add(entity);
+	public void addDrawable(GameObject gameObject) {
+		this.drawables.add(gameObject);
 	}
 
-	public void removeDrawable(Entity entity) {
-		entity.setDrawn(false);
+	public void removeDrawable(GameObject gameObject) {
+		gameObject.setDrawn(false);
 	}
 	
 	public void removeAllDrawables() {
