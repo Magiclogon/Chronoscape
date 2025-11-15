@@ -47,7 +47,7 @@ public class WorldManager {
 		worlds = new ArrayList<>();
 		
 		try {
-			loadWorldsFromConfig("waves.json");
+			loadWorldsFromConfig("src/main/resources/configs/waves.json");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

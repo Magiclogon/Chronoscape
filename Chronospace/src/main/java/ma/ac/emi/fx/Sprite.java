@@ -15,6 +15,7 @@ public class Sprite {
 	
 	public Sprite() {
 		//Load default image from assets
+		this("assets/default_sprite.png");
 	}
 	
 	
@@ -22,6 +23,7 @@ public class Sprite {
 		try {
             sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream(path));
         } catch (IOException | IllegalArgumentException e) {
+        	e.printStackTrace();
             throw new RuntimeException("Failed to load spritesheet: " + path, e);
         }
 	}

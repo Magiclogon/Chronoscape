@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
@@ -49,11 +50,13 @@ public class GameController implements Runnable {
     
     private GameController() {
         window = new Window();
+        
+        AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
-        particleSystem.loadFromJson("particles.json");
-		ItemLoader.getInstance().loadItems("items.json");		
-		ProjectileLoader.getInstance().load("projectiles.json");
-		AOELoader.getInstance().load("aoe.json");
+        particleSystem.loadFromJson("src/main/resources/configs/particles.json");
+		ItemLoader.getInstance().loadItems("src/main/resources/configs/items.json");		
+		ProjectileLoader.getInstance().load("src/main/resources/configs/projectiles.json");
+		AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
 		
 		difficultyObservers = new ArrayList<>();
 		
