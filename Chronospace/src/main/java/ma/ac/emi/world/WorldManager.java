@@ -125,6 +125,7 @@ public class WorldManager {
 	}
 	
 	public void nextWorld() {
+		if(currentWorld != null) GameController.getInstance().getGamePanel().removeDrawable(currentWorld);
 		currentWorldIndex++;
 
 		// Get next world (or generate endless world)

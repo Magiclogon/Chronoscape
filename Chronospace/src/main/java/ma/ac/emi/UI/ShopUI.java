@@ -181,7 +181,7 @@ public class ShopUI extends JPanel {
 
     public void refresh() {
 
-        Player player = GameController.getInstance().getWorldManager().getCurrentWorld().getPlayer();
+        Player player = Player.getInstance();
         ShopManager shop = GameController.getInstance().getShopManager();
 
         // === Update money and reroll ===

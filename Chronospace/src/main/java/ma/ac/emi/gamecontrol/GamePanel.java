@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import javax.swing.JPanel;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import lombok.Getter;
@@ -12,6 +14,7 @@ import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.world.World;
 
 
 @Getter
@@ -48,9 +51,18 @@ public class GamePanel extends JPanel {
 		g2d.setTransform(newTransform);
 		
 		Collections.sort(drawables);
-		drawables.forEach((drawable) -> drawable.draw(g2d));
-		drawables.removeIf(d -> !d.isDrawn());
+		Class<? extends GameObject> c = null;
+		try{
+			for(GameObject drawable : drawables) {
+				c = drawable.getClass();
+				drawable.draw(g);
+			}
+		}catch(Exception e) {
+			System.out.println(Arrays.toString(drawables.stream().map(Object::getClass).collect(Collectors.toList()).toArray()));
 
+			System.err.println("drawing error from: " + c);
+		}
+		drawables.removeIf(d -> !d.isDrawn());
 		g2d.setTransform(oldTransform);
 	}
 
