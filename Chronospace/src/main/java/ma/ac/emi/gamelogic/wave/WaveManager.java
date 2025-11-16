@@ -62,7 +62,7 @@ public class WaveManager {
                 break;
 
             case COMPLETED:
-            	SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
+            	GameController.getInstance().showShop();
             	GameController.getInstance().nextWorld();
             	break;
             case LOST:

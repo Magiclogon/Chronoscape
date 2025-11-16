@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnimationState {
-	public final double DEFAULT_FRAME_RATE = 12;
+	public static final double DEFAULT_FRAME_RATE = 12;
 	private String title;
 	private List<Frame> frames;
 	
@@ -25,12 +25,11 @@ public class AnimationState {
 	
 	public AnimationState(String title, Sprite defaultSprite) {
 		this.title = title;
-		frames = new ArrayList<>();
-		currentFrameIndex = 0;
-		timeTracker = 0;
-		doesLoop = true;
+		this.frames = new ArrayList<>();
+		this.currentFrameIndex = 0;
+		this.timeTracker = 0;
+		this.doesLoop = true;
 		this.defaultSprite = defaultSprite;
-
 	}
 	
 	public void addFrame(Sprite sprite, double frameTime) {
@@ -38,27 +37,38 @@ public class AnimationState {
 	}
 	
 	public void addFrame(Sprite sprite) {
-		double frameTime = 1/DEFAULT_FRAME_RATE;
+		double frameTime = 1.0 / DEFAULT_FRAME_RATE;
 		this.frames.add(new Frame(sprite, frameTime));
 	}
 	
 	public void update(double step) {
-		if(currentFrameIndex < frames.size()) {
-			timeTracker -= step;
-			if(timeTracker <= 0) {
-				if(currentFrameIndex != frames.size()-1 || doesLoop) {
-					currentFrameIndex = (currentFrameIndex + 1) % frames.size();
-				}
+		if (frames.isEmpty() || currentFrameIndex >= frames.size()) {
+			return;
+		}
+		
+		timeTracker -= step;
+		
+		if (timeTracker <= 0) {
+			boolean isLastFrame = currentFrameIndex == frames.size() - 1;
+			
+			if (!isLastFrame || doesLoop) {
+				currentFrameIndex = (currentFrameIndex + 1) % frames.size();
 				timeTracker = frames.get(currentFrameIndex).getFrameTime();
 			}
 		}
 	}
 	
 	public Sprite getCurrentFrameSprite() {
-		if(currentFrameIndex < frames.size()) {
+		if (currentFrameIndex < frames.size()) {
 			return frames.get(currentFrameIndex).getSprite();
 		}
-		return getDefaultSprite();
+		return defaultSprite;
 	}
 	
+	public void reset() {
+		currentFrameIndex = 0;
+		if (!frames.isEmpty()) {
+			timeTracker = frames.get(0).getFrameTime();
+		}
+	}
 }

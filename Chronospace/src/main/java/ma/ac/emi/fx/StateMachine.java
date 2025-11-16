@@ -5,16 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import lombok.Getter;
 
 @Getter
 public class StateMachine {
-	private class StateTrigger{
-		private String trigger;
-		private String state;
-		
-		public StateTrigger() {}
+	private static class StateTrigger {
+		private final String trigger;
+		private final String state;
 		
 		public StateTrigger(String trigger, String state) {
 			this.trigger = trigger;
@@ -23,10 +22,10 @@ public class StateMachine {
 		
 		@Override
 		public boolean equals(Object o) {
-			if(o instanceof StateTrigger stateTrigger) {
-				return trigger.equals(stateTrigger.trigger) && state.equals(stateTrigger.state);
-			}
-			return false;
+			if (this == o) return true;
+			if (!(o instanceof StateTrigger)) return false;
+			StateTrigger that = (StateTrigger) o;
+			return trigger.equals(that.trigger) && state.equals(that.state);
 		}
 		
 		@Override
@@ -35,68 +34,88 @@ public class StateMachine {
 		}
 	}
 	
-	private Map<StateTrigger, String> stateTransfers;
-	private List<AnimationState> animationStates;
+	private final Map<StateTrigger, String> stateTransfers;
+	private final Map<String, AnimationState> statesByTitle;
 	private AnimationState currentAnimationState;
-	private String defaultState;
+	private String defaultStateTitle;
 	
 	public StateMachine() {
-		stateTransfers = new HashMap<>();
-		animationStates = new ArrayList<>();
-		currentAnimationState = null;
-		defaultState = "";
+		this.stateTransfers = new HashMap<>();
+		this.statesByTitle = new HashMap<>();
+		this.currentAnimationState = null;
+		this.defaultStateTitle = "";
 	}
 	
 	public void addAnimationState(AnimationState state) {
-		this.animationStates.add(state);
+		statesByTitle.put(state.getTitle(), state);
 	}
 	
 	public void addStateTransfer(String trigger, String fromState, String toState) {
-		this.stateTransfers.put(new StateTrigger(trigger, fromState), toState);
+		stateTransfers.put(new StateTrigger(trigger, fromState), toState);
 	}
 	
 	public void setDefaultState(String defaultState) {
-		for(AnimationState state : animationStates) {
-			if(state.getTitle().equals(defaultState)) {
-				defaultState = state.getTitle();
-				if(currentAnimationState == null) currentAnimationState = state;
-				return;
+		AnimationState state = statesByTitle.get(defaultState);
+		if (state != null) {
+			this.defaultStateTitle = defaultState;
+			if (currentAnimationState == null) {
+				currentAnimationState = state;
 			}
+		} else {
+			System.err.println("Unable to find animation state: " + defaultState);
 		}
-		System.out.println("Unable to find the animation state.");
 	}
 	
 	public void trigger(String trigger) {
-		for(StateTrigger stateTrigger : stateTransfers.keySet()) {
-			if(stateTrigger.equals(new StateTrigger(trigger, currentAnimationState.getTitle()))) {
-				String nextStateTitle = stateTransfers.get(stateTrigger);
-				if(nextStateTitle != null) {
-					for(int i = 0; i < animationStates.size(); i++) {
-						if(animationStates.get(i).getTitle().equals(nextStateTitle)) {
-							currentAnimationState = animationStates.get(i);
-							break;
-						}
-					}
-				}
-				return;
-			}
+		if (currentAnimationState == null) {
+			System.err.println("No current state set. Cannot trigger: " + trigger);
+			return;
 		}
 		
-		System.out.println("Unable to find the trigger '" + trigger + "'.");
+		StateTrigger stateTrigger = new StateTrigger(trigger, currentAnimationState.getTitle());
+		String nextStateTitle = stateTransfers.get(stateTrigger);
+		
+		if (nextStateTitle != null) {
+			AnimationState nextState = statesByTitle.get(nextStateTitle);
+			if (nextState != null) {
+				currentAnimationState = nextState;
+			} else {
+				System.err.println("Target state not found: " + nextStateTitle);
+			}
+		} else {
+			System.err.println("No transition found for trigger '" + trigger + 
+			                   "' from state '" + currentAnimationState.getTitle() + "'");
+		}
 	}
 	
 	public void update(double step) {
-		if(currentAnimationState != null) {
+		if (currentAnimationState != null) {
 			currentAnimationState.update(step);
 		}
 	}
 	
 	public AnimationState getAnimationStateByTitle(String title) {
-		for(AnimationState state : animationStates) {
-			if(state.getTitle().equals(title)) {
-				return state;
-			}
-		}
-		return null;
+		return statesByTitle.get(title);
+	}
+	
+	/**
+	 * Get all animation states (for backwards compatibility)
+	 */
+	public List<AnimationState> getAnimationStates() {
+		return new ArrayList<>(statesByTitle.values());
+	}
+	
+	/**
+	 * Check if the state machine has a specific state
+	 */
+	public boolean hasState(String title) {
+		return statesByTitle.containsKey(title);
+	}
+	
+	/**
+	 * Check if a transition exists
+	 */
+	public boolean hasTransition(String trigger, String fromState) {
+		return stateTransfers.containsKey(new StateTrigger(trigger, fromState));
 	}
 }

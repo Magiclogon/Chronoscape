@@ -3,6 +3,8 @@ package ma.ac.emi.gamecontrol;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
@@ -76,33 +78,46 @@ public class GameController implements Runnable {
 
     public void showMainMenu() {
         state = GameState.MENU;
-        window.showScreen("MENU");
+        SwingUtilities.invokeLater(() -> {
+        	window.showScreen("MENU");
+    	});
     }
 
     public void showDifficultyMenu() {
         state = GameState.DIFFICULTY_SELECT;
-        window.showScreen("DIFFICULTY");
+        SwingUtilities.invokeLater(() -> {
+        	window.showScreen("DIFFICULTY");
+    	});
     }
 
     public void showLevelSelection() {
         state = GameState.LEVEL_SELECT;
-        window.showScreen("LEVEL_SELECT");
+        SwingUtilities.invokeLater(() -> {
+        	window.showScreen("LEVEL_SELECT");
+    	});
     }
     
     public void showGame() {
-    	window.showScreen("GAME");
+    	SwingUtilities.invokeLater(() -> {
+        	window.showScreen("GAME");
+    	});
     }
     
     public void showShop() {
     	state = GameState.SHOP;
     	shopManager.init();
-    	window.refreshShop();
-    	window.showScreen("SHOP");
+    	SwingUtilities.invokeLater(() -> {
+        	window.refreshShop();
+        	window.showScreen("SHOP");
+    	});
+
     }
     
     public void showGameOver() {
     	state = GameState.GAME_OVER;
-    	window.showScreen("GAMEOVER");
+    	SwingUtilities.invokeLater(() -> {
+        	window.showScreen("GAMEOVER");
+    	});
     }
     
     public void resumeGame() {
