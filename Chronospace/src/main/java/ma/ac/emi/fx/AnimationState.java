@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnimationState {
-	public static final double DEFAULT_FRAME_RATE = 12;
+	public static final double DEFAULT_FRAME_RATE = 24;
 	private String title;
 	private List<Frame> frames;
 	

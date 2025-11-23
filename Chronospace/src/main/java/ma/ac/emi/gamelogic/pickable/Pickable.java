@@ -38,4 +38,17 @@ public abstract class Pickable extends Entity{
         	GameController.getInstance().getGamePanel().removeDrawable(this);
         }
     }
+    
+
+	@Override
+	public void initStateMachine() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setupAnimations() {
+		// TODO Auto-generated method stub
+		
+	}
 }
