@@ -93,4 +93,16 @@ public class Weapon extends Entity{
     public boolean isFromPlayer() {
         return getBearer() instanceof Player;
     }
+
+	@Override
+	public void initStateMachine() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setupAnimations() {
+		// TODO Auto-generated method stub
+		
+	}
 }

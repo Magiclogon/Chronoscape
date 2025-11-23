@@ -49,7 +49,8 @@ public class GamePanel extends JPanel {
 		newTransform.concatenate(camera.getCamTransform());
 		
 		g2d.setTransform(newTransform);
-		
+		drawables.removeIf(d -> !d.isDrawn());
+
 		Collections.sort(drawables);
 		Class<? extends GameObject> c = null;
 		try{
@@ -62,12 +63,12 @@ public class GamePanel extends JPanel {
 
 			System.err.println("drawing error from: " + c);
 		}
-		drawables.removeIf(d -> !d.isDrawn());
 		g2d.setTransform(oldTransform);
 	}
 
 	public void addDrawable(GameObject gameObject) {
 		this.drawables.add(gameObject);
+		gameObject.setDrawn(true);
 	}
 
 	public void removeDrawable(GameObject gameObject) {

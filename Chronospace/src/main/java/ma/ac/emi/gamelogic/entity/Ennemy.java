@@ -14,7 +14,7 @@ import java.awt.*;
 
 @Setter
 @Getter
-public class Ennemy extends LivingEntity implements DifficultyObserver{
+public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 	protected double damage;
 	protected Weapon weapon;
 	protected AIBehavior aiBehavior;
@@ -84,6 +84,12 @@ public class Ennemy extends LivingEntity implements DifficultyObserver{
 	@Override
 	public void refreshDifficulty(DifficultyStrategy difficutly) {
 		difficutly.adjustEnemyStats(this);
+	}
+
+	@Override
+	public void setupAnimations() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

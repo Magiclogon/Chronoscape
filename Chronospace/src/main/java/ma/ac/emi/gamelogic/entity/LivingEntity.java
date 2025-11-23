@@ -10,13 +10,14 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 @Getter
 public abstract class LivingEntity extends Entity {
-	private static final String[] ACTIONS = {"Idle", "Running", "Backing"};
-	private static final String[] DIRECTIONS = {"Left", "Right", "Up", "Down"};
+	private static final String[] ACTIONS = {"Idle", "Running", "Backing", "Dying"};
+	private static final String[] DIRECTIONS = {"Left", "Right"};
 	
 	// Movement state constants
 	private static final String TRIGGER_RUN = "Run";
 	private static final String TRIGGER_STOP = "Stop";
 	private static final String TRIGGER_BACK = "Back";
+	private static final String TRIGGER_DIE = "Die";
 	
 	protected Weapon activeWeapon;
 	protected double hp;
@@ -32,21 +33,24 @@ public abstract class LivingEntity extends Entity {
 	
 	public LivingEntity() {
 		super(true);
-		initStateMachine();
 	}
 	
-	private void initStateMachine() {
+	@Override
+	public void initStateMachine() {
 		// Create all animation states programmatically
 		for (String action : ACTIONS) {
 			for (String direction : DIRECTIONS) {
 				String stateName = action + "_" + direction;
-				stateMachine.addAnimationState(new AnimationState(stateName));
+				AnimationState state = new AnimationState(stateName);
+				if(action.equals("Dying")) state.setDoesLoop(false);
+				stateMachine.addAnimationState(state);
 			}
 		}
 		
 		// Add transitions for running and stopping
 		addMovementTransitions(TRIGGER_RUN, "Idle", "Running");
 		addMovementTransitions(TRIGGER_STOP, "Running", "Idle");
+		addMovementTransitions(TRIGGER_DIE, "Idle", "Dying");
 		
 		// Add transitions for backing and stopping
 		addBackingTransitions();
@@ -54,7 +58,7 @@ public abstract class LivingEntity extends Entity {
 		// Add look direction transitions
 		addLookTransitions();
 		
-		stateMachine.setDefaultState("Idle_Down");
+		stateMachine.setDefaultState("Idle_Right");
 	}
 	
 	private void addMovementTransitions(String trigger, String fromAction, String toAction) {
@@ -71,21 +75,11 @@ public abstract class LivingEntity extends Entity {
 		stateMachine.addStateTransfer(TRIGGER_STOP, "Backing_Right", "Idle_Left");
 		stateMachine.addStateTransfer(TRIGGER_BACK, "Idle_Right", "Backing_Left");
 		stateMachine.addStateTransfer(TRIGGER_STOP, "Backing_Left", "Idle_Right");
-		stateMachine.addStateTransfer(TRIGGER_BACK, "Idle_Up", "Backing_Down");
-		stateMachine.addStateTransfer(TRIGGER_STOP, "Backing_Down", "Idle_Up");
-		stateMachine.addStateTransfer(TRIGGER_BACK, "Idle_Down", "Backing_Up");
-		stateMachine.addStateTransfer(TRIGGER_STOP, "Backing_Up", "Idle_Down");
 	}
 	
 	private void addLookTransitions() {
-		stateMachine.addStateTransfer("Look_Left", "Idle_Up", "Idle_Left");
-		stateMachine.addStateTransfer("Look_Left", "Idle_Down", "Idle_Left");
-		stateMachine.addStateTransfer("Look_Right", "Idle_Up", "Idle_Right");
-		stateMachine.addStateTransfer("Look_Right", "Idle_Down", "Idle_Right");
-		stateMachine.addStateTransfer("Look_Up", "Idle_Left", "Idle_Up");
-		stateMachine.addStateTransfer("Look_Up", "Idle_Right", "Idle_Up");
-		stateMachine.addStateTransfer("Look_Down", "Idle_Left", "Idle_Down");
-		stateMachine.addStateTransfer("Look_Down", "Idle_Right", "Idle_Down");
+		stateMachine.addStateTransfer("Look_Left", "Idle_Right", "Idle_Left");
+		stateMachine.addStateTransfer("Look_Right", "Idle_Left", "Idle_Right");
 	}
 	
 	public abstract void attack();
@@ -102,6 +96,10 @@ public abstract class LivingEntity extends Entity {
 		return isInState("Backing");
 	}
 	
+	protected boolean isDying() {
+		return isInState("Dying");
+	}
+	
 	private boolean isInState(String action) {
 		String currentState = stateMachine.getCurrentAnimationState().getTitle();
 		return currentState.startsWith(action + "_");
@@ -111,6 +109,8 @@ public abstract class LivingEntity extends Entity {
 		if (activeWeapon == null) {
 			return;
 		}
+		
+		if(isDying()) return;
 		
 		DirectionInfo directionInfo = determineDirection();
 		boolean wasMoving = isRunning() || isBacking();
@@ -125,7 +125,8 @@ public abstract class LivingEntity extends Entity {
 		
 		// Resume movement if was moving
 		if (wasMoving) {
-			boolean movingForward = getVelocity().dotP(activeWeapon.getDir()) >= 0;
+			Vector3D rightVect = new Vector3D(1, 0, 0);
+			boolean movingForward = rightVect.mult(getVelocity().dotP(rightVect)).dotP(activeWeapon.getDir()) >= 0;
 			stateMachine.trigger(movingForward ? TRIGGER_RUN : TRIGGER_BACK);
 		}
 	}
@@ -135,10 +136,8 @@ public abstract class LivingEntity extends Entity {
 		
 		double dpLeft = weaponDir.dotP(new Vector3D(-1, 0, 0));
 		double dpRight = weaponDir.dotP(new Vector3D(1, 0, 0));
-		double dpUp = weaponDir.dotP(new Vector3D(0, -1, 0));
-		double dpDown = weaponDir.dotP(new Vector3D(0, 1, 0));
 		
-		double[] dotProducts = {dpLeft, dpRight, dpUp, dpDown};
+		double[] dotProducts = {dpLeft, dpRight};
 		int maxIndex = 0;
 		double maxDotProduct = dpLeft;
 		
@@ -160,31 +159,8 @@ public abstract class LivingEntity extends Entity {
 			return;
 		}
 		
-		// Handle special transitions through intermediate states
-		if (needsIntermediateTransition(currentState, targetDirection)) {
-			String intermediateDirection = getIntermediateDirection(currentState);
-			stateMachine.trigger("Look_" + intermediateDirection);
-		}
+		stateMachine.trigger("Look_" + targetDirection);
 		
-		// Trigger final look direction
-		if (!stateMachine.getCurrentAnimationState().getTitle().equals(targetIdleState)) {
-			stateMachine.trigger("Look_" + targetDirection);
-		}
-	}
-	
-	private boolean needsIntermediateTransition(String currentState, String targetDirection) {
-		// Left-Right and Right-Left need intermediate state
-		return (currentState.equals("Idle_Right") && targetDirection.equals("Left")) ||
-		       (currentState.equals("Idle_Left") && targetDirection.equals("Right")) ||
-		       (currentState.equals("Idle_Up") && targetDirection.equals("Down")) ||
-		       (currentState.equals("Idle_Down") && targetDirection.equals("Up"));
-	}
-	
-	private String getIntermediateDirection(String currentState) {
-		if (currentState.equals("Idle_Right") || currentState.equals("Idle_Left")) {
-			return "Up";
-		}
-		return "Left";
 	}
 	
 	private static class DirectionInfo {
