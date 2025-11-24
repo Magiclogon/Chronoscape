@@ -116,7 +116,7 @@ public class Player extends LivingEntity {
         getInventory().addItem(fists);
         getInventory().equipWeapon(fists, 0);
         initWeapons();
-        
+        if(!isIdle()) stateMachine.trigger("Stop");
 	}
 
 	public void resetBaseStats() {
@@ -147,7 +147,7 @@ public class Player extends LivingEntity {
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
-			//SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+			if(stateMachine.getCurrentAnimationState().isAnimationDone()) SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
 			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {

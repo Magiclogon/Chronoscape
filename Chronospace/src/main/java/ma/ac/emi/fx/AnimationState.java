@@ -65,6 +65,11 @@ public class AnimationState {
 		return defaultSprite;
 	}
 	
+	public boolean isAnimationDone() {
+		if(doesLoop) return false;
+		return currentFrameIndex == frames.size() - 1;
+	}
+	
 	public void reset() {
 		currentFrameIndex = 0;
 		if (!frames.isEmpty()) {

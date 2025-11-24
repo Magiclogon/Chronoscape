@@ -128,19 +128,16 @@ public class WorldManager {
 		if(currentWorld != null) GameController.getInstance().getGamePanel().removeDrawable(currentWorld);
 		currentWorldIndex++;
 
-		// Get next world (or generate endless world)
 		if (currentWorldIndex < worlds.size()) {
 			currentWorld = worlds.get(currentWorldIndex);
-			currentWorld.setDrawn(true);
-			GameController.getInstance().getGamePanel().addDrawable(currentWorld);
 		} else {
 			currentWorld = endlessGenerator.generateWorld(currentWorldIndex);
 		}
+		GameController.getInstance().getGamePanel().addDrawable(currentWorld);;
 		
 		System.out.println("Switched to world with species: " + 
 			currentWorld.getSpecieFactory().getClass().getName());
 		
-
 		// Setup player for new world
 		setupPlayerForWorld();
 		
