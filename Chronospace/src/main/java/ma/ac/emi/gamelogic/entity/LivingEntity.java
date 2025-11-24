@@ -51,7 +51,7 @@ public abstract class LivingEntity extends Entity {
 		addMovementTransitions(TRIGGER_RUN, "Idle", "Running");
 		addMovementTransitions(TRIGGER_STOP, "Running", "Idle");
 		addMovementTransitions(TRIGGER_DIE, "Idle", "Dying");
-		
+		addMovementTransitions(TRIGGER_STOP, "Dying", "Idle");
 		// Add transitions for backing and stopping
 		addBackingTransitions();
 		

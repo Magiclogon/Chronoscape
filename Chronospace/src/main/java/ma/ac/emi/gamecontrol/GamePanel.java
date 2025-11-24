@@ -32,6 +32,7 @@ public class GamePanel extends JPanel {
 		KeyHandler.getInstance().setupKeyBindings(this);
 		
 		this.drawables = new ArrayList<>();
+		drawables = Collections.synchronizedList(drawables);
 	}
 
 	@SuppressWarnings("unchecked")
