@@ -42,23 +42,55 @@ public class Player extends LivingEntity {
 		velocity = new Vector3D();
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
-		
-		spriteSheet = new SpriteSheet(AssetsLoader.getSprite("player/running animation test.png"), 
-				GamePanel.TILE_SIZE, 
-				GamePanel.TILE_SIZE);
-		setupAnimations();
+
 	}
 	
-	private void setupAnimations() {
+	@Override
+	public void setupAnimations() {
+		spriteSheet = new SpriteSheet(AssetsLoader.getSprite("player/main_character-Sheet.png"), 
+				GamePanel.TILE_SIZE, 
+				GamePanel.TILE_SIZE);
+		
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
 		AnimationState run_right = stateMachine.getAnimationStateByTitle("Running_Right");
+		AnimationState back_right = stateMachine.getAnimationStateByTitle("Backing_Right");
+		AnimationState die_right = stateMachine.getAnimationStateByTitle("Dying_Right");
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(0, 6)) {
+		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
+		AnimationState run_left = stateMachine.getAnimationStateByTitle("Running_Left");
+		AnimationState back_left = stateMachine.getAnimationStateByTitle("Backing_Left");
+		AnimationState die_left = stateMachine.getAnimationStateByTitle("Dying_Left");
+
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, 14)) {
 			idle_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(1, 6)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, 14)) {
 			run_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, 14)) {
+			back_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(3, 14)) {
+			idle_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, 14)) {
+			run_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, 14)) {
+			back_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, 49)) {
+			die_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, 49)) {
+			die_right.addFrame(sprite);
 		}
 	}
 	
@@ -84,7 +116,7 @@ public class Player extends LivingEntity {
         getInventory().addItem(fists);
         getInventory().equipWeapon(fists, 0);
         initWeapons();
-        
+        if(!isIdle()) stateMachine.trigger("Stop");
 	}
 
 	public void resetBaseStats() {
@@ -110,27 +142,30 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
+		velocity.init();
+		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
-			SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+			if(!isDying()) stateMachine.trigger("Die");
+			stateMachine.update(step);
+			if(stateMachine.getCurrentAnimationState().isAnimationDone()) SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack();
 		}
-		velocity.init();
-		if(!isIdle()) stateMachine.trigger("Stop");
-		
+
 		if(KeyHandler.getInstance().isUp()) {
-			if(!isIdle()) stateMachine.trigger("Stop");
+			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
 			velocity.setY(-1*speed);
 		}
 		if(KeyHandler.getInstance().isDown()) {
-			if(!isIdle()) stateMachine.trigger("Stop");
+			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
 			velocity.setY(speed);
 		}
 		if(KeyHandler.getInstance().isLeft()) {
-			if(!isIdle()) stateMachine.trigger("Stop");
+			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
 			velocity.setX(-1*speed);
 		}
@@ -146,9 +181,10 @@ public class Player extends LivingEntity {
 		bound.y = (int) getPos().getY();
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
-			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[weaponIndex]);
+			if(activeWeapon != null) GameController.getInstance().getGamePanel().removeDrawable(activeWeapon);
 			weaponIndex = Math.floorMod(weaponIndex+1, 3);
-			GameController.getInstance().getGamePanel().addDrawable(equippedWeapons[weaponIndex]);
+			activeWeapon = equippedWeapons[weaponIndex];
+			if(activeWeapon != null) GameController.getInstance().getGamePanel().addDrawable(activeWeapon);
 
 		}
 		if(activeWeapon != null) {
@@ -173,7 +209,7 @@ public class Player extends LivingEntity {
 		g.drawString(stateMachine.getCurrentAnimationState().getTitle(), (int)(pos.getX()), (int)(pos.getY()));
 		
 		g.drawString(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()), (int)(pos.getX()), (int)(pos.getY()+10));
-		
+	
 		g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)(pos.getX()), (int)(pos.getY()), null);
 	}
 	

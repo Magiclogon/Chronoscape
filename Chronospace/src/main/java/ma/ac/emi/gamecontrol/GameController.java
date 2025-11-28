@@ -130,6 +130,7 @@ public class GameController implements Runnable {
 		gamePanel.removeAllDrawables();
 		gamePanel.addDrawable(Player.getInstance());
 		Player.getInstance().setDrawn(true);
+		Player.getInstance().init();
         shopManager = new ShopManager(Player.getInstance());
         worldManager = new WorldManager(difficulty);
 		shopManager.init();

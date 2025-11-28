@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AnimationState {
-	public static final double DEFAULT_FRAME_RATE = 12;
+	public static final double DEFAULT_FRAME_RATE = 24;
 	private String title;
 	private List<Frame> frames;
 	
@@ -63,6 +63,11 @@ public class AnimationState {
 			return frames.get(currentFrameIndex).getSprite();
 		}
 		return defaultSprite;
+	}
+	
+	public boolean isAnimationDone() {
+		if(doesLoop) return false;
+		return currentFrameIndex == frames.size() - 1;
 	}
 	
 	public void reset() {

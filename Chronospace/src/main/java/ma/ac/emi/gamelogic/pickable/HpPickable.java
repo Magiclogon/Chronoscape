@@ -48,4 +48,5 @@ public class HpPickable extends Pickable {
         g.drawRect(bound.x, bound.y, bound.width, bound.height);
     }
 
+
 }

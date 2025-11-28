@@ -19,6 +19,11 @@ public abstract class Entity extends GameObject{
 	public Entity(boolean drawn) {
 		super(drawn);
 		stateMachine = new StateMachine();
+		initStateMachine();
+		setupAnimations();
 	}
+	
+	public abstract void initStateMachine();
+	public abstract void setupAnimations();
 	
 }

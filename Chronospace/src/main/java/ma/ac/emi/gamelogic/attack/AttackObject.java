@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.attack;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -23,7 +24,16 @@ public abstract class AttackObject extends Entity{
 		this.active = true;
 		this.weapon = weapon;
 		fromPlayer = weapon.isFromPlayer();
+		
 	}
+   	
+   	public void initStateMachine() {
+   		stateMachine.addAnimationState(new AnimationState("Active"));
+   	}
+   	
+   	public void setupAnimations() {
+   		
+   	}
    	
     public boolean isOutOfWorld(WorldContext context) {
     	return !(context.getWorldBounds().intersects(this.getBound()));
