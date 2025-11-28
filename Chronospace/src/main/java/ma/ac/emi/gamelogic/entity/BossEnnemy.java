@@ -12,6 +12,13 @@ public class BossEnnemy extends Ennemy{
     public BossEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
+
+    @Override
+    protected void initStats() {
+        setHpMax(80);
+        setHp(getHpMax());
+    }
+
     
     @Override
     public void initWeapon() {

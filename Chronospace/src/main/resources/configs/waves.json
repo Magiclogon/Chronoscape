@@ -14,7 +14,7 @@
         },
         {
           "waveNumber": 2,
-          "enemies": { "common": 1, "ranged": 3 },
+          "enemies": { "common": 1, "ranged": 3, "boss": 1 },
           "spawnDelay": 0.5,
           "isBossWave": false
         }
@@ -46,6 +46,5 @@
         }
       ]
     }
-    
   ]
 }

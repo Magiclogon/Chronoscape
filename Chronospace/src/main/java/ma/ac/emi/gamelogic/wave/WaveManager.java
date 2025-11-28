@@ -103,6 +103,13 @@ public class WaveManager {
         return wave != null ? new ArrayList<>(wave.getEnemies()) : new ArrayList<>();
     }
 
+    public void addEnemyToCurrentWave(Ennemy enemy) {
+        Wave currentWave = getCurrentWave();
+        if (currentWave != null) {
+            currentWave.getEnemies().add(enemy);
+        }
+    }
+
     public Wave getCurrentWave() {
         if (currentWaveNumber > 0 && currentWaveNumber <= waves.size()) {
             return waves.get(currentWaveNumber - 1);

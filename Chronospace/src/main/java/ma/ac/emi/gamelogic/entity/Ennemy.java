@@ -24,13 +24,13 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		this.pos = pos;
 		this.speed = speed;
 		this.velocity = new Vector3D();
-		hpMax = 100;
-		hp = 100;
 		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		hp = 30;
-		
+
 		GameController.getInstance().addDifficultyObserver(this);
+		initStats();
 	}
+
+	protected abstract void initStats();
 	
 	public void initWeapon() {
 		getWeapon().setAttackObjectManager(getAttackObjectManager());

@@ -12,7 +12,13 @@ public class TankEnnemy extends Ennemy{
     public TankEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
-    
+
+    @Override
+    protected void initStats() {
+        setHpMax(450);
+        setHp(getHpMax());
+    }
+
     @Override
     public void initWeapon() {
         setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("hammer")));

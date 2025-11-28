@@ -11,7 +11,13 @@ import java.awt.*;
 public class RangedEnnemy extends Ennemy{
 
     public RangedEnnemy(Vector3D pos, double speed) {
-        super(pos, speed);        
+        super(pos, speed);
+    }
+
+    @Override
+    protected void initStats() {
+        setHpMax(100);
+        setHp(getHpMax());
     }
     
     @Override

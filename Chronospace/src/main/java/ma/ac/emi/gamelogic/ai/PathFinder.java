@@ -11,6 +11,7 @@ import java.util.*;
 @Setter
 @Getter
 public class PathFinder {
+
     private WorldContext context;
     private int tileSize;
 

@@ -10,7 +10,7 @@ import java.util.Random;
 
 @Getter
 @Setter
-public class BossAIBehavior implements AIBehavior {
+public class RobotBossAIBehavior implements AIBehavior {
     private PathFinder pathfinder;
     private Random random;
 
@@ -53,7 +53,7 @@ public class BossAIBehavior implements AIBehavior {
     private double circleSpeed = 1.2;
     private double circleRadius = 150.0;
 
-    public BossAIBehavior(PathFinder pathfinder, double meleeRange) {
+    public RobotBossAIBehavior(PathFinder pathfinder, double meleeRange) {
         this.pathfinder = pathfinder;
         this.meleeRange = meleeRange;
         this.chargeRange = 400.0;

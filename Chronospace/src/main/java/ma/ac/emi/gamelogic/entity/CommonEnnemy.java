@@ -11,6 +11,12 @@ public class CommonEnnemy extends Ennemy{
     public CommonEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
+
+    @Override
+    protected void initStats() {
+        setHpMax(100);
+        setHp(getHpMax());
+    }
     
     @Override
     public void initWeapon() {

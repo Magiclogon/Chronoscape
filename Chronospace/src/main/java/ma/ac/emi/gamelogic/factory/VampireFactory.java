@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.factory;
 
+import ma.ac.emi.gamelogic.ai.MeleeAIBehavior;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.*;
