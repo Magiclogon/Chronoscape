@@ -8,20 +8,16 @@ import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
-import ma.ac.emi.gamelogic.ai.MeleeAIBehavior;
-import ma.ac.emi.gamelogic.ai.PathFinder;
-import ma.ac.emi.gamelogic.ai.RangedAIBehavior;
+import ma.ac.emi.gamelogic.ai.*;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.entity.Entity;
-import ma.ac.emi.gamelogic.entity.RangedEnnemy;
-import ma.ac.emi.gamelogic.entity.SpeedsterEnnemy;
+import ma.ac.emi.gamelogic.entity.*;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
@@ -87,7 +83,9 @@ public class World extends GameObject{
 				pathfinder, 
 				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
-		} else {
+		} else if (enemy instanceof BossEnnemy) {
+			enemy.setAiBehavior(new AlienBossAIBehavior(pathfinder));
+		}else {
 			enemy.setAiBehavior(new MeleeAIBehavior(
 				pathfinder, 
 				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
@@ -120,12 +118,39 @@ public class World extends GameObject{
 			if (enemy.getAiBehavior() == null) {
 				setupEnemyAI(enemy);
 			}
+
+			if (enemy.getAiBehavior() instanceof AlienBossAIBehavior bossAI) {
+				if (bossAI.isSpawningNow()) {
+					spawnBossMinions(enemy.getPos());
+				}
+			}
 		}
 		
 		context.getPickableManager().update(step);
 		// Update managers
 		context.getAttackObjectManager().update(step);
 		collisionManager.handleCollisions();
+	}
+
+	private void spawnBossMinions(Vector3D bossPos) {
+		int minionCount = 3;
+
+		for (int i = 0; i < minionCount; i++) {
+
+			Ennemy minion = context.getSpecieFactory().createCommon();
+			minion.setAttackObjectManager(context.getAttackObjectManager());
+			minion.initWeapon();
+
+			double offsetX = (Math.random() - 0.5) * 100;
+			double offsetY = (Math.random() - 0.5) * 100;
+			minion.setPos(bossPos.add(new Vector3D(offsetX, offsetY)));
+
+			setupEnemyAI(minion);
+
+			context.getWaveManager().addEnemyToCurrentWave(minion);
+		}
+
+		System.out.println("Boss spawned " + minionCount + " minions!");
 	}
 
 	public void draw(Graphics g) {

@@ -12,7 +12,13 @@ public class SpeedsterEnnemy extends Ennemy{
     public SpeedsterEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
     }
-    
+
+    @Override
+    protected void initStats() {
+        setHpMax(60);
+        setHp(getHpMax());
+    }
+
     @Override
     public void initWeapon() {
         setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("sword")));

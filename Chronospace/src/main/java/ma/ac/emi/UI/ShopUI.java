@@ -185,7 +185,7 @@ public class ShopUI extends JPanel {
         ShopManager shop = GameController.getInstance().getShopManager();
 
         // === Update money and reroll ===
-        moneyLabel.setText("Money: " + player.getMoney() + "$");
+        moneyLabel.setText("Money: " + (int)player.getMoney() + "$"); // Cast to int for cleaner look
         rerollButton.setText("Reroll (" + shop.getRerollPrice() + "$)");
 
         // === Update available shop items ===
@@ -197,10 +197,11 @@ public class ShopUI extends JPanel {
         // === Update equipped weapons ===
         activeWeaponsPane.getPanel().removeAll();
         for (WeaponItem item : player.getInventory().getEquippedWeapons()) {
-            activeWeaponsPane.add(new InventoryItemButton(this, item, 1));
+            if (item != null) {
+                activeWeaponsPane.add(new InventoryItemButton(this, item, 1));
+            }
         }
 
-        // === Update inventory weapons (stack same items) ===
         weaponPane.getPanel().removeAll();
         Map<String, Integer> weaponCounts = new HashMap<>();
         Map<String, ShopItem> weaponRefs = new HashMap<>();
@@ -217,7 +218,6 @@ public class ShopUI extends JPanel {
             weaponPane.add(new InventoryItemButton(this, ref, count));
         }
 
-        // === Update stat upgrade items (stack same items) ===
         statItemsPane.getPanel().removeAll();
         Map<String, Integer> statCounts = new HashMap<>();
         Map<String, ShopItem> statRefs = new HashMap<>();
@@ -234,10 +234,27 @@ public class ShopUI extends JPanel {
             statItemsPane.add(new InventoryItemButton(this, ref, count));
         }
 
-        // === Update player stats ===
         statsPanel.removeAll();
-        statsPanel.add(createStatLabel("Speed: " + player.getSpeed()));
-        // Add more stats here if available, e.g. health, damage, etc.
+
+        // Format: Name, Value, Color
+        addStatRow("Health",
+                String.format("%.0f / %.0f", player.getHp(), player.getHpMax()),
+                new Color(100, 255, 100));
+
+        addStatRow("Speed",
+                String.format("%.0f", player.getSpeed()),
+                new Color(100, 200, 255));
+
+        addStatRow("Strength",
+                String.format("%.1f", player.getStrength()),
+                new Color(255, 100, 100));
+
+        addStatRow("Regeneration",
+                String.format("%.1f /s", player.getRegenerationSpeed()),
+                new Color(255, 100, 255));
+
+        statsPanel.revalidate();
+        statsPanel.repaint();
 
         revalidate();
         repaint();
@@ -371,4 +388,22 @@ public class ShopUI extends JPanel {
         itemDescriptionPanel.repaint();
     }
 
+    private void addStatRow(String name, String value, Color valueColor) {
+        JPanel row = new JPanel(new BorderLayout());
+        row.setBackground(new Color(50, 50, 50));
+        row.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+
+        JLabel nameLbl = new JLabel(name + ": ");
+        nameLbl.setForeground(Color.LIGHT_GRAY);
+        nameLbl.setFont(new Font("Arial", Font.PLAIN, 14));
+
+        JLabel valLbl = new JLabel(value);
+        valLbl.setForeground(valueColor);
+        valLbl.setFont(new Font("Arial", Font.BOLD, 14));
+
+        row.add(nameLbl, BorderLayout.WEST);
+        row.add(valLbl, BorderLayout.EAST);
+
+        statsPanel.add(row);
+    }
 }

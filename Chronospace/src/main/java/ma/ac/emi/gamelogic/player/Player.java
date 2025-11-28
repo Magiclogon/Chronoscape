@@ -105,7 +105,7 @@ public class Player extends LivingEntity {
 		baseSpeed = 200;
 
 		resetBaseStats();
-		hp = baseHP;
+		hp = 100;
 		money = 10000;
 		weaponIndex = 0;
 		
