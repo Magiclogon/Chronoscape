@@ -202,9 +202,6 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.GREEN);
-		g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		
 		g.setColor(Color.black);
 		g.drawString(stateMachine.getCurrentAnimationState().getTitle(), (int)(pos.getX()), (int)(pos.getY()));
 		

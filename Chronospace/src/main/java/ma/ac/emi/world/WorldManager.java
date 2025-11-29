@@ -17,6 +17,7 @@ import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveConfigLoader;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.tiles.MapTheme;
 
 @Getter
 @Setter
@@ -85,7 +86,8 @@ public class WorldManager {
 			World world = new World(
 				worldConfig.getWorldWidth(),
 				worldConfig.getWorldHeight(),
-				specieFactory
+				specieFactory,
+				MapTheme.ROBOTS
 			);
 			
 			// Load waves for this world
@@ -143,8 +145,5 @@ public class WorldManager {
 		
 		// Reinitialize player weapons (if needed)
 		player.initWeapons();
-
-
 	}
-	
 }

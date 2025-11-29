@@ -18,22 +18,26 @@ import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.tiles.MapTheme;
+import ma.ac.emi.tiles.TileManager;
 
 @Getter
 @Setter
 public class World extends GameObject{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
+	private final TileManager tileManager;
 
-	public World(int width, int height, EnnemySpecieFactory specieFactory) {
+	public World(int width, int height, EnnemySpecieFactory specieFactory, MapTheme theme) {
 		super(false);
-		// Create context with all shared data
 		context = new WorldContext(width, height, specieFactory);
 
-		// Initialize managers that depend on context
+		this.tileManager = new TileManager(width, height, theme);
+
+		syncMapObstacles();
+
 		initializeManagers();
 
-		// Initialize collision manager
 		collisionManager = new CollisionManager(context);
 	}
 
@@ -90,6 +94,21 @@ public class World extends GameObject{
 				pathfinder, 
 				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
+		}
+	}
+
+	private void syncMapObstacles() {
+		for (int x = 0; x < context.getWorldWidth(); x++) {
+			for (int y = 0; y < context.getWorldHeight(); y++) {
+				if (tileManager.isSolid(x, y)) {
+					context.addObstacle(new Rectangle(
+							x * GamePanel.TILE_SIZE,
+							y * GamePanel.TILE_SIZE,
+							GamePanel.TILE_SIZE,
+							GamePanel.TILE_SIZE
+					));
+				}
+			}
 		}
 	}
 
@@ -154,19 +173,11 @@ public class World extends GameObject{
 	}
 
 	public void draw(Graphics g) {
-		int width = context.getWorldWidth();
-		int height = context.getWorldHeight();
-		
-		// Draw grid
-		g.setColor(Color.black);
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				g.drawRect(j * GamePanel.TILE_SIZE, i * GamePanel.TILE_SIZE,
-						GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-			}
+		if (tileManager != null) {
+			tileManager.draw(g);
 		}
 	}
-	
+
 	// Convenience getters that delegate to context
 	public int getWidth() {
 		return context.getWorldWidth();

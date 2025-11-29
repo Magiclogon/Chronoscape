@@ -4,44 +4,74 @@
       "worldNumber": 1,
       "worldWidth": 50,
       "worldHeight": 50,
-      "specieType": "vampire",
+      "specieType": "robot",
       "waves": [
         {
           "waveNumber": 1,
-          "enemies": { "common": 0 },
-          "spawnDelay": 0.5,
+          "enemies": { "common": 5 },
+          "spawnDelay": 1.0,
           "isBossWave": false
         },
         {
           "waveNumber": 2,
-          "enemies": { "common": 1, "ranged": 3, "boss": 1 },
+          "enemies": { "common": 6, "ranged": 2 },
+          "spawnDelay": 0.9,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 3,
+          "enemies": { "common": 5, "speedster": 3 },
+          "spawnDelay": 0.8,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 4,
+          "enemies": { "common": 8, "ranged": 4, "speedster": 2 },
+          "spawnDelay": 0.7,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 5,
+          "enemies": { "common": 15, "tank": 1, "ranged": 5 },
           "spawnDelay": 0.5,
           "isBossWave": false
         }
       ]
     },
-    { 
-	  "worldNumber": 2,
-	  "worldWidth": 30,
-	  "worldHeight": 60,
-	  "specieType": "zombie",
-	  "waves": [ 
-    	{
+    {
+      "worldNumber": 2,
+      "worldWidth": 30,
+      "worldHeight": 60,
+      "specieType": "alien",
+      "waves": [
+        {
           "waveNumber": 1,
-          "enemies": { "speedster": 5, "common": 10 },
-          "spawnDelay": 0.4,
+          "enemies": { "common": 8, "speedster": 4 },
+          "spawnDelay": 0.6,
           "isBossWave": false
         },
         {
           "waveNumber": 2,
-          "enemies": { "speedster": 6, "common": 8, "tank": 2 },
-          "spawnDelay": 0.4,
+          "enemies": { "common": 10, "ranged": 5 },
+          "spawnDelay": 0.6,
           "isBossWave": false
         },
         {
           "waveNumber": 3,
-          "enemies": { "speedster": 5, "boss": 1, "ranged": 3 },
-          "spawnDelay": 0.3,
+          "enemies": { "speedster": 8, "tank": 2 },
+          "spawnDelay": 0.5,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 4,
+          "enemies": { "common": 15, "ranged": 6, "speedster": 6 },
+          "spawnDelay": 0.4,
+          "isBossWave": false
+        },
+        {
+          "waveNumber": 5,
+          "enemies": { "boss": 1, "common": 5, "ranged": 2 },
+          "spawnDelay": 1.0,
           "isBossWave": true
         }
       ]

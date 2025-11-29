@@ -8,17 +8,13 @@ import java.util.Random;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamecontrol.GameController;
-import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.difficulty.EasyDifficultyStrategy;
 import ma.ac.emi.gamelogic.factory.AlienFactory;
-import ma.ac.emi.gamelogic.factory.AmericanFactory;
+import ma.ac.emi.gamelogic.factory.RobotFactory;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
-import ma.ac.emi.gamelogic.factory.VampireFactory;
-import ma.ac.emi.gamelogic.factory.ZombieFactory;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
+import ma.ac.emi.tiles.MapTheme;
 
 @Getter
 @Setter
@@ -26,9 +22,7 @@ public class EndlessWorldGenerator {
 	public static final Map<String, EnnemySpecieFactory> SPECIES = new HashMap<>();
 
 	static {
-		SPECIES.put("vampire", VampireFactory.getInstance());
-		SPECIES.put("zombie", ZombieFactory.getInstance());
-		SPECIES.put("american", AmericanFactory.getInstance());
+		SPECIES.put("robot", RobotFactory.getInstance());
 		SPECIES.put("alien", AlienFactory.getInstance());
     }
 	
@@ -59,7 +53,7 @@ public class EndlessWorldGenerator {
 		EnnemySpecieFactory specieFactory = specieFactories.remove(random.nextInt(specieFactories.size()));
 		int worldWidth = random.nextInt(MAX_WORLD_WIDTH-MIN_WORLD_WIDTH)+MIN_WORLD_WIDTH;
 		int worldHeight = random.nextInt(MAX_WORLD_HEIGHT-MIN_WORLD_HEIGHT)+MIN_WORLD_HEIGHT;
-		World world = new World(worldWidth, worldHeight, specieFactory);
+		World world = new World(worldWidth, worldHeight, specieFactory, MapTheme.ROBOTS);
 		world.setSpecieFactory(specieFactory);
 		
 		for(int i = 0; i < WAVES_PER_WORLD; i++) {
