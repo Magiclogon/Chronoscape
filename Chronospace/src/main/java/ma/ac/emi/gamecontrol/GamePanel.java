@@ -60,9 +60,8 @@ public class GamePanel extends JPanel {
 				drawable.draw(g);
 			}
 		}catch(Exception e) {
-			System.out.println(Arrays.toString(drawables.stream().map(Object::getClass).collect(Collectors.toList()).toArray()));
 
-			System.err.println("drawing error from: " + c);
+			System.err.println("drawing error from: " + c + " " + e.getMessage());
 		}
 		g2d.setTransform(oldTransform);
 	}

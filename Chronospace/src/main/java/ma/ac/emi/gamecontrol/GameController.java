@@ -179,6 +179,10 @@ public class GameController implements Runnable {
         long deltaTime;
         long accumTime = 0;
 
+        final long TARGET_FPS = 60;
+        final long FRAME_TIME = (long)(Math.pow(10, 9) / TARGET_FPS);  // ~33.3 million nanoseconds
+        long lastFrameTime = System.nanoTime();
+
         while (state == GameState.PLAYING) {
             deltaTime = System.nanoTime() - latestTime;
             latestTime += deltaTime;
@@ -189,11 +193,15 @@ public class GameController implements Runnable {
                 accumTime -= SIM_STEP;
             }
 
-            gamePanel.repaint();
-            gameUIPanel.repaint();
+            long currentTime = System.nanoTime();
+            if (currentTime - lastFrameTime >= FRAME_TIME) {
+                gamePanel.repaint();
+                gameUIPanel.repaint();
+                lastFrameTime = currentTime;
+            }
 
             try {
-                Thread.sleep(10);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

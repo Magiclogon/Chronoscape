@@ -1,0 +1,16 @@
+package ma.ac.emi.tiles;
+
+public enum TileType {
+    TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT,
+
+    TOP_EDGE, BOTTOM_EDGE, LEFT_EDGE, RIGHT_EDGE,
+
+    BORDER,
+
+    GROUND_DEFAULT,
+    GROUND_VAR_1_OBS,
+    GROUND_VAR_2_OBS,
+    GROUND_VAR_3_OBS,
+    GROUND_VAR_4_OBS,
+    GROUND_VAR_5_OBS
+}
