@@ -20,6 +20,7 @@ import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
+import ma.ac.emi.tiles.TileMap;
 
 @Getter
 @Setter
@@ -27,18 +28,23 @@ public class World extends GameObject{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
 	private final TileManager tileManager;
+	
+	private final TileMap map;
+	private final MapTheme theme;
 
 	public World(int width, int height, EnnemySpecieFactory specieFactory, MapTheme theme) {
-		super(false);
 		context = new WorldContext(width, height, specieFactory);
-
-		this.tileManager = new TileManager(width, height, theme);
-
+	
+		map = new TileMap();
+		this.tileManager = new TileManager(theme, map);
+		this.theme = theme;
+		
 		syncMapObstacles();
 
 		initializeManagers();
 
 		collisionManager = new CollisionManager(context);
+		
 	}
 
 	private void initializeManagers() {
@@ -101,11 +107,13 @@ public class World extends GameObject{
 		for (int x = 0; x < context.getWorldWidth(); x++) {
 			for (int y = 0; y < context.getWorldHeight(); y++) {
 				if (tileManager.isSolid(x, y)) {
-					context.addObstacle(new Rectangle(
-							x * GamePanel.TILE_SIZE,
-							y * GamePanel.TILE_SIZE,
-							GamePanel.TILE_SIZE,
-							GamePanel.TILE_SIZE
+					context.addObstacle(new Wall(
+							new Vector3D(
+								x * GamePanel.TILE_SIZE,
+								y * GamePanel.TILE_SIZE
+							),
+							map.getTile(y, x),
+							tileManager
 					));
 				}
 			}
@@ -113,7 +121,7 @@ public class World extends GameObject{
 	}
 
 	// Delegate to context
-	public void addObstacle(Rectangle obstacle) {
+	public void addObstacle(Wall obstacle) {
 		context.addObstacle(obstacle);
 	}
 

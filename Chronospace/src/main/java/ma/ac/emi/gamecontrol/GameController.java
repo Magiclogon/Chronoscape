@@ -154,6 +154,7 @@ public class GameController implements Runnable {
 
         window.showGame(gamePanel, gameUIPanel);
         showGame();
+        
         startGameThread();
     }
     
@@ -189,7 +190,7 @@ public class GameController implements Runnable {
             accumTime += deltaTime;
 
             while (accumTime > SIM_STEP) {
-                update(SIM_STEP / Math.pow(10, 9));
+                update(SIM_STEP / Math.pow(10, 9) / 1);
                 accumTime -= SIM_STEP;
             }
 
@@ -212,8 +213,10 @@ public class GameController implements Runnable {
         worldManager.update(step);
         camera.update(step);
         particleSystem.update(step);
+        gamePanel.update(step);
         
         GameTime.addTime(step);
+
     }
     
     public void setDifficulty(DifficultyStrategy difficulty) {

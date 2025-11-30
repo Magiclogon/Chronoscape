@@ -7,32 +7,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import lombok.Getter;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.gamecontrol.GamePanel;
 
+@Getter
 public class TileManager {
 
-    private TileType[][] mapLayout;
     private final int width;
     private final int height;
     private final MapTheme theme;
     private final Map<TileType, Sprite> tileSprites;
-    private final Random random;
-
+    
+    private final TileMap map;
     // OPTIMIZATION: This holds the pre-drawn map
     private BufferedImage mapCache;
 
-    public TileManager(int width, int height, MapTheme theme) {
-        this.width = width;
-        this.height = height;
+    public TileManager(MapTheme theme, TileMap map) {
+        this.width = map.getMap()[0].length;
+        this.height = map.getMap().length;
         this.theme = theme;
-        this.mapLayout = new TileType[width][height];
         this.tileSprites = new HashMap<>();
-        this.random = new Random(19L);
+        
+        this.map = map;
 
         loadTileSprites();
-        generateMap();
+        //generateMap();
 
         // Render the map once into memory
         cacheMap();
@@ -40,34 +42,31 @@ public class TileManager {
 
     private void loadTileSprites() {
         String p = theme.getPath();
-
-        tileSprites.put(TileType.TOP_LEFT, AssetsLoader.getSprite(p + "/topleft-001.png"));
-        tileSprites.put(TileType.TOP_RIGHT, AssetsLoader.getSprite(p + "/topright-001.png"));
-        tileSprites.put(TileType.BOTTOM_LEFT, AssetsLoader.getSprite(p + "/bottomleft-001.png"));
-        tileSprites.put(TileType.BOTTOM_RIGHT, AssetsLoader.getSprite(p + "/bottomright-001.png"));
-
-        tileSprites.put(TileType.TOP_EDGE, AssetsLoader.getSprite(p + "/top-001.png"));
-        tileSprites.put(TileType.BOTTOM_EDGE, AssetsLoader.getSprite(p + "/bottom-001.png"));
-        tileSprites.put(TileType.LEFT_EDGE, AssetsLoader.getSprite(p + "/left-001.png"));
-        tileSprites.put(TileType.RIGHT_EDGE, AssetsLoader.getSprite(p + "/right-001.png"));
-
-        tileSprites.put(TileType.BORDER, AssetsLoader.getSprite(p + "/border.png"));
-
-        tileSprites.put(TileType.GROUND_DEFAULT, AssetsLoader.getSprite(p + "/default.png"));
-        tileSprites.put(TileType.GROUND_VAR_1_OBS, AssetsLoader.getSprite(p + "/basic-001.png"));
-        tileSprites.put(TileType.GROUND_VAR_2_OBS, AssetsLoader.getSprite(p + "/basic-002.png"));
-        tileSprites.put(TileType.GROUND_VAR_3_OBS, AssetsLoader.getSprite(p + "/basic-003.png"));
-        tileSprites.put(TileType.GROUND_VAR_4_OBS, AssetsLoader.getSprite(p + "/basic-004.png"));
-        tileSprites.put(TileType.GROUND_VAR_5_OBS, AssetsLoader.getSprite(p + "/basic-005.png"));
+        
+        SpriteSheet sheet = new SpriteSheet(AssetsLoader.getSprite(p + "/Tileset.png"), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+        tileSprites.put(TileType.TOP_LEFT_OUT, sheet.getSprite(7, 2));
+        tileSprites.put(TileType.TOP_EDGE_OUT, sheet.getSprite(1, 0));
+        tileSprites.put(TileType.TOP_RIGHT_OUT, sheet.getSprite(5, 2));
+        tileSprites.put(TileType.TOP_LEFT_IN, sheet.getSprite(5, 0));
+        tileSprites.put(TileType.TOP_RIGHT_IN, sheet.getSprite(7, 0));
+        tileSprites.put(TileType.TOP_EDGE_IN, sheet.getSprite(6, 0));
+        
+        tileSprites.put(TileType.BOTTOM_LEFT_OUT, sheet.getSprite(4, 2));
+        tileSprites.put(TileType.BOTTOM_RIGHT_OUT, sheet.getSprite(4, 1));
+        tileSprites.put(TileType.BOTTOM_EDGE_OUT, sheet.getSprite(6, 0));
+        tileSprites.put(TileType.BOTTOM_LEFT_IN, sheet.getSprite(7, 3));
+        tileSprites.put(TileType.BOTTOM_RIGHT_IN, sheet.getSprite(5, 3));
+        tileSprites.put(TileType.BOTTOM_EDGE_IN, sheet.getSprite(6, 3));
+        
+        tileSprites.put(TileType.LEFT_EDGE_OUT, sheet.getSprite(7, 2));
+        tileSprites.put(TileType.RIGHT_EDGE_OUT, sheet.getSprite(5, 2));
+        tileSprites.put(TileType.LEFT_EDGE_IN, sheet.getSprite(5, 2));
+        tileSprites.put(TileType.RIGHT_EDGE_IN, sheet.getSprite(7, 2));
+        
+        tileSprites.put(TileType.GROUND_DEFAULT, sheet.getSprite(1, 2));
+        tileSprites.put(TileType.VOID, sheet.getSprite(6, 1));
     }
 
-    private void generateMap() {
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                mapLayout[x][y] = determineTileType(x, y);
-            }
-        }
-    }
 
     // NEW METHOD: Draws all tiles onto a single image
     private void cacheMap() {
@@ -82,7 +81,8 @@ public class TileManager {
         // Run the heavy loop here (ONCE only)
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                TileType type = mapLayout[x][y];
+            	if(isSolid(x, y)) continue;
+                TileType type = map.getMap()[y][x];
                 Sprite sprite = tileSprites.get(type);
 
                 if (sprite != null) {
@@ -98,30 +98,6 @@ public class TileManager {
         g2.dispose(); // Release resources
     }
 
-    private TileType determineTileType(int x, int y) {
-        if (x == 0 && y == 0) return TileType.TOP_LEFT;
-        if (x == width - 1 && y == 0) return TileType.TOP_RIGHT;
-        if (x == 0 && y == height - 1) return TileType.BOTTOM_LEFT;
-        if (x == width - 1 && y == height - 1) return TileType.BOTTOM_RIGHT;
-
-        if (y == 0) return TileType.TOP_EDGE;
-        if (y == height - 1) return TileType.BOTTOM_EDGE;
-        if (x == 0) return TileType.LEFT_EDGE;
-        if (x == width - 1) return TileType.RIGHT_EDGE;
-
-        return getRandomGroundTile();
-    }
-
-    private TileType getRandomGroundTile() {
-        double chance = random.nextDouble();
-        if (chance > 0.05) return TileType.GROUND_DEFAULT;
-        if (chance < 0.01) return TileType.GROUND_VAR_1_OBS;
-        if (chance < 0.02) return TileType.GROUND_VAR_2_OBS;
-        if (chance < 0.03) return TileType.GROUND_VAR_3_OBS;
-        if (chance < 0.04) return TileType.GROUND_VAR_4_OBS;
-        return TileType.GROUND_VAR_5_OBS;
-    }
-
     public void draw(Graphics g) {
         if (mapCache != null) {
             g.drawImage(mapCache, 0, 0, null);
@@ -129,7 +105,7 @@ public class TileManager {
     }
 
     public boolean isSolid(int x, int y) {
-        TileType type = mapLayout[x][y];
+        TileType type = map.getMap()[y][x];
         return !type.name().startsWith("GROUND") || type.name().endsWith("OBS");
     }
 }

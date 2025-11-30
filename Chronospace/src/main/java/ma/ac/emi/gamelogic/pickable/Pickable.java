@@ -16,8 +16,7 @@ public abstract class Pickable extends Entity{
     protected double dropProbability;
     protected boolean isPickedUp;
 
-    public Pickable(double dropProbability, boolean drawn) {
-    	super(drawn);
+    public Pickable(double dropProbability) {
         this.dropProbability = dropProbability;
         this.isPickedUp = false;
         this.bound = new Rectangle(10, 10);

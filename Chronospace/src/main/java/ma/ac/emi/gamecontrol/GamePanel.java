@@ -33,9 +33,10 @@ public class GamePanel extends JPanel {
 		
 		this.drawables = new ArrayList<>();
 		drawables = Collections.synchronizedList(drawables);
+		
+		setDoubleBuffered(true);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -46,29 +47,45 @@ public class GamePanel extends JPanel {
 		}		
 		AffineTransform oldTransform = g2d.getTransform();
 		
-		AffineTransform newTransform = oldTransform;
-		newTransform.concatenate(camera.getCamTransform());
 		
-		g2d.setTransform(newTransform);
-		drawables.removeIf(d -> !d.isDrawn());
+		AffineTransform camTx;
+		synchronized (camera) {
+		    camTx = new AffineTransform(camera.getCamTransform());
+		}
+		g2d.transform(camTx);
 
-		Collections.sort(drawables);
-		Class<? extends GameObject> c = null;
+
+		GameObject o = null;
 		try{
-			for(GameObject drawable : drawables) {
-				c = drawable.getClass();
-				drawable.draw(g);
+			List<GameObject> snapshot;
+			synchronized (drawables) {
+			    snapshot = new ArrayList<>(drawables);
 			}
+
+			for (GameObject d : snapshot) {
+				o = d;
+			    d.draw(g);
+			}
+
 		}catch(Exception e) {
 
-			System.err.println("drawing error from: " + c + " " + e.getMessage());
+			System.err.println("drawing error from: " + o.getClass());
+			e.printStackTrace();
 		}
 		g2d.setTransform(oldTransform);
 	}
+	
+	public void update(double step) {
+		drawables.removeIf(d -> !d.isDrawn());
+		Collections.sort(drawables);
+	}
 
 	public void addDrawable(GameObject gameObject) {
-		this.drawables.add(gameObject);
-		gameObject.setDrawn(true);
+		synchronized (drawables) {
+			this.drawables.add(gameObject);
+			gameObject.setDrawn(true);
+		}
+
 	}
 
 	public void removeDrawable(GameObject gameObject) {
@@ -76,6 +93,8 @@ public class GamePanel extends JPanel {
 	}
 	
 	public void removeAllDrawables() {
-		drawables.forEach(d -> d.setDrawn(false));
+		synchronized (drawables) {
+			drawables.forEach(d -> d.setDrawn(false));
+		}
 	}
 }

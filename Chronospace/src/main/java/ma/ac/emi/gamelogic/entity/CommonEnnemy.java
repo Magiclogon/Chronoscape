@@ -34,6 +34,5 @@ public class CommonEnnemy extends Ennemy{
         g.setColor(Color.yellow);
         g.drawRect(bound.x, bound.y, bound.width, bound.height);
         
-        super.draw(g);
     }
 }

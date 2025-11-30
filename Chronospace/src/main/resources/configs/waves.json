@@ -41,7 +41,7 @@
     {
       "worldNumber": 2,
       "worldWidth": 30,
-      "worldHeight": 60,
+      "worldHeight": 50,
       "specieType": "alien",
       "waves": [
         {

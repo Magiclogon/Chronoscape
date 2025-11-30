@@ -11,14 +11,14 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 public abstract class GameObject implements GameDrawable{
 	protected Vector3D pos;
+	protected Rectangle bound;
 	protected SpriteSheet spriteSheet;
 	protected boolean drawn;
 	
-	protected Rectangle bound;
-	public GameObject(boolean drawn) {
-		this.drawn = drawn;
-		if(drawn) GameController.getInstance().getGamePanel().addDrawable(this);
+	public GameObject() {
 		pos = new Vector3D();
+		bound = new Rectangle();
+		GameController.getInstance().getGamePanel().addDrawable(this);
 	}
 	
 	public abstract void update(double step);

@@ -30,7 +30,6 @@ public class Weapon extends Entity{
     protected AttackStrategy attackStrategy;
         
     public Weapon(WeaponItem weaponItem) {
-    	super(true);
     	this.weaponItem = weaponItem;
         pos = new Vector3D();
         dir = new Vector3D();
