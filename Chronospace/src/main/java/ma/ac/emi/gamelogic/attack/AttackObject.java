@@ -19,7 +19,6 @@ public abstract class AttackObject extends Entity{
     protected boolean fromPlayer;
     
    	public AttackObject(Vector3D pos, Weapon weapon) {
-   		super(true);
    		this.pos = pos;
 		this.active = true;
 		this.weapon = weapon;

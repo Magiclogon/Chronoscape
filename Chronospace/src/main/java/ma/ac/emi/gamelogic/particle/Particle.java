@@ -17,7 +17,6 @@ public class Particle extends Entity{
     private Image sprite;
 
     public Particle(ParticleDefinition definition, Vector3D pos, Vector3D vel) {
-    	super(true);
         this.pos = new Vector3D(pos);
         this.velocity = vel;
         this.definition = definition;

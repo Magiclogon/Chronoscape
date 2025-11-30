@@ -31,9 +31,6 @@ public abstract class LivingEntity extends Entity {
 	protected double speed;
 	protected AttackObjectManager attackObjectManager;
 	
-	public LivingEntity() {
-		super(true);
-	}
 	
 	@Override
 	public void initStateMachine() {

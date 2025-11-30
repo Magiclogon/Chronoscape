@@ -15,9 +15,7 @@ public abstract class Entity extends GameObject{
 	protected Vector3D velocity;
 	protected StateMachine stateMachine;
 	
-	protected Rectangle bound;
-	public Entity(boolean drawn) {
-		super(drawn);
+	public Entity() {
 		stateMachine = new StateMachine();
 		initStateMachine();
 		setupAnimations();
