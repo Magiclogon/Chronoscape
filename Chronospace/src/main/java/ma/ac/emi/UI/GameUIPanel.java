@@ -1,26 +1,38 @@
 package ma.ac.emi.UI;
 
+import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.world.World;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 public class GameUIPanel extends JPanel{
-	
+
+	// Minimap Configuration
+	private static final double MINIMAP_SCALE_PERCENT = 0.20; // Map takes 20% of screen width
+	private static final int MINIMAP_PADDING = 20;
+
 	public GameUIPanel() {
 		this.setOpaque(false);
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
 		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		Player player = Player.getInstance();
 		Inventory inventory = player.getInventory();
@@ -41,7 +53,6 @@ public class GameUIPanel extends JPanel{
 		g2.setColor(Color.GRAY);
 		g2.fillRect(barX, barY, barWidth, barHeight);
 
-		// HP Filler
 		g2.setColor(Color.RED);
 		g2.fillRect(barX, barY, (int) (barWidth * hpPercent), barHeight);
 
@@ -55,13 +66,63 @@ public class GameUIPanel extends JPanel{
 
 		FontMetrics fm = g2.getFontMetrics();
 		int textWidth = fm.stringWidth(moneyText);
-		int textX = panelWidth - textWidth - (int) (panelWidth * 0.03);
-		int textY = (int) (panelHeight * 0.08);
+		int textX = barX;
+		int textY = barY + barHeight + moneyFontSize + 5;
 
 		g2.setColor(Color.YELLOW);
 		g2.drawString(moneyText, textX, textY);
 
-		drawWeaponSlots(g2, inventory, player.getWeaponIndex(),panelWidth, panelHeight);
+		drawWeaponSlots(g2, inventory, player.getWeaponIndex(), panelWidth, panelHeight);
+
+		drawMinimap(g2, player, panelWidth, panelHeight);
+	}
+
+	private void drawMinimap(Graphics2D g2, Player player, int panelWidth, int panelHeight) {
+		try {
+			// get cached map
+			World currentWorld = GameController.getInstance().getWorldManager().getCurrentWorld();
+			if (currentWorld == null) return;
+
+			TileManager tileManager = currentWorld.getTileManager();
+			BufferedImage mapImage = tileManager.getMapCache();
+			if (mapImage == null) return;
+
+			// minimap dims
+			int mapW = mapImage.getWidth();
+			int mapH = mapImage.getHeight();
+
+			// Calculate scale to fit in the corner
+			double desiredWidth = panelWidth * MINIMAP_SCALE_PERCENT;
+			double scale = desiredWidth / mapW;
+
+			int minimapW = (int) (mapW * scale);
+			int minimapH = (int) (mapH * scale);
+
+			int miniX = panelWidth - minimapW - MINIMAP_PADDING;
+			int miniY = MINIMAP_PADDING;
+
+			g2.setColor(new Color(0, 0, 0, 150));
+			g2.fillRect(miniX - 2, miniY - 2, minimapW + 4, minimapH + 4);
+
+			g2.setColor(new Color(200, 200, 200));
+			g2.drawRect(miniX - 2, miniY - 2, minimapW + 4, minimapH + 4);
+
+			// map from cached map
+			g2.drawImage(mapImage, miniX, miniY, minimapW, minimapH, null);
+
+			// player dot
+			Vector3D playerPos = player.getPos();
+			int pMiniX = miniX + (int) (playerPos.getX() * scale);
+			int pMiniY = miniY + (int) (playerPos.getY() * scale);
+
+			g2.setColor(Color.GREEN);
+			g2.fillOval(pMiniX - 3, pMiniY - 3, 6, 6);
+
+
+		} catch (Exception e) {
+			// Fail silently or log to console to prevent UI crash
+			System.err.println("Minimap error: " + e.getMessage());
+		}
 	}
 
 	private void drawWeaponSlots(Graphics2D g2, Inventory inventory, int activeWeaponIndex,int panelWidth, int panelHeight) {

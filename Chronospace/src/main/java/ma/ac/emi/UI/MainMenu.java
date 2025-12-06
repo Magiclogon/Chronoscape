@@ -20,20 +20,35 @@ public class MainMenu extends JPanel {
 	private Image backgroundImage;
 
 	// Variables to hold the button images
-	private ImageIcon playIcon;
-	private ImageIcon playHoverIcon;
+	private ImageIcon startIcon;
+	private ImageIcon startHoverIcon;
+
+	private ImageIcon quitIcon;
+	private ImageIcon quitHoverIcon;
 
 	public MainMenu() {
 		try {
 			// 1. Load Background
 			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
 
-			// 2. Load Button Images (RENAME THESE TO MATCH YOUR FILES)
-			Image playImg = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/play.png"));
-			Image playHoverImg = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/play_hover.png"));
+			Image startImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Start1.png"));
+			Image startHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Start5.png"));
+			Image quitImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Quit1.png"));
+			Image quitHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Quit5.png"));
 
-			playIcon = new ImageIcon(playImg);
-			playHoverIcon = new ImageIcon(playHoverImg);
+			int btnWidth = 224;
+			int btnHeight = 56;
+
+			Image startImg = startImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+			Image startHoverImg = startHoverImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+			Image quitImg = quitImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+			Image quitHoverImg = quitHoverImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+
+			startIcon = new ImageIcon(startImg);
+			startHoverIcon = new ImageIcon(startHoverImg);
+
+			quitIcon = new ImageIcon(quitImg);
+			quitHoverIcon = new ImageIcon(quitHoverImg);
 
 		} catch (Exception e) {
 			System.err.println("Error loading menu images. Check file paths in MainMenu.java");
@@ -42,9 +57,9 @@ public class MainMenu extends JPanel {
 
 		startButton = new JButton();
 
-		if (playIcon != null) {
-			startButton.setIcon(playIcon);
-			startButton.setRolloverIcon(playHoverIcon);
+		if (startIcon != null) {
+			startButton.setIcon(startIcon);
+			startButton.setRolloverIcon(startHoverIcon);
 
 			startButton.setBorderPainted(false);
 			startButton.setContentAreaFilled(false);
@@ -54,9 +69,20 @@ public class MainMenu extends JPanel {
 			startButton.setText("Start");
 		}
 
-		startButton.addActionListener(e -> GameController.getInstance().showDifficultyMenu());
+		quitButton = new JButton();
 
-		quitButton = new JButton("Quit");
+		if (quitIcon != null) {
+			quitButton.setIcon(quitIcon);
+			quitButton.setRolloverIcon(quitHoverIcon);
+			quitButton.setBorderPainted(false);
+			quitButton.setContentAreaFilled(false);
+			quitButton.setFocusPainted(false);
+			quitButton.setOpaque(false);
+		} else {
+			quitButton.setText("Quit");
+		}
+
+		startButton.addActionListener(e -> GameController.getInstance().showDifficultyMenu());
 		quitButton.addActionListener(e -> System.exit(0));
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -64,7 +90,7 @@ public class MainMenu extends JPanel {
 		startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-		this.add(new Box.Filler(new Dimension(0, 20), new Dimension(0, 100), new Dimension(0, 200)));
+		this.add(new Box.Filler(new Dimension(0, 100), new Dimension(0, 200), new Dimension(0, 300)));
 		this.add(startButton);
 		this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
 		this.add(quitButton);

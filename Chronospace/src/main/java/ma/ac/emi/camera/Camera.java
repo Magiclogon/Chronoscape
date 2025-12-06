@@ -53,8 +53,6 @@ public class Camera {
 		// bloquer cam aux bordures
 		this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
 		this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
-		
-
 	}
 	
 	public void calculateTransform() {

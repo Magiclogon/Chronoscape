@@ -12,22 +12,99 @@ import java.awt.*;
 import java.io.IOException;
 
 public class DifficultyMenu extends JPanel {
-    private JLabel title;
     private JButton easyButton, mediumButton, hardButton, anwarButton;
     private Image backgroundImage;
 
+    private ImageIcon easyIcon, easyHoverIcon, mediumIcon, mediumHoverIcon, hardIcon, hardHoverIcon, anwarIcon, anwarHoverIcon;
+
     public DifficultyMenu() {
         try {
+            // 1. Load Background
             backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
+
+            int btnWidth = 224;
+            int btnHeight = 56;
+
+            Image easyImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Easy1.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image easyHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Easy5.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image mediumImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Medium1.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image mediumHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Medium5.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image hardImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Hard1.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image hardHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Hard5.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image anwarImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Anwar1.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+            Image anwarHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Anwar5.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+
+            easyIcon = new ImageIcon(easyImgRaw);
+            easyHoverIcon = new ImageIcon(easyHoverImgRaw);
+
+            mediumIcon = new ImageIcon(mediumImgRaw);
+            mediumHoverIcon = new ImageIcon(mediumHoverImgRaw);
+
+            hardIcon = new ImageIcon(hardImgRaw);
+            hardHoverIcon = new ImageIcon(hardHoverImgRaw);
+
+            anwarIcon = new ImageIcon(anwarImgRaw);
+            anwarHoverIcon = new ImageIcon(anwarHoverImgRaw);
+
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Error loading menu images. Check file paths in MainMenu.java");
         }
 
-        title = new JLabel();
-        easyButton = new JButton("Easy Button");
-        mediumButton = new JButton("Medium Button");
-        hardButton = new JButton("Hard Button");
-        anwarButton = new JButton("Anwar Button");
+        easyButton = new JButton();
+
+        if (easyIcon != null) {
+            easyButton.setIcon(easyIcon);
+            easyButton.setRolloverIcon(easyHoverIcon);
+
+            easyButton.setBorderPainted(false);
+            easyButton.setContentAreaFilled(false);
+            easyButton.setFocusPainted(false);
+            easyButton.setOpaque(false);
+        } else {
+            easyButton.setText("Easy difficulty");
+        }
+
+        mediumButton = new JButton();
+
+        if (mediumIcon != null) {
+            mediumButton.setIcon(mediumIcon);
+            mediumButton.setRolloverIcon(mediumHoverIcon);
+
+            mediumButton.setBorderPainted(false);
+            mediumButton.setContentAreaFilled(false);
+            mediumButton.setFocusPainted(false);
+            mediumButton.setOpaque(false);
+        } else {
+            mediumButton.setText("Medium Difficulty");
+        }
+
+        hardButton = new JButton();
+
+        if (hardIcon != null) {
+            hardButton.setIcon(hardIcon);
+            hardButton.setRolloverIcon(hardHoverIcon);
+
+            hardButton.setBorderPainted(false);
+            hardButton.setContentAreaFilled(false);
+            hardButton.setFocusPainted(false);
+            hardButton.setOpaque(false);
+        } else {
+            hardButton.setText("Hard difficulty");
+        }
+
+        anwarButton = new JButton();
+
+        if (anwarIcon != null) {
+            anwarButton.setIcon(anwarIcon);
+            anwarButton.setRolloverIcon(anwarHoverIcon);
+
+            anwarButton.setBorderPainted(false);
+            anwarButton.setContentAreaFilled(false);
+            anwarButton.setFocusPainted(false);
+            anwarButton.setOpaque(false);
+        } else {
+            anwarButton.setText("Anwar Difficulty");
+        }
 
         easyButton.addActionListener((e) -> {
             GameController.getInstance().setDifficulty(new EasyDifficultyStrategy());
@@ -49,10 +126,6 @@ public class DifficultyMenu extends JPanel {
             GameController.getInstance().showLevelSelection();
         });
 
-        title.setForeground(Color.RED);
-        title.setFont(new Font("Arial", Font.BOLD, 28));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
         easyButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         mediumButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         hardButton.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -60,10 +133,8 @@ public class DifficultyMenu extends JPanel {
 
         this.setBackground(Color.BLACK);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        title.setText("Difficulty");
 
-        this.add(title);
-        this.add(new Box.Filler(new Dimension(0, 20), new Dimension(0, 100), new Dimension(0, 200)));
+        this.add(new Box.Filler(new Dimension(0, 20), new Dimension(0, 100), new Dimension(0, 225)));
         this.add(easyButton);
         this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
         this.add(mediumButton);
