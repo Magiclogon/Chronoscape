@@ -11,42 +11,50 @@ import javax.swing.*;
 import ma.ac.emi.gamecontrol.GameController;
 
 public class LevelSelection extends JPanel {
-	private JLabel title;
-	private List<JButton> levelsButtons;
 	private Image backgroundImage;
+
+	private JButton level1Button;
+	private ImageIcon level1Icon, level1HoverIcon;
 
 	public LevelSelection() {
 		try {
 			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
+
+			int btnWidth = 224;
+			int btnHeight = 56;
+
+			Image level1ImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Level11.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+			Image level1HoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Level15.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+
+			level1Icon = new ImageIcon(level1ImgRaw);
+			level1HoverIcon = new ImageIcon(level1HoverImgRaw);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		title = new JLabel();
+		level1Button = new JButton();
 
-		levelsButtons = new ArrayList<>();
-		for (int i = 1; i <= 2; i++) {
-			JButton levelButton = new JButton("Level " + i);
-			levelButton.addActionListener((e) -> GameController.getInstance().restartGame());
-			levelsButtons.add(levelButton);
+		if (level1Icon != null) {
+			level1Button.setIcon(level1Icon);
+			level1Button.setRolloverIcon(level1HoverIcon);
+
+			level1Button.setBorderPainted(false);
+			level1Button.setContentAreaFilled(false);
+			level1Button.setFocusPainted(false);
+			level1Button.setOpaque(false);
+		} else {
+			level1Button.setText("Easy difficulty");
 		}
+
+		level1Button.addActionListener((e) -> GameController.getInstance().restartGame());
+		level1Button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		this.setBackground(Color.BLACK);
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.add(new Box.Filler(new Dimension(0, 20), new Dimension(0, 300), new Dimension(0, 320)));
+		this.add(level1Button);
 
-		title.setText("Choose Level");
-		title.setForeground(Color.RED);
-		title.setFont(new Font("Arial", Font.BOLD, 28));
-		title.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		this.add(title);
-		this.add(new Box.Filler(new Dimension(0, 20), new Dimension(0, 100), new Dimension(0, 200)));
-
-		for (JButton levelButton : levelsButtons) {
-			this.add(levelButton);
-			levelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-			this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
-		}
 	}
 
 	@Override
