@@ -1,5 +1,6 @@
 package ma.ac.emi.gamecontrol;
 
+import java.awt.Rectangle;
 import java.util.List;
 
 import lombok.Getter;
@@ -10,6 +11,8 @@ import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.pickable.Pickable;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
@@ -20,13 +23,14 @@ public class CollisionManager {
 	private List<Ennemy> enemies;
 	private AttackObjectManager attackObjectManager;
 	private PickableManager pickableManager;
+	private Obstacle obstacles;
 	private WorldContext context;
 	
 	public CollisionManager(WorldContext context) {
 		setContext(context);
 	}
 	
-	public void handleCollisions() {
+	public void handleCollisions(double step) {
 		player = Player.getInstance();
 
 		for(AttackObject attackObject : context.getAttackObjectManager().getEnemyObjects()) {
@@ -47,6 +51,38 @@ public class CollisionManager {
 			if(player.getBound().intersects(pickable.getBound()) && !pickable.isPickedUp()) {
 				pickable.applyEffect(player);
 				pickable.setPickedUp(true);
+			}
+		}
+		
+		for(Obstacle obstacle : context.getObstacles()) {
+			if(player.getBound().intersects(obstacle.getBound())) {
+				Rectangle p_bound = player.getBound();
+			    Rectangle o_bound = obstacle.getBound();
+			    
+			    int overlapRight = (p_bound.x + p_bound.width) - o_bound.x;
+			    int overlapLeft = (o_bound.x + o_bound.width) - p_bound.x;
+			    int overlapBottom = (p_bound.y + p_bound.height) - o_bound.y;
+			    int overlapTop = (o_bound.y + o_bound.height) - p_bound.y;
+			    
+			    int minOverlap = Math.min(Math.min(overlapRight, overlapLeft), 
+			                              Math.min(overlapBottom, overlapTop));
+			    
+			    System.out.println("obstacles position: " + o_bound.x + ", " + o_bound.y);
+			    System.out.println("overlaps: " + overlapRight + ", " + overlapLeft + ", " +
+			    				overlapBottom + ", " + overlapTop);
+			    
+			    if(minOverlap == overlapRight) {
+			        player.setPos(new Vector3D(o_bound.x - p_bound.width, player.getPos().getY()));
+			    } else if(minOverlap == overlapLeft) {
+			        player.setPos(new Vector3D(o_bound.x + o_bound.width, player.getPos().getY()));
+			    } else if(minOverlap == overlapBottom) {
+			        player.setPos(new Vector3D(player.getPos().getX(), o_bound.y - p_bound.height));
+			    } else {
+			        player.setPos(new Vector3D(player.getPos().getX(), o_bound.y + o_bound.height));
+			    }
+			    
+			    player.bound.x = (int) player.getPos().getX();
+			    player.bound.y = (int) player.getPos().getY();
 			}
 		}
 		

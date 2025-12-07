@@ -1,5 +1,6 @@
 package ma.ac.emi.world;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
@@ -13,11 +14,11 @@ import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.tiles.TileType;
 
-public class Wall extends GameObject{
+public class Obstacle extends GameObject{
 	private final TileType direction;
 	private final TileManager tileManager;
 	
-	public Wall(Vector3D pos, TileType dir, TileManager tileManager) {
+	public Obstacle(Vector3D pos, TileType dir, TileManager tileManager) {
 		this.pos = pos;
 		this.direction = dir;
 		this.tileManager = tileManager;
@@ -39,6 +40,7 @@ public class Wall extends GameObject{
 				(int)(getPos().getX()), 
 				(int)(getPos().getY()),
 				null);
+		
 	}
 
 	@Override
