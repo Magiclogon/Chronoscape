@@ -1,6 +1,8 @@
 package ma.ac.emi.gamecontrol;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.Getter;
@@ -54,38 +56,61 @@ public class CollisionManager {
 			}
 		}
 		
+		List<Obstacle> collidingObs = new ArrayList<>();
 		for(Obstacle obstacle : context.getObstacles()) {
 			if(player.getBound().intersects(obstacle.getBound())) {
-				Rectangle p_bound = player.getBound();
-			    Rectangle o_bound = obstacle.getBound();
-			    
-			    int overlapRight = (p_bound.x + p_bound.width) - o_bound.x;
-			    int overlapLeft = (o_bound.x + o_bound.width) - p_bound.x;
-			    int overlapBottom = (p_bound.y + p_bound.height) - o_bound.y;
-			    int overlapTop = (o_bound.y + o_bound.height) - p_bound.y;
-			    
-			    int minOverlap = Math.min(Math.min(overlapRight, overlapLeft), 
-			                              Math.min(overlapBottom, overlapTop));
-			    
-			    System.out.println("obstacles position: " + o_bound.x + ", " + o_bound.y);
-			    System.out.println("overlaps: " + overlapRight + ", " + overlapLeft + ", " +
-			    				overlapBottom + ", " + overlapTop);
-			    
-			    if(minOverlap == overlapRight) {
-			        player.setPos(new Vector3D(o_bound.x - p_bound.width, player.getPos().getY()));
-			    } else if(minOverlap == overlapLeft) {
-			        player.setPos(new Vector3D(o_bound.x + o_bound.width, player.getPos().getY()));
-			    } else if(minOverlap == overlapBottom) {
-			        player.setPos(new Vector3D(player.getPos().getX(), o_bound.y - p_bound.height));
-			    } else {
-			        player.setPos(new Vector3D(player.getPos().getX(), o_bound.y + o_bound.height));
-			    }
-			    
-			    player.bound.x = (int) player.getPos().getX();
-			    player.bound.y = (int) player.getPos().getY();
+				
+				collidingObs.add(obstacle);
+					
+			}
+
+		}
+		
+		
+		Collections.sort(collidingObs, (o1, o2) -> {
+		    double dx1 = (o1.bound.x + o1.bound.width * 0.5) - (player.bound.x + player.bound.width * 0.5);
+		    double dy1 = (o1.bound.y + o1.bound.height * 0.5) - (player.bound.y + player.bound.height * 0.5);
+
+		    double dx2 = (o2.bound.x + o2.bound.width * 0.5) - (player.bound.x + player.bound.width * 0.5);
+		    double dy2 = (o2.bound.y + o2.bound.height * 0.5) - (player.bound.y + player.bound.height * 0.5);
+
+		    double d1 = dx1 * dx1 + dy1 * dy1;
+		    double d2 = dx2 * dx2 + dy2 * dy2;
+
+		    return Double.compare(d1, d2);
+		});
+
+		
+		for(Obstacle obstacle : collidingObs) {
+			
+			Vector3D playerCenter = player.getPos().add(new Vector3D(
+				    player.getBound().width * 0.5,
+				    player.getBound().height * 0.5
+				));
+
+			Vector3D start = playerCenter.sub(player.getVelocity().mult(step));
+			Vector3D end   = playerCenter;
+
+			Rectangle expanded = new Rectangle(
+				    obstacle.getBound().x - player.getBound().width/2,
+				    obstacle.getBound().y - player.getBound().height/2,
+				    obstacle.getBound().width + player.getBound().width,
+				    obstacle.getBound().height + player.getBound().height
+				);
+
+			Vector3D.RayRectCollisionResponse response = Vector3D.rayRectIntersection(start, end, expanded);
+			
+			if(response.inCollision && response.t <= 1) {
+				player.setPos(player.getPos().sub(
+						response.contactNormal.mult(player.getVelocity().dotP(response.contactNormal)*(1-response.t)).mult(step)
+						));
+				player.bound.x = (int)player.getPos().getX();
+				player.bound.y = (int)player.getPos().getY();
 			}
 		}
 		
 		player.clamp(context.getWorldBounds());
 	}
+	
+
 }
