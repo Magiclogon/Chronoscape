@@ -1,5 +1,6 @@
 package ma.ac.emi.math;
 
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
@@ -70,6 +71,82 @@ public class Vector3D {
 	
 	public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
 		return a.add(b.sub(a).mult(t));
+	}
+	
+	public static RayRectCollisionResponse rayRectIntersection(Vector3D start, Vector3D end, Rectangle rect) {
+
+	    Vector3D dir = end.sub(start);
+
+	    double tNear = Double.NEGATIVE_INFINITY;
+	    double tFar  = Double.POSITIVE_INFINITY;
+
+	    Vector3D normalNear = null;
+
+	    // X slab
+	    if(dir.getX() != 0) {
+	        double tx1 = (rect.getX()    - start.getX()) / dir.getX();
+	        double tx2 = (rect.getMaxX() - start.getX()) / dir.getX();
+
+	        double t1 = Math.min(tx1, tx2);
+	        double t2 = Math.max(tx1, tx2);
+
+	        Vector3D n1 = tx1 < tx2 ? new Vector3D(-1, 0) : new Vector3D(1, 0);
+
+	        if(t1 > tNear) {
+	            tNear = t1;
+	            normalNear = n1;
+	        }
+
+	        tFar = Math.min(tFar, t2);
+	    }
+	    else {
+	        if(start.getX() < rect.getX() || start.getX() > rect.getMaxX())
+	            return new RayRectCollisionResponse(null, false, null, null);
+	    }
+
+	    // Y slab
+	    if(dir.getY() != 0) {
+	        double ty1 = (rect.getY()    - start.getY()) / dir.getY();
+	        double ty2 = (rect.getMaxY() - start.getY()) / dir.getY();
+
+	        double t1 = Math.min(ty1, ty2);
+	        double t2 = Math.max(ty1, ty2);
+
+	        Vector3D n1 = ty1 < ty2 ? new Vector3D(0, -1) : new Vector3D(0, 1);
+
+	        if(t1 > tNear) {
+	            tNear = t1;
+	            normalNear = n1;
+	        }
+
+	        tFar = Math.min(tFar, t2);
+	    }
+	    else {
+	        if(start.getY() < rect.getY() || start.getY() > rect.getMaxY())
+	            return new RayRectCollisionResponse(null, false, null, null);
+	    }
+
+	    if(tNear > tFar) return new RayRectCollisionResponse(null, false, null, null);
+	    if(tFar < 0)     return new RayRectCollisionResponse(null, false, null, null);
+
+	    Vector3D contactPoint = start.add(dir.mult(tNear));
+
+	    return new RayRectCollisionResponse(tNear, true, contactPoint, normalNear);
+	}
+
+	
+	public static class RayRectCollisionResponse{
+		public final Double t;
+		public final boolean inCollision;
+		public final Vector3D contactPoint;
+		public final Vector3D contactNormal;
+		
+		RayRectCollisionResponse(Double t, boolean inCollision, Vector3D contactPoint, Vector3D contactNormal){
+			this.t = t;
+			this.inCollision = inCollision;
+			this.contactPoint = contactPoint;
+			this.contactNormal = contactNormal;
+		}
 	}
 
 }
