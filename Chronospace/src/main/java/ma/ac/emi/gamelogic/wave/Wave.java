@@ -77,7 +77,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         // dead enemies positions
         List<Vector3D> deadEnemyPositions = new ArrayList<>();
         enemies.forEach(e -> {
-            if(e.getHp() <= 0) deadEnemyPositions.add(e.getPos());
+            if(e.getHp() <= 0 && e.deathAnimationDone()) deadEnemyPositions.add(e.getPos());
         });
 
         // Notify
@@ -85,13 +85,14 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
             System.out.println("Number of points: " + deadEnemyPositions.size());
             notifyListeners(deadEnemyPositions);
         }
+        
         enemies.forEach(enemy -> {
-        	if(enemy.getHp() <= 0) {
+        	if(enemy.getHp() <= 0 && enemy.deathAnimationDone()) {
         		GameController.getInstance().getGamePanel().removeDrawable(enemy);
         		GameController.getInstance().getGamePanel().removeDrawable(enemy.getWeapon());
         	}
         });
-        enemies.removeIf(enemy -> enemy.getHp() <= 0);
+        enemies.removeIf(enemy -> enemy.getHp() <= 0 && enemy.deathAnimationDone());
         for(Ennemy e: enemies) {
             e.update(deltaTime, playerPos);
         }

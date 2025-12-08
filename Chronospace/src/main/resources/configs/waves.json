@@ -8,7 +8,7 @@
       "waves": [
         {
           "waveNumber": 1,
-          "enemies": { "common": 5 },
+          "enemies": { "common": 0 },
           "spawnDelay": 1.0,
           "isBossWave": false
         },
