@@ -19,7 +19,7 @@ public abstract class LivingEntity extends Entity {
 	private static final String TRIGGER_BACK = "Back";
 	private static final String TRIGGER_DIE = "Die";
 	
-	protected Weapon activeWeapon;
+	protected Vector3D dir;
 	protected double hp;
 	protected double hpMax;
 	protected double baseHP;
@@ -103,7 +103,7 @@ public abstract class LivingEntity extends Entity {
 	}
 	
 	protected void changeStateDirection() {
-		if (activeWeapon == null) {
+		if (dir == null) {
 			return;
 		}
 		
@@ -123,16 +123,15 @@ public abstract class LivingEntity extends Entity {
 		// Resume movement if was moving
 		if (wasMoving) {
 			Vector3D rightVect = new Vector3D(1, 0, 0);
-			boolean movingForward = rightVect.mult(getVelocity().dotP(rightVect)).dotP(activeWeapon.getDir()) >= 0;
+			boolean movingForward = rightVect.mult(getVelocity().dotP(rightVect)).dotP(dir) >= 0;
 			stateMachine.trigger(movingForward ? TRIGGER_RUN : TRIGGER_BACK);
 		}
 	}
 	
 	private DirectionInfo determineDirection() {
-		Vector3D weaponDir = activeWeapon.getDir();
 		
-		double dpLeft = weaponDir.dotP(new Vector3D(-1, 0, 0));
-		double dpRight = weaponDir.dotP(new Vector3D(1, 0, 0));
+		double dpLeft = dir.dotP(new Vector3D(-1, 0, 0));
+		double dpRight = dir.dotP(new Vector3D(1, 0, 0));
 		
 		double[] dotProducts = {dpLeft, dpRight};
 		int maxIndex = 0;
@@ -160,6 +159,10 @@ public abstract class LivingEntity extends Entity {
 		
 	}
 	
+	public void pointAt(Vector3D target) {
+        setDir(target.sub(getPos()).normalize());
+    }
+	
 	private static class DirectionInfo {
 		final int index;
 		final String direction;
@@ -168,5 +171,9 @@ public abstract class LivingEntity extends Entity {
 			this.index = index;
 			this.direction = direction;
 		}
+	}
+	
+	public boolean deathAnimationDone() {
+		return isDying() && stateMachine.getCurrentAnimationState().isAnimationDone();
 	}
 }

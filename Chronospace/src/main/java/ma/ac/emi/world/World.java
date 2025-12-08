@@ -186,7 +186,6 @@ public class World extends GameObject{
 		}
 	}
 
-	// Convenience getters that delegate to context
 	public int getWidth() {
 		return context.getWorldWidth();
 	}

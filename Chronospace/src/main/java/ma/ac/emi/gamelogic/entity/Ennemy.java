@@ -12,6 +12,8 @@ import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 import java.awt.*;
 
+import javax.swing.SwingUtilities;
+
 @Setter
 @Getter
 public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
@@ -39,7 +41,15 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 
 	public void update(double step, Vector3D targetPos) {
 		velocity.init();
-
+		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
+		if(getHp() <= 0) {
+			if(!isDying()) stateMachine.trigger("Die");
+			System.out.print(stateMachine.getCurrentAnimationState().getCurrentFrameIndex());
+			System.out.println("/"+stateMachine.getCurrentAnimationState().getFrames().size());
+			stateMachine.update(step);
+			return;
+		}
+		
 		if (aiBehavior != null) {
 			Vector3D direction = aiBehavior.calculateMovement(this, targetPos, step);
 			setVelocity(direction.mult(getSpeed()));
@@ -48,9 +58,11 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 				attack();
 			}
 			
-			if(getWeapon() != null) {
-				getWeapon().pointAt(targetPos);
-			}
+			pointAt(targetPos);
+			
+			
+			if(!isIdle())stateMachine.trigger("Stop");
+			stateMachine.trigger("Run");
 		} else {
 			// basic
 			Vector3D direction = (targetPos.sub(getPos())).normalize();
@@ -65,14 +77,14 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		if(getWeapon() != null) {
 			getWeapon().update(step);
 		}
+		
+		changeStateDirection();
+		stateMachine.update(step);
 	}
 
 	@Override
 	public void update(double step) {/* todo nothing */}
 
-	@Override
-	public void draw(Graphics g) {
-	}
 
 	@Override
 	public void attack() {
@@ -86,12 +98,17 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		difficutly.adjustEnemyStats(this);
 	}
 
-	@Override
-	public void setupAnimations() {
-		// TODO Auto-generated method stub
-		
-	}
 
+	@Override
+	public void setupAnimations() {}
+
+	
+
+    @Override
+    public void draw(Graphics g) {
+        g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)pos.getX(), (int)pos.getY(), null);
+        
+    }
 
 
 }
