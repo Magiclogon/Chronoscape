@@ -14,28 +14,28 @@ public class RobotFactory extends EnnemySpecieFactory{
 
     @Override
     public Ennemy createCommon() {
-        CommonEnnemy enemy = new CommonEnnemy(new Vector3D(), 1);
+        CommonEnnemy enemy = new CommonEnnemy(new Vector3D(), 115);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createSpeedster() {
-        SpeedsterEnnemy enemy = new SpeedsterEnnemy(new Vector3D(), 2);
+        SpeedsterEnnemy enemy = new SpeedsterEnnemy(new Vector3D(), 210);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createTank() {
-        TankEnnemy enemy = new TankEnnemy(new Vector3D(), 0.5);
+        TankEnnemy enemy = new TankEnnemy(new Vector3D(), 90);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createRanged() {
-        RangedEnnemy enemy = new RangedEnnemy(new Vector3D(), 1);
+        RangedEnnemy enemy = new RangedEnnemy(new Vector3D(), 130);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }

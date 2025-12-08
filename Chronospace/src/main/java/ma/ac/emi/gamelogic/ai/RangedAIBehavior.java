@@ -5,61 +5,112 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.math.Vector3D;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
 public class RangedAIBehavior implements AIBehavior {
-    private PathFinder pathfinder;
-    private double optimalRange;
-    private double attackRange;
-    private double minRange;
-    private Vector3D currentTarget;
 
-    public RangedAIBehavior(PathFinder pathfinder, double optimalRange, double attackRange) {
+    private PathFinder pathfinder;
+    private double rangeOptimal;
+    private double rangeAttaque;
+    private double rangeMin;
+
+    private List<Vector3D> chemin = new ArrayList<>();
+    private int idx = 0;
+
+    private long lastTime = 0;
+    private static final long DELAI_CALCUL = 250;
+
+    private static final double FORCE = 0.10;
+    private static final double TOLERANCE = 16.0;
+
+    private Vector3D vitesseActuelle = new Vector3D(0, 0);
+
+    public RangedAIBehavior(PathFinder pathfinder, double rangeOptimal, double rangeAttaque) {
         this.pathfinder = pathfinder;
-        this.optimalRange = optimalRange;
-        this.attackRange = attackRange;
-        this.minRange = optimalRange * 0.7;
+        this.rangeOptimal = rangeOptimal;
+        this.rangeAttaque = rangeAttaque;
+        this.rangeMin = rangeOptimal * 0.7;
     }
 
     @Override
-    public Vector3D calculateMovement(Ennemy enemy, Vector3D playerPos, double step) {
-        double distance = enemy.getPos().distance(playerPos);
+    public Vector3D calculateMovement(Ennemy ennemy, Vector3D posJoueur, double step) {
+        double dist = ennemy.getPos().distance(posJoueur);
+        Vector3D directionVoulu;
 
-        // Too close - retreat
-        if (distance < minRange) {
-            Vector3D retreatDirection = enemy.getPos().sub(playerPos).normalize();
-            return retreatDirection;
+        //too close
+        if (dist < rangeMin) {
+            directionVoulu = ennemy.getPos().sub(posJoueur);
+
+            chemin.clear();
         }
 
-        // Too far - approach
-        if (distance > optimalRange) {
-            if (distance < 200) {
-                return playerPos.sub(enemy.getPos()).normalize();
+        // approach
+        else if (dist > rangeOptimal) {
+            long now = System.currentTimeMillis();
+            boolean check = chemin.isEmpty() || (now - lastTime > DELAI_CALCUL);
+
+            if (check) {
+                calculerChemin(ennemy.getPos(), posJoueur);
+                lastTime = now;
             }
 
-            // Use pathfinding for longer distances
-            if (currentTarget == null || currentTarget.distance(enemy.getPos()) < 10) {
-                List<Vector3D> path = pathfinder.findPath(enemy.getPos(), playerPos);
-                if (!path.isEmpty()) {
-                    currentTarget = path.get(0);
-                } else {
-                    currentTarget = playerPos;
+            Vector3D cible = posJoueur;
+
+            if (!chemin.isEmpty()) {
+                while (idx < chemin.size() &&
+                        ennemy.getPos().distance(chemin.get(idx)) < TOLERANCE) {
+                    idx++;
+                }
+                if (idx < chemin.size()) {
+                    cible = chemin.get(idx);
                 }
             }
-            return currentTarget.sub(enemy.getPos()).normalize();
+            directionVoulu = cible.sub(ennemy.getPos());
         }
 
-        // At optimal range - strafe (move perpendicular)
-        Vector3D toPlayer = playerPos.sub(enemy.getPos());
-        Vector3D perpendicular = new Vector3D(-toPlayer.getY(), toPlayer.getX()).normalize();
-        return perpendicular;
+        // keep distance
+        else {
+            Vector3D toPlayer = posJoueur.sub(ennemy.getPos());
+            directionVoulu = new Vector3D(-toPlayer.getY(), toPlayer.getX());
+            chemin.clear();
+        }
+
+        // Normalization
+        if (directionVoulu.getX() != 0 || directionVoulu.getY() != 0) {
+            directionVoulu = directionVoulu.normalize();
+        }
+
+        // Smoothing
+        double smoothX = lissage(vitesseActuelle.getX(), directionVoulu.getX(), FORCE);
+        double smoothY = lissage(vitesseActuelle.getY(), directionVoulu.getY(), FORCE);
+
+        this.vitesseActuelle = new Vector3D(smoothX, smoothY);
+
+        if (vitesseActuelle.getX() != 0 || vitesseActuelle.getY() != 0) {
+            return vitesseActuelle.normalize();
+        }
+
+        return new Vector3D(0, 0);
     }
 
     @Override
-    public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
-        double distance = enemy.getPos().distance(playerPos);
-        return distance <= attackRange && distance >= minRange;
+    public boolean shouldAttack(Ennemy ennemy, Vector3D posJoueur) {
+        double dist = ennemy.getPos().distance(posJoueur);
+        return dist <= rangeAttaque && dist >= rangeMin;
+    }
+
+    private void calculerChemin(Vector3D start, Vector3D end) {
+        List<Vector3D> res = pathfinder.findPath(start, end);
+        if (res != null && !res.isEmpty()) {
+            this.chemin = res;
+            this.idx = 0;
+        }
+    }
+
+    private double lissage(double start, double end, double val) {
+        return start + val * (end - start);
     }
 }
