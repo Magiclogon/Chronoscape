@@ -232,5 +232,4 @@ public class GameController implements Runnable {
 		this.difficultyObservers.add(observer);
 		if(difficulty != null) notifyDifficultyObservers();
 	}
-
 }

@@ -91,7 +91,4 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		// TODO Auto-generated method stub
 		
 	}
-
-
-
 }

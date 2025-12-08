@@ -8,7 +8,6 @@ import java.util.Random;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.factory.AlienFactory;
 import ma.ac.emi.gamelogic.factory.RobotFactory;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.wave.Wave;
@@ -23,7 +22,7 @@ public class EndlessWorldGenerator {
 
 	static {
 		SPECIES.put("robot", RobotFactory.getInstance());
-		SPECIES.put("alien", AlienFactory.getInstance());
+
     }
 	
 	public final int MIN_WORLD_WIDTH = 30, MAX_WORLD_WIDTH = 70, MIN_WORLD_HEIGHT = 30, MAX_WORLD_HEIGHT = 70;
