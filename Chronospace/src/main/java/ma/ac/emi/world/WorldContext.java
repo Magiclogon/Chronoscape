@@ -41,7 +41,7 @@ public class WorldContext {
     private EnnemySpecieFactory specieFactory;
     
     // World data
-    private final List<Wall> obstacles;
+    private final List<Obstacle> obstacles;
     
     public WorldContext(int width, int height, EnnemySpecieFactory specieFactory) {
         this.worldWidth = width;
@@ -58,7 +58,7 @@ public class WorldContext {
     /**
      * Add an obstacle to the world
      */
-    public void addObstacle(Wall obstacle) {
+    public void addObstacle(Obstacle obstacle) {
         obstacles.add(obstacle);
     }
     
@@ -77,7 +77,7 @@ public class WorldContext {
             ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE
         );
         
-        for (Wall obstacle : obstacles) {
+        for (Obstacle obstacle : obstacles) {
             if (checkRect.intersects(obstacle.getBound())) {
                 return true;
             }

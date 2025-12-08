@@ -107,7 +107,7 @@ public class World extends GameObject{
 		for (int x = 0; x < context.getWorldWidth(); x++) {
 			for (int y = 0; y < context.getWorldHeight(); y++) {
 				if (tileManager.isSolid(x, y)) {
-					context.addObstacle(new Wall(
+					context.addObstacle(new Obstacle(
 							new Vector3D(
 								x * GamePanel.TILE_SIZE,
 								y * GamePanel.TILE_SIZE
@@ -121,7 +121,7 @@ public class World extends GameObject{
 	}
 
 	// Delegate to context
-	public void addObstacle(Wall obstacle) {
+	public void addObstacle(Obstacle obstacle) {
 		context.addObstacle(obstacle);
 	}
 
@@ -156,7 +156,7 @@ public class World extends GameObject{
 		context.getPickableManager().update(step);
 		// Update managers
 		context.getAttackObjectManager().update(step);
-		collisionManager.handleCollisions();
+		collisionManager.handleCollisions(step);
 	}
 
 	private void spawnBossMinions(Vector3D bossPos) {
@@ -186,7 +186,6 @@ public class World extends GameObject{
 		}
 	}
 
-	// Convenience getters that delegate to context
 	public int getWidth() {
 		return context.getWorldWidth();
 	}

@@ -180,8 +180,8 @@ public class GameController implements Runnable {
         long deltaTime;
         long accumTime = 0;
 
-        final long TARGET_FPS = 60;
-        final long FRAME_TIME = (long)(Math.pow(10, 9) / TARGET_FPS);  // ~33.3 million nanoseconds
+        final long TARGET_FPS = 120;
+        final long FRAME_TIME = (long)(Math.pow(10, 9) / TARGET_FPS);
         long lastFrameTime = System.nanoTime();
 
         while (state == GameState.PLAYING) {

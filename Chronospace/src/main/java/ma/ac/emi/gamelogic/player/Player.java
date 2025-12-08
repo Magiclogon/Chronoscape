@@ -34,6 +34,7 @@ public class Player extends LivingEntity {
 	private Inventory inventory;
 	private Weapon[] equippedWeapons;
 	private int weaponIndex;
+	private Weapon activeWeapon;
 	
 	private static Player instance;
 		
@@ -60,7 +61,7 @@ public class Player extends LivingEntity {
 		AnimationState run_left = stateMachine.getAnimationStateByTitle("Running_Left");
 		AnimationState back_left = stateMachine.getAnimationStateByTitle("Backing_Left");
 		AnimationState die_left = stateMachine.getAnimationStateByTitle("Dying_Left");
-
+		run_left.setDoesLoop(false);
 		for(Sprite sprite : spriteSheet.getAnimationRow(0, 14)) {
 			idle_right.addFrame(sprite);
 		}
@@ -147,7 +148,7 @@ public class Player extends LivingEntity {
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
-			if(stateMachine.getCurrentAnimationState().isAnimationDone()) SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+			if(deathAnimationDone()) SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
 			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
@@ -188,13 +189,14 @@ public class Player extends LivingEntity {
 
 		}
 		if(activeWeapon != null) {
-			activeWeapon.pointAt(MouseHandler.getInstance().getMouseWorldPos());
 			activeWeapon.update(step);
 		}
 		
 		if (!isIdle()) {
 		    GameController.getInstance().getParticleSystem().spawnEffect("smoke", pos, this, GameTime.get());
 		}
+		
+		pointAt(MouseHandler.getInstance().getMouseWorldPos());
 		
 		changeStateDirection();
 		stateMachine.update(step);

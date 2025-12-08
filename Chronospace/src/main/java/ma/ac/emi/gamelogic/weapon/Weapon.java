@@ -53,7 +53,7 @@ public class Weapon extends Entity{
     public void draw(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         AffineTransform oldTransform = g2d.getTransform();
-        double theta = Math.atan2(getDir().getY(), getDir().getX());
+        double theta = getDir()!=null? Math.atan2(getDir().getY(), getDir().getX()) : 0;
         g2d.translate(getPos().getX(), getPos().getY());
         g2d.rotate(theta);
         g2d.setColor(Color.GRAY);
@@ -73,6 +73,8 @@ public class Weapon extends Entity{
             setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
             setTssr(0);
         }
+        
+        setDir(getBearer().getDir());
     }
     
     public void snapTo(LivingEntity entity) {
@@ -83,10 +85,6 @@ public class Weapon extends Entity{
         if (ammo == ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() || tssr > 0) return;
         System.out.println("Reloading weapon...");
         tssr = 0;
-    }
-
-    public void pointAt(Vector3D target) {
-        setDir(target.sub(getPos()).normalize());
     }
     
     public boolean isFromPlayer() {
