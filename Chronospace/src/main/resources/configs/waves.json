@@ -14,9 +14,9 @@
         },
         {
           "waveNumber": 2,
-          "enemies": { "common": 6, "ranged": 2 },
+          "enemies": { "boss": 1},
           "spawnDelay": 0.9,
-          "isBossWave": false
+          "isBossWave": true
         },
         {
           "waveNumber": 3,
