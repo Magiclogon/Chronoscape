@@ -8,13 +8,13 @@
       "waves": [
         {
           "waveNumber": 1,
-          "enemies": { "common": 0 },
+          "enemies": { "common": 5 },
           "spawnDelay": 1.0,
           "isBossWave": false
         },
         {
           "waveNumber": 2,
-          "enemies": { "common": 5 },
+          "enemies": { "common": 6, "ranged": 2 },
           "spawnDelay": 1.0,
           "isBossWave": false
         },
@@ -22,7 +22,7 @@
           "waveNumber": 3,
           "enemies": { "common": 6, "ranged": 2 },
           "spawnDelay": 0.9,
-          "isBossWave": false
+          "isBossWave": true
         },
         {
           "waveNumber": 4,

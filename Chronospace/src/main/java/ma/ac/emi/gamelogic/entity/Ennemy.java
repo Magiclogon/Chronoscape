@@ -106,7 +106,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 
     @Override
     public void draw(Graphics g) {
-        g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)pos.getX(), (int)pos.getY(), null);
+        if(stateMachine.getCurrentAnimationState() != null) g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)pos.getX(), (int)pos.getY(), null);
         
     }
 
