@@ -28,14 +28,14 @@ public abstract class Projectile extends AttackObject{
     	this.startingPos = pos;
     	
         this.velocity = dir.mult(projectileType.getBaseSpeed());
-        this.bound = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
+        this.hitbox = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
     }
 
 	public void update(double step) {
         setPos(getPos().add(velocity.mult(step)));
         
-        bound.x = (int) getPos().getX();
-        bound.y = (int) getPos().getY();
+        hitbox.x = (int) getPos().getX();
+        hitbox.y = (int) getPos().getY();
         
         if(isOutOfRange()) {
         	setActive(false);
@@ -49,7 +49,7 @@ public abstract class Projectile extends AttackObject{
             g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
                          (int)(radius * 2), (int)(radius * 2));
             g2d.setColor(Color.black);
-            g2d.draw(bound);
+            g2d.draw(hitbox);
     	}
         
     }

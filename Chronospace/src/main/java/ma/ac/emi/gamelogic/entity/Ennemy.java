@@ -26,7 +26,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		this.pos = pos;
 		this.speed = speed;
 		this.velocity = new Vector3D();
-		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		hitbox = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 
 		GameController.getInstance().addDifficultyObserver(this);
 		initStats();
@@ -44,8 +44,6 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
-			System.out.print(stateMachine.getCurrentAnimationState().getCurrentFrameIndex());
-			System.out.println("/"+stateMachine.getCurrentAnimationState().getFrames().size());
 			stateMachine.update(step);
 			return;
 		}
@@ -71,8 +69,8 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 
 		setPos(getPos().add(velocity.mult(step)));
 
-		bound.x = (int) getPos().getX();
-		bound.y = (int) getPos().getY();
+		hitbox.x = (int) (getPos().getX());
+		hitbox.y = (int) (getPos().getY());
 		
 		if(getWeapon() != null) {
 			getWeapon().update(step);
@@ -102,13 +100,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 	@Override
 	public void setupAnimations() {}
 
-	
 
-    @Override
-    public void draw(Graphics g) {
-        if(stateMachine.getCurrentAnimationState() != null) g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)pos.getX(), (int)pos.getY(), null);
-        
-    }
 
 
 }

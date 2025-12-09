@@ -24,15 +24,15 @@ public class AOE extends AttackObject{
 		
 		this.aoeType = aoeType;
     	
-        this.bound = new Rectangle(aoeType.getBoundWidth(), aoeType.getBoundHeight());
+        this.hitbox = new Rectangle(aoeType.getBoundWidth(), aoeType.getBoundHeight());
         currentAge = 0;
         lastAge = 0;
 	}
 
 	@Override
 	public void update(double step) {
-		bound.x = (int)getPos().getX();
-		bound.y = (int)getPos().getY();
+		hitbox.x = (int)getPos().getX();
+		hitbox.y = (int)getPos().getY();
 		currentAge += step;
 		lastAge = currentAge - step;
 		
@@ -45,7 +45,7 @@ public class AOE extends AttackObject{
 	public void draw(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setColor(Color.cyan);
-		g2d.fillRect((int)getPos().getX(), (int)getPos().getY(), bound.width, bound.height);
+		g2d.fillRect((int)getPos().getX(), (int)getPos().getY(), hitbox.width, hitbox.height);
 	}
 
 	@Override

@@ -76,16 +76,4 @@ public class SpeedsterEnnemy extends Ennemy{
         super.initWeapon();
     }
 
-    @Override
-    public void draw(Graphics g) {
-        if(hp > 0) {
-            g.setColor(Color.YELLOW);
-            g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-        }
-
-        g.setColor(Color.yellow);
-        g.drawRect(bound.x, bound.y, bound.width, bound.height);
-        super.draw(g);
-
-    }
 }

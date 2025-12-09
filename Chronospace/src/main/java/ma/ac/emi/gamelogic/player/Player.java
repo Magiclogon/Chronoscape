@@ -41,7 +41,8 @@ public class Player extends LivingEntity {
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector3D();
-		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		hitbox = new Rectangle(22, 28);
+		bound = new Rectangle(22, 8);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 
 	}
@@ -61,7 +62,7 @@ public class Player extends LivingEntity {
 		AnimationState run_left = stateMachine.getAnimationStateByTitle("Running_Left");
 		AnimationState back_left = stateMachine.getAnimationStateByTitle("Backing_Left");
 		AnimationState die_left = stateMachine.getAnimationStateByTitle("Dying_Left");
-		run_left.setDoesLoop(false);
+
 		for(Sprite sprite : spriteSheet.getAnimationRow(0, 14)) {
 			idle_right.addFrame(sprite);
 		}
@@ -178,8 +179,11 @@ public class Player extends LivingEntity {
 		
 		setPos(pos.add(velocity.mult(step)));
 		
-		bound.x = (int) getPos().getX();
-		bound.y = (int) getPos().getY();
+		hitbox.x = (int) (getPos().getX());
+		hitbox.y = (int) (getPos().getY()-hitbox.height/2+GamePanel.TILE_SIZE/2);
+		
+		bound.x = (int) (getPos().getX());
+		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
 			if(activeWeapon != null) GameController.getInstance().getGamePanel().removeDrawable(activeWeapon);
@@ -202,16 +206,6 @@ public class Player extends LivingEntity {
 		stateMachine.update(step);
 	}
 
-	@Override
-	public void draw(Graphics g) {
-		g.setColor(Color.black);
-		g.drawString(stateMachine.getCurrentAnimationState().getTitle(), (int)(pos.getX()), (int)(pos.getY()));
-		
-		g.drawString(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()), (int)(pos.getX()), (int)(pos.getY()+10));
-	
-		g.drawImage(stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite(), (int)(pos.getX()), (int)(pos.getY()), null);
-	}
-	
 	public void setWeapon(Weapon weapon) {
 		this.activeWeapon = weapon;
 		this.activeWeapon.snapTo(this);
@@ -234,11 +228,6 @@ public class Player extends LivingEntity {
 			}
 		}
 		return null;
-	}
-	
-	public void clamp(Rectangle bound) {
-		setPos(new Vector3D(Math.min(bound.width-getBound().width, Math.max(0, getPos().getX())),
-				Math.min(bound.height-getBound().height, Math.max(0, getPos().getY()))));
 	}
 	
 
