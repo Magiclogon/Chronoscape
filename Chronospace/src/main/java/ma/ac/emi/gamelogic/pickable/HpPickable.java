@@ -45,7 +45,7 @@ public class HpPickable extends Pickable {
         g.setColor(Color.RED);
         g.fillOval((int)pos.getX(), (int)pos.getY(), 10, 10);
         g.setColor(Color.GREEN);
-        g.drawRect(bound.x, bound.y, bound.width, bound.height);
+        g.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
     }
 
 

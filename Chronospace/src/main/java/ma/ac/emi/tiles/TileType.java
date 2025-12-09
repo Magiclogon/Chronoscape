@@ -14,9 +14,4 @@ public enum TileType {
     BORDER,
 
     GROUND_DEFAULT,
-    GROUND_VAR_1_OBS,
-    GROUND_VAR_2_OBS,
-    GROUND_VAR_3_OBS,
-    GROUND_VAR_4_OBS,
-    GROUND_VAR_5_OBS
 }

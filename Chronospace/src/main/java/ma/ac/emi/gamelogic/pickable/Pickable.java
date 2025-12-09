@@ -19,7 +19,7 @@ public abstract class Pickable extends Entity{
     public Pickable(double dropProbability) {
         this.dropProbability = dropProbability;
         this.isPickedUp = false;
-        this.bound = new Rectangle(10, 10);
+        this.hitbox = new Rectangle(10, 10);
         
     }
 
@@ -32,7 +32,7 @@ public abstract class Pickable extends Entity{
     public abstract Pickable createInstance();
     
     public void update(double step) {
-        bound.setLocation((int) pos.getX(), (int) pos.getY());
+        hitbox.setLocation((int) pos.getX(), (int) pos.getY());
         if(isPickedUp) {
         	GameController.getInstance().getGamePanel().removeDrawable(this);
         }

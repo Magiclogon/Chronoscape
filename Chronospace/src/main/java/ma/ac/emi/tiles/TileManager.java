@@ -87,8 +87,8 @@ public class TileManager {
 
                 if (sprite != null) {
                     g2.drawImage(sprite.getSprite(),
-                            x * tileSize,
-                            y * tileSize,
+                            x * tileSize - tileSize/2,
+                            y * tileSize - tileSize/2,
                             tileSize,
                             tileSize,
                             null);

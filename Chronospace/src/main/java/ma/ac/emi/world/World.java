@@ -21,6 +21,7 @@ import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.tiles.TileMap;
+import ma.ac.emi.tiles.TileType;
 
 @Getter
 @Setter
@@ -118,6 +119,7 @@ public class World extends GameObject{
 				}
 			}
 		}
+		
 	}
 
 	// Delegate to context

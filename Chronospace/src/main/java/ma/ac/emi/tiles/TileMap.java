@@ -58,20 +58,8 @@ public class TileMap {
     
     private TileType getRandomGroundTile() {
         // Randomly place ground variations (80% default, 20% variations)
-        double rand = Math.random();
-        if (rand < 1.00) {
-            return TileType.GROUND_DEFAULT;
-        } else if (rand < 0.84) {
-            return TileType.GROUND_VAR_1_OBS;
-        } else if (rand < 0.88) {
-            return TileType.GROUND_VAR_2_OBS;
-        } else if (rand < 0.92) {
-            return TileType.GROUND_VAR_3_OBS;
-        } else if (rand < 0.96) {
-            return TileType.GROUND_VAR_4_OBS;
-        } else {
-            return TileType.GROUND_VAR_5_OBS;
-        }
+        return TileType.GROUND_DEFAULT;
+         
     }
     
     private void createRoom(int startRow, int endRow, int startCol, int endCol) {

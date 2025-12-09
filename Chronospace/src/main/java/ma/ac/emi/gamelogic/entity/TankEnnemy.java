@@ -61,11 +61,11 @@ public class TankEnnemy extends Ennemy{
 		for(Sprite sprite : spriteSheet.getAnimationRow(2, 15)) {
 			back_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, 29)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, 29)) {
 			die_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, 29)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, 29)) {
 			die_right.addFrame(sprite);
 		}
     }
@@ -76,16 +76,4 @@ public class TankEnnemy extends Ennemy{
         super.initWeapon();
     }
 
-    @Override
-    public void draw(Graphics g) {
-        if(hp > 0) {
-            g.setColor(Color.RED);
-            g.fillRect((int)(pos.getX()), (int)(pos.getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-        }
-
-        g.setColor(Color.yellow);
-        g.drawRect(bound.x, bound.y, bound.width, bound.height);
-        super.draw(g);
-
-    }
 }

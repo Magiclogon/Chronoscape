@@ -58,8 +58,19 @@ public class CollisionManager {
 		
 		List<Obstacle> collidingObs = new ArrayList<>();
 		for(Obstacle obstacle : context.getObstacles()) {
-			if(player.getBound().intersects(obstacle.getBound())) {
-				
+			Rectangle shifted_player = new Rectangle(
+					player.getBound().x-player.getBound().width/2,
+					player.getBound().y-player.getBound().height/2,
+					player.getBound().width,
+					player.getBound().height
+				);
+			Rectangle shifted_obs = new Rectangle(
+					obstacle.getBound().x-obstacle.getBound().width/2,
+					obstacle.getBound().y-obstacle.getBound().height/2,
+					obstacle.getBound().width,
+					obstacle.getBound().height
+				);
+			if(shifted_player.intersects(shifted_obs)) {
 				collidingObs.add(obstacle);
 					
 			}
@@ -68,11 +79,11 @@ public class CollisionManager {
 		
 		
 		Collections.sort(collidingObs, (o1, o2) -> {
-		    double dx1 = (o1.bound.x + o1.bound.width * 0.5) - (player.bound.x + player.bound.width * 0.5);
-		    double dy1 = (o1.bound.y + o1.bound.height * 0.5) - (player.bound.y + player.bound.height * 0.5);
+		    double dx1 = (o1.hitbox.x + o1.hitbox.width * 0.5) - (player.hitbox.x + player.hitbox.width * 0.5);
+		    double dy1 = (o1.hitbox.y + o1.hitbox.height * 0.5) - (player.hitbox.y + player.hitbox.height * 0.5);
 
-		    double dx2 = (o2.bound.x + o2.bound.width * 0.5) - (player.bound.x + player.bound.width * 0.5);
-		    double dy2 = (o2.bound.y + o2.bound.height * 0.5) - (player.bound.y + player.bound.height * 0.5);
+		    double dx2 = (o2.hitbox.x + o2.hitbox.width * 0.5) - (player.hitbox.x + player.hitbox.width * 0.5);
+		    double dy2 = (o2.hitbox.y + o2.hitbox.height * 0.5) - (player.hitbox.y + player.hitbox.height * 0.5);
 
 		    double d1 = dx1 * dx1 + dy1 * dy1;
 		    double d2 = dx2 * dx2 + dy2 * dy2;
@@ -83,33 +94,30 @@ public class CollisionManager {
 		
 		for(Obstacle obstacle : collidingObs) {
 			
-			Vector3D playerCenter = player.getPos().add(new Vector3D(
-				    player.getBound().width * 0.5,
-				    player.getBound().height * 0.5
-				));
-
-			Vector3D start = playerCenter.sub(player.getVelocity().mult(step));
-			Vector3D end   = playerCenter;
+			Vector3D start = (new Vector3D(player.getBound().x, player.getBound().y)).sub(player.getVelocity().mult(step));
+			Vector3D end   = (new Vector3D(player.getBound().x, player.getBound().y));
 
 			Rectangle expanded = new Rectangle(
-				    obstacle.getBound().x - player.getBound().width/2,
-				    obstacle.getBound().y - player.getBound().height/2,
+				    obstacle.getBound().x,
+				    obstacle.getBound().y,
 				    obstacle.getBound().width + player.getBound().width,
 				    obstacle.getBound().height + player.getBound().height
 				);
-
+			
 			Vector3D.RayRectCollisionResponse response = Vector3D.rayRectIntersection(start, end, expanded);
 			
 			if(response.inCollision && response.t <= 1) {
 				player.setPos(player.getPos().sub(
 						response.contactNormal.mult(player.getVelocity().dotP(response.contactNormal)*(1-response.t)).mult(step)
 						));
-				player.bound.x = (int)player.getPos().getX();
-				player.bound.y = (int)player.getPos().getY();
+				player.hitbox.x = (int) (player.getPos().getX());
+				player.hitbox.y = (int) (player.getPos().getY()-player.hitbox.height/2+GamePanel.TILE_SIZE/2);
+				
+				player.bound.x = (int) (player.getPos().getX());
+				player.bound.y = (int) (player.getPos().getY()-player.bound.height/2+GamePanel.TILE_SIZE/2);
 			}
 		}
 		
-		player.clamp(context.getWorldBounds());
 	}
 	
 
