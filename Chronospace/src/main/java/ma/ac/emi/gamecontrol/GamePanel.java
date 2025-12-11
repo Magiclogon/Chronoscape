@@ -12,8 +12,10 @@ import java.util.Collections;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 
 
@@ -39,40 +41,52 @@ public class GamePanel extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2d = (Graphics2D) g;
-		if (camera == null) {
-			System.out.println("Camera is null");
-			return;
-		}		
-		AffineTransform oldTransform = g2d.getTransform();
+		try {
+			GameController.getInstance();
+			GameController.draw.acquire();
+			
+			super.paintComponent(g);
+			Graphics2D g2d = (Graphics2D) g;
+			if (camera == null) {
+				System.out.println("Camera is null");
+				return;
+			}		
+			AffineTransform oldTransform = g2d.getTransform();
+			
+			
+			AffineTransform camTx;
+			synchronized (camera) {
+			    camTx = new AffineTransform(camera.getCamTransform());
+			}
+			g2d.transform(camTx);
+
+			GameObject o = null;
+			try{
+				List<GameObject> snapshot;
+				synchronized (drawables) {
+				    snapshot = new ArrayList<>(drawables);
+				}
+
+				for (GameObject d : snapshot) {
+					o = d;
+				    d.draw(g);
+				}
+
+			}catch(Exception e) {
+
+				System.err.println("drawing error from: " + o.getClass());
+				e.printStackTrace();
+			}
+			g2d.setTransform(oldTransform);
+			
+			GameController.getInstance();
+			GameController.update.release();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		
-		AffineTransform camTx;
-		synchronized (camera) {
-		    camTx = new AffineTransform(camera.getCamTransform());
-		}
-		g2d.transform(camTx);
-
-
-		GameObject o = null;
-		try{
-			List<GameObject> snapshot;
-			synchronized (drawables) {
-			    snapshot = new ArrayList<>(drawables);
-			}
-
-			for (GameObject d : snapshot) {
-				o = d;
-			    d.draw(g);
-			}
-
-		}catch(Exception e) {
-
-			System.err.println("drawing error from: " + o.getClass());
-			e.printStackTrace();
-		}
-		g2d.setTransform(oldTransform);
 	}
 	
 	public void update(double step) {
@@ -82,8 +96,10 @@ public class GamePanel extends JPanel {
 
 	public void addDrawable(GameObject gameObject) {
 		synchronized (drawables) {
-			this.drawables.add(gameObject);
 			gameObject.setDrawn(true);
+
+			if(drawables.contains(gameObject)) return;
+			this.drawables.add(gameObject);
 		}
 
 	}

@@ -31,19 +31,19 @@ public class Obstacle extends GameObject{
 					GamePanel.TILE_SIZE
 					));
 			if(dir == TileType.LEFT_EDGE_IN || dir == TileType.RIGHT_EDGE_OUT)
-				setBound(new Rectangle((int)(getPos().getX()+8-GamePanel.TILE_SIZE/2), (int)(getPos().getY()), (int)(GamePanel.TILE_SIZE)/2, (int)(GamePanel.TILE_SIZE)));
+				setHitbox(new Rectangle((int)(getPos().getX()+8-GamePanel.TILE_SIZE/2), (int)(getPos().getY()), (int)(GamePanel.TILE_SIZE)/2, (int)(GamePanel.TILE_SIZE)));
 			else if(dir == TileType.RIGHT_EDGE_IN || dir == TileType.LEFT_EDGE_OUT)
-				setBound(new Rectangle((int)(getPos().getX()-8+GamePanel.TILE_SIZE/2), (int)(getPos().getY()), (int)(GamePanel.TILE_SIZE)/2, (int)(GamePanel.TILE_SIZE)));
+				setHitbox(new Rectangle((int)(getPos().getX()-8+GamePanel.TILE_SIZE/2), (int)(getPos().getY()), (int)(GamePanel.TILE_SIZE)/2, (int)(GamePanel.TILE_SIZE)));
 			else if(dir == TileType.TOP_EDGE_IN || dir == TileType.BOTTOM_EDGE_OUT || 
 					dir == TileType.BOTTOM_EDGE_IN || dir == TileType.TOP_EDGE_OUT ||
 					dir == TileType.TOP_LEFT_IN || dir == TileType.TOP_RIGHT_IN)
-				setBound(new Rectangle((int)(getPos().getX()), (int)(getPos().getY()-8+GamePanel.TILE_SIZE/2), GamePanel.TILE_SIZE, (int)(GamePanel.TILE_SIZE)/2));
+				setHitbox(new Rectangle((int)(getPos().getX()), (int)(getPos().getY()-8+GamePanel.TILE_SIZE/2), GamePanel.TILE_SIZE, (int)(GamePanel.TILE_SIZE)/2));
 			else if(dir == TileType.BOTTOM_LEFT_IN || dir == TileType.BOTTOM_RIGHT_IN ||
 					dir == TileType.BOTTOM_LEFT_OUT || dir == TileType.BOTTOM_RIGHT_OUT) {
-				setBound(new Rectangle((int)(getPos().getX()), (int)(getPos().getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
+				setHitbox(new Rectangle((int)(getPos().getX()), (int)(getPos().getY()), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE));
 			}
 			else 
-				setBound(new Rectangle());
+				setHitbox(new Rectangle());
 		}
 	}
 	@Override

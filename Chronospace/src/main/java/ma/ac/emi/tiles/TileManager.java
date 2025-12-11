@@ -3,7 +3,9 @@ package ma.ac.emi.tiles;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -16,28 +18,40 @@ import ma.ac.emi.gamecontrol.GamePanel;
 @Getter
 public class TileManager {
 
-    private final int width;
-    private final int height;
     private final MapTheme theme;
     private final Map<TileType, Sprite> tileSprites;
     
-    private final TileMap map;
+    private List<TileMap> maps;
+    private TileMap currentMap;
+
     // OPTIMIZATION: This holds the pre-drawn map
     private BufferedImage mapCache;
 
-    public TileManager(MapTheme theme, TileMap map) {
-        this.width = map.getMap()[0].length;
-        this.height = map.getMap().length;
+    public TileManager(MapTheme theme) {
         this.theme = theme;
         this.tileSprites = new HashMap<>();
         
-        this.map = map;
+        this.maps = new ArrayList<>();
+        
 
-        loadTileSprites();
-        //generateMap();
-
-        // Render the map once into memory
-        cacheMap();
+        loadTileSprites(); 
+    }
+    
+    public void addMap(TileMap map) {
+    	this.maps.add(map);
+    }
+    
+    public void setCurrentMap(int index) {
+    	if(index >= 0 && index < maps.size()) {
+    		currentMap = maps.get(index);
+    		cacheMap();
+    	}
+    }
+    
+    public void refreshCurrentMap() {
+    	Random r = new Random();
+    	int index = r.nextInt(this.maps.size());
+    	setCurrentMap(index);
     }
 
     private void loadTileSprites() {
@@ -71,18 +85,18 @@ public class TileManager {
     // NEW METHOD: Draws all tiles onto a single image
     private void cacheMap() {
         int tileSize = GamePanel.TILE_SIZE;
-        int pixelWidth = width * tileSize;
-        int pixelHeight = height * tileSize;
+        int pixelWidth = currentMap.getWidth() * tileSize;
+        int pixelHeight = currentMap.getHeight() * tileSize;
 
         // Create an empty image the size of the entire world
         mapCache = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = mapCache.createGraphics();
 
         // Run the heavy loop here (ONCE only)
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int x = 0; x < currentMap.getWidth(); x++) {
+            for (int y = 0; y < currentMap.getHeight(); y++) {
             	if(isSolid(x, y)) continue;
-                TileType type = map.getMap()[y][x];
+                TileType type = currentMap.getMap()[y][x];
                 Sprite sprite = tileSprites.get(type);
 
                 if (sprite != null) {
@@ -105,7 +119,7 @@ public class TileManager {
     }
 
     public boolean isSolid(int x, int y) {
-        TileType type = map.getMap()[y][x];
+        TileType type = currentMap.getMap()[y][x];
         return !type.name().startsWith("GROUND") || type.name().endsWith("OBS");
     }
 }

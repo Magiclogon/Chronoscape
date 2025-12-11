@@ -32,7 +32,7 @@ public abstract class Projectile extends AttackObject{
     }
 
 	public void update(double step) {
-        setPos(getPos().add(velocity.mult(step)));
+        super.update(step);
         
         hitbox.x = (int) getPos().getX();
         hitbox.y = (int) getPos().getY();
@@ -61,6 +61,7 @@ public abstract class Projectile extends AttackObject{
 
 	@Override
 	public void applyEffect(LivingEntity entity) {
+		System.out.println("applying effect");
 		setActive(false);
 	}
 

@@ -11,15 +11,15 @@ import ma.ac.emi.math.Vector3D;
 @Getter
 @Setter
 public abstract class GameObject implements GameDrawable{
-	protected Vector3D pos;
-	protected Rectangle hitbox, bound;
+	protected volatile Vector3D pos;
+	protected volatile Vector3D prevPos;
+	protected Rectangle hitbox;
 	protected SpriteSheet spriteSheet;
 	protected boolean drawn;
 	
 	public GameObject() {
 		pos = new Vector3D();
 		hitbox = new Rectangle();
-		bound = new Rectangle();
 		GameController.getInstance().getGamePanel().addDrawable(this);
 	}
 	

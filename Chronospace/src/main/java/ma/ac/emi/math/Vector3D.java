@@ -7,10 +7,12 @@ import java.awt.geom.Point2D;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
 @Getter
 @Setter
 @ToString
+@EqualsAndHashCode
 public class Vector3D {
 	private double x, y, z;
 	
@@ -73,88 +75,6 @@ public class Vector3D {
 		return a.add(b.sub(a).mult(t));
 	}
 	
-	public static RayRectCollisionResponse rayRectIntersection(Vector3D start, Vector3D end, Rectangle rect) {
-
-	    // Convert center-based rectangle to min/max
-	    double halfW = rect.getWidth() / 2.0;
-	    double halfH = rect.getHeight() / 2.0;
-
-	    double minX = rect.getX() - halfW;
-	    double maxX = rect.getX() + halfW;
-
-	    double minY = rect.getY() - halfH;
-	    double maxY = rect.getY() + halfH;
-
-	    Vector3D dir = end.sub(start);
-
-	    double tNear = Double.NEGATIVE_INFINITY;
-	    double tFar  = Double.POSITIVE_INFINITY;
-
-	    Vector3D normalNear = null;
-
-	    // ---- X slab ----
-	    if (dir.getX() != 0) {
-	        double tx1 = (minX - start.getX()) / dir.getX();
-	        double tx2 = (maxX - start.getX()) / dir.getX();
-
-	        double t1 = Math.min(tx1, tx2);
-	        double t2 = Math.max(tx1, tx2);
-
-	        Vector3D n1 = tx1 < tx2 ? new Vector3D(-1, 0) : new Vector3D(1, 0);
-
-	        if (t1 > tNear) {
-	            tNear = t1;
-	            normalNear = n1;
-	        }
-	        tFar = Math.min(tFar, t2);
-	    } else {
-	        if (start.getX() < minX || start.getX() > maxX)
-	            return new RayRectCollisionResponse(null, false, null, null);
-	    }
-
-	    // ---- Y slab ----
-	    if (dir.getY() != 0) {
-	        double ty1 = (minY - start.getY()) / dir.getY();
-	        double ty2 = (maxY - start.getY()) / dir.getY();
-
-	        double t1 = Math.min(ty1, ty2);
-	        double t2 = Math.max(ty1, ty2);
-
-	        Vector3D n1 = ty1 < ty2 ? new Vector3D(0, -1) : new Vector3D(0, 1);
-
-	        if (t1 > tNear) {
-	            tNear = t1;
-	            normalNear = n1;
-	        }
-	        tFar = Math.min(tFar, t2);
-	    } else {
-	        if (start.getY() < minY || start.getY() > maxY)
-	            return new RayRectCollisionResponse(null, false, null, null);
-	    }
-
-	    // ---- Final checks ----
-	    if (tNear > tFar) return new RayRectCollisionResponse(null, false, null, null);
-	    if (tFar < 0)     return new RayRectCollisionResponse(null, false, null, null);
-
-	    Vector3D contactPoint = start.add(dir.mult(tNear));
-
-	    return new RayRectCollisionResponse(tNear, true, contactPoint, normalNear);
-	}
-
-
 	
-	public static class RayRectCollisionResponse{
-		public final Double t;
-		public final boolean inCollision;
-		public final Vector3D contactPoint;
-		public final Vector3D contactNormal;
-		
-		RayRectCollisionResponse(Double t, boolean inCollision, Vector3D contactPoint, Vector3D contactNormal){
-			this.t = t;
-			this.inCollision = inCollision;
-			this.contactPoint = contactPoint;
-			this.contactNormal = contactNormal;
-		}
-	}
 
 }

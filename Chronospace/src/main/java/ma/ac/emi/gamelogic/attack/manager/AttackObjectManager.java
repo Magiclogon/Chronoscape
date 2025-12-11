@@ -4,10 +4,12 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.AttackObject;
+import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
@@ -41,7 +43,6 @@ public class AttackObjectManager {
         	}
         });
         
-        // Remove inactive ones
         attackObjects.removeIf(attackObject -> !attackObject.isActive());
        
     }
@@ -54,5 +55,9 @@ public class AttackObjectManager {
     public List<AttackObject> getPlayerObjects(){
 		return getAttackObjects().stream().filter((o) -> o.isFromPlayer()).toList();
 
+    }
+    
+    public List<Projectile> getProjectiles(){
+    	return getAttackObjects().stream().filter(o -> o instanceof Projectile).map(o -> (Projectile) o).toList();
     }
 }

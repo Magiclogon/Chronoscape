@@ -10,15 +10,12 @@ import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.tiles.TileManager;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * WorldContext holds all shared data and managers for a world instance.
- * This allows clean dependency injection and makes components testable.
- */
 @Getter
 @Setter
 public class WorldContext {
@@ -29,7 +26,6 @@ public class WorldContext {
     
     // Core entities
     private Player player;
-    private final List<Ennemy> enemies;
     
     // Managers
     private AttackObjectManager attackObjectManager;
@@ -41,9 +37,10 @@ public class WorldContext {
     private EnnemySpecieFactory specieFactory;
     
     // World data
+    private final TileManager tileManager;
     private final List<Obstacle> obstacles;
     
-    public WorldContext(int width, int height, EnnemySpecieFactory specieFactory) {
+    public WorldContext(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
         this.worldWidth = width;
         this.worldHeight = height;
         this.worldBounds = new Rectangle(width * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE, 
@@ -51,20 +48,14 @@ public class WorldContext {
         this.specieFactory = specieFactory;
         
         // Initialize collections
-        this.enemies = new ArrayList<>();
         this.obstacles = new ArrayList<>();
+        this.tileManager = tileManager;
     }
     
-    /**
-     * Add an obstacle to the world
-     */
     public void addObstacle(Obstacle obstacle) {
         obstacles.add(obstacle);
     }
     
-    /**
-     * Check if a grid position contains an obstacle
-     */
     public boolean isObstacle(int gridX, int gridY) {
         if (gridX < 0 || gridY < 0 || gridX >= worldWidth || gridY >= worldHeight) {
             return true;
@@ -78,7 +69,7 @@ public class WorldContext {
         );
         
         for (Obstacle obstacle : obstacles) {
-            if (checkRect.intersects(obstacle.getBound())) {
+            if (checkRect.intersects(obstacle.getHitbox())) {
                 return true;
             }
         }
@@ -86,10 +77,11 @@ public class WorldContext {
         return false;
     }
     
-    /**
-     * Get current active enemies (from wave manager)
-     */
     public List<Ennemy> getCurrentEnemies() {
-        return waveManager != null ? waveManager.getCurrentEnemies() : enemies;
+        return waveManager != null ? waveManager.getCurrentEnemies() : new ArrayList<>();
+    }
+    
+    public void refreshCurrentMap() {
+    	this.tileManager.refreshCurrentMap();
     }
 }

@@ -2,6 +2,7 @@ package ma.ac.emi.gamecontrol;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 
 import javax.swing.SwingUtilities;
 
@@ -30,12 +31,19 @@ public class GameController implements Runnable {
 	private static final long SIM_STEP = (long)(Math.pow(10, 9)/60);
     private static GameController instance;
     
+    public static Semaphore draw = new Semaphore(0);
+    public static Semaphore update = new Semaphore(1);
+    
     public static GameController getInstance() {
         if (instance == null)
             instance = new GameController();
         return instance;
     }
-
+    
+    long latestTime;
+    long deltaTime;
+    long accumTime;
+    
     private final Window window;
     private WorldManager worldManager;
     private GamePanel gamePanel;
@@ -51,7 +59,6 @@ public class GameController implements Runnable {
     private List<DifficultyObserver> difficultyObservers;
     
     private GameController() {
-        window = new Window();
         
         AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
@@ -60,6 +67,8 @@ public class GameController implements Runnable {
 		ProjectileLoader.getInstance().load("src/main/resources/configs/projectiles.json");
 		AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
 		
+		window = new Window();
+
 		difficultyObservers = new ArrayList<>();
 		
         gamePanel = new GamePanel();
@@ -106,7 +115,10 @@ public class GameController implements Runnable {
     public void showShop() {
     	state = GameState.SHOP;
     	shopManager.init();
+    	    	
     	SwingUtilities.invokeLater(() -> {
+        	System.out.println("showing shop..");
+
         	window.refreshShop();
         	window.showScreen("SHOP");
     	});
@@ -154,52 +166,54 @@ public class GameController implements Runnable {
 
         window.showGame(gamePanel, gameUIPanel);
         showGame();
-        
+        System.out.println("Starting game");
         startGameThread();
     }
     
 	public void startGameThread() {
+        latestTime = System.nanoTime();
+        deltaTime = 0;
+        accumTime = 0;
+        
 	    if (gameThread != null && gameThread.isAlive()) {
-	        // Stop current loop safely
-	        state = GameState.STOPPED;
-	        try {
-	            gameThread.join(); // wait for it to stop
-	        } catch (InterruptedException e) {
-	            e.printStackTrace();
-	        }
+	    	return;
 	    }
 	
 	    // Start a fresh loop
+
 	    gameThread = new Thread(this);
 	    gameThread.start();
     }
 
     @Override
     public void run() {
-        long latestTime = System.nanoTime();
-        long deltaTime;
-        long accumTime = 0;
 
-        final long TARGET_FPS = 120;
-        final long FRAME_TIME = (long)(Math.pow(10, 9) / TARGET_FPS);
-        long lastFrameTime = System.nanoTime();
+        while (true) {
+    		deltaTime = System.nanoTime() - latestTime;
+    		latestTime += deltaTime;
+        	
+        	try {
+				update.acquire();
+				accumTime += deltaTime;
+	            while (accumTime > SIM_STEP) {
+	                update(SIM_STEP / Math.pow(10, 9) / 1);
+	
+	                accumTime -= SIM_STEP;
+	            }
+			
+		        
+            	draw.release();
 
-        while (state == GameState.PLAYING) {
-            deltaTime = System.nanoTime() - latestTime;
-            latestTime += deltaTime;
-            accumTime += deltaTime;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
-            while (accumTime > SIM_STEP) {
-                update(SIM_STEP / Math.pow(10, 9) / 1);
-                accumTime -= SIM_STEP;
-            }
-
-            long currentTime = System.nanoTime();
-            if (currentTime - lastFrameTime >= FRAME_TIME) {
-                gamePanel.repaint();
+                        
+            SwingUtilities.invokeLater(() -> {
+            	gamePanel.repaint();
                 gameUIPanel.repaint();
-                lastFrameTime = currentTime;
-            }
+            });
 
             try {
                 Thread.sleep(1);
@@ -210,13 +224,14 @@ public class GameController implements Runnable {
     }
 
     public void update(double step) {
-        worldManager.update(step);
+    	worldManager.update(step);
         camera.update(step);
+        Player.getInstance().update(step);
+
         particleSystem.update(step);
         gamePanel.update(step);
         
         GameTime.addTime(step);
-
     }
     
     public void setDifficulty(DifficultyStrategy difficulty) {

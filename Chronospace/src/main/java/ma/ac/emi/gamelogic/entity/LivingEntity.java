@@ -1,8 +1,13 @@
 package ma.ac.emi.gamelogic.entity;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
+import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
@@ -31,6 +36,29 @@ public abstract class LivingEntity extends Entity {
 	protected double speed;
 	protected AttackObjectManager attackObjectManager;
 	
+	protected Rectangle bound;
+	
+	public LivingEntity() {
+		bound = new Rectangle();
+	}
+	
+	@Override
+	public void update(double step) {
+		super.update(step);
+		hitbox.x = (int) (getPos().getX());
+		hitbox.y = (int) (getPos().getY()-hitbox.height/2+GamePanel.TILE_SIZE/2);
+		
+		bound.x = (int) (getPos().getX());
+		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
+	}
+	
+	@Override
+	public void draw(Graphics g) {
+		super.draw(g);
+        
+        g.setColor(Color.red);
+        g.drawRect(bound.x-bound.width/2, bound.y-bound.height/2, bound.width, bound.height);
+	}
 	
 	@Override
 	public void initStateMachine() {

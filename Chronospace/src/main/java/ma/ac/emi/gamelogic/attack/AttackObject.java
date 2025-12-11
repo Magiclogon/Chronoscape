@@ -35,7 +35,7 @@ public abstract class AttackObject extends Entity{
    	}
    	
     public boolean isOutOfWorld(WorldContext context) {
-    	return !(context.getWorldBounds().intersects(this.getBound()));
+    	return !(context.getWorldBounds().intersects(this.getHitbox()));
     }
     
     public abstract void applyEffect(LivingEntity entity);

@@ -14,4 +14,5 @@ public class WorldConfig {
     private int worldWidth, worldHeight; //in tiles
     private String specieType;
     private List<WaveConfig> waves;
+    private List<Integer[][]> maps;
 }

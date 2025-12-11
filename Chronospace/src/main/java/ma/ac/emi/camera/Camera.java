@@ -14,10 +14,10 @@ import ma.ac.emi.math.Vector3D;
 @Getter
 public class Camera {
 	private double scalingFactor = 0.6;
-	private Vector3D pos;
+	private volatile Vector3D pos;
 	private double width;
 	private double height;
-	private AffineTransform camTransform;
+	private volatile AffineTransform camTransform;
 	
 	private GamePanel gamePanel;
 	private Entity followed;
@@ -28,31 +28,36 @@ public class Camera {
 		this.height = h;
 		this.gamePanel = gamePanel;
 		this.followed = followed;
+		calculateTransform();
+
 	}
 
 	public void update(double step) {
-		if (followed == null) {
-			return;
+		synchronized(this) {
+			if (followed == null) {
+				return;
+			}
+	
+			// camera match panel aspect ratio
+			this.width = gamePanel.getWidth()*scalingFactor; 
+			this.height = gamePanel.getHeight()*scalingFactor;		
+	
+			Vector3D targetPos = followed.getPos();
+			Vector3D relativeCamCenter = new Vector3D(this.width/2, this.height/2);
+			
+			targetPos = targetPos.sub(relativeCamCenter);
+			
+			setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
+			// get world borders from panel
+			double worldPixelWidth = GameController.getInstance().getWorldManager().getCurrentWorld().getWidth() * GamePanel.TILE_SIZE;
+			double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
+			
+			calculateTransform();
+
+			// bloquer cam aux bordures
+			//this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
+			//this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
 		}
-
-		// camera match panel aspect ratio
-		this.width = gamePanel.getWidth()*scalingFactor; 
-		this.height = gamePanel.getHeight()*scalingFactor;		
-
-		Vector3D targetPos = followed.getPos();
-		Vector3D relativeCamCenter = new Vector3D(this.width/2, this.height/2);
-		
-		targetPos = targetPos.sub(relativeCamCenter);
-		
-		setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
-
-		// get world borders from panel
-		double worldPixelWidth = GameController.getInstance().getWorldManager().getCurrentWorld().getWidth() * GamePanel.TILE_SIZE;
-		double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
-
-		// bloquer cam aux bordures
-		this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
-		this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
 	}
 	
 	public void calculateTransform() {
@@ -67,7 +72,6 @@ public class Camera {
 	}
 	
 	public AffineTransform getCamTransform() {
-		calculateTransform();
 		return camTransform;
 	}
 }
