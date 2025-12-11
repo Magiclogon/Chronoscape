@@ -14,6 +14,8 @@ import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
 import ma.ac.emi.tiles.MapTheme;
+import ma.ac.emi.tiles.TileManager;
+import ma.ac.emi.tiles.TileMap;
 
 @Getter
 @Setter
@@ -50,9 +52,18 @@ public class EndlessWorldGenerator {
 			initSpeciesList();
 		}
 		EnnemySpecieFactory specieFactory = specieFactories.remove(random.nextInt(specieFactories.size()));
-		int worldWidth = random.nextInt(MAX_WORLD_WIDTH-MIN_WORLD_WIDTH)+MIN_WORLD_WIDTH;
-		int worldHeight = random.nextInt(MAX_WORLD_HEIGHT-MIN_WORLD_HEIGHT)+MIN_WORLD_HEIGHT;
-		World world = new World(worldWidth, worldHeight, specieFactory, MapTheme.ROBOTS);
+
+		List<WorldConfig> configs = WorldManager.configs;
+		WorldConfig worldConfig = configs.get(random.nextInt(configs.size()));
+		
+		int worldWidth = worldConfig.getWorldWidth();
+		int worldHeight = worldConfig.getWorldHeight();
+		
+		TileManager tileManager = new TileManager(MapTheme.ROBOTS);
+		worldConfig.getMaps().forEach(map -> {
+			tileManager.addMap(new TileMap(map));
+		});
+		World world = new World(worldWidth, worldHeight, specieFactory, tileManager);
 		world.setSpecieFactory(specieFactory);
 		
 		for(int i = 0; i < WAVES_PER_WORLD; i++) {

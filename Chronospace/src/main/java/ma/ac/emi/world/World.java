@@ -28,24 +28,16 @@ import ma.ac.emi.tiles.TileType;
 public class World extends GameObject{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
-	private final TileManager tileManager;
 	
-	private final TileMap map;
-	private final MapTheme theme;
-
-	public World(int width, int height, EnnemySpecieFactory specieFactory, MapTheme theme) {
-		context = new WorldContext(width, height, specieFactory);
-	
-		map = new TileMap();
-		this.tileManager = new TileManager(theme, map);
-		this.theme = theme;
+	public World(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
+		context = new WorldContext(width, height, specieFactory, tileManager);
 		
-		syncMapObstacles();
-
 		initializeManagers();
 
 		collisionManager = new CollisionManager(context);
 		
+		syncMapObstacles();
+
 	}
 
 	private void initializeManagers() {
@@ -58,7 +50,7 @@ public class World extends GameObject{
 		context.setPickableManager(pickableManager);
 
 		// Create wave manager
-		WaveManager waveManager = new WaveManager(context.getWorldWidth(), context.getWorldHeight());
+		WaveManager waveManager = new WaveManager(context);
 		waveManager.setAttackObjectManager(attackObjectManager);
 		context.setWaveManager(waveManager);
 
@@ -107,14 +99,14 @@ public class World extends GameObject{
 	private void syncMapObstacles() {
 		for (int x = 0; x < context.getWorldWidth(); x++) {
 			for (int y = 0; y < context.getWorldHeight(); y++) {
-				if (tileManager.isSolid(x, y)) {
+				if (context.getTileManager().isSolid(x, y)) {
 					context.addObstacle(new Obstacle(
 							new Vector3D(
 								x * GamePanel.TILE_SIZE,
 								y * GamePanel.TILE_SIZE
 							),
-							map.getTile(y, x),
-							tileManager
+							context.getTileManager().getCurrentMap().getTile(y, x),
+							context.getTileManager()
 					));
 				}
 			}
@@ -132,14 +124,9 @@ public class World extends GameObject{
 	}
 
 	public void update(double step) {
-		Player player = context.getPlayer();
-		if (player != null) {
-			player.update(step);
-		}
-
 		// Update wave manager
 		WaveManager waveManager = context.getWaveManager();
-		waveManager.update(step, player.getPos());
+		waveManager.update(step, Player.getInstance().getPos());
 
 		// Ensure enemies have AI
 		List<Ennemy> currentEnemies = waveManager.getCurrentEnemies();
@@ -181,10 +168,11 @@ public class World extends GameObject{
 
 		System.out.println("Boss spawned " + minionCount + " minions!");
 	}
+	
 
 	public void draw(Graphics g) {
-		if (tileManager != null) {
-			tileManager.draw(g);
+		if (context.getTileManager() != null) {
+			context.getTileManager().draw(g);
 		}
 	}
 
@@ -218,5 +206,9 @@ public class World extends GameObject{
 	
 	public void setSpecieFactory(EnnemySpecieFactory factory) {
 		context.setSpecieFactory(factory);
+	}
+	
+	public TileManager getTileManager() {
+		return context.getTileManager();
 	}
 }

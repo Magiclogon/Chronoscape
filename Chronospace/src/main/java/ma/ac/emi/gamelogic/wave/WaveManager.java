@@ -7,6 +7,7 @@ import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.WorldContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +26,22 @@ public class WaveManager {
     private double waveTimer;
     private int worldWidth;
     private int worldHeight;
+    private WorldContext context;
     
     private AttackObjectManager attackObjectManager;
 
-    public WaveManager(int worldWidth, int worldHeight) {
-        this.worldWidth = worldWidth;
-        this.worldHeight = worldHeight;
+    public WaveManager(WorldContext context) {
+        this.worldWidth = context.getWorldWidth();
+        this.worldHeight = context.getWorldHeight();
         this.waveFactory = new WaveFactory();
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
-        this.waveDelay = 1;
+        this.waveDelay = 2;
         this.waveTimer = 0;
+        
+        this.context = context;
+        this.context.refreshCurrentMap();
     }
 
     public void update(double deltaTime, Vector3D playerPos) {
@@ -94,7 +99,8 @@ public class WaveManager {
         } else {
             state = WaveState.WAITING;
             waveTimer = 0;
-            SwingUtilities.invokeLater(() -> GameController.getInstance().showShop());
+            context.refreshCurrentMap();
+            GameController.getInstance().showShop();
         }
     }
 

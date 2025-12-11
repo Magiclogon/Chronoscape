@@ -18,10 +18,14 @@ import ma.ac.emi.gamelogic.wave.WaveConfigLoader;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
+import ma.ac.emi.tiles.TileManager;
+import ma.ac.emi.tiles.TileMap;
 
 @Getter
 @Setter
 public class WorldManager {
+	public static List<WorldConfig> configs;
+
 	private List<World> worlds;
 	private WaveConfigLoader configLoader;
 	private WaveFactory waveFactory;
@@ -76,19 +80,27 @@ public class WorldManager {
 	}
 	
 	public void loadWorldsFromConfig(String filepath) throws IOException {
-		List<WorldConfig> configs = configLoader.loadWorldsFromFile(filepath);
+		configs = configLoader.loadWorldsFromFile(filepath);
 		
 		for (WorldConfig worldConfig : configs) {
 			// Get specie factory
 			EnnemySpecieFactory specieFactory = EndlessWorldGenerator.SPECIES.get(worldConfig.getSpecieType());
+			
+			TileManager tileManager = new TileManager(MapTheme.ROBOTS);
+			worldConfig.getMaps().forEach(map -> {
+				TileMap tileMap = new TileMap(map);
+				tileManager.addMap(tileMap);
+			});
 			
 			// Create world with context pattern
 			World world = new World(
 				worldConfig.getWorldWidth(),
 				worldConfig.getWorldHeight(),
 				specieFactory,
-				MapTheme.ROBOTS
+				tileManager
 			);
+			
+
 			
 			// Load waves for this world
 			for (WaveConfig config : worldConfig.getWaves()) {

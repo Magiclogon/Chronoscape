@@ -24,23 +24,23 @@ public abstract class Entity extends GameObject{
 	}
 	
 	@Override
+	public void update(double step) {
+		setPos(getPos().add(getVelocity().mult(step)));
+	}
+	
+	@Override
 	public void draw(Graphics g) {
         if(stateMachine.getCurrentAnimationState() != null) {
         	BufferedImage sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite();
-        	g.drawImage(sprite, (int)(pos.getX()-sprite.getWidth()/2), (int)(pos.getY()-sprite.getHeight()/2), null);
+        	g.drawImage(sprite, (int)(getPos().getX()-sprite.getWidth()/2), (int)(getPos().getY()-sprite.getHeight()/2), null);
         }
         else
             g.drawImage(AssetsLoader.getSprite("default_sprite.png").getSprite(), (int)(pos.getX()-hitbox.width/2), (int)(pos.getY()-hitbox.height/2), null);
 
         g.setColor(Color.yellow);
         g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
-        //g.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-        
-        g.setColor(Color.red);
-        g.drawRect(bound.x-bound.width/2, bound.y-bound.height/2, bound.width, bound.height);
 
 	}
-	
 	
 	public abstract void initStateMachine();
 	public abstract void setupAnimations();

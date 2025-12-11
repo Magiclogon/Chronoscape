@@ -1,11 +1,24 @@
 package ma.ac.emi.tiles;
 
+import lombok.Getter;
+
+@Getter
 public class TileMap {
-    private TileType[][] map;
+    private final TileType[][] map;
+    private final int width, height;
     
-    public TileMap() {
-        map = new TileType[50][50];
-        generateMap();
+    public TileMap(Integer[][] map) {
+    	this.map = new TileType[map.length][map[0].length];
+    	for(int i = 0; i < map.length; i++) {
+    		for(int j = 0; j < map[0].length; j++) {
+    			this.map[i][j] = TileType.fromValue(map[i][j]);
+    		}
+    	}
+    	
+    	this.width = this.map[0].length;
+    	this.height = this.map.length;
+        //map = new TileType[50][50];
+        //generateMap();
     }
     
     private void generateMap() {
@@ -123,8 +136,8 @@ public class TileMap {
     }
     
     public void printMap() {
-        for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50; j++) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
                 System.out.print(getTileSymbol(map[i][j]) + " ");
             }
             System.out.println();

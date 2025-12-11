@@ -44,7 +44,6 @@ public class Player extends LivingEntity {
 		hitbox = new Rectangle(22, 28);
 		bound = new Rectangle(22, 8);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
-
 	}
 	
 	@Override
@@ -67,11 +66,11 @@ public class Player extends LivingEntity {
 			idle_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(1, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, 12)) {
 			run_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(2, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, 12)) {
 			back_left.addFrame(sprite);
 		}
 		
@@ -79,11 +78,11 @@ public class Player extends LivingEntity {
 			idle_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(4, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, 12)) {
 			run_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, 12)) {
 			back_right.addFrame(sprite);
 		}
 		
@@ -176,14 +175,7 @@ public class Player extends LivingEntity {
 			stateMachine.trigger("Run");
 			velocity.setX(speed);
 		}
-		
-		setPos(pos.add(velocity.mult(step)));
-		
-		hitbox.x = (int) (getPos().getX());
-		hitbox.y = (int) (getPos().getY()-hitbox.height/2+GamePanel.TILE_SIZE/2);
-		
-		bound.x = (int) (getPos().getX());
-		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
+
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
 			if(activeWeapon != null) GameController.getInstance().getGamePanel().removeDrawable(activeWeapon);
@@ -204,6 +196,12 @@ public class Player extends LivingEntity {
 		
 		changeStateDirection();
 		stateMachine.update(step);
+		
+		
+		super.update(step);
+		
+
+		
 	}
 
 	public void setWeapon(Weapon weapon) {

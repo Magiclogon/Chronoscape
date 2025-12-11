@@ -68,11 +68,11 @@ public class BossEnnemy extends Ennemy{
 		for(Sprite sprite : spriteSheet.getAnimationRow(2, 32)) {
 			back_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, 106)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, 106)) {
 			die_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, 106)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, 106)) {
 			die_right.addFrame(sprite);
 		}
     }

@@ -42,7 +42,7 @@ public class RobotFactory extends EnnemySpecieFactory{
 
     @Override
     public Ennemy createBoss() {
-        BossEnnemy enemy = new BossEnnemy(new Vector3D(), 0.5);
+        BossEnnemy enemy = new BossEnnemy(new Vector3D(), 40);
         difficulty.adjustEnemyStats(enemy);
         return enemy;
     }

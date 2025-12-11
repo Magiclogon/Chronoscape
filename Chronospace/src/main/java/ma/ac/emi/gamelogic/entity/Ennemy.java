@@ -27,6 +27,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		this.speed = speed;
 		this.velocity = new Vector3D();
 		hitbox = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
 
 		GameController.getInstance().addDifficultyObserver(this);
 		initStats();
@@ -66,11 +67,6 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 			Vector3D direction = (targetPos.sub(getPos())).normalize();
 			setVelocity(direction.mult(getSpeed()));
 		}
-
-		setPos(getPos().add(velocity.mult(step)));
-
-		hitbox.x = (int) (getPos().getX());
-		hitbox.y = (int) (getPos().getY());
 		
 		if(getWeapon() != null) {
 			getWeapon().update(step);
@@ -78,6 +74,10 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		
 		changeStateDirection();
 		stateMachine.update(step);
+		
+		super.update(step);
+		
+
 	}
 
 	@Override
