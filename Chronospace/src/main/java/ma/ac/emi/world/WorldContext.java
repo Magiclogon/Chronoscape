@@ -11,7 +11,9 @@ import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.tiles.TileManager;
+import ma.ac.emi.tiles.TileType;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,8 @@ public class WorldContext {
     private final TileManager tileManager;
     private final List<Obstacle> obstacles;
     
+    private final Color voidColor;
+    
     public WorldContext(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
         this.worldWidth = width;
         this.worldHeight = height;
@@ -50,6 +54,8 @@ public class WorldContext {
         // Initialize collections
         this.obstacles = new ArrayList<>();
         this.tileManager = tileManager;
+        
+        this.voidColor = new Color(tileManager.getTileSprites().get(TileType.VOID).getSprite().getRGB(0, 0), true);
     }
     
     public void addObstacle(Obstacle obstacle) {
