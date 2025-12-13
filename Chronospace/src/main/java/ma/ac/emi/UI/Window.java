@@ -12,6 +12,8 @@ public class Window extends JFrame {
     private final JPanel mainPanel;
 
     // Screens
+    private final LoadingScreen loadingScreen;
+    private final PauseMenu pauseMenu;
     private final MainMenu mainMenu;
     private final DifficultyMenu difficultyMenu;
     private final LevelSelection levelSelection;
@@ -24,14 +26,18 @@ public class Window extends JFrame {
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
 
+        loadingScreen = new LoadingScreen();
         mainMenu = new MainMenu();
+        pauseMenu = new PauseMenu();
         difficultyMenu = new DifficultyMenu();
         levelSelection = new LevelSelection();
         gamePane = new JLayeredPane();
         shopUI = new ShopUI();
         gameOverPanel = new GameOverPanel();
-        
+
+        mainPanel.add(loadingScreen, "LOADING");
         mainPanel.add(mainMenu, "MENU");
+        mainPanel.add(pauseMenu, "PAUSE");
         mainPanel.add(difficultyMenu, "DIFFICULTY");
         mainPanel.add(levelSelection, "LEVEL_SELECT");
         mainPanel.add(gamePane, "GAME");

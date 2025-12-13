@@ -19,7 +19,7 @@ public class BossEnnemy extends Ennemy{
 
     @Override
     protected void initStats() {
-        setHpMax(80);
+        setHpMax(1000);
         setHp(getHpMax());
     }
 
@@ -76,5 +76,4 @@ public class BossEnnemy extends Ennemy{
 			die_right.addFrame(sprite);
 		}
     }
-
 }

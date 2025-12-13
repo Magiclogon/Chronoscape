@@ -3,7 +3,6 @@ package ma.ac.emi.gamelogic.ai;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.math.Vector3D;
-import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
 import java.util.*;
@@ -15,12 +14,13 @@ public class PathFinder {
     private WorldContext context;
     private int tileSize;
 
+    private static final double WALL_HUG_PENALTY = 10.0;
+
     public PathFinder(WorldContext context, int tileSize) {
         this.context = context;
         this.tileSize = tileSize;
     }
 
-    // Simple A* pathfinding
     public List<Vector3D> findPath(Vector3D start, Vector3D goal) {
         Node startNode = new Node(toGrid(start));
         Node goalNode = new Node(toGrid(goal));
@@ -44,11 +44,14 @@ public class PathFinder {
             closedSet.add(current);
 
             for (Node neighbor : getNeighbors(current)) {
+                // Skip if in closed set or is an actual obstacle
                 if (closedSet.contains(neighbor) || isObstacle(neighbor)) {
                     continue;
                 }
 
-                double tentativeG = gScore.getOrDefault(current, Double.MAX_VALUE) + 1.0;
+                double moveCost = 1.0 + getSafetyPenalty(neighbor);
+
+                double tentativeG = gScore.getOrDefault(current, Double.MAX_VALUE) + moveCost;
 
                 if (tentativeG < gScore.getOrDefault(neighbor, Double.MAX_VALUE)) {
                     cameFrom.put(neighbor, current);
@@ -62,7 +65,22 @@ public class PathFinder {
             }
         }
 
-        return new ArrayList<>(); // No path found
+        return new ArrayList<>();
+    }
+
+
+    private double getSafetyPenalty(Node node) {
+        int x = (int) node.pos.getX();
+        int y = (int) node.pos.getY();
+
+        int[][] offsets = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        for (int[] offset : offsets) {
+            if (context.isObstacle(x + offset[0], y + offset[1])) {
+                return WALL_HUG_PENALTY;
+            }
+        }
+        return 0.0;
     }
 
     private Vector3D toGrid(Vector3D pos) {
@@ -100,7 +118,6 @@ public class PathFinder {
     }
 
     private boolean isObstacle(Node node) {
-        // Check if position is obstacle in world
         return context.isObstacle((int)node.pos.getX(), (int)node.pos.getY());
     }
 

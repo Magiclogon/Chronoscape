@@ -15,54 +15,54 @@ public class AlienBossAIBehavior implements AIBehavior {
     private Random random;
     private static final double TILE_SIZE = 32.0;
 
-    // physics
+    // Physics
     private Vector3D currentVelocity = new Vector3D(0, 0);
     private double acceleration = 0.25;
     private double friction = 0.90;
 
     private enum Phase {
-        ZONER,    // phase 1: spawns minions, keeps distance
-        ASSASSIN, // phase 2: teleports, strikes from behind
-        BERSERK   // phase 3: fast chase, raw aggression
+        ZONER,      // Phase 1: High HP - Spawn and kite
+        ASSASSIN,   // Phase 2: Mid HP - Chase and teleport
+        BERSERK     // Phase 3: Low HP - Maximum aggression
     }
 
     private enum BossState {
         IDLE,
-        KITING,          // run away from player
-        CHASING,         // run towards player
-
-        // ability 1: spawning minions
+        KITING,
+        CHASING,
         SUMMON_WINDUP,
-
-        // ability 2: teleportation
-        BLINK_WINDUP,    // vanish
-        BLINK_STRIKE     // appear and hit
+        TELEPORT_VANISH,
+        TELEPORT_REAPPEAR
     }
 
     private BossState currentState;
     private Phase currentPhase;
 
-    // timers
+    // Timers
     private double stateTimer;
-    private double globalCooldown;
-    private double abilityCooldown;
-
-    // movement
-    private Vector3D moveTarget;
-    private List<Vector3D> path;
+    private double attackCooldown;
+    private double spawnCooldown;
+    private double teleportCooldown;
     private double pathTimer;
 
-    // stats
+    private Vector3D moveTarget;
+    private List<Vector3D> path;
+
     private double moveSpeed;
     private boolean isInvulnerable;
-    private boolean justHit;
+    private boolean isVisible;
+
+    // Spawning Logic
     private boolean isSpawningNow;
+    private int spawnQuantity;
 
     public AlienBossAIBehavior(PathFinder pathfinder) {
         this.pathfinder = pathfinder;
         this.random = new Random();
         this.currentState = BossState.IDLE;
         this.currentPhase = Phase.ZONER;
+        this.isVisible = true;
+        this.isInvulnerable = false;
     }
 
     @Override
@@ -70,12 +70,12 @@ public class AlienBossAIBehavior implements AIBehavior {
         updatePhase(enemy);
         tickTimers(step);
 
-        Vector3D steering = new Vector3D(0,0);
+        Vector3D steering = new Vector3D(0, 0);
         double distToPlayer = enemy.getPos().distance(playerPos);
 
         switch (currentState) {
             case IDLE:
-                steering = handleIdle(enemy, playerPos);
+                steering = handleIdle(enemy, playerPos, distToPlayer);
                 break;
             case KITING:
                 steering = handleKiting(enemy, playerPos, distToPlayer);
@@ -84,59 +84,89 @@ public class AlienBossAIBehavior implements AIBehavior {
                 steering = handleChasing(enemy, playerPos);
                 break;
             case SUMMON_WINDUP:
-                // stationary while summoning
-                if (stateTimer > 1.5) spawnMinionsAndReset();
+                steering = new Vector3D(0, 0);
+                if (stateTimer > 1.0) {
+                    completeSummoning();
+                }
                 break;
-            case BLINK_WINDUP:
-            case BLINK_STRIKE:
-                handleBlinkSequence(enemy, playerPos);
+            case TELEPORT_VANISH:
+                steering = new Vector3D(0, 0);
+                if (stateTimer > 1.0) {
+                    performTeleport(enemy, playerPos);
+                    changeState(BossState.TELEPORT_REAPPEAR);
+                }
+                break;
+            case TELEPORT_REAPPEAR:
+                steering = new Vector3D(0, 0);
+                if (stateTimer > 1.0) {
+                    isInvulnerable = false;
+                    isVisible = true;
+                    teleportCooldown = 5.0;
+                    changeState(BossState.CHASING);
+                }
                 break;
         }
 
-        // physics application
-        if (steering.norm() > 0.1) {
-            currentVelocity = currentVelocity.add(steering.sub(currentVelocity).mult(acceleration));
+        if (isVisible && currentState != BossState.SUMMON_WINDUP) {
+            if (steering.norm() > 0.1) {
+                currentVelocity = currentVelocity.add(steering.sub(currentVelocity).mult(acceleration));
+            } else {
+                currentVelocity = currentVelocity.mult(friction);
+            }
         } else {
-            currentVelocity = currentVelocity.mult(friction);
+            currentVelocity = new Vector3D(0, 0);
         }
 
-        if(currentVelocity.norm() < 0.05) currentVelocity = new Vector3D(0,0);
+        if (currentVelocity.norm() < 0.05) {
+            currentVelocity = new Vector3D(0, 0);
+        }
 
         return currentVelocity;
     }
 
     private void tickTimers(double step) {
         stateTimer += step;
-        globalCooldown = Math.max(0, globalCooldown - step);
-        abilityCooldown = Math.max(0, abilityCooldown - step);
+        attackCooldown = Math.max(0, attackCooldown - step);
+        spawnCooldown = Math.max(0, spawnCooldown - step);
+        teleportCooldown = Math.max(0, teleportCooldown - step);
         pathTimer = Math.max(0, pathTimer - step);
-        isSpawningNow = false; // reset frame flag
+        isSpawningNow = false;
     }
 
-    private Vector3D handleIdle(Ennemy enemy, Vector3D playerPos) {
-        // fast reaction in later phases
-        double reactionTime = (currentPhase == Phase.BERSERK) ? 0.2 : 0.5;
-
-        if (stateTimer > reactionTime) {
-            chooseTactics(enemy, playerPos);
+    private Vector3D handleIdle(Ennemy enemy, Vector3D playerPos, double distToPlayer) {
+        if (spawnCooldown <= 0) {
+            changeState(BossState.SUMMON_WINDUP);
+            return new Vector3D(0, 0);
         }
-        return new Vector3D(0,0);
+
+        if (currentPhase == Phase.ZONER) {
+            changeState(BossState.KITING);
+        }
+        else {
+            changeState(BossState.CHASING);
+        }
+
+        return new Vector3D(0, 0);
     }
 
-    private void chooseTactics(Ennemy enemy, Vector3D playerPos) {
-        // priority 1: use special ability if ready
-        if (abilityCooldown <= 0) {
-            if (currentPhase == Phase.ZONER) {
-                changeState(BossState.SUMMON_WINDUP);
-                return;
-            } else if (currentPhase == Phase.ASSASSIN) {
-                changeState(BossState.BLINK_WINDUP);
-                return;
-            }
-            // phase 3 has no special cast time, it just chases aggressively
+    private void completeSummoning() {
+        isSpawningNow = true;
+
+        switch (currentPhase) {
+            case ZONER:
+                spawnCooldown = 6.0;
+                spawnQuantity = 2;
+                break;
+            case ASSASSIN:
+                spawnCooldown = 4.0;
+                spawnQuantity = 4;
+                break;
+            case BERSERK:
+                spawnCooldown = 2.0;
+                spawnQuantity = 6;
+                break;
         }
 
-        // priority 2: movement based on phase
         if (currentPhase == Phase.ZONER) {
             changeState(BossState.KITING);
         } else {
@@ -144,87 +174,95 @@ public class AlienBossAIBehavior implements AIBehavior {
         }
     }
 
-    // --- ability 1: minions ---
-    private void spawnMinionsAndReset() {
-        isSpawningNow = true; // tell game loop to spawn entity
-        abilityCooldown = 15.0;
-        changeState(BossState.KITING);
-    }
-
-    // --- ability 2: teleportation ---
-    private void handleBlinkSequence(Ennemy enemy, Vector3D playerPos) {
-        if (currentState == BossState.BLINK_WINDUP) {
-            isInvulnerable = true;
-            if (stateTimer > 0.5) {
-                // teleport behind player
-                Vector3D dir = playerPos.sub(enemy.getPos()).normalize();
-                Vector3D behind = playerPos.add(dir.mult(-TILE_SIZE * 1.5));
-                enemy.setPos(behind);
-                changeState(BossState.BLINK_STRIKE);
-            }
-        } else { // strike
-            isInvulnerable = false;
-            if (stateTimer > 0.4) {
-                justHit = true; // deal damage
-                abilityCooldown = 5.0;
-                changeState(BossState.IDLE);
-            }
+    private Vector3D handleKiting(Ennemy enemy, Vector3D playerPos, double distToPlayer) {
+        if (spawnCooldown <= 0) {
+            changeState(BossState.SUMMON_WINDUP);
+            return new Vector3D(0, 0);
         }
-    }
 
-    // --- movement logic ---
-    private Vector3D handleKiting(Ennemy enemy, Vector3D playerPos, double dist) {
-        // phase 1: keep distance
-        if (dist < TILE_SIZE * 6) {
+        if (distToPlayer < TILE_SIZE * 6) {
             return enemy.getPos().sub(playerPos).normalize().mult(moveSpeed);
         }
+
         changeState(BossState.IDLE);
-        return new Vector3D(0,0);
+        return new Vector3D(0, 0);
     }
 
     private Vector3D handleChasing(Ennemy enemy, Vector3D playerPos) {
-        // phase 2 & 3: aggressive
-        if (enemy.getPos().distance(playerPos) <= TILE_SIZE) return new Vector3D(0,0);
+        double distToPlayer = enemy.getPos().distance(playerPos);
+
+        if (spawnCooldown <= 0) {
+            changeState(BossState.SUMMON_WINDUP);
+            return new Vector3D(0, 0);
+        }
+
+        if (currentPhase != Phase.ZONER && teleportCooldown <= 0 && distToPlayer > TILE_SIZE * 3) {
+            changeState(BossState.TELEPORT_VANISH);
+            isInvulnerable = true;
+            isVisible = false;
+            return new Vector3D(0, 0);
+        }
+
+        if (distToPlayer <= TILE_SIZE * 1.5) {
+            return new Vector3D(0, 0);
+        }
 
         if (currentPhase == Phase.BERSERK) {
-            // berserk ignores pathfinding for raw speed
             return playerPos.sub(enemy.getPos()).normalize().mult(moveSpeed);
+        } else {
+            return getPathDirection(enemy.getPos(), playerPos).mult(moveSpeed);
         }
-        return getPathDirection(enemy.getPos(), playerPos).mult(moveSpeed);
     }
 
     private Vector3D getPathDirection(Vector3D from, Vector3D to) {
         if (pathTimer <= 0) {
             path = pathfinder.findPath(from, to);
             pathTimer = 0.5;
-            if (path != null && !path.isEmpty()) moveTarget = path.get(0);
+            if (path != null && !path.isEmpty()) {
+                moveTarget = path.get(0);
+            }
         }
         if (moveTarget != null) {
-            if (from.distance(moveTarget) < 4.0) moveTarget = null;
-            else return moveTarget.sub(from).normalize();
+            if (from.distance(moveTarget) < 4.0) {
+                moveTarget = null;
+            } else {
+                return moveTarget.sub(from).normalize();
+            }
         }
         return to.sub(from).normalize();
     }
 
+    private void performTeleport(Ennemy enemy, Vector3D playerPos) {
+        double angle = random.nextDouble() * 2 * Math.PI;
+        double distance = TILE_SIZE * (2 + random.nextDouble() * 2);
+
+        Vector3D offset = new Vector3D(Math.cos(angle), Math.sin(angle)).mult(distance);
+        Vector3D newPos = playerPos.add(offset);
+
+        enemy.setPos(newPos);
+    }
+
     private void updatePhase(Ennemy enemy) {
         double hpPct = (double) enemy.getHp() / enemy.getHpMax();
-        Phase nextPhase; // Determine what phase we SHOULD be in
+        Phase nextPhase;
 
         if (hpPct > 0.6) {
             nextPhase = Phase.ZONER;
             moveSpeed = 2.5;
         } else if (hpPct > 0.3) {
             nextPhase = Phase.ASSASSIN;
-            moveSpeed = 3.5;
+            moveSpeed = 4.0;
         } else {
             nextPhase = Phase.BERSERK;
-            moveSpeed = 5.5;
+            moveSpeed = 6.5;
         }
 
         if (nextPhase != currentPhase) {
             currentPhase = nextPhase;
-            abilityCooldown = 0;
-            stateTimer = 0;      // Reset reaction timer
+            spawnCooldown = 0;
+            teleportCooldown = 0;
+            attackCooldown = 0;
+            stateTimer = 0;
             System.out.println("Boss entered Phase: " + currentPhase);
         }
     }
@@ -234,21 +272,42 @@ public class AlienBossAIBehavior implements AIBehavior {
         this.stateTimer = 0;
     }
 
+    public double getDamageMultiplier() {
+        switch (currentPhase) {
+            case ZONER:
+                return 1.0;
+            case ASSASSIN:
+                return 1.5;
+            case BERSERK:
+                return 2.5;
+            default:
+                return 1.0;
+        }
+    }
+
     @Override
     public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
-        // trigger damage for abilities
-        if (justHit) {
-            justHit = false;
+        double distToPlayer = enemy.getPos().distance(playerPos);
+
+        if (!isVisible) {
+            return false;
+        }
+        if (distToPlayer < TILE_SIZE * 1.5 && attackCooldown <= 0) {
+            // Faster attacks in later phases
+            switch (currentPhase) {
+                case ZONER:
+                    attackCooldown = 1.5;
+                    break;
+                case ASSASSIN:
+                    attackCooldown = 1.0;
+                    break;
+                case BERSERK:
+                    attackCooldown = 0.5;
+                    break;
+            }
             return true;
         }
 
-        // standard melee attack
-        if (currentState == BossState.CHASING && enemy.getPos().distance(playerPos) < TILE_SIZE * 1.5) {
-            if (globalCooldown <= 0) {
-                globalCooldown = 1.0;
-                return true;
-            }
-        }
         return false;
     }
 }

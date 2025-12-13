@@ -3,6 +3,7 @@ package ma.ac.emi.world;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
@@ -61,4 +62,13 @@ public class Obstacle extends GameObject{
 		
 	}
 
+	public static boolean isPositionInObstacles(Vector3D pos, List<Obstacle> obstacles) {
+		for (Obstacle obstacle : obstacles) {
+			if (obstacle.getHitbox() != null &&
+					obstacle.getHitbox().contains(pos.getX(), pos.getY())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
