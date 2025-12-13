@@ -46,6 +46,10 @@ public class GamePanel extends JPanel {
 			GameController.draw.acquire();
 			
 			super.paintComponent(g);
+			
+			g.setColor(GameController.getInstance().getWorldManager().getCurrentWorld().getVoidColor());
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			
 			Graphics2D g2d = (Graphics2D) g;
 			if (camera == null) {
 				System.out.println("Camera is null");

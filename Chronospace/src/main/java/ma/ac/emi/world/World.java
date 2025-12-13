@@ -211,4 +211,8 @@ public class World extends GameObject{
 	public TileManager getTileManager() {
 		return context.getTileManager();
 	}
+
+	public Color getVoidColor() {
+		return context.getVoidColor();
+	}
 }

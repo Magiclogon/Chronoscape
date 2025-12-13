@@ -158,23 +158,26 @@ public class Player extends LivingEntity {
 		if(KeyHandler.getInstance().isUp()) {
 			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
-			velocity.setY(-1*speed);
+			velocity.setY(-1);
 		}
 		if(KeyHandler.getInstance().isDown()) {
 			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
-			velocity.setY(speed);
+			velocity.setY(1);
 		}
 		if(KeyHandler.getInstance().isLeft()) {
 			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
-			velocity.setX(-1*speed);
+			velocity.setX(-1);
 		}
 		if(KeyHandler.getInstance().isRight()) {
 			if(!isIdle()) stateMachine.trigger("Stop");
 			stateMachine.trigger("Run");
-			velocity.setX(speed);
+			velocity.setX(1);
 		}
+		
+		
+		if(velocity.norm() != 0) velocity = velocity.normalize().mult(speed);
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
