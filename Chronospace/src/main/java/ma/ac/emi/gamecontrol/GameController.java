@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -59,23 +59,27 @@ public class GameController implements Runnable {
     private List<DifficultyObserver> difficultyObservers;
     
     private GameController() {
-        
+        window = new Window();
+
+        showLoadingScreen();
+
         AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
         particleSystem.loadFromJson("src/main/resources/configs/particles.json");
 		ItemLoader.getInstance().loadItems("src/main/resources/configs/items.json");		
 		ProjectileLoader.getInstance().load("src/main/resources/configs/projectiles.json");
 		AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
-		
-		window = new Window();
 
 		difficultyObservers = new ArrayList<>();
 		
         gamePanel = new GamePanel();
         gameUIPanel = new GameUIPanel();
 
-        showMainMenu();
-
+        Timer timer = new Timer(3000, e -> {
+            showMainMenu();
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
     
     public void nextWorld() {
@@ -83,6 +87,13 @@ public class GameController implements Runnable {
 		gamePanel.addDrawable(Player.getInstance());
 		Player.getInstance().setDrawn(true);
     	worldManager.nextWorld();
+    }
+
+    public void showLoadingScreen() {
+        state = GameState.LOADING;
+        SwingUtilities.invokeLater(() -> {
+        	window.showScreen("LOADING");
+        });
     }
 
     public void showMainMenu() {
@@ -131,12 +142,32 @@ public class GameController implements Runnable {
         	window.showScreen("GAMEOVER");
     	});
     }
-    
+
+    // --- PAUSE LOGIC ---
+
+    /**
+     * Toggles between Playing and Paused states.
+     */
+    public void togglePause() {
+        if (state == GameState.PLAYING) {
+            pauseGame();
+        } else if (state == GameState.PAUSED) {
+            resumeGame();
+        }
+    }
+
+    public void pauseGame() {
+        state = GameState.PAUSED;
+        SwingUtilities.invokeLater(() -> window.showScreen("PAUSE"));
+    }
+
     public void resumeGame() {
         state = GameState.PLAYING;
-        startGame();
+        latestTime = System.nanoTime();
+        SwingUtilities.invokeLater(() -> window.showScreen("GAME"));
     }
-    
+
+
 
 	public void restartGame() {
 		gamePanel.removeAllDrawables();
@@ -187,35 +218,42 @@ public class GameController implements Runnable {
 
     @Override
     public void run() {
-
         while (true) {
-    		deltaTime = System.nanoTime() - latestTime;
-    		latestTime += deltaTime;
-        	
-        	try {
-				update.acquire();
-				accumTime += deltaTime;
-	            while (accumTime > SIM_STEP) {
-	                update(SIM_STEP / Math.pow(10, 9) / 1);
-	
-	                accumTime -= SIM_STEP;
-	            }
-			
-		        
-            	draw.release();
+            if (KeyHandler.getInstance().consumeTogglePause()) {
+                togglePause();
+            }
 
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+            long currentTime = System.nanoTime();
+            deltaTime = currentTime - latestTime;
+            latestTime = currentTime;
 
-                        
+            try {
+                update.acquire();
+
+                if (state == GameState.PLAYING) {
+                    accumTime += deltaTime;
+
+                    while (accumTime > SIM_STEP) {
+                        update(SIM_STEP / Math.pow(10, 9));
+                        accumTime -= SIM_STEP;
+                    }
+                } else {
+                    accumTime = 0;
+                }
+
+                draw.release();
+
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             SwingUtilities.invokeLater(() -> {
-            	gamePanel.repaint();
+                gamePanel.repaint();
                 gameUIPanel.repaint();
             });
 
             try {
+                // Small sleep to prevent CPU hogging
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();

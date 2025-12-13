@@ -9,6 +9,7 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 
 import java.util.*;
 
@@ -110,11 +111,13 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
     }
 
     private void setRandomSpawnPosition(Ennemy enemy) {
-        // Spawn at edges of the world
-        int side = random.nextInt(4); // 0=top, 1=right, 2=bottom, 3=left
         double x, y;
-        x = random.nextDouble() * worldWidth * 16;
-        y = random.nextDouble() * worldHeight * 16;
+        List<Obstacle> obstacles = GameController.getInstance().getWorldManager().getCurrentWorld().getContext().getObstacles();
+
+        do {
+            x = random.nextDouble() * worldWidth * 32;
+            y = random.nextDouble() * worldHeight * 32;
+        } while(Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles));
 
         enemy.setPos(new Vector3D(x, y));
     }

@@ -14,7 +14,7 @@ public class KeyHandler{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean left, right, up, down, switchWeapon;
+	private boolean left, right, up, down, switchWeapon, togglePause;
 	private static KeyHandler instance;
 	
 	private KeyHandler() {
@@ -153,6 +153,16 @@ public class KeyHandler{
                 setSwitchWeapon(true);
             }
         });
+
+        // Esc Pressed
+        inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "Esc Pressed");
+        actionMap.put("Esc Pressed", new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTogglePause(true);
+            }
+        });
         
 
     }
@@ -160,6 +170,14 @@ public class KeyHandler{
     public boolean consumeSwitchWeapon() {
         if (switchWeapon) {
             switchWeapon = false;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean consumeTogglePause() {
+        if (togglePause) {
+            togglePause = false;
             return true;
         }
         return false;

@@ -1,7 +1,10 @@
 package ma.ac.emi.UI;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import ma.ac.emi.UI.shopElements.InventoryItemButton;
 import ma.ac.emi.UI.shopElements.InventoryScrollable;
@@ -13,397 +16,425 @@ import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * ShopUI handles the visual representation of the in-game shop.
- * It displays:
- *  - Player money
- *  - Available items for purchase
- *  - Inventory (weapons + stat items)
- *  - Player stats
- */
 public class ShopUI extends JPanel {
-    public final Dimension inventoryButtonSize = new Dimension(75, 75);
 
+    // --- ROGUELIKE PALETTE ---
+    private static final Color BG_DARK      = new Color(18, 18, 24);   // Deep Void
+    private static final Color PANEL_BG     = new Color(30, 30, 38);   // Panel Background
+    private static final Color BORDER_LIGHT = new Color(180, 180, 190); // Retro White/Grey
+    private static final Color TEXT_MAIN    = new Color(235, 235, 245);
+    private static final Color ACCENT_GOLD  = new Color(255, 215, 0);  // Money
+    private static final Color ACCENT_RED   = new Color(220, 60, 60);  // Health/Sell
+    private static final Color ACCENT_GREEN = new Color(80, 200, 100); // Buy/Next Wave
+
+    // --- FONTS ---
+    private static final String FONT_NAME = "ByteBounce";
+    // Pixel fonts need to be large to be readable
+    private static final Font FONT_HEADER = new Font(FONT_NAME, Font.PLAIN, 32);
+    private static final Font FONT_BODY   = new Font(FONT_NAME, Font.PLAIN, 20);
+    private static final Font FONT_SMALL  = new Font(FONT_NAME, Font.PLAIN, 16);
+    public final Dimension inventoryButtonSize = new Dimension(80, 80);
+
+    // --- COMPONENTS ---
     private JLabel moneyLabel;
-    private JPanel availableItemsPanel;
-    private JPanel statsPanel;
-    private JPanel itemDescriptionPanel;
 
+    // The three main columns
+    private JPanel heroPanel;      // Left
+    private JPanel shopPanel;      // Center
+    private JPanel bagPanel;       // Right
+
+    // Dynamic containers
+    private JPanel availableItemsGrid;
+    private JPanel statsContainer;
+    private JPanel detailsContainer;
+
+    // Inventory references
     private InventoryScrollable weaponPane;
-    private InventoryScrollable activeWeaponsPane;
     private InventoryScrollable statItemsPane;
 
-    private JButton nextWaveButton;
-    private JButton rerollButton;
+    // Buttons
+    private RetroButton nextWaveButton;
+    private RetroButton rerollButton;
 
     public ShopUI() {
+        setLayout(new BorderLayout(0, 0));
+        setBackground(BG_DARK);
 
-        setLayout(new BorderLayout(10, 10));
-        setBackground(new Color(30, 30, 30));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // 1. TOP HEADER (Money & Wave Control)
+        add(createHeader(), BorderLayout.NORTH);
 
-        nextWaveButton = new JButton("Next Wave");
+        // 2. MAIN CONTENT (3 Columns)
+        JPanel contentGrid = new JPanel(new GridLayout(1, 3, 10, 0)); // 3 Cols, 10px gap
+        contentGrid.setBackground(BG_DARK);
+        contentGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        // --- LEFT: HERO STATS & EQUIPPED ---
+        heroPanel = createSectionPanel("HERO STATUS");
+        statsContainer = new JPanel();
+        statsContainer.setLayout(new BoxLayout(statsContainer, BoxLayout.Y_AXIS));
+        statsContainer.setBackground(PANEL_BG);
+        heroPanel.add(statsContainer, BorderLayout.CENTER);
+        contentGrid.add(heroPanel);
+
+        // --- CENTER: SHOP ---
+        shopPanel = createSectionPanel("MERCHANT");
+
+        // Shop Grid
+        availableItemsGrid = new JPanel(new GridLayout(3, 2, 8, 8)); // 3x2 Grid for items
+        availableItemsGrid.setBackground(PANEL_BG);
+        shopPanel.add(availableItemsGrid, BorderLayout.CENTER);
+
+        // Reroll Area (Bottom of Center)
+        JPanel rerollContainer = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rerollContainer.setBackground(PANEL_BG);
+        rerollContainer.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        rerollButton = new RetroButton("REROLL", ACCENT_GOLD, Color.BLACK);
+        rerollButton.setPreferredSize(new Dimension(150, 40));
+        rerollButton.addActionListener(e -> {
+            GameController.getInstance().getShopManager().refreshAvailableItems();
+            refresh();
+        });
+        rerollContainer.add(rerollButton);
+        shopPanel.add(rerollContainer, BorderLayout.SOUTH);
+
+        contentGrid.add(shopPanel);
+
+        // --- RIGHT: INVENTORY & DETAILS ---
+        bagPanel = createSectionPanel("INVENTORY & INSPECT");
+
+        // Split right panel: Top is Inventory, Bottom is Details
+        JPanel rightSplit = new JPanel(new GridLayout(2, 1, 0, 10));
+        rightSplit.setBackground(PANEL_BG);
+
+        // Inventory Tabs
+        JTabbedPane invTabs = createRetroTabbedPane();
+        weaponPane = new InventoryScrollable(this, ""); // Title handled by tab
+        statItemsPane = new InventoryScrollable(this, "");
+
+        invTabs.addTab("WEAPONS", weaponPane);
+        invTabs.addTab("ITEMS", statItemsPane);
+        rightSplit.add(invTabs);
+
+        // Item Details Area
+        detailsContainer = new JPanel();
+        detailsContainer.setLayout(new BoxLayout(detailsContainer, BoxLayout.Y_AXIS));
+        detailsContainer.setBackground(PANEL_BG);
+        detailsContainer.setBorder(createRetroBorder()); // Inner border for details
+
+        // Wrap details in a scroll pane just in case description is long
+        JScrollPane detailsScroll = new JScrollPane(detailsContainer);
+        detailsScroll.getViewport().setBackground(PANEL_BG);
+        detailsScroll.setBorder(null);
+        rightSplit.add(detailsScroll);
+
+        bagPanel.add(rightSplit, BorderLayout.CENTER);
+        contentGrid.add(bagPanel);
+
+        add(contentGrid, BorderLayout.CENTER);
+    }
+
+    private JPanel createHeader() {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(new Color(10, 10, 15)); // Darker top bar
+        header.setBorder(new CompoundBorder(
+                new LineBorder(BORDER_LIGHT, 0, false), // No outside border
+                new EmptyBorder(15, 20, 15, 20)         // Padding
+        ));
+
+        moneyLabel = new JLabel("GOLD: 0");
+        moneyLabel.setFont(FONT_HEADER);
+        moneyLabel.setForeground(ACCENT_GOLD);
+
+        nextWaveButton = new RetroButton("START WAVE >", ACCENT_GREEN, Color.BLACK);
+        nextWaveButton.setPreferredSize(new Dimension(160, 45));
         nextWaveButton.addActionListener((e) -> {
             Player.getInstance().initWeapons();
             GameController.getInstance().resumeGame();
         });
-        add(createTopPanel(), BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel();
-        centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
-        centerPanel.setBackground(new Color(30, 30, 30));
-        centerPanel.add(createAvailableItemsPanel());
+        header.add(moneyLabel, BorderLayout.WEST);
+        header.add(nextWaveButton, BorderLayout.EAST);
 
-        JPanel rerollPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
-        rerollPanel.setBackground(new Color(60, 60, 60));
-        rerollButton = new JButton();
-        rerollButton.addActionListener((e) -> {
-            GameController.getInstance().getShopManager().refreshAvailableItems();
-            refresh();
-        });
-        rerollPanel.add(rerollButton);
+        // Bottom line of header
+        JPanel separator = new JPanel();
+        separator.setPreferredSize(new Dimension(0, 4));
+        separator.setBackground(BORDER_LIGHT);
+        header.add(separator, BorderLayout.SOUTH);
 
-        centerPanel.add(rerollPanel);
-        centerPanel.add(createInventoryPanel());
-        add(centerPanel, BorderLayout.CENTER);
-
-        JPanel descriptionPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        descriptionPanel.setBackground(new Color(60,60,60));
-        descriptionPanel.add(createStatsPanel());
-        descriptionPanel.add(createItemDescriptionPanel());
-        add(descriptionPanel, BorderLayout.EAST);
+        return header;
     }
 
-    private JPanel createTopPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // padding
-        panel.setBackground(Color.BLACK);
-
-        moneyLabel = new JLabel();
-        moneyLabel.setForeground(Color.YELLOW);
-        moneyLabel.setFont(new Font("Arial", Font.BOLD, 20));
-
-        panel.add(moneyLabel);
-        panel.add(Box.createHorizontalGlue()); // pushes button to the right
-        panel.add(nextWaveButton);
-        return panel;
-    }
-
-    private JPanel createAvailableItemsPanel() {
-        availableItemsPanel = new JPanel(new GridLayout(0, 3, 10, 10));
-        availableItemsPanel.setPreferredSize(new Dimension(availableItemsPanel.getPreferredSize().width,
-                500));
-        availableItemsPanel.setBackground(new Color(50, 50, 50));
-        availableItemsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Available Items",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
-        return availableItemsPanel;
-    }
-
-    private JPanel createInventoryPanel() {
-        JPanel inventoryPanel = new JPanel(new BorderLayout(10, 10));
-        inventoryPanel.setPreferredSize(new Dimension(inventoryPanel.getPreferredSize().width, 400));
-        inventoryPanel.setBackground(new Color(40, 40, 40));
-        inventoryPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Inventory",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
-
-        weaponPane = new InventoryScrollable(this, "Weapons");
-
-        statItemsPane = new InventoryScrollable(this, "Stat Items");
-
-        activeWeaponsPane = new InventoryScrollable(this, "Active Weapons");
-
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 3, 10, 10));
-        bottomPanel.setBackground(new Color(40, 40, 40));
-        bottomPanel.add(statItemsPane);
-        bottomPanel.add(weaponPane);
-        bottomPanel.add(activeWeaponsPane);
-
-        inventoryPanel.add(bottomPanel, BorderLayout.CENTER);
-        return inventoryPanel;
-    }
-
-    private JPanel createStatsPanel() {
-        statsPanel = new JPanel(new GridLayout(0, 1, 5, 5));
-        statsPanel.setBackground(new Color(50, 50, 50));
-        statsPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Player Stats",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
-        statsPanel.setPreferredSize(new Dimension(250, 700));
-        return statsPanel;
-    }
-
-    public JPanel createItemDescriptionPanel() {
-        itemDescriptionPanel = new JPanel();
-        itemDescriptionPanel.setBackground(new Color(50, 50, 50));
-        itemDescriptionPanel.setBorder(
-                BorderFactory.createTitledBorder(
-                        BorderFactory.createLineBorder(Color.GRAY),
-                        "Item description",
-                        TitledBorder.LEADING,
-                        TitledBorder.TOP,
-                        new Font("Arial", Font.BOLD, 14),
-                        Color.WHITE
-                )
-        );
-        itemDescriptionPanel.setPreferredSize(new Dimension(250, 700));
-        return itemDescriptionPanel;
-    }
-
+    // --- REFRESH LOGIC ---
     public void refresh() {
-
         Player player = Player.getInstance();
         ShopManager shop = GameController.getInstance().getShopManager();
 
-        // === Update money and reroll ===
-        moneyLabel.setText("Money: " + (int)player.getMoney() + "$"); // Cast to int for cleaner look
-        rerollButton.setText("Reroll (" + shop.getRerollPrice() + "$)");
+        // 1. Header
+        moneyLabel.setText("GOLD: " + (int)player.getMoney());
+        rerollButton.setText("REROLL (" + shop.getRerollPrice() + "$)");
 
-        // === Update available shop items ===
-        availableItemsPanel.removeAll();
-        for (ShopItem item : shop.getAvailableItems()) {
-            availableItemsPanel.add(new ShopItemButton(this, item));
-        }
+        // 2. Stats (Left Panel)
+        statsContainer.removeAll();
+        statsContainer.add(createStatRow("HP", String.format("%.0f/%.0f", player.getHp(), player.getHpMax()), ACCENT_RED));
+        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(createStatRow("SPEED", String.format("%.0f", player.getSpeed()), new Color(100, 200, 255)));
+        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(createStatRow("MIGHT", String.format("%.1f", player.getStrength()), new Color(255, 150, 50)));
+        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(createStatRow("REGEN", String.format("%.1f/s", player.getRegenerationSpeed()), new Color(100, 255, 100)));
 
-        // === Update equipped weapons ===
-        activeWeaponsPane.getPanel().removeAll();
-        for (WeaponItem item : player.getInventory().getEquippedWeapons()) {
-            if (item != null) {
-                activeWeaponsPane.add(new InventoryItemButton(this, item, 1));
+        // Add Equipped Weapons Visuals below stats
+        statsContainer.add(Box.createVerticalStrut(30));
+        JLabel equipHeader = new JLabel("EQUIPPED LOADOUT");
+        equipHeader.setFont(FONT_BODY);
+        equipHeader.setForeground(Color.GRAY);
+        equipHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
+        statsContainer.add(equipHeader);
+        statsContainer.add(Box.createVerticalStrut(10));
+
+        JPanel equippedGrid = new JPanel(new GridLayout(1, 3, 5, 0));
+        equippedGrid.setBackground(PANEL_BG);
+        equippedGrid.setMaximumSize(new Dimension(300, 80));
+
+        // Fill slots (assuming max 3 weapons)
+        WeaponItem[] weapons = player.getInventory().getEquippedWeapons();
+        for(int i=0; i<3; i++) {
+            if(i < weapons.length && weapons[i] != null) {
+                // If you have an icon for the weapon, use it here.
+                // For now reusing InventoryItemButton
+                equippedGrid.add(new InventoryItemButton(this, weapons[i], 1));
+            } else {
+                // Empty Slot Visual
+                JLabel emptySlot = new JLabel("EMPTY");
+                emptySlot.setFont(FONT_SMALL);
+                emptySlot.setForeground(Color.DARK_GRAY);
+                emptySlot.setHorizontalAlignment(SwingConstants.CENTER);
+                emptySlot.setBorder(new LineBorder(Color.DARK_GRAY, 2));
+                equippedGrid.add(emptySlot);
             }
         }
+        statsContainer.add(equippedGrid);
 
+        // 3. Shop Items (Center Panel)
+        availableItemsGrid.removeAll();
+        for (ShopItem item : shop.getAvailableItems()) {
+            availableItemsGrid.add(new ShopItemButton(this, item));
+        }
+
+        // 4. Inventory (Right Panel)
         weaponPane.getPanel().removeAll();
-        Map<String, Integer> weaponCounts = new HashMap<>();
-        Map<String, ShopItem> weaponRefs = new HashMap<>();
-
-        for (ShopItem item : player.getInventory().getWeaponItems()) {
-            String id = item.getItemDefinition().getId();
-            weaponCounts.put(id, weaponCounts.getOrDefault(id, 0) + 1);
-            weaponRefs.putIfAbsent(id, item);
-        }
-
-        for (String id : weaponCounts.keySet()) {
-            ShopItem ref = weaponRefs.get(id);
-            int count = weaponCounts.get(id);
-            weaponPane.add(new InventoryItemButton(this, ref, count));
-        }
+        refreshInventoryCategory(player.getInventory().getWeaponItems(), weaponPane);
 
         statItemsPane.getPanel().removeAll();
-        Map<String, Integer> statCounts = new HashMap<>();
-        Map<String, ShopItem> statRefs = new HashMap<>();
-
-        for (ShopItem item : player.getInventory().getUpgradeItems()) {
-            String id = item.getItemDefinition().getId();
-            statCounts.put(id, statCounts.getOrDefault(id, 0) + 1);
-            statRefs.putIfAbsent(id, item);
-        }
-
-        for (String id : statCounts.keySet()) {
-            ShopItem ref = statRefs.get(id);
-            int count = statCounts.get(id);
-            statItemsPane.add(new InventoryItemButton(this, ref, count));
-        }
-
-        statsPanel.removeAll();
-
-        // Format: Name, Value, Color
-        addStatRow("Health",
-                String.format("%.0f / %.0f", player.getHp(), player.getHpMax()),
-                new Color(100, 255, 100));
-
-        addStatRow("Speed",
-                String.format("%.0f", player.getSpeed()),
-                new Color(100, 200, 255));
-
-        addStatRow("Strength",
-                String.format("%.1f", player.getStrength()),
-                new Color(255, 100, 100));
-
-        addStatRow("Regeneration",
-                String.format("%.1f /s", player.getRegenerationSpeed()),
-                new Color(255, 100, 255));
-
-        statsPanel.revalidate();
-        statsPanel.repaint();
+        refreshInventoryCategory(player.getInventory().getUpgradeItems(), statItemsPane);
 
         revalidate();
         repaint();
     }
 
-    private JLabel createSlotLabel(String text) {
-        JLabel label = new JLabel(text, SwingConstants.CENTER);
-        label.setForeground(Color.WHITE);
-        label.setBackground(new Color(70, 70, 70));
-        label.setOpaque(true);
-        label.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
-        return label;
+    private void refreshInventoryCategory(java.util.List<? extends ShopItem> items, InventoryScrollable pane) {
+        Map<String, Integer> counts = new HashMap<>();
+        Map<String, ShopItem> refs = new HashMap<>();
+
+        for (ShopItem item : items) {
+            String id = item.getItemDefinition().getId();
+            counts.put(id, counts.getOrDefault(id, 0) + 1);
+            refs.putIfAbsent(id, item);
+        }
+        for (String id : counts.keySet()) {
+            pane.add(new InventoryItemButton(this, refs.get(id), counts.get(id)));
+        }
     }
 
-    private JLabel createStatLabel(String text) {
-        JLabel label = new JLabel(text);
-        label.setForeground(Color.WHITE);
-        label.setFont(new Font("Arial", Font.PLAIN, 14));
-        return label;
-    }
-
+    // --- ITEM DETAILS PANEL ---
     public void showItemDetails(ShopItem item) {
-        itemDescriptionPanel.removeAll();
+        detailsContainer.removeAll();
 
-        JLabel nameLabel = new JLabel(item.getItemDefinition().getName());
-        nameLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        nameLabel.setForeground(Color.WHITE);
+        // Name
+        JLabel nameLbl = new JLabel(item.getItemDefinition().getName().toUpperCase());
+        nameLbl.setFont(FONT_HEADER);
+        nameLbl.setForeground(ACCENT_GOLD);
+        nameLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel descLabel = new JLabel("<html>" + item.getItemDefinition().getDescription() + "</html>");
-        descLabel.setForeground(Color.LIGHT_GRAY);
-        descLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        // Rarity
+        JLabel rarityLbl = new JLabel(item.getItemDefinition().getRarity().toString());
+        rarityLbl.setFont(FONT_SMALL);
+        rarityLbl.setForeground(Color.CYAN);
+        rarityLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel rarityLabel = new JLabel("Rarity: " + item.getItemDefinition().getRarity());
-        rarityLabel.setForeground(Color.CYAN);
+        // Description Box
+        JTextArea descArea = new JTextArea(item.getItemDefinition().getDescription());
+        descArea.setFont(FONT_BODY);
+        descArea.setForeground(TEXT_MAIN);
+        descArea.setBackground(PANEL_BG);
+        descArea.setLineWrap(true);
+        descArea.setWrapStyleWord(true);
+        descArea.setEditable(false);
+        descArea.setBorder(new EmptyBorder(10, 0, 10, 0));
+        descArea.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel priceLabel = new JLabel("Price: $" + item.getPrice());
-        priceLabel.setForeground(Color.YELLOW);
+        // Add to panel
+        detailsContainer.add(nameLbl);
+        detailsContainer.add(rarityLbl);
+        detailsContainer.add(Box.createVerticalStrut(10));
+        detailsContainer.add(descArea);
 
-        itemDescriptionPanel.setBackground(new Color(40, 40, 40));
-        itemDescriptionPanel.setLayout(new BoxLayout(itemDescriptionPanel, BoxLayout.Y_AXIS));
-        itemDescriptionPanel.add(nameLabel);
-        itemDescriptionPanel.add(Box.createVerticalStrut(5));
-        itemDescriptionPanel.add(descLabel);
-        itemDescriptionPanel.add(Box.createVerticalStrut(10));
-        itemDescriptionPanel.add(rarityLabel);
-        itemDescriptionPanel.add(priceLabel);
-
-        //If the item is a WeaponItem, show its equip state
+        // Equip Logic (If Weapon)
         if (item instanceof WeaponItem) {
-            WeaponItem weaponItem = (WeaponItem) item;
-
-            JLabel equipLabel = new JLabel("Equipped State:");
-            equipLabel.setForeground(Color.WHITE);
-            equipLabel.setFont(new Font("Arial", Font.BOLD, 13));
-
-            JComboBox<String> equipStateBox = new JComboBox<>();
-            equipStateBox.addItem("Unequipped");
-
-            // Suppose your player has 3 weapon slots
-            for (int i = 0; i < 3; i++) {
-                equipStateBox.addItem("Slot " + i);
-            }
-
-            // Get equipped slot index
-            Integer equippedIndex = Player.getInstance().isWeaponEquipped(weaponItem);
-            if (equippedIndex != null && equippedIndex >= 0) {
-                equipStateBox.setSelectedIndex(equippedIndex + 1);
-            } else {
-                equipStateBox.setSelectedIndex(0);
-            }
-
-            //Limit the size so it doesn’t stretch across the whole panel
-            Dimension comboSize = new Dimension(150, 25);
-            equipStateBox.setMaximumSize(comboSize);
-            equipStateBox.setPreferredSize(comboSize);
-            equipStateBox.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-            itemDescriptionPanel.add(Box.createVerticalStrut(5));
-            itemDescriptionPanel.add(equipLabel);
-            itemDescriptionPanel.add(Box.createVerticalStrut(3));
-            itemDescriptionPanel.add(equipStateBox);
-
-            equipStateBox.addActionListener(e -> {
-                int selectedIndex = equipStateBox.getSelectedIndex();
-                Player player = Player.getInstance();
-
-                if (selectedIndex == 0) {
-                    player.getInventory().unequipWeapon(weaponItem);
-                } else {
-                    int slotIndex = selectedIndex - 1;
-                    player.getInventory().equipWeapon(weaponItem, slotIndex);
-                }
-                refresh();
-            });
+            detailsContainer.add(Box.createVerticalStrut(10));
+            detailsContainer.add(createEquipControls((WeaponItem)item));
         }
 
-        itemDescriptionPanel.add(Box.createVerticalStrut(20));
-        JSeparator separator = new JSeparator();
-        separator.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        itemDescriptionPanel.add(separator);
-        itemDescriptionPanel.add(Box.createVerticalStrut(10));
-
-        JPanel sellPanel = new JPanel();
-        sellPanel.setBackground(new Color(50, 50, 50));
-        sellPanel.setLayout(new BoxLayout(sellPanel, BoxLayout.Y_AXIS));
-        sellPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        JLabel sellLabel = new JLabel("Sell this item:");
-        sellLabel.setForeground(Color.WHITE);
-        sellLabel.setFont(new Font("Arial", Font.BOLD, 13));
-
-        JButton sellButton = new JButton("Sell");
-        sellButton.setBackground(new Color(200, 50, 50));
-        sellButton.setForeground(Color.WHITE);
-        sellButton.setFocusPainted(false);
-        sellButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        sellButton.setMaximumSize(new Dimension(120, 30));
-
-        sellButton.addActionListener(e -> {
+        // Sell Button
+        detailsContainer.add(Box.createVerticalGlue());
+        RetroButton sellBtn = new RetroButton("SELL FOR " + (int)(item.getPrice() * 0.5) + "$", ACCENT_RED, Color.WHITE);
+        sellBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
+        sellBtn.setMaximumSize(new Dimension(300, 40));
+        sellBtn.addActionListener(e -> {
             GameController.getInstance().getShopManager().sellItem(item);
+            refresh();
+            detailsContainer.removeAll();
+            detailsContainer.repaint();
+        });
+
+        detailsContainer.add(Box.createVerticalStrut(10));
+        detailsContainer.add(sellBtn);
+
+        detailsContainer.revalidate();
+        detailsContainer.repaint();
+    }
+
+    private JPanel createEquipControls(WeaponItem weaponItem) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        panel.setBackground(PANEL_BG);
+        panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lbl = new JLabel("SLOT: ");
+        lbl.setFont(FONT_BODY);
+        lbl.setForeground(Color.GRAY);
+
+        JComboBox<String> box = new JComboBox<>();
+        box.addItem("- BACKPACK -");
+        box.addItem("SLOT 1");
+        box.addItem("SLOT 2");
+        box.addItem("SLOT 3");
+        box.setFont(FONT_SMALL);
+
+        Integer equippedIndex = Player.getInstance().isWeaponEquipped(weaponItem);
+        if (equippedIndex != null && equippedIndex >= 0) {
+            box.setSelectedIndex(equippedIndex + 1);
+        } else {
+            box.setSelectedIndex(0);
+        }
+
+        box.addActionListener(e -> {
+            int selectedIndex = box.getSelectedIndex();
+            if (selectedIndex == 0) Player.getInstance().getInventory().unequipWeapon(weaponItem);
+            else Player.getInstance().getInventory().equipWeapon(weaponItem, selectedIndex - 1);
             refresh();
         });
 
-        sellPanel.add(sellLabel);
-        sellPanel.add(Box.createVerticalStrut(5));
-        sellPanel.add(sellButton);
-
-        itemDescriptionPanel.add(sellPanel);
-
-        itemDescriptionPanel.revalidate();
-        itemDescriptionPanel.repaint();
+        panel.add(lbl);
+        panel.add(box);
+        return panel;
     }
 
-    private void addStatRow(String name, String value, Color valueColor) {
+    // --- HELPER VISUALS ---
+
+    private JPanel createSectionPanel(String title) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBackground(PANEL_BG);
+        // Custom Titled Border with Pixel aesthetic
+        Border line = new LineBorder(BORDER_LIGHT, 2);
+        Border titled = BorderFactory.createTitledBorder(line, " " + title + " ",
+                javax.swing.border.TitledBorder.CENTER,
+                javax.swing.border.TitledBorder.TOP,
+                FONT_BODY, BORDER_LIGHT);
+        p.setBorder(new CompoundBorder(titled, new EmptyBorder(10, 10, 10, 10)));
+        return p;
+    }
+
+    private JPanel createStatRow(String label, String value, Color color) {
         JPanel row = new JPanel(new BorderLayout());
-        row.setBackground(new Color(50, 50, 50));
-        row.setBorder(BorderFactory.createEmptyBorder(2, 5, 2, 5));
+        row.setBackground(PANEL_BG);
+        row.setMaximumSize(new Dimension(300, 30));
 
-        JLabel nameLbl = new JLabel(name + ": ");
-        nameLbl.setForeground(Color.LIGHT_GRAY);
-        nameLbl.setFont(new Font("Arial", Font.PLAIN, 14));
+        JLabel l = new JLabel(label);
+        l.setFont(FONT_BODY);
+        l.setForeground(Color.GRAY);
 
-        JLabel valLbl = new JLabel(value);
-        valLbl.setForeground(valueColor);
-        valLbl.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel v = new JLabel(value);
+        v.setFont(FONT_BODY);
+        v.setForeground(color);
 
-        row.add(nameLbl, BorderLayout.WEST);
-        row.add(valLbl, BorderLayout.EAST);
+        row.add(l, BorderLayout.WEST);
+        row.add(v, BorderLayout.EAST);
 
-        statsPanel.add(row);
+        // Dashed line between label and value
+        JLabel dots = new JLabel(" . . . . . . . . . . . . . . . . . . . ");
+        dots.setFont(FONT_SMALL);
+        dots.setForeground(new Color(60, 60, 70));
+        dots.setHorizontalAlignment(SwingConstants.CENTER);
+        row.add(dots, BorderLayout.CENTER);
+
+        return row;
+    }
+
+    private Border createRetroBorder() {
+        return new LineBorder(BORDER_LIGHT, 2);
+    }
+
+    private JTabbedPane createRetroTabbedPane() {
+        JTabbedPane tab = new JTabbedPane();
+        tab.setFont(FONT_BODY);
+        tab.setForeground(Color.BLACK); // Text color of tabs
+        tab.setBackground(BORDER_LIGHT); // Bg color of tabs
+        return tab;
+    }
+
+    // --- CUSTOM RETRO BUTTON CLASS ---
+    private class RetroButton extends JButton {
+        private Color normalColor;
+        private Color hoverColor;
+
+        public RetroButton(String text, Color bg, Color fg) {
+            super(text);
+            this.normalColor = bg;
+            this.hoverColor = bg.brighter();
+
+            setFont(FONT_BODY);
+            setForeground(fg);
+            setBackground(bg);
+            setFocusPainted(false);
+            setBorderPainted(false); // We draw our own border
+            setContentAreaFilled(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF); // Pixel feel
+
+            // Draw Background
+            if (getModel().isPressed()) g2.setColor(normalColor.darker());
+            else if (getModel().isRollover()) g2.setColor(hoverColor);
+            else g2.setColor(normalColor);
+
+            // Draw rectangle (Solid block)
+            g2.fillRect(2, 2, getWidth()-4, getHeight()-4);
+
+            // Draw Border (Thick)
+            g2.setColor(BORDER_LIGHT);
+            g2.setStroke(new BasicStroke(2));
+            g2.drawRect(1, 1, getWidth()-3, getHeight()-3);
+
+            // Draw Text
+            super.paintComponent(g);
+        }
     }
 }

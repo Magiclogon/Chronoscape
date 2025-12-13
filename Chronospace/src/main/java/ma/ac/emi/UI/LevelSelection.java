@@ -16,12 +16,12 @@ public class LevelSelection extends JPanel {
 	private JButton level1Button;
 	private ImageIcon level1Icon, level1HoverIcon;
 
+	private static final int btnWidth = 224;
+	private static final int btnHeight = 56;
+
 	public LevelSelection() {
 		try {
 			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
-
-			int btnWidth = 224;
-			int btnHeight = 56;
 
 			Image level1ImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Level11.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
 			Image level1HoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Level15.png")).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
