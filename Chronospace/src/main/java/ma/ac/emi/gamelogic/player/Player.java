@@ -110,6 +110,9 @@ public class Player extends LivingEntity {
 		money = 10000;
 		weaponIndex = 0;
 		
+		weaponXOffset = 9;
+		weaponYOffset = 5;
+		
 		//WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
 		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.RARE).get("ak47");
 		WeaponItem fists = new WeaponItem(fistsDef);
@@ -189,10 +192,9 @@ public class Player extends LivingEntity {
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
-			if(activeWeapon != null) GameController.getInstance().getGamePanel().removeDrawable(activeWeapon);
 			weaponIndex = Math.floorMod(weaponIndex+1, 3);
 			activeWeapon = equippedWeapons[weaponIndex];
-			if(activeWeapon != null) GameController.getInstance().getGamePanel().addDrawable(activeWeapon);
+			if(activeWeapon != null) activeWeapon.triggerSwitching();
 
 		}
 		if(activeWeapon != null) {
@@ -240,6 +242,13 @@ public class Player extends LivingEntity {
 	public void stopAttacking() {
 		if(activeWeapon != null) this.activeWeapon.stopAttacking();
 	}
+	
+	@Override
+	public void consumeAmmo() {
+		if(activeWeapon != null) {
+			activeWeapon.setAmmo(activeWeapon.getAmmo()-1);
+		}
+	}
 
 	public Integer isWeaponEquipped(WeaponItem item) {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
@@ -250,6 +259,8 @@ public class Player extends LivingEntity {
 		}
 		return null;
 	}
+	
+	
 	
 
 }

@@ -38,6 +38,8 @@ public abstract class LivingEntity extends Entity {
 	
 	protected Rectangle bound;
 	
+	protected int weaponXOffset, weaponYOffset;
+	
 	public LivingEntity() {
 		bound = new Rectangle();
 	}
@@ -205,5 +207,7 @@ public abstract class LivingEntity extends Entity {
 	public boolean deathAnimationDone() {
 		return isDying() && stateMachine.getCurrentAnimationState().isAnimationDone();
 	}
+
+	public abstract void consumeAmmo();
 
 }

@@ -106,9 +106,9 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		difficutly.adjustEnemyStats(this);
 	}
 
-
+	
 	@Override
-	public void setupAnimations() {}
+	public void consumeAmmo() {}
 
 
 
