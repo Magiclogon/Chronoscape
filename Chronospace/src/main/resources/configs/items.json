@@ -4,6 +4,7 @@
       "type": "weapon",
       "id": "ak47",
       "name": "AK-47",
+      "spriteSheetPath": "weapons/ak47-Sheet.png",
       "description": "Automatic rifle with high fire rate.",
       "rarity": "RARE",
       "basePrice": 500,
@@ -13,7 +14,7 @@
       "attackSpeed": 8,
       "projectileId": "bullet",
       "reloadingTime": 2.5,
-      "magazineSize": 50,
+      "magazineSize": 5,
       "stackable": false
     },
     {

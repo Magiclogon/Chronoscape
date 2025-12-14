@@ -110,14 +110,18 @@ public class Player extends LivingEntity {
 		money = 10000;
 		weaponIndex = 0;
 		
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
+		//WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.RARE).get("ak47");
 		WeaponItem fists = new WeaponItem(fistsDef);
 		
 		getInventory().init();
         getInventory().addItem(fists);
         getInventory().equipWeapon(fists, 0);
         initWeapons();
+        
+        setupAnimations();
         if(!isIdle()) stateMachine.trigger("Stop");
+        
 	}
 
 	public void resetBaseStats() {
@@ -126,13 +130,15 @@ public class Player extends LivingEntity {
 	}
 	
 	public void initWeapons() {
-		for(int i = 0; i < Inventory.MAX_EQU; i++) {
+		/*for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(getEquippedWeapons()[i] == null) continue;
 			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[i]);
-		}
+		}*/
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
 			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
+			GameController.getInstance().getGamePanel().removeDrawable(weapon);
+
 			weapon.setAttackObjectManager(attackObjectManager);
 			weapon.snapTo(this);
 			equippedWeapons[i] = weapon;
@@ -153,6 +159,8 @@ public class Player extends LivingEntity {
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack();
+		}else {
+			stopAttacking();
 		}
 
 		if(KeyHandler.getInstance().isUp()) {
@@ -206,6 +214,13 @@ public class Player extends LivingEntity {
 
 		
 	}
+	
+	@Override
+	public void draw(Graphics g) {
+		super.draw(g);
+		if(activeWeapon != null)
+			activeWeapon.draw(g);
+	}
 
 	public void setWeapon(Weapon weapon) {
 		this.activeWeapon = weapon;
@@ -219,6 +234,11 @@ public class Player extends LivingEntity {
 	@Override
 	public void attack() {
 		if(activeWeapon != null) this.activeWeapon.attack();
+	}
+	
+	@Override
+	public void stopAttacking() {
+		if(activeWeapon != null) this.activeWeapon.stopAttacking();
 	}
 
 	public Integer isWeaponEquipped(WeaponItem item) {

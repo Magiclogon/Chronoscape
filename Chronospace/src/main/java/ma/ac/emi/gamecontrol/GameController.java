@@ -164,6 +164,8 @@ public class GameController implements Runnable {
     public void resumeGame() {
         state = GameState.PLAYING;
         latestTime = System.nanoTime();
+        
+        KeyHandler.getInstance().reset();
         SwingUtilities.invokeLater(() -> window.showScreen("GAME"));
     }
 
@@ -192,7 +194,7 @@ public class GameController implements Runnable {
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
         
-        KeyHandler.getInstance().init();
+        KeyHandler.getInstance().reset();
         MouseHandler.getInstance().setCamera(camera);
 
         window.showGame(gamePanel, gameUIPanel);

@@ -7,6 +7,7 @@ import ma.ac.emi.gamelogic.weapon.Weapon;
 @Setter
 @ToString
 public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
+	private String spriteSheetPath;
     private String attackStrategy;
     private double damage;
     private double range;
@@ -47,6 +48,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.projectileId = other.projectileId;
         this.reloadingTime = other.reloadingTime;
         this.magazineSize = other.magazineSize;
+        this.spriteSheetPath = other.spriteSheetPath;
     }
     
     

@@ -31,6 +31,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 
 		GameController.getInstance().addDifficultyObserver(this);
 		initStats();
+		setupAnimations();
 	}
 
 	protected abstract void initStats();
@@ -55,6 +56,8 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 
 			if (aiBehavior.shouldAttack(this, targetPos)) {
 				attack();
+			}else {
+				stopAttacking();
 			}
 			
 			pointAt(targetPos);
@@ -88,6 +91,13 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 	public void attack() {
 		if (this.weapon != null) {
 			this.weapon.attack();
+		}
+	}
+	
+	@Override
+	public void stopAttacking() {
+		if (this.weapon != null) {
+			this.weapon.stopAttacking();
 		}
 	}
 
