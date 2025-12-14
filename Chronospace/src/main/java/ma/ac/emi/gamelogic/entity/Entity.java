@@ -20,7 +20,6 @@ public abstract class Entity extends GameObject{
 	public Entity() {
 		stateMachine = new StateMachine();
 		initStateMachine();
-		setupAnimations();
 	}
 	
 	@Override

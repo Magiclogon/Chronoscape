@@ -18,7 +18,7 @@ public class KeyHandler{
 	private static KeyHandler instance;
 	
 	private KeyHandler() {
-		init();
+		reset();
 	}
 	
 	public static KeyHandler getInstance() {
@@ -183,7 +183,7 @@ public class KeyHandler{
         return false;
     }
 
-	public void init() {
+	public void reset() {
 		setLeft(false);
 		setRight(false);
 		setUp(false);

@@ -114,7 +114,8 @@ public class CollisionManager {
 		RayRectCollisionResponse response = rayRectIntersection(start, end, expanded);
 		
 		if(response.inCollision && response.t <= 1) {
-			entity.setPos(entity.getPos().sub(
+			if(response.contactNormal != null) 
+				entity.setPos(entity.getPos().sub(
 					response.contactNormal.mult(entity.getVelocity().dotP(response.contactNormal)*(1-response.t)).mult(step)
 					));
 		}
