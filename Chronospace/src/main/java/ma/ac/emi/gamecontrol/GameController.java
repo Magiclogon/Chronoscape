@@ -1,5 +1,7 @@
 package ma.ac.emi.gamecontrol;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
@@ -72,9 +74,9 @@ public class GameController implements Runnable {
 
 		difficultyObservers = new ArrayList<>();
 		
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(window.getWidth(), window.getHeight());
         gameUIPanel = new GameUIPanel();
-
+        
         Timer timer = new Timer(3000, e -> {
             showMainMenu();
         });
@@ -201,6 +203,12 @@ public class GameController implements Runnable {
         showGame();
         System.out.println("Starting game");
         startGameThread();
+    	int w = getWindow().getSize().width;
+    	int h = getWindow().getSize().height;
+    	getWindow().setSize(w+1, h+1);
+    	getWindow().revalidate();
+    	getWindow().setSize(w, h);
+    	getWindow().revalidate();
     }
     
 	public void startGameThread() {
@@ -217,7 +225,7 @@ public class GameController implements Runnable {
 	    gameThread = new Thread(this);
 	    gameThread.start();
     }
-
+	
     @Override
     public void run() {
         while (true) {
@@ -288,3 +296,4 @@ public class GameController implements Runnable {
 		if(difficulty != null) notifyDifficultyObservers();
 	}
 }
+
