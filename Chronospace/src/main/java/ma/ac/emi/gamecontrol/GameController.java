@@ -62,7 +62,6 @@ public class GameController implements Runnable {
     
     private GameController() {
         window = new Window();
-
         showLoadingScreen();
 
         AssetsLoader.loadAssets("assets");
@@ -145,11 +144,6 @@ public class GameController implements Runnable {
     	});
     }
 
-    // --- PAUSE LOGIC ---
-
-    /**
-     * Toggles between Playing and Paused states.
-     */
     public void togglePause() {
         if (state == GameState.PLAYING) {
             pauseGame();
@@ -203,12 +197,14 @@ public class GameController implements Runnable {
         showGame();
         System.out.println("Starting game");
         startGameThread();
+        
     	int w = getWindow().getSize().width;
     	int h = getWindow().getSize().height;
     	getWindow().setSize(w+1, h+1);
     	getWindow().revalidate();
     	getWindow().setSize(w, h);
     	getWindow().revalidate();
+        
     }
     
 	public void startGameThread() {

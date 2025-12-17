@@ -58,8 +58,8 @@ public abstract class LivingEntity extends Entity {
 	public void draw(Graphics g) {
 		super.draw(g);
         
-        g.setColor(Color.red);
-        g.drawRect(bound.x-bound.width/2, bound.y-bound.height/2, bound.width, bound.height);
+        //g.setColor(Color.red);
+        //g.drawRect(bound.x-bound.width/2, bound.y-bound.height/2, bound.width, bound.height);
 	}
 	
 	@Override

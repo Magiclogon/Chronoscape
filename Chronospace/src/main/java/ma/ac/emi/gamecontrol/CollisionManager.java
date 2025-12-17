@@ -211,7 +211,7 @@ public class CollisionManager {
 
 
 	
-	public static class RayRectCollisionResponse{
+	private static class RayRectCollisionResponse{
 		public final Double t;
 		public final boolean inCollision;
 		public final Vector3D contactPoint;

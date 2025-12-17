@@ -99,5 +99,7 @@ public class Window extends JFrame {
         
         gamePane.add(gamePanel, Integer.valueOf(0));
         gamePane.add(uiPanel, Integer.valueOf(1));
+        
+        gamePane.setBackground(Color.RED);
     }
 }

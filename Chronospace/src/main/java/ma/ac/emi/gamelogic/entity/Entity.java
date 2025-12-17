@@ -36,8 +36,8 @@ public abstract class Entity extends GameObject{
         else
             g.drawImage(AssetsLoader.getSprite("default_sprite.png").getSprite(), (int)(pos.getX()-hitbox.width/2), (int)(pos.getY()-hitbox.height/2), null);
 
-        g.setColor(Color.yellow);
-        g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
+        //g.setColor(Color.yellow);
+        //g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
 
 	}
 	
