@@ -156,6 +156,45 @@ public class Weapon extends Entity{
 			switching_right.addFrame(sprite);
 		}
 		
+		/*
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, 1)) {
+			idle_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, 1)) {
+			idle_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, 17)) {
+			attacking_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, 17)) {
+			attacking_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, 0)) {
+			reload_init_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, 0)) {
+			reload_init_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(3, 0)) {
+			reload_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, 0)) {
+			reload_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, 11)) {
+			reload_finish_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, 11)) {
+			reload_finish_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, 11)) {
+			switching_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, 11)) {
+			switching_right.addFrame(sprite);
+		}
+		*/
 	}
     
     public void attack() {
@@ -188,6 +227,9 @@ public class Weapon extends Entity{
     }
     
     public void update(double step) {
+    	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());
+    	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(17*def.getAttackSpeed()/24);
+    	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(17*def.getAttackSpeed()/24);
     	if(isInState("Reload_Init"))
     		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
     			stateMachine.getCurrentAnimationState().reset();
@@ -202,13 +244,15 @@ public class Weapon extends Entity{
     		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
     			stateMachine.getCurrentAnimationState().reset();
     			stateMachine.trigger(TRIGGER_STOP);
+
     		}
     			
     	
         setPos(getBearer().getPos());
         setTsla(getTsla() + step);
         
-        if (getAmmo() == 0) {
+        if (getAmmo() == 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
+        	System.out.println("ammo == 0");
         	if(!isInState("Reload")) {
             	if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
             	stateMachine.trigger(TRIGGER_RELOAD);
@@ -218,7 +262,8 @@ public class Weapon extends Entity{
             	stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Right")) setTssr(getTssr() + step);
         }
         
-        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime()) {
+        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime() && 
+        		((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
         	stateMachine.trigger(TRIGGER_STOP);
             setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
             setTssr(0);
@@ -271,7 +316,9 @@ public class Weapon extends Entity{
 	}
 	
 	public void triggerSwitching() {
-		if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
+		if(!isInState("Idle")) {
+			stateMachine.trigger(TRIGGER_STOP);
+		}
 		stateMachine.trigger(TRIGGER_SWITCH);
 	}
 
