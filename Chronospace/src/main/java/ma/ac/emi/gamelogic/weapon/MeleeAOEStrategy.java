@@ -17,6 +17,7 @@ public class MeleeAOEStrategy implements AttackStrategy {
         		);
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.setTsla(0);
+            weapon.getStateMachine().getCurrentAnimationState().reset();
         }
     }
 }

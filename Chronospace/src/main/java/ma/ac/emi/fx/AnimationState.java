@@ -55,7 +55,8 @@ public class AnimationState {
 			
 			if (!isLastFrame || doesLoop) {
 				currentFrameIndex = (currentFrameIndex + 1) % frames.size();
-				if(playSpeed > 0) timeTracker = frames.get(currentFrameIndex).getFrameTime()/playSpeed;
+				if(playSpeed > 0) timeTracker += frames.get(currentFrameIndex).getFrameTime()/playSpeed;
+
 			}
 		}
 	}
@@ -68,7 +69,6 @@ public class AnimationState {
 	}
 	
 	public boolean isAnimationDone() {
-		if(doesLoop) return false;
 		return currentFrameIndex == frames.size() - 1;
 	}
 	

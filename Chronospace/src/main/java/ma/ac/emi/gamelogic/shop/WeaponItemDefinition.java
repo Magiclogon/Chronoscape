@@ -7,9 +7,6 @@ import ma.ac.emi.gamelogic.weapon.Weapon;
 @Setter
 @ToString
 public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
-	private String spriteSheetPath;
-	private int spriteWidth;
-	private int spriteHeight;
     private String attackStrategy;
     private double damage;
     private double range;
@@ -17,6 +14,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private String projectileId;
     private double reloadingTime;
     private int magazineSize;
+    
+    private WeaponAnimationDetails animationDetails;
 
 	@Override
 	public ShopItem getItem() {
@@ -50,9 +49,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.projectileId = other.projectileId;
         this.reloadingTime = other.reloadingTime;
         this.magazineSize = other.magazineSize;
-        this.spriteSheetPath = other.spriteSheetPath;
-        this.spriteWidth = other.spriteWidth;
-        this.spriteHeight = other.spriteHeight;
+        
+        this.animationDetails = other.animationDetails;
     }
     
     
@@ -61,5 +59,38 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
 		return new WeaponItemDefinition(this);
     	
     }
+    
+    public static class WeaponAnimationDetails{
+    	public String spriteSheetPath;
+		public int spriteWidth;
+    	public int spriteHeight;
+    	public int idleLength, attackingInitLength, attackingLength, reloadInitLength, reloadLength, reloadFinishLength;
+    	
 
+    	public WeaponAnimationDetails(String spriteSheetPath, int spriteWidth, int spriteHeight, int idleLength,
+				int attackingInitLength, int attackingLength, int reloadInitLength, int reloadLength, int reloadFinishLength) {
+			this.spriteSheetPath = spriteSheetPath;
+			this.spriteWidth = spriteWidth;
+			this.spriteHeight = spriteHeight;
+			this.idleLength = idleLength;
+			this.attackingInitLength = attackingInitLength;
+			this.attackingLength = attackingLength;
+			this.reloadInitLength = reloadInitLength;
+			this.reloadLength = reloadLength;
+			this.reloadFinishLength = reloadFinishLength;
+		}
+    	
+    	public WeaponAnimationDetails(WeaponAnimationDetails details) {
+    		this(details.spriteSheetPath,
+    			details.spriteWidth,
+    			details.spriteHeight,
+    			details.idleLength,
+    			details.attackingInitLength,
+    			details.attackingLength,
+    			details.reloadInitLength,
+    			details.reloadLength,
+    			details.reloadFinishLength
+    		);
+    	}
+    }
 }

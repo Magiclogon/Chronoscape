@@ -8,7 +8,7 @@ public class RangeSingleHitStrategy implements AttackStrategy {
     @Override
     public void execute(Weapon weapon) {
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
-        if (weapon.getTsla() >= 1/definition.getAttackSpeed() && !weapon.isInState("Reload")) {
+        if (weapon.getTsla() >= 1/definition.getAttackSpeed()) {
         	ProjectileSingleHit projectile = (ProjectileSingleHit) ProjectileSingleHitFactory.getInstance().createProjectile(
         			definition.getProjectileId(),
         			weapon.getPos(),
@@ -18,6 +18,7 @@ public class RangeSingleHitStrategy implements AttackStrategy {
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.consumeAmmo();
             weapon.setTsla(0);
+            weapon.getStateMachine().getCurrentAnimationState().reset();
         }
     }
 }

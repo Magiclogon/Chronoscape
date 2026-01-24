@@ -8,7 +8,7 @@ public class RangeAOEStrategy implements AttackStrategy {
     @Override
     public void execute(Weapon weapon) {
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
-        if (weapon.getTsla() >= 1/definition.getAttackSpeed() && weapon.getAmmo()>0) {
+        if (weapon.getTsla() >= 1/definition.getAttackSpeed()) {
         	ProjectileAOE projectile = (ProjectileAOE) ProjectileAOEFactory.getInstance().createProjectile(
         			definition.getProjectileId(),
         			weapon.getPos(),
@@ -16,8 +16,9 @@ public class RangeAOEStrategy implements AttackStrategy {
         			weapon
         		);
             weapon.getAttackObjectManager().addObject(projectile);
-            weapon.setAmmo(weapon.getAmmo() - 1);
+            weapon.consumeAmmo();
             weapon.setTsla(0);
+            weapon.getStateMachine().getCurrentAnimationState().reset();
         }
     }
 }

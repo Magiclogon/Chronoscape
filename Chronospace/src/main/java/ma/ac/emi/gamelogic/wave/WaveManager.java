@@ -37,7 +37,7 @@ public class WaveManager {
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
         this.state = WaveState.WAITING;
-        this.waveDelay = 30;
+        this.waveDelay = 300;
         this.waveTimer = 0;
         
         this.context = context;
