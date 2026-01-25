@@ -61,7 +61,7 @@ public class Obstacle extends GameObject{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	public static boolean isPositionInObstacles(Vector3D pos, List<Obstacle> obstacles) {
 		for (Obstacle obstacle : obstacles) {
 			if (obstacle.getHitbox() != null &&

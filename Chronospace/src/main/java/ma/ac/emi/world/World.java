@@ -37,7 +37,8 @@ public class World extends GameObject{
 		collisionManager = new CollisionManager(context);
 		
 		syncMapObstacles();
-
+		
+		getPos().setZ(-1);
 	}
 
 	private void initializeManagers() {
@@ -214,5 +215,10 @@ public class World extends GameObject{
 
 	public Color getVoidColor() {
 		return context.getVoidColor();
+	}
+
+	@Override
+	public double getDrawnHeight() {
+		return context.getWorldHeight()*GamePanel.TILE_SIZE;
 	}
 }

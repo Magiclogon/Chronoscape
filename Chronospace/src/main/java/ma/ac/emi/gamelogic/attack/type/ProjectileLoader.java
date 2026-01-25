@@ -1,63 +1,66 @@
 package ma.ac.emi.gamelogic.attack.type;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.BehaviorFactory;
+import ma.ac.emi.gamelogic.attack.behavior.definition.BehaviorDefinition;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ProjectileLoader {
+
     private final Map<String, ProjectileDefinition> projectileDefinitions = new HashMap<>();
     private static ProjectileLoader instance;
-    
+
     private ProjectileLoader() {}
+
     public static ProjectileLoader getInstance() {
-    	if(instance == null) instance = new ProjectileLoader();
-    	return instance;
+        if (instance == null) instance = new ProjectileLoader();
+        return instance;
     }
 
     public void load(String filePath) {
+
         try (FileReader reader = new FileReader(filePath)) {
+
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            
-            // Load Single-Hit projectiles
-            if (root.has("singleHit")) {
-                JsonArray singleHitArray = root.getAsJsonArray("singleHit");
-                for (JsonElement element : singleHitArray) {
-                    JsonObject node = element.getAsJsonObject();
-                    ProjectileSingleHitDefinition def = new ProjectileSingleHitDefinition(
-                            node.get("id").getAsString(),
-                            null,
-                            node.get("speed").getAsFloat(),
-                            node.get("width").getAsInt(),
-                            node.get("height").getAsInt()
-                    );
-                    projectileDefinitions.put(def.getId(), def);
+            JsonArray projectiles = root.getAsJsonArray("projectiles");
+
+            for (JsonElement element : projectiles) {
+
+                JsonObject node = element.getAsJsonObject();
+
+                String id = node.get("id").getAsString();
+                double speed = node.get("speed").getAsDouble();
+                int width = node.get("width").getAsInt();
+                int height = node.get("height").getAsInt();
+
+                List<BehaviorDefinition> behaviors = new ArrayList<>();
+
+                if (node.has("behaviors")) {
+                    JsonArray behaviorArray = node.getAsJsonArray("behaviors");
+                    for (JsonElement b : behaviorArray) {
+                        JsonObject behaviorJson = b.getAsJsonObject();
+                        behaviors.add(BehaviorFactory.create(behaviorJson));
+                    }
                 }
+
+                ProjectileDefinition def = new ProjectileDefinition(
+                        id,
+                        null,
+                        speed,
+                        width,
+                        height,
+                        behaviors
+                );
+
+                projectileDefinitions.put(id, def);
             }
-            
-            // Load AOE projectiles
-            if (root.has("aoe")) {
-                JsonArray aoeArray = root.getAsJsonArray("aoe");
-                for (JsonElement element : aoeArray) {
-                    JsonObject node = element.getAsJsonObject();
-                    ProjectileAOEDefinition def = new ProjectileAOEDefinition(
-                            node.get("id").getAsString(),
-                            null,
-                            node.get("speed").getAsFloat(),
-                            node.get("width").getAsInt(),
-                            node.get("height").getAsInt(),
-                            node.has("aoeId") ? node.get("aoeId").getAsString() : null
-                    );
-                    projectileDefinitions.put(def.getId(), def);
-                }
-            }
-            
+
             System.out.println("Loaded " + projectileDefinitions.size() + " projectiles");
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,36 +1,78 @@
 {
-  "singleHit": [
-  	{
-  	  "id": "noneSingle",
+  "projectiles": [
+    {
+      "id": "noneSingle",
       "sprite": "assets/projectiles/none.png",
       "speed": 800,
       "width": 2,
-      "height": 2
-  	},
+      "height": 2,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        }
+      ]
+    },
     {
       "id": "bullet",
       "sprite": "assets/projectiles/bullet.png",
       "speed": 800,
       "width": 4,
-      "height": 2
+      "height": 2,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        }
+      ]
     },
     {
       "id": "arrow",
       "sprite": "assets/projectiles/arrow.png",
       "speed": 700,
       "width": 3,
-      "height": 10
-    }
-  ],
+      "height": 10,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        }
+      ]
+    },
 
-  "aoe": [
     {
       "id": "rocket",
       "sprite": "assets/projectiles/rocket.png",
       "speed": 400,
       "width": 8,
       "height": 8,
-      "aoeId": "explosion"
+      "behaviors": [
+        
+        {
+          "type": "particle_trail",
+          "particleId": "smoke1"
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "smoke2"
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "fire1",
+          "count": 30,
+          "radius": 50,
+          "ageMax": 2,
+          "isOneTime": false
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "explosion",
+          "count": 1,
+          "radius": 50,
+          "ageMax": 2,
+          "isOneTime": true
+        }
+      ]
     },
     {
       "id": "hammerShockwave",
@@ -38,7 +80,18 @@
       "speed": 1000,
       "width": 20,
       "height": 20,
-      "aoeId": "groundSlam"
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        },
+        {
+          "type": "aoe_spawn",
+          "aoeId": "groundSlam",
+          "count": 1,
+          "radius": 80
+        }
+      ]
     }
   ]
 }

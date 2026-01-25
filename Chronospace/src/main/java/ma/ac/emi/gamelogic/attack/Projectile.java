@@ -4,9 +4,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamelogic.attack.behavior.Behavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -17,18 +20,18 @@ import ma.ac.emi.world.World;
 
 @Getter
 @Setter
-public abstract class Projectile extends AttackObject{
-	private ProjectileDefinition projectileType; 
+public class Projectile extends AttackObject{
 	private Vector3D startingPos;
+	private List<Behavior> behaviors = new ArrayList<>();
     private double radius = 2;
     
-    public Projectile(Vector3D pos, Vector3D dir, ProjectileDefinition projectileType, Weapon weapon) {
+    public Projectile(Vector3D pos, Vector3D dir, Weapon weapon) {
     	super(pos, weapon);
-    	this.projectileType = projectileType;
     	this.startingPos = pos;
-    	
-        this.velocity = dir.mult(projectileType.getBaseSpeed());
-        this.hitbox = new Rectangle(projectileType.getBoundWidth(), projectileType.getBoundHeight());
+    }
+    
+    public void init() {
+    	behaviors.forEach(b -> b.onInit(this));
     }
 
 	public void update(double step) {
@@ -40,6 +43,8 @@ public abstract class Projectile extends AttackObject{
         if(isOutOfRange()) {
         	setActive(false);
         }
+        
+        behaviors.forEach(b -> b.onUpdate(this, step));
     }
 
     public void draw(Graphics g) {
@@ -49,7 +54,7 @@ public abstract class Projectile extends AttackObject{
             g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
                          (int)(radius * 2), (int)(radius * 2));
             g2d.setColor(Color.black);
-            g2d.draw(hitbox);
+            g2d.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
     	}
         
     }
@@ -62,7 +67,26 @@ public abstract class Projectile extends AttackObject{
 	@Override
 	public void applyEffect(LivingEntity entity) {
 		System.out.println("applying effect");
+		behaviors.forEach(b -> b.onHit(this, entity));
 		setActive(false);
+	}
+	
+	@Override
+	public void onDesactivate() {
+		behaviors.forEach(b -> b.onDesactivate(this));
+	}
+	
+	public void addBehavior(Behavior behavior) {
+		behaviors.add(behavior);
+	}
+	
+	public void removeBehavior(Behavior behavior) {
+		behaviors.remove(behavior);
+	}
+	
+	@Override
+	public double getDrawnHeight() {
+		return radius*2;
 	}
 
 }

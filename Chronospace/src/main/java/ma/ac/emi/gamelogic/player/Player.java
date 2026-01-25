@@ -113,8 +113,7 @@ public class Player extends LivingEntity {
 		weaponXOffset = 9;
 		weaponYOffset = 5;
 		
-		//WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.RARE).get("ak47");
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("rpg7");
 		WeaponItem fists = new WeaponItem(fistsDef);
 		
 		getInventory().init();
@@ -201,9 +200,6 @@ public class Player extends LivingEntity {
 			activeWeapon.update(step);
 		}
 		
-		if (!isIdle()) {
-		    GameController.getInstance().getParticleSystem().spawnEffect("smoke", pos, this, GameTime.get());
-		}
 		
 		pointAt(MouseHandler.getInstance().getMouseWorldPos());
 		

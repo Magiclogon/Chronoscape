@@ -205,7 +205,6 @@ public class Weapon extends Entity{
         	BufferedImage sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite();
         	g.drawImage(sprite, (int)(getBearer().getWeaponXOffset()-sprite.getWidth()/2), (int)(-sprite.getHeight()/2), null);
         	g.drawString(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()), 0, - 30);
-        	if(stateMachine.getCurrentAnimationState().getTitle().equals("Attacking_Right")) System.out.println(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()));
         }else {
         	g.setColor(Color.gray);
         	g.fillRect(0, 0, 16, 8);
@@ -215,14 +214,9 @@ public class Weapon extends Entity{
     
     public void update(double step) {
     	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());
-//    	System.out.println("Atttack animation length: " + def.getAnimationDetails().attackingLength);
-//    	System.out.println("Weapon attack speed: " + def.getAttackSpeed());
-//    	System.out.println("Play speed: " + def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24);
     	double playSpeed = def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24;
     	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
     	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(playSpeed);
-//    	stateMachine.getAnimationStateByTitle("Attacking_Init_Left").setPlaySpeed(playSpeed);
-//    	stateMachine.getAnimationStateByTitle("Attacking_Init_Right").setPlaySpeed(playSpeed);
     	
     	if(isInState("Reload_Init"))
     		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
@@ -251,8 +245,8 @@ public class Weapon extends Entity{
     	
         setPos(getBearer().getPos());
         setTsla(getTsla() + step);
-        
-        if (getAmmo() == 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
+        System.out.println(getAmmo());
+        if (getAmmo() <= 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
         		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
         			stateMachine.getCurrentAnimationState().reset();
@@ -328,6 +322,7 @@ public class Weapon extends Entity{
 	public boolean isReloadingAnimation() {
 		return isInState("Reload") || isInState("Reload_Init") || isInState("Reload_Finish");
 	}
+
 
 
 }

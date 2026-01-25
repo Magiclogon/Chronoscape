@@ -7,16 +7,28 @@ import lombok.Setter;
 @Setter
 public class ParticleDefinition {
     private String id;
-    private String sprite;
-    private String color;
+    private String spritePath;
+    private int spriteWidth;
+    private int spriteHeight;
     private double lifetime;
     private double spawnRate;
-    private int particleCount;
-    private double size;
+    
+    private AnimationDetails animationDetails;
 
     public void applyDefaults() {
-        if (particleCount <= 0) particleCount = 10;
         if (lifetime <= 0) lifetime = 1.0;
+    }
+    
+    
+    public static class AnimationDetails{
+    	public int initLength, loopLength, finishLength;
+    	
+    	public AnimationDetails(int initLength, int loopLength, int finishLength) {
+    		this.initLength = initLength;
+    		this.loopLength = loopLength;
+    		this.finishLength = finishLength;
+    	}
+    	
     }
 }
 

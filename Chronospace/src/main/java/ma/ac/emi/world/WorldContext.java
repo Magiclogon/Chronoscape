@@ -62,27 +62,34 @@ public class WorldContext {
         obstacles.add(obstacle);
     }
     
-    public boolean isObstacle(int gridX, int gridY) {
-        if (gridX < 0 || gridY < 0 || gridX >= worldWidth || gridY >= worldHeight) {
-            return true;
-        }
-        
-        Rectangle checkRect = new Rectangle(
-            gridX * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
-            gridY * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
-            ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
-            ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE
-        );
-        
-        for (Obstacle obstacle : obstacles) {
-            if (checkRect.intersects(obstacle.getHitbox())) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
+//    public boolean isObstacle(int gridX, int gridY) {
+//        if (gridX < 0 || gridY < 0 || gridX >= worldWidth || gridY >= worldHeight) {
+//            return true;
+//        }
+//        
+//        Rectangle checkRect = new Rectangle(
+//            gridX * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
+//            gridY * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
+//            ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE,
+//            ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE
+//        );
+//        
+//        for (Obstacle obstacle : obstacles) {
+//            if (checkRect.intersects(obstacle.getHitbox())) {
+//                return true;
+//            }
+//        }
+//        
+//        return false;
+//    }
     
+    public boolean isObstacle(int gridX, int gridY) {
+    	if (gridX < 0 || gridY < 0 || gridX >= worldWidth || gridY >= worldHeight) {
+    		return true;
+    	}
+    	
+    	return tileManager.isSolid(gridX, gridY);
+    }
     public List<Ennemy> getCurrentEnemies() {
         return waveManager != null ? waveManager.getCurrentEnemies() : new ArrayList<>();
     }

@@ -75,11 +75,7 @@ public class GameController implements Runnable {
         gamePanel = new GamePanel();
         gameUIPanel = new GameUIPanel();
 
-        Timer timer = new Timer(3000, e -> {
-            showMainMenu();
-        });
-        timer.setRepeats(false);
-        timer.start();
+        showMainMenu();
     }
     
     public void nextWorld() {

@@ -75,6 +75,11 @@ public class Vector3D {
 		return a.add(b.sub(a).mult(t));
 	}
 	
+	public static Vector3D randomUnit2() {
+		double theta = Math.random() * 2 * Math.PI;
+		return new Vector3D(Math.cos(theta), Math.sin(theta));
+	}
+	
 	
 
 }

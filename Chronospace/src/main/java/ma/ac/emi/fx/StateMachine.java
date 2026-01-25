@@ -98,23 +98,16 @@ public class StateMachine {
 		return statesByTitle.get(title);
 	}
 	
-	/**
-	 * Get all animation states (for backwards compatibility)
-	 */
+
 	public List<AnimationState> getAnimationStates() {
 		return new ArrayList<>(statesByTitle.values());
 	}
 	
-	/**
-	 * Check if the state machine has a specific state
-	 */
+
 	public boolean hasState(String title) {
 		return statesByTitle.containsKey(title);
 	}
 	
-	/**
-	 * Check if a transition exists
-	 */
 	public boolean hasTransition(String trigger, String fromState) {
 		return stateTransfers.containsKey(new StateTrigger(trigger, fromState));
 	}

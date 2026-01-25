@@ -2,21 +2,28 @@ package ma.ac.emi.gamelogic.particle;
 
 import java.util.*;
 import com.google.gson.*;
+
+import lombok.Getter;
+
 import java.io.*;
 
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.math.Vector3D;
 
+@Getter
 public class ParticleSystem {
     private Map<String, ParticleDefinition> definitions;
     private Map<String, Double> lastSpawnTimes;
     private List<Particle> activeEffects;
+    private ParticleEmitterManager emitterManager;
     
     private double gravity;
 
     public ParticleSystem() {
     	definitions = new HashMap<>();
     	init();
+    	
+    	emitterManager = new ParticleEmitterManager();
     }
     
     public void init() {
@@ -27,7 +34,6 @@ public class ParticleSystem {
     	gravity = 160;
     }
 
-    // 🔥 Load definitions from JSON
     public void loadFromJson(String filePath) {
         try (Reader reader = new FileReader(filePath)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
@@ -35,7 +41,8 @@ public class ParticleSystem {
             Gson gson = new Gson();
 
             for (JsonElement e : arr) {
-            	ParticleDefinition def = gson.fromJson(e, ParticleDefinition.class);
+            	JsonObject obj = e.getAsJsonObject();
+            	ParticleDefinition def = gson.fromJson(obj, ParticleDefinition.class);
                 def.applyDefaults();
                 definitions.put(def.getId(), def);
                 lastSpawnTimes.put(def.getId(), -999.0);
@@ -52,12 +59,11 @@ public class ParticleSystem {
             return;
         }
 
-        // Unique key for this entity-effect pair
         String key = source.hashCode() + ":" + id;
         double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
 
         if (currentTime - lastTime >= 1/def.getSpawnRate()) {
-            activeEffects.add(new Particle(def, new Vector3D(position), new Vector3D()));
+            activeEffects.add(new Particle(def, new Vector3D(position)));
             lastSpawnTimes.put(key, currentTime);
         }
     }
@@ -67,9 +73,13 @@ public class ParticleSystem {
         while (iter.hasNext()) {
             Particle effect = iter.next();
             effect.update(step);
-            if (!effect.isAlive())
+            if (!effect.isAlive()) {
                 iter.remove();
+                GameController.getInstance().getGamePanel().removeDrawable(effect);
+            }
         }
+        
+        emitterManager.update(step);
     }
 
 }

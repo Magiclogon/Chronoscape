@@ -9,6 +9,8 @@ import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.particle.ParticleEmitter;
+import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
@@ -40,8 +42,12 @@ public abstract class LivingEntity extends Entity {
 	
 	protected int weaponXOffset, weaponYOffset;
 	
+	protected ParticleEmitter dustEmitter;
+	
 	public LivingEntity() {
 		bound = new Rectangle();
+		dustEmitter = new ParticleEmitter("dust", getPos(), 999);
+		dustEmitter.setStrategy(new UndeterminedStrategy());
 	}
 	
 	@Override
@@ -52,6 +58,9 @@ public abstract class LivingEntity extends Entity {
 		
 		bound.x = (int) (getPos().getX());
 		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
+		
+		dustEmitter.setShouldEmit(!isIdle());
+		dustEmitter.setPos(getPos());
 	}
 	
 	@Override

@@ -24,7 +24,6 @@ public class TileManager {
     private List<TileMap> maps;
     private TileMap currentMap;
 
-    // OPTIMIZATION: This holds the pre-drawn map
     private BufferedImage mapCache;
 
     public TileManager(MapTheme theme) {
@@ -82,17 +81,14 @@ public class TileManager {
     }
 
 
-    // NEW METHOD: Draws all tiles onto a single image
     private void cacheMap() {
         int tileSize = GamePanel.TILE_SIZE;
         int pixelWidth = currentMap.getWidth() * tileSize;
         int pixelHeight = currentMap.getHeight() * tileSize;
 
-        // Create an empty image the size of the entire world
         mapCache = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2 = mapCache.createGraphics();
 
-        // Run the heavy loop here (ONCE only)
         for (int x = 0; x < currentMap.getWidth(); x++) {
             for (int y = 0; y < currentMap.getHeight(); y++) {
             	if(isSolid(x, y)) continue;
@@ -109,7 +105,7 @@ public class TileManager {
                 }
             }
         }
-        g2.dispose(); // Release resources
+        g2.dispose(); 
     }
 
     public void draw(Graphics g) {

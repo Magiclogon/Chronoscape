@@ -3,8 +3,8 @@
     {
       "id": "explosion",
       "sprite": "assets/effects/explosion.png",
-      "boundWidth": 100,
-      "boundHeight": 100,
+      "boundWidth": 32,
+      "boundHeight": 32,
       "effectRate": 2.0,
       "ageMax": 1.5
     },

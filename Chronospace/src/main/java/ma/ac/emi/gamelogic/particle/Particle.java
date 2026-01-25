@@ -1,65 +1,99 @@
 package ma.ac.emi.gamelogic.particle;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamecontrol.GameController;
-import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
-public class Particle extends Entity{
-    private ParticleDefinition definition;
-    private double age;
-    private boolean alive;
-    private Image sprite;
+public class Particle extends GameObject{
 
-    public Particle(ParticleDefinition definition, Vector3D pos, Vector3D vel) {
+    private double age;
+    private double frameTimer;
+
+    private int frameIndex;
+    private ParticlePhase phase;
+
+    private final ParticleDefinition definition;
+    private final ParticleAnimation animation;
+
+    public boolean alive = true;
+
+    public Particle(ParticleDefinition def, Vector3D pos) {
+        this.definition = def;
         this.pos = new Vector3D(pos);
-        this.velocity = vel;
-        this.definition = definition;
-        this.age = 0;
-        this.alive = true;
+
+        this.animation = ParticleAnimationCache.get(def);
+        this.phase = ParticlePhase.INIT;
+        
+        
     }
 
     public void update(double step) {
         age += step;
-        if (age >= definition.getLifetime()) {
-        	GameController.getInstance().getGamePanel().removeDrawable(this);
-            alive = false;
-            return;
+        frameTimer += step;
+
+        double frameTime = 1.0/24;
+        if (frameTimer >= frameTime) {
+            frameTimer = 0;
+            frameIndex++;
         }
-        pos = pos.add(velocity.mult(step));
+
+        switch (phase) {
+            case INIT -> {
+                if (frameIndex >= animation.initFrames.length) {
+                    frameIndex = (int) (Math.random() * (animation.loopFrames.length));
+                    phase = ParticlePhase.LOOP;
+                }
+            }
+            case LOOP -> {
+                if (age >= definition.getLifetime()) {
+                    frameIndex = 0;
+                    phase = ParticlePhase.FINISH;
+                } else {
+                    frameIndex %= animation.loopFrames.length;
+                }
+            }
+            case FINISH -> {
+                if (frameIndex >= animation.finishFrames.length) {
+                    alive = false;
+                }
+            }
+        }
+
     }
 
     public void draw(Graphics g) {
-    	Graphics2D g2d = (Graphics2D) g;
-        int drawX = (int) (pos.getX() - definition.getSize() / 2);
-        int drawY = (int) (pos.getY() - definition.getSize() / 2 - pos.getZ());
-        int s = (int) definition.getSize();
+        Sprite sprite = getCurrentSprite();
+        if (sprite == null) return;
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.drawImage(
+            sprite.getSprite(),
+            (int) (pos.getX() - definition.getSpriteWidth() / 2),
+            (int) (pos.getY() - definition.getSpriteHeight() / 2 - pos.getZ()),
+            definition.getSpriteWidth(),
+            definition.getSpriteHeight(),
+            null
+        );
+    }
 
-        if (sprite != null) {
-            g2d.drawImage(sprite, drawX, drawY, s, s, null);
-        } else {
-            g2d.setColor(Color.gray);
-            g2d.fillOval(drawX, drawY, s, s);
-        }
+    private Sprite getCurrentSprite() {
+        return switch (phase) {
+            case INIT -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
+            case LOOP -> animation.loopFrames[frameIndex % animation.loopFrames.length];
+            case FINISH -> animation.finishFrames[Math.min(frameIndex, animation.finishFrames.length - 1)];
+        };
     }
 
 	@Override
-	public void initStateMachine() {
-		// TODO Auto-generated method stub
-		
+	public double getDrawnHeight() {
+		return getCurrentSprite().getSprite().getHeight();
 	}
-
-	@Override
-	public void setupAnimations() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 
 }

@@ -1,10 +1,27 @@
 package ma.ac.emi.gamelogic.attack.type;
 
+import java.awt.Rectangle;
+
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
-public interface ProjectileFactory {
-	Projectile createProjectile(String id, Vector3D pos, Vector3D dir, Weapon weapon);
+public class ProjectileFactory {
+	public static Projectile createProjectile(String id, Vector3D pos, Vector3D dir, Weapon weapon) {
+		ProjectileDefinition def = ProjectileLoader.getInstance().get(id);
+		if (def == null) {
+	        throw new IllegalArgumentException("Unknown projectile id: " + id);
+	    }
+		
+		Projectile projectile = new Projectile(pos, dir, weapon);
+    	
+        projectile.setVelocity(dir.mult(def.getBaseSpeed()));
+        projectile.setHitbox(new Rectangle(def.getBoundWidth(), def.getBoundHeight()));
+        
+        def.getBehaviorDefinitions().forEach(b -> projectile.addBehavior(b.create()));
+        
+        projectile.init();
+	    return projectile;
+	}
        
 }
