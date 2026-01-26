@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import ma.ac.emi.gamecontrol.GameController;
 
-public class MainMenu extends JPanel {
+public class MainMenu extends JPanel implements Soundable{
 	private static final long serialVersionUID = 1L;
 	private JButton startButton, quitButton;
 	private Image backgroundImage;
@@ -28,6 +28,7 @@ public class MainMenu extends JPanel {
 
 	public MainMenu() {
 		try {
+
 			// 1. Load Background
 			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
 
@@ -82,8 +83,16 @@ public class MainMenu extends JPanel {
 			quitButton.setText("Quit");
 		}
 
-		startButton.addActionListener(e -> GameController.getInstance().showDifficultyMenu());
-		quitButton.addActionListener(e -> System.exit(0));
+		configureButtonSounds(startButton, "hover_menu", "select_menu");
+		configureButtonSounds(quitButton, "hover_menu", "select_menu");
+
+		startButton.addActionListener(e -> {
+			GameController.getInstance().showDifficultyMenu();
+		});
+
+		quitButton.addActionListener(e -> {
+			System.exit(0);
+		});
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

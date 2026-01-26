@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import ma.ac.emi.gamecontrol.GameController;
 
-public class GameOverPanel extends JPanel {
+public class GameOverPanel extends JPanel implements Soundable{
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,6 +37,9 @@ public class GameOverPanel extends JPanel {
 
 		tryAgain = createImageButton("tryagain1.png", "tryagain5.png");
 		backToLevels = createImageButton("worlds1.png", "worlds5.png");
+
+		configureButtonSounds(tryAgain, "hover_menu", "select_menu");
+		configureButtonSounds(backToLevels, "hover_menu", "select_menu");
 
 		tryAgain.addActionListener((e) -> GameController.getInstance().restartGame());
 		backToLevels.addActionListener((e) -> GameController.getInstance().showLevelSelection());

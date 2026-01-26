@@ -22,6 +22,7 @@ import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.sound.SoundManager;
 import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldManager;
 
@@ -55,6 +56,8 @@ public class GameController implements Runnable {
     private ShopManager shopManager;
     private ParticleSystem particleSystem;
 
+    private SoundManager soundManager;
+
     private DifficultyStrategy difficulty;
     private List<DifficultyObserver> difficultyObservers;
     
@@ -71,6 +74,10 @@ public class GameController implements Runnable {
 		AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
 
 		difficultyObservers = new ArrayList<>();
+
+        // Sound Loading
+        soundManager = new SoundManager();
+        loadSounds();
 		
         gamePanel = new GamePanel();
         gameUIPanel = new GameUIPanel();
@@ -80,6 +87,14 @@ public class GameController implements Runnable {
         });
         timer.setRepeats(false);
         timer.start();
+    }
+
+    private void loadSounds() {
+        soundManager.load("main_menu_music", "/sounds/main_menu_1.wav");
+        soundManager.load("select_menu", "/sounds/select_004.wav");
+        soundManager.load("hover_menu", "/sounds/pluck_001.wav");
+        soundManager.load("pause_menu_music", "/sounds/pause_menu_1.wav");
+        soundManager.load("game_over_music", "/sounds/game_over_1.wav");
     }
     
     public void nextWorld() {
@@ -101,6 +116,7 @@ public class GameController implements Runnable {
         SwingUtilities.invokeLater(() -> {
         	window.showScreen("MENU");
     	});
+        soundManager.loop("main_menu_music");
     }
 
     public void showDifficultyMenu() {
@@ -141,6 +157,8 @@ public class GameController implements Runnable {
     	SwingUtilities.invokeLater(() -> {
         	window.showScreen("GAMEOVER");
     	});
+        soundManager.stopAll();
+        soundManager.play("game_over_music");
     }
 
     // --- PAUSE LOGIC ---
@@ -159,6 +177,8 @@ public class GameController implements Runnable {
     public void pauseGame() {
         state = GameState.PAUSED;
         SwingUtilities.invokeLater(() -> window.showScreen("PAUSE"));
+        soundManager.stopAll();
+        soundManager.play("pause_menu_music");
     }
 
     public void resumeGame() {
@@ -167,6 +187,7 @@ public class GameController implements Runnable {
         
         KeyHandler.getInstance().reset();
         SwingUtilities.invokeLater(() -> window.showScreen("GAME"));
+        soundManager.stopAll();
     }
 
 
@@ -185,6 +206,8 @@ public class GameController implements Runnable {
 
     public void startGame() {
         state = GameState.PLAYING;
+
+        soundManager.stopAll();
         
         World world = worldManager.getCurrentWorld();
         world.getPickableManager().init();

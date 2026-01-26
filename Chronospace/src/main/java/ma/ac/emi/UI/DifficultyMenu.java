@@ -11,7 +11,7 @@ import ma.ac.emi.gamelogic.difficulty.MediumDifficultyStrategy;
 import java.awt.*;
 import java.io.IOException;
 
-public class DifficultyMenu extends JPanel {
+public class DifficultyMenu extends JPanel implements Soundable {
     private JButton easyButton, mediumButton, hardButton, anwarButton;
     private Image backgroundImage;
 
@@ -105,6 +105,11 @@ public class DifficultyMenu extends JPanel {
         } else {
             anwarButton.setText("Anwar Difficulty");
         }
+
+        configureButtonSounds(easyButton, "hover_menu", "select_menu");
+        configureButtonSounds(mediumButton, "hover_menu", "select_menu");
+        configureButtonSounds(hardButton, "hover_menu", "select_menu");
+        configureButtonSounds(anwarButton, "hover_menu", "select_menu");
 
         easyButton.addActionListener((e) -> {
             GameController.getInstance().setDifficulty(new EasyDifficultyStrategy());
