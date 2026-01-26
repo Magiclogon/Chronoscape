@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 
 import ma.ac.emi.gamecontrol.GameController;
 
-public class PauseMenu extends JPanel {
+public class PauseMenu extends JPanel implements Soundable{
 
     private static final int btnWidth = 224;
     private static final int btnHeight = 56;
@@ -39,6 +39,10 @@ public class PauseMenu extends JPanel {
         btnResume = createImageButton("Resume1.png", "Resume5.png");
         btnMainMenu = createImageButton("Main Menu1.png", "Main Menu5.png");
         btnQuit = createImageButton("Quit1.png", "Quit5.png");
+
+        configureButtonSounds(btnResume, "hover_menu", "select_menu");
+        configureButtonSounds(btnMainMenu, "hover_menu", "select_menu");
+        configureButtonSounds(btnQuit, "hover_menu", "select_menu");
 
         btnResume.addActionListener(e -> GameController.getInstance().resumeGame());
 

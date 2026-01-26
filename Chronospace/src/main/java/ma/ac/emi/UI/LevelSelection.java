@@ -10,7 +10,7 @@ import javax.swing.*;
 
 import ma.ac.emi.gamecontrol.GameController;
 
-public class LevelSelection extends JPanel {
+public class LevelSelection extends JPanel implements Soundable{
 	private Image backgroundImage;
 
 	private JButton level1Button;
@@ -46,6 +46,8 @@ public class LevelSelection extends JPanel {
 		} else {
 			level1Button.setText("Easy difficulty");
 		}
+
+		configureButtonSounds(level1Button, "hover_menu", "select_menu");
 
 		level1Button.addActionListener((e) -> GameController.getInstance().restartGame());
 		level1Button.setAlignmentX(Component.CENTER_ALIGNMENT);
