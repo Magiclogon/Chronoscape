@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.attack.type;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,20 +24,13 @@ public class AOELoader {
     public void load(String filePath) {
         try (FileReader reader = new FileReader(filePath)) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            
-            // Load aoes
+            Gson gson = new Gson();
+
             if (root.has("aoes")) {
                 JsonArray aoesArray = root.getAsJsonArray("aoes");
                 for (JsonElement element : aoesArray) {
                     JsonObject node = element.getAsJsonObject();
-                    AOEDefinition def = new AOEDefinition(
-                    		node.get("id").getAsString(),
-                    		null,
-                    		node.get("boundWidth").getAsInt(),
-                    		node.get("boundHeight").getAsInt(),
-                    		node.get("effectRate").getAsDouble(),
-                    		node.get("ageMax").getAsDouble()
-                		);
+                    AOEDefinition def = gson.fromJson(node, AOEDefinition.class);
                     aoeDefinitions.put(def.getId(), def);
                 }
             }

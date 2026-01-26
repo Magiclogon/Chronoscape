@@ -7,9 +7,6 @@ import lombok.Setter;
 @Setter
 public class ParticleDefinition {
     private String id;
-    private String spritePath;
-    private int spriteWidth;
-    private int spriteHeight;
     private double lifetime;
     private double spawnRate;
     
@@ -21,6 +18,8 @@ public class ParticleDefinition {
     
     
     public static class AnimationDetails{
+    	public String spritePath;
+    	public int spriteWidth, spriteHeight;
     	public int initLength, loopLength, finishLength;
     	
     	public AnimationDetails(int initLength, int loopLength, int finishLength) {

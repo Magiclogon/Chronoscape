@@ -2,12 +2,12 @@
   "effects": [
     {
       "id": "smoke1",
-      "spritePath": "particles/smoke1-Sheet.png",
-      "spriteWidth": 16,
-      "spriteHeight": 16,
       "lifetime": 0.33,
       "spawnRate": 50,
       "animationDetails": {
+      	"spritePath": "particles/smoke1-Sheet.png",
+      	"spriteWidth": 16,
+      	"spriteHeight": 16,
       	"initLength": 3,
       	"loopLength": 3,
       	"finishLength": 9
@@ -15,12 +15,12 @@
     },
     {
       "id": "smoke2",
-      "spritePath": "particles/smoke2-Sheet.png",
-      "spriteWidth": 16,
-      "spriteHeight": 16,
       "lifetime": 0.2,
       "spawnRate": 60,
       "animationDetails": {
+      	"spritePath": "particles/smoke2-Sheet.png",
+      	"spriteWidth": 16,
+      	"spriteHeight": 16,
       	"initLength": 3,
       	"loopLength": 3,
       	"finishLength": 9
@@ -28,12 +28,12 @@
     },
     {
       "id": "explosion",
-      "spritePath": "particles/explosion-Sheet.png",
-      "spriteWidth": 128,
-      "spriteHeight": 128,
       "lifetime": 0.8,
       "spawnRate": 50,
       "animationDetails": {
+      	"spritePath": "particles/explosion-Sheet.png",
+      	"spriteWidth": 128,
+      	"spriteHeight": 128,
       	"initLength": 35,
       	"loopLength": 1,
       	"finishLength": 1
@@ -41,12 +41,12 @@
     },
     {
       "id": "fire1",
-      "spritePath": "particles/fire1-Sheet.png",
-      "spriteWidth": 16,
-      "spriteHeight": 16,
       "lifetime": 1,
       "spawnRate": 1,
       "animationDetails": {
+      	"spritePath": "particles/fire1-Sheet.png",
+	    "spriteWidth": 16,
+	    "spriteHeight": 16,
       	"initLength": 1,
       	"loopLength": 9,
       	"finishLength": 13
@@ -54,12 +54,12 @@
     },
     {
       "id": "dust",
-      "spritePath": "particles/dust-Sheet.png",
-      "spriteWidth": 16,
-      "spriteHeight": 16,
       "lifetime": 0.1,
       "spawnRate": 3,
       "animationDetails": {
+      	"spritePath": "particles/dust-Sheet.png",
+      	"spriteWidth": 16,
+      	"spriteHeight": 16,
       	"initLength": 3,
       	"loopLength": 3,
       	"finishLength": 9

@@ -59,9 +59,9 @@
         {
           "type": "particle_spawn",
           "particleId": "fire1",
-          "count": 30,
-          "radius": 50,
-          "ageMax": 2,
+          "count": 50,
+          "radius": 70,
+          "ageMax": 3.5,
           "isOneTime": false
         },
         {
@@ -71,7 +71,14 @@
           "radius": 50,
           "ageMax": 2,
           "isOneTime": true
+        },
+        {
+          "type": "aoe_spawn",
+          "aoeId": "explosion_aoe",
+          "count": 1,
+          "radius": 80
         }
+        
       ]
     },
     {

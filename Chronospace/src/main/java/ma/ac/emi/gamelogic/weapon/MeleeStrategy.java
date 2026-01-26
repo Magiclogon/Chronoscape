@@ -1,12 +1,10 @@
 package ma.ac.emi.gamelogic.weapon;
 
 import ma.ac.emi.gamelogic.attack.Projectile;
-import ma.ac.emi.gamelogic.attack.ProjectileSingleHit;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
-import ma.ac.emi.gamelogic.attack.type.ProjectileSingleHitFactory;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 
-public class MeleeSingleHitStrategy implements AttackStrategy {
+public class MeleeStrategy implements AttackStrategy {
     @Override
     public void execute(Weapon weapon) {
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());

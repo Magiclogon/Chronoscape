@@ -39,6 +39,8 @@ public class Weapon extends Entity{
     private double tssr;
     private AttackObjectManager attackObjectManager;
     
+    private Vector3D relativeProjectilePos;
+    
     protected AttackStrategy attackStrategy;
         
     public Weapon(WeaponItem weaponItem) {
@@ -54,6 +56,7 @@ public class Weapon extends Entity{
             setAmmo(definition.getMagazineSize());
         }
         
+        this.relativeProjectilePos = new Vector3D();
         setupAnimations();
     }
     
@@ -245,7 +248,6 @@ public class Weapon extends Entity{
     	
         setPos(getBearer().getPos());
         setTsla(getTsla() + step);
-        System.out.println(getAmmo());
         if (getAmmo() <= 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
         		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
@@ -267,7 +269,14 @@ public class Weapon extends Entity{
         }
         
         setDir(getBearer().getDir());
-        
+        if(getDir() != null) {
+        	int invert = (int) Math.signum(getDir().dotP(new Vector3D(1, 0)));
+        	setRelativeProjectilePos(new Vector3D(
+        			def.getRelativeProjectilePosX()+getBearer().getWeaponXOffset(), 
+        			(def.getRelativeProjectilePosY()+getBearer().getWeaponYOffset()) * invert)
+        		.rotateXY(getDir().getAngle()));
+        }
+       
         changeStateDirection();
         stateMachine.update(step);
     }

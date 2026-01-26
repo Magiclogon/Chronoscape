@@ -11,11 +11,11 @@ public class ParticleAnimationCache {
     private static final Map<String, ParticleAnimation> CACHE = new HashMap<>();
 
     public static ParticleAnimation get(ParticleDefinition def) {
-        return CACHE.computeIfAbsent(def.getSpritePath(), key -> {
+        return CACHE.computeIfAbsent(def.getAnimationDetails().spritePath, key -> {
             SpriteSheet sheet = new SpriteSheet(
-                AssetsLoader.getSprite(def.getSpritePath()),
-                def.getSpriteWidth(),
-                def.getSpriteHeight()
+                AssetsLoader.getSprite(def.getAnimationDetails().spritePath),
+                def.getAnimationDetails().spriteWidth,
+                def.getAnimationDetails().spriteHeight
             );
 
             return new ParticleAnimation(

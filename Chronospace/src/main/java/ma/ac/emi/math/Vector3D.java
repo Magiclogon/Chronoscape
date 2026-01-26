@@ -63,6 +63,18 @@ public class Vector3D {
 	public double distance(Vector3D v) {
 		return (this.sub(v)).norm();
 	}
+	
+	public Vector3D rotateXY(double theta) {
+		return new Vector3D(
+				Math.cos(theta)*x - Math.sin(theta)*y,
+				Math.sin(theta)*x + Math.cos(theta)*y,
+				z
+			);
+	}
+	
+	public double getAngle() {
+		return Math.atan2(y, x);
+	}
 
 	public Vector3D applyTransform(AffineTransform transform) {
 	    Point2D.Double src = new Point2D.Double(x, y);

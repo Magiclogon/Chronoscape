@@ -5,7 +5,6 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.attack.AOE;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.attack.type.AOEFactory;
-import ma.ac.emi.gamelogic.attack.type.ProjectileAOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.math.Vector3D;
 

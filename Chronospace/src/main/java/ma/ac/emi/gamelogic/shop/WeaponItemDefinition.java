@@ -14,6 +14,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private String projectileId;
     private double reloadingTime;
     private int magazineSize;
+    private int relativeProjectilePosX;
+    private int relativeProjectilePosY;
     
     private WeaponAnimationDetails animationDetails;
 
@@ -49,6 +51,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.projectileId = other.projectileId;
         this.reloadingTime = other.reloadingTime;
         this.magazineSize = other.magazineSize;
+        this.relativeProjectilePosX = other.relativeProjectilePosX;
+        this.relativeProjectilePosY = other.relativeProjectilePosY;
         
         this.animationDetails = other.animationDetails;
     }

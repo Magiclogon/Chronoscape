@@ -16,14 +16,14 @@ public class ParticleSystem {
     private Map<String, Double> lastSpawnTimes;
     private List<Particle> activeEffects;
     private ParticleEmitterManager emitterManager;
+    private ParticleLoader loader;
     
-    private double gravity;
-
     public ParticleSystem() {
     	definitions = new HashMap<>();
     	init();
     	
     	emitterManager = new ParticleEmitterManager();
+    	loader = new ParticleLoader();
     }
     
     public void init() {
@@ -31,25 +31,10 @@ public class ParticleSystem {
     	lastSpawnTimes = new HashMap<>();
     	activeEffects = new ArrayList<>();
     	
-    	gravity = 160;
     }
 
     public void loadFromJson(String filePath) {
-        try (Reader reader = new FileReader(filePath)) {
-            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
-            JsonArray arr = root.getAsJsonArray("effects");
-            Gson gson = new Gson();
-
-            for (JsonElement e : arr) {
-            	JsonObject obj = e.getAsJsonObject();
-            	ParticleDefinition def = gson.fromJson(obj, ParticleDefinition.class);
-                def.applyDefaults();
-                definitions.put(def.getId(), def);
-                lastSpawnTimes.put(def.getId(), -999.0);
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        loader.loadFromJson(filePath, definitions, lastSpawnTimes);
     }
 
     public void spawnEffect(String id, Vector3D position, Object source, double currentTime) {

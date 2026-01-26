@@ -38,7 +38,7 @@ public class World extends GameObject{
 		
 		syncMapObstacles();
 		
-		getPos().setZ(-1);
+		getPos().setZ(-2);
 	}
 
 	private void initializeManagers() {

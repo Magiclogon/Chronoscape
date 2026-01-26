@@ -1,12 +1,17 @@
 {
   "aoes": [
     {
-      "id": "explosion",
-      "sprite": "assets/effects/explosion.png",
-      "boundWidth": 32,
-      "boundHeight": 32,
+      "id": "explosion_aoe",
       "effectRate": 2.0,
-      "ageMax": 1.5
+      "ageMax": 2,
+      "animationDetails": {
+      	"spritePath": "aoes/explosion_aoe-Sheet.png",
+      	"spriteWidth": 128,
+      	"spriteHeight": 128,
+      	"initLength": 7,
+      	"loopLength": 1,
+      	"finishLength": 41
+      }
     },
     {
       "id": "groundSlam",

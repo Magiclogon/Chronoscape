@@ -75,10 +75,10 @@ public class Particle extends GameObject{
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(
             sprite.getSprite(),
-            (int) (pos.getX() - definition.getSpriteWidth() / 2),
-            (int) (pos.getY() - definition.getSpriteHeight() / 2 - pos.getZ()),
-            definition.getSpriteWidth(),
-            definition.getSpriteHeight(),
+            (int) (pos.getX() - definition.getAnimationDetails().spriteWidth / 2),
+            (int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
+            definition.getAnimationDetails().spriteWidth,
+            definition.getAnimationDetails().spriteHeight,
             null
         );
     }
