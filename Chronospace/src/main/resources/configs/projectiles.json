@@ -2,10 +2,10 @@
   "projectiles": [
     {
       "id": "noneSingle",
-      "sprite": "assets/projectiles/none.png",
+      "sprite": "projectiles/none_projectile.png",
       "speed": 800,
-      "width": 2,
-      "height": 2,
+      "width": 8,
+      "height": 8,
       "behaviors": [
         {
           "type": "damage",
@@ -15,10 +15,10 @@
     },
     {
       "id": "bullet",
-      "sprite": "assets/projectiles/bullet.png",
+      "sprite": "projectiles/bullet.png",
       "speed": 800,
-      "width": 4,
-      "height": 2,
+      "width": 8,
+      "height": 8,
       "behaviors": [
         {
           "type": "damage",
@@ -42,25 +42,52 @@
 
     {
       "id": "rocket",
-      "sprite": "assets/projectiles/rocket.png",
+      "sprite": "projectiles/rocket.png",
       "speed": 400,
-      "width": 8,
-      "height": 8,
+      "width": 32,
+      "height": 32,
       "behaviors": [
         
         {
           "type": "particle_trail",
-          "particleId": "smoke1"
+          "particleId": "smoke1",
+          "emitterRadius": 5
         },
         {
           "type": "particle_trail",
-          "particleId": "smoke2"
+          "particleId": "smoke2",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "fire_trail",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "fire_trail2",
+          "emitterRadius": 10
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "smoke2",
+          "emitterRadius": 5
         },
         {
           "type": "particle_spawn",
           "particleId": "fire1",
           "count": 50,
           "radius": 70,
+          "emitterRadius": 20,
+          "ageMax": 3.5,
+          "isOneTime": false
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "fire2",
+          "count": 20,
+          "radius": 60,
+          "emitterRadius": 10,
           "ageMax": 3.5,
           "isOneTime": false
         },
@@ -69,6 +96,7 @@
           "particleId": "explosion",
           "count": 1,
           "radius": 50,
+          "emitterRadius": 0,
           "ageMax": 2,
           "isOneTime": true
         },
@@ -83,10 +111,10 @@
     },
     {
       "id": "hammerShockwave",
-      "sprite": "assets/projectiles/hammer_wave.png",
-      "speed": 1000,
-      "width": 20,
-      "height": 20,
+      "sprite": "projectiles/none_projectile.png",
+      "speed": 10,
+      "width": 8,
+      "height": 8,
       "behaviors": [
         {
           "type": "damage",
@@ -94,7 +122,7 @@
         },
         {
           "type": "aoe_spawn",
-          "aoeId": "groundSlam",
+          "aoeId": "shockwave",
           "count": 1,
           "radius": 80
         }

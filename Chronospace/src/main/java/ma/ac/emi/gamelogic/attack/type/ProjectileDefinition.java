@@ -1,6 +1,5 @@
 package ma.ac.emi.gamelogic.attack.type;
 
-import java.awt.Image;
 import java.util.List;
 
 import lombok.Getter;

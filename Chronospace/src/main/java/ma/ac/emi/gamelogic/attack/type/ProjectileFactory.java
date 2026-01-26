@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.attack.type;
 
 import java.awt.Rectangle;
 
+import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
@@ -19,8 +20,9 @@ public class ProjectileFactory {
         projectile.setHitbox(new Rectangle(def.getBoundWidth(), def.getBoundHeight()));
         
         def.getBehaviorDefinitions().forEach(b -> projectile.addBehavior(b.create()));
-        
+        projectile.setSprite(AssetsLoader.getSprite(def.getSpritePath()));
         projectile.init();
+        
 	    return projectile;
 	}
        

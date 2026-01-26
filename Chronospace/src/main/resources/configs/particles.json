@@ -53,6 +53,45 @@
       }
     },
     {
+      "id": "fire2",
+      "lifetime": 1.5,
+      "spawnRate": 1,
+      "animationDetails": {
+      	"spritePath": "particles/fire2-Sheet.png",
+	    "spriteWidth": 32,
+	    "spriteHeight": 32,
+      	"initLength": 13,
+      	"loopLength": 8,
+      	"finishLength": 21
+      }
+    },
+    {
+      "id": "fire_trail",
+      "lifetime": 0.08,
+      "spawnRate": 150,
+      "animationDetails": {
+      	"spritePath": "particles/fire_trail-Sheet.png",
+	    "spriteWidth": 16,
+	    "spriteHeight": 16,
+      	"initLength": 1,
+      	"loopLength": 1,
+      	"finishLength": 10
+      }
+    },
+    {
+      "id": "fire_trail2",
+      "lifetime": 0.08,
+      "spawnRate": 60,
+      "animationDetails": {
+      	"spritePath": "particles/fire_trail2-Sheet.png",
+	    "spriteWidth": 16,
+	    "spriteHeight": 16,
+      	"initLength": 1,
+      	"loopLength": 1,
+      	"finishLength": 9
+      }
+    },
+    {
       "id": "dust",
       "lifetime": 0.1,
       "spawnRate": 3,

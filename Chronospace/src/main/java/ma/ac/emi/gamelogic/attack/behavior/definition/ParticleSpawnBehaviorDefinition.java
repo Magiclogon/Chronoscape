@@ -8,20 +8,22 @@ public class ParticleSpawnBehaviorDefinition extends BehaviorDefinition{
 	private final String particleId;
     private final int count;
     private final double radius;
+    private final double emitterRadius;
     private final double ageMax;
     private final boolean isOneTime;
 
-    public ParticleSpawnBehaviorDefinition(String particleId, int count, double radius, double ageMax, boolean isOneTime) {
+    public ParticleSpawnBehaviorDefinition(String particleId, int count, double radius, double emitterRadius, double ageMax, boolean isOneTime) {
         this.particleId = particleId;
         this.count = count;
         this.radius = radius;
+        this.emitterRadius = emitterRadius;
         this.ageMax = ageMax;
         this.isOneTime = isOneTime;
     }
 
     @Override
     public Behavior create() {
-        return new ParticleSpawnBehavior(particleId, count, radius, ageMax, isOneTime);
+        return new ParticleSpawnBehavior(particleId, count, radius, emitterRadius, ageMax, isOneTime);
     }
 
 }

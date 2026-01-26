@@ -11,7 +11,7 @@ public class MeleeStrategy implements AttackStrategy {
         if (weapon.getTsla() >= 1/definition.getAttackSpeed()) {
         	Projectile projectile = ProjectileFactory.createProjectile(
         			definition.getProjectileId(),
-        			weapon.getPos(),
+        			weapon.getPos().add(weapon.getRelativeProjectilePos()),
         			weapon.getDir(),
         			weapon
         		);

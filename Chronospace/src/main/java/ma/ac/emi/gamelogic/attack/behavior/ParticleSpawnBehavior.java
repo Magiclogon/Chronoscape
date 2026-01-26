@@ -16,16 +16,18 @@ public class ParticleSpawnBehavior implements Behavior{
 	private String particleId;
 	private int count;
 	private double radius;
+	private double emitterRadius;
 	private double ageMax;
 	private boolean isOneTime;
 	private List<ParticleEmitter> emitters = new ArrayList<>();
 
-	public ParticleSpawnBehavior(String particleId, int count, double radius, double ageMax, boolean isOneTime) {
+	public ParticleSpawnBehavior(String particleId, int count, double radius, double emitterRadius, double ageMax, boolean isOneTime) {
 		this.particleId = particleId;
 		this.count = count;
 		this.radius = radius;
 		this.ageMax = ageMax;
 		this.isOneTime = isOneTime;
+		this.emitterRadius = emitterRadius;
 	}
 	
 
@@ -33,7 +35,7 @@ public class ParticleSpawnBehavior implements Behavior{
 	public void onInit(Projectile p) {
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
-			ParticleEmitter emitter = new ParticleEmitter(particleId, offset, ageMax, false);
+			ParticleEmitter emitter = new ParticleEmitter(particleId, offset, ageMax, emitterRadius, false);
 			if(isOneTime) emitter.setStrategy(new OneTimeStrategy());
 			else emitter.setStrategy(new AgeStrategy());
 			emitters.add(emitter);

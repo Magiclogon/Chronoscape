@@ -18,7 +18,8 @@ public class BehaviorFactory {
 
             case "particle_trail":
                 return new ParticleTrailBehaviorDefinition(
-                        json.get("particleId").getAsString()
+                        json.get("particleId").getAsString(),
+                        json.get("emitterRadius").getAsDouble()
                 );
 
             case "aoe_spawn":
@@ -32,6 +33,7 @@ public class BehaviorFactory {
                         json.get("particleId").getAsString(),
                         json.get("count").getAsInt(),
                         json.get("radius").getAsDouble(),
+                        json.get("emitterRadius").getAsDouble(),
                         json.get("ageMax").getAsDouble(),
                         json.get("isOneTime").getAsBoolean()
                 );

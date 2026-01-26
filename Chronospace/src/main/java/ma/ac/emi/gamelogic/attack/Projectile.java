@@ -4,11 +4,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.gamelogic.attack.behavior.Behavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
@@ -24,6 +27,7 @@ public class Projectile extends AttackObject{
 	private Vector3D startingPos;
 	private List<Behavior> behaviors = new ArrayList<>();
     private double radius = 2;
+    private Sprite sprite;
     
     public Projectile(Vector3D pos, Vector3D dir, Weapon weapon) {
     	super(pos, weapon);
@@ -50,11 +54,20 @@ public class Projectile extends AttackObject{
     public void draw(Graphics g) {
     	Graphics2D g2d = (Graphics2D) g;
     	if(isActive()) {
-    		g2d.setColor(Color.red);
-            g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
-                         (int)(radius * 2), (int)(radius * 2));
-            g2d.setColor(Color.black);
-            g2d.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
+    		if(sprite != null) {
+    			AffineTransform oldTransform = g2d.getTransform();
+    			g2d.translate(pos.getX(), pos.getY());
+    			g2d.rotate(velocity.getAngle());
+    			g2d.drawImage(sprite.getSprite(), -sprite.getSprite().getWidth()/2, -sprite.getSprite().getHeight()/2, null);
+    			g2d.setTransform(oldTransform);
+    			
+    		}else {
+	    		g2d.setColor(Color.red);
+	            g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
+	                         (int)(radius * 2), (int)(radius * 2));
+	            g2d.setColor(Color.black);
+	            g2d.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
+    		}
     	}
         
     }

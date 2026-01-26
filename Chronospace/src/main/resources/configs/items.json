@@ -39,10 +39,11 @@
       "basePrice": 800,
       "attackStrategy": "Melee",
       "damage": 80,
-      "range": 45,
+      "range": 0,
       "attackSpeed": 0.8,
-      "aoeType": "groundSlam",
       "projectileId": "hammerShockwave",
+      "relativeProjectilePosX": 20,
+      "relativeProjectilePosY": 13,
       "stackable": false,
       
       "animationDetails": {
@@ -98,7 +99,6 @@
       "projectileId": "rocket",
       "reloadingTime": 3,
       "magazineSize": 1,
-      "aoeType": "explosion",
       "relativeProjectilePosX": 18,
       "relativeProjectilePosY": 3,
       "stackable": false,

@@ -27,7 +27,6 @@ public abstract class AttackObject extends Entity{
 	}
    	
    	public void initStateMachine() {
-   		stateMachine.addAnimationState(new AnimationState("Active"));
    	}
    	
    	public void setupAnimations() {

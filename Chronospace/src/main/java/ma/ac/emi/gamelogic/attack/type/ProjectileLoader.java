@@ -36,6 +36,7 @@ public class ProjectileLoader {
                 double speed = node.get("speed").getAsDouble();
                 int width = node.get("width").getAsInt();
                 int height = node.get("height").getAsInt();
+                String spritePath = node.get("sprite").getAsString();
 
                 List<BehaviorDefinition> behaviors = new ArrayList<>();
 
@@ -49,7 +50,7 @@ public class ProjectileLoader {
 
                 ProjectileDefinition def = new ProjectileDefinition(
                         id,
-                        null,
+                        spritePath,
                         speed,
                         width,
                         height,

@@ -46,7 +46,7 @@ public abstract class LivingEntity extends Entity {
 	
 	public LivingEntity() {
 		bound = new Rectangle();
-		dustEmitter = new ParticleEmitter("dust", getPos(), 999);
+		dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
 		dustEmitter.setStrategy(new UndeterminedStrategy());
 	}
 	

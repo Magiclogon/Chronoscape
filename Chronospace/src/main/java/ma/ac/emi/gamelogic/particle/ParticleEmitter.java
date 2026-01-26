@@ -17,6 +17,7 @@ import ma.ac.emi.math.Vector3D;
 public class ParticleEmitter extends GameObject{
 	private String particleId;
 	private double age;
+	private double radius;
 
 	private boolean shouldEmit;
 	private boolean isActive;
@@ -24,11 +25,11 @@ public class ParticleEmitter extends GameObject{
 	
 	private EmitterLifeCycleStrategy strategy;
 	
-	public ParticleEmitter(String particleId, Vector3D pos, double ageMax) {
-		this(particleId, pos, ageMax, true);
+	public ParticleEmitter(String particleId, Vector3D pos, double ageMax, double radius) {
+		this(particleId, pos, ageMax, radius, true);
 	}
 	
-	public ParticleEmitter(String particleId, Vector3D pos, double ageMax, boolean shouldEmit) {
+	public ParticleEmitter(String particleId, Vector3D pos, double ageMax, double radius, boolean shouldEmit) {
 		this.particleId = particleId;
 		this.pos = pos;
 		this.drawn = false;
@@ -36,6 +37,7 @@ public class ParticleEmitter extends GameObject{
 		this.shouldEmit = shouldEmit;
 		this.hasEmitted = false;
 		this.age = ageMax;
+		this.radius = radius;
 		
 		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
 	}
@@ -46,7 +48,7 @@ public class ParticleEmitter extends GameObject{
 
 	@Override
 	public void update(double step) {
-		Vector3D offset = Vector3D.randomUnit2().mult(Math.random() * 5);
+		Vector3D offset = Vector3D.randomUnit2().mult(Math.random() * radius);
 		Vector3D spawnPos = pos.add(offset);
 		
 		if(!GameController.getInstance().getWorldManager().getCurrentWorld().isObstacle(

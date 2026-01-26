@@ -8,14 +8,16 @@ import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 public class ParticleTrailBehavior implements Behavior{
 	private String particleId;
 	private ParticleEmitter emitter;
+	private double emitterRadius;
 	
-	public ParticleTrailBehavior(String particleId) {
+	public ParticleTrailBehavior(String particleId, double emitterRadius) {
 		this.particleId = particleId;
+		this.emitterRadius = emitterRadius;
 	}
 	
 	@Override
 	public void onInit(Projectile p) {
-		this.emitter = new ParticleEmitter(particleId, p.getPos(), 999);
+		this.emitter = new ParticleEmitter(particleId, p.getPos(), 999, emitterRadius);
 		this.emitter.setStrategy(new UndeterminedStrategy());
 	}
 
