@@ -28,9 +28,9 @@ public class GamePanel extends JPanel {
 	private Camera camera;
 
 	public GamePanel() {
-		addMouseListener(MouseHandler.getInstance());
-		addMouseMotionListener(MouseHandler.getInstance());
-		addMouseWheelListener(MouseHandler.getInstance());
+//		addMouseListener(MouseHandler.getInstance());
+//		addMouseMotionListener(MouseHandler.getInstance());
+//		addMouseWheelListener(MouseHandler.getInstance());
 		//KeyHandler.getInstance().setupKeyBindings(this);
 		
 		this.drawables = new ArrayList<>();

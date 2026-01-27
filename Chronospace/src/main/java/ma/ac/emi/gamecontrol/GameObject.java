@@ -2,9 +2,12 @@ package ma.ac.emi.gamecontrol;
 
 import java.awt.Rectangle;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -19,6 +22,7 @@ public abstract class GameObject implements GameDrawable{
 		pos = new Vector3D();
 		hitbox = new Rectangle();
 		GameController.getInstance().getGamePanel().addDrawable(this);
+		GameController.getInstance().getGameGLPanel().getRenderer().addDrawable(this);
 	}
 	
 	public abstract void update(double step);
@@ -27,6 +31,7 @@ public abstract class GameObject implements GameDrawable{
 	}
 	
 
+	
 	@Override
 	public int compareTo(GameObject gameObject) {
 		if(getPos().getZ() == gameObject.getPos().getZ())

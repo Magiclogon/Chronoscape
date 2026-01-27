@@ -8,6 +8,8 @@ import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AssetsLoader;
@@ -18,6 +20,9 @@ import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.World;
 
@@ -70,6 +75,35 @@ public class Projectile extends AttackObject{
     		}
     	}
         
+    }
+    
+    @Override
+    public void drawGL(GL3 gl, GLGraphics glGraphics) {
+    	if(isActive()) {
+    		if(sprite != null) {
+    			Texture texture = sprite.getTexture(gl);
+    			
+    			float[] model = new float[16];
+    	        Matrix4.identity(model);
+
+    	        float px = (float) getPos().getX();
+    	        float py = (float) getPos().getY();
+    	        Matrix4.translate(model, px, py, 0f);
+
+    	        double theta = getVelocity() != null ? getVelocity().getAngle() : 0;
+    	        Matrix4.rotateZ(model, (float) theta);
+
+    	        float wx = -sprite.getWidth()/2;
+    	        float wy = -sprite.getHeight() / 2f;
+    	        Matrix4.translate(model, wx, wy, 0f);
+
+    	        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+    	        
+    			glGraphics.drawSprite(gl, texture, model);
+    			
+    		}
+    	}
+    	
     }
     
     public boolean isOutOfRange() {

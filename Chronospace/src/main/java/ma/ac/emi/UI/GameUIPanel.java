@@ -166,7 +166,7 @@ public class GameUIPanel extends JPanel {
 			if (currentWorld == null) return;
 
 			TileManager tileManager = currentWorld.getTileManager();
-			BufferedImage mapImage = tileManager.getMapCache();
+			BufferedImage mapImage = tileManager.getMapCache().getSprite();
 			if (mapImage == null) return;
 
 			// Minimap Logic

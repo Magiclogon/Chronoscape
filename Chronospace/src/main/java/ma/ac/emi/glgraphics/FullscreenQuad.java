@@ -1,4 +1,4 @@
-package ma.ac.emi.gamecontrol;
+package ma.ac.emi.glgraphics;
 
 import com.jogamp.opengl.*;
 

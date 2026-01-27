@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.particle;
 
 import java.awt.Graphics;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
@@ -10,6 +12,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.particle.lifecycle.EmitterLifeCycleStrategy;
 import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -64,5 +67,8 @@ public class ParticleEmitter extends GameObject{
 		
 		age -= step;
 	}
+
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {}
 
 }

@@ -5,6 +5,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.Sprite;
@@ -16,6 +18,7 @@ import ma.ac.emi.gamelogic.particle.ParticleDefinition;
 import ma.ac.emi.gamelogic.particle.ParticlePhase;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -90,6 +93,18 @@ public class AOE extends AttackObject{
             definition.getAnimationDetails().spriteHeight,
             null
         );
+    }
+    
+    @Override
+    public void drawGL(GL3 gl, GLGraphics glGraphics) {
+    	Sprite sprite = getCurrentSprite();
+    	if (sprite == null) return;
+    	glGraphics.drawSprite(gl, sprite.getTexture(gl),
+    			(int) (pos.getX() - definition.getAnimationDetails().spriteWidth / 2),
+    			(int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
+    			definition.getAnimationDetails().spriteWidth,
+    			definition.getAnimationDetails().spriteHeight
+    		);
     }
 
     private Sprite getCurrentSprite() {

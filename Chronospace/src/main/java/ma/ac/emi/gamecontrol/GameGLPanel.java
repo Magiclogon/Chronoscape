@@ -32,4 +32,8 @@ public class GameGLPanel extends GLJPanel {
     public GameRenderer getRenderer() {
         return renderer;
     }
+    
+    public void update(double step) {
+    	getRenderer().update();
+    }
 }

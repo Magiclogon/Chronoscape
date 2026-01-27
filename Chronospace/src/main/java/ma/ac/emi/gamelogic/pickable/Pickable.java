@@ -35,6 +35,7 @@ public abstract class Pickable extends Entity{
         hitbox.setLocation((int) pos.getX(), (int) pos.getY());
         if(isPickedUp) {
         	GameController.getInstance().getGamePanel().removeDrawable(this);
+        	GameController.getInstance().getGameGLPanel().getRenderer().removeDrawable(this);
         }
     }
     

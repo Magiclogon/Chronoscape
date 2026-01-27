@@ -1,4 +1,4 @@
-package ma.ac.emi.gamecontrol;
+package ma.ac.emi.glgraphics;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
@@ -83,12 +83,13 @@ public class QuadMesh {
 //        System.out.println("VAO=" + QuadMesh.VAO + " VBO=" + VBO + " EBO=" + EBO);
     	
     	// Quad vertices (two triangles)
-        float[] vertices = {
-            -0.5f, -0.5f, 0.0f,  // bottom left
-             0.5f, -0.5f, 0.0f,  // bottom right
-             0.5f,  0.5f, 0.0f,  // top right
-            -0.5f,  0.5f, 0.0f   // top left
-        };
+    	float[] vertices = {
+    		    0f,   0f,   0f,
+    		    100f, 0f,   0f,
+    		    100f, 100f, 0f,
+    		    0f,   100f, 0f
+    		};
+
         
         // Create VAO
         int[] vaos = new int[1];

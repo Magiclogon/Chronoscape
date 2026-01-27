@@ -3,6 +3,8 @@ package ma.ac.emi.world;
 import java.awt.*;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
@@ -17,6 +19,7 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -176,6 +179,13 @@ public class World extends GameObject{
 			context.getTileManager().draw(g);
 		}
 	}
+	
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		if (context.getTileManager() != null) {
+			context.getTileManager().drawGL(gl, glGraphics);
+		}
+	}
 
 	public int getWidth() {
 		return context.getWorldWidth();
@@ -221,4 +231,6 @@ public class World extends GameObject{
 	public double getDrawnHeight() {
 		return context.getWorldHeight()*GamePanel.TILE_SIZE;
 	}
+
+	
 }

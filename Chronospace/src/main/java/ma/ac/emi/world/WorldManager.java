@@ -124,6 +124,7 @@ public class WorldManager {
 			System.out.println("Loaded " + world.getWaveManager().getWaves().size() + " waves from " + filepath);
 			
 			GameController.getInstance().getGamePanel().removeDrawable(world);
+			GameController.getInstance().getGameGLPanel().getRenderer().removeDrawable(world);
 			worlds.add(world);
 		}
 	}

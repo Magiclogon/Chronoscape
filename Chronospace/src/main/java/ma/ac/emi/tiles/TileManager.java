@@ -9,14 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamecontrol.GameDrawable;
+import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
 
 @Getter
-public class TileManager {
+public class TileManager implements GameDrawable{
 
     private final MapTheme theme;
     private final Map<TileType, Sprite> tileSprites;
@@ -24,14 +30,14 @@ public class TileManager {
     private List<TileMap> maps;
     private TileMap currentMap;
 
-    private BufferedImage mapCache;
+    private Sprite mapCache;
 
     public TileManager(MapTheme theme) {
         this.theme = theme;
         this.tileSprites = new HashMap<>();
         
         this.maps = new ArrayList<>();
-        
+        this.mapCache = new Sprite();
 
         loadTileSprites(); 
     }
@@ -85,9 +91,10 @@ public class TileManager {
         int tileSize = GamePanel.TILE_SIZE;
         int pixelWidth = currentMap.getWidth() * tileSize;
         int pixelHeight = currentMap.getHeight() * tileSize;
-
-        mapCache = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = mapCache.createGraphics();
+        
+        
+        BufferedImage mapCacheBuff = new BufferedImage(pixelWidth, pixelHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = mapCacheBuff.createGraphics();
 
         for (int x = 0; x < currentMap.getWidth(); x++) {
             for (int y = 0; y < currentMap.getHeight(); y++) {
@@ -106,11 +113,13 @@ public class TileManager {
             }
         }
         g2.dispose(); 
+        
+        mapCache.setSprite(mapCacheBuff);
     }
 
     public void draw(Graphics g) {
         if (mapCache != null) {
-            g.drawImage(mapCache, 0, 0, null);
+            g.drawImage(mapCache.getSprite(), 0, 0, null);
         }
     }
 
@@ -118,4 +127,18 @@ public class TileManager {
         TileType type = currentMap.getMap()[y][x];
         return !type.name().startsWith("GROUND") || type.name().endsWith("OBS");
     }
+
+	@Override
+	public int compareTo(GameObject o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		if (mapCache != null) {
+			Texture texture = mapCache.getTexture(gl);
+            glGraphics.drawSprite(gl, texture, 0, 0, mapCache.getWidth(), mapCache.getHeight());
+        }
+	}
 }

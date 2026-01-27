@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +19,10 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -214,6 +219,37 @@ public class Weapon extends Entity{
         }
         g2d.setTransform(oldTransform);
     }
+    
+    @Override
+    public void drawGL(GL3 gl, GLGraphics glGraphics) {
+        // --- 1) Determine sprite ---
+        Sprite sprite;
+        if (stateMachine.getCurrentAnimationState() != null) {
+            sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite();
+        } else {
+            sprite = AssetsLoader.getSprite("default_weapon.png");
+        }
+        Texture texture = sprite.getTexture(gl);
+
+        float[] model = new float[16];
+        Matrix4.identity(model);
+
+        float px = (float) getBearer().getPos().getX();
+        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset());
+        Matrix4.translate(model, px, py, 0f);
+
+        double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
+        Matrix4.rotateZ(model, (float) theta);
+
+        float wx = (float) getBearer().getWeaponXOffset() - sprite.getWidth() / 2f;
+        float wy = -sprite.getHeight() / 2f;
+        Matrix4.translate(model, wx, wy, 0f);
+
+        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+        
+        glGraphics.drawSprite(gl, texture, model);
+    }
+    
     
     public void update(double step) {
     	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());

@@ -5,11 +5,16 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.TextureCache;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -70,5 +75,16 @@ public class Obstacle extends GameObject{
 			}
 		}
 		return false;
+	}
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		Sprite sprite = getSpriteSheet().getSprite(0, 0, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+		Texture texture = sprite.getTexture(gl);
+		glGraphics.drawSprite(gl, texture,
+				(int)(getPos().getX()-GamePanel.TILE_SIZE/2), 
+				(int)(getPos().getY()-GamePanel.TILE_SIZE/2),
+				GamePanel.TILE_SIZE,
+				GamePanel.TILE_SIZE
+			);
 	}
 }

@@ -7,6 +7,8 @@ import java.awt.Color;
 
 import javax.swing.SwingUtilities;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
@@ -20,6 +22,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -150,7 +153,7 @@ public class Player extends LivingEntity {
 	
 
 	@Override
-	public void update(double step) {
+	public void update(double step) {		
 		velocity.init();
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
@@ -218,6 +221,14 @@ public class Player extends LivingEntity {
 		super.draw(g);
 		if(activeWeapon != null)
 			activeWeapon.draw(g);
+	}
+	
+	
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		super.drawGL(gl, glGraphics);
+		if(activeWeapon != null)
+			activeWeapon.drawGL(gl, glGraphics);
 	}
 
 	public void setWeapon(Weapon weapon) {

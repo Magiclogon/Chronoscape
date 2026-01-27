@@ -48,6 +48,7 @@ public class Window extends JFrame {
         mainPanel.add(shopUI, "SHOP");
         mainPanel.add(gameOverPanel, "GAMEOVER");
 
+        add(mainPanel);
 
         setSize(1280, 720);
         setLocationRelativeTo(null);
@@ -55,7 +56,6 @@ public class Window extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
-        add(mainPanel);
 
     }
     

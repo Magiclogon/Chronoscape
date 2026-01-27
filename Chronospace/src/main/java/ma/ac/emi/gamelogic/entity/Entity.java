@@ -3,12 +3,17 @@ package ma.ac.emi.gamelogic.entity;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -40,6 +45,26 @@ public abstract class Entity extends GameObject{
         g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
 
 	}
+	
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+
+	    Sprite sprite = stateMachine.getCurrentAnimationState() != null
+	            ? stateMachine.getCurrentAnimationState().getCurrentFrameSprite()
+	            : AssetsLoader.getSprite("default_sprite.png");
+
+	    Texture texture = sprite.getTexture(gl);
+
+	    glGraphics.drawSprite(
+	            gl,
+	            texture,
+	            (float)(getPos().getX() - sprite.getWidth() / 2f),
+	            (float)(getPos().getY() - sprite.getHeight() / 2f),
+	            sprite.getWidth(),
+	            sprite.getHeight()
+	    );
+	}
+
 	
 	public abstract void initStateMachine();
 	public abstract void setupAnimations();

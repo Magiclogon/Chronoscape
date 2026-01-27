@@ -192,7 +192,7 @@ public class GameController implements Runnable {
         world.getPickableManager().init();
     	particleSystem.init();
 
-        camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
+        camera = new Camera(new Vector3D(), 640, 480, gameGLPanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
         gameGLPanel.setCamera(camera);
@@ -244,7 +244,7 @@ public class GameController implements Runnable {
 			}
 
             SwingUtilities.invokeLater(() -> {
-                gamePanel.repaint();
+                //gamePanel.repaint();
                 //gameGLPanel.repaint();
                 gameUIPanel.repaint();
             });
@@ -264,8 +264,8 @@ public class GameController implements Runnable {
         Player.getInstance().update(step);
 
         particleSystem.update(step);
-        gamePanel.update(step);
-        
+        //gamePanel.update(step);
+        gameGLPanel.update(step);
         GameTime.addTime(step);
     }
     
