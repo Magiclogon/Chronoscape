@@ -9,7 +9,7 @@ public class GLGraphics {
     private Camera camera;
 
     public GLGraphics(GL3 gl) {
-        spriteShader = Shader.load("sprite.vert", "sprite.frag", gl);
+        spriteShader = Shader.load(gl, "sprite.vert", "sprite.frag");
         SpriteQuad.init(gl);
     }
 

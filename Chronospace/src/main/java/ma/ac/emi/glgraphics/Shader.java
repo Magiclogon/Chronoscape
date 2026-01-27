@@ -20,7 +20,7 @@ public class Shader {
        Public API
        =============================== */
 
-    public static Shader load(String vertexSource, String fragmentSource, GL3 gl) {
+	public static Shader load(GL3 gl, String vertexSource, String fragmentSource) {
     	
     	String vertexsrc = loadShaderSource(vertexSource);
     	String fragmentsrc = loadShaderSource(fragmentSource);
@@ -41,7 +41,10 @@ public class Shader {
         if (status.get(0) == GL.GL_FALSE) {
             byte[] log = new byte[1024];
             gl.glGetProgramInfoLog(program, log.length, null, 0, log, 0);
-            throw new RuntimeException("Shader link error:\n" + new String(log));
+            
+    		System.err.println("Error while loading shaders. Using default..");
+    		return Shader.load(gl, "post.vert", "post.frag");
+        	
         }
 
         // shaders no longer needed after linking
@@ -71,6 +74,10 @@ public class Shader {
     public void setFloat(GL3 gl, String name, float value) {
         int loc = gl.glGetUniformLocation(programId, name);
         gl.glUniform1f(loc, value);
+    }
+    
+    public void setBoolean(GL3 gl, String name, boolean value) {
+    	setInt(gl, name, value ? 1 : 0);
     }
 
     /* ===============================
