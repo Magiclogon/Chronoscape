@@ -6,6 +6,9 @@ import java.util.concurrent.Semaphore;
 
 import javax.swing.*;
 
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
@@ -47,6 +50,7 @@ public class GameController implements Runnable {
     private final Window window;
     private WorldManager worldManager;
     private GamePanel gamePanel;
+    private GameGLPanel gameGLPanel;
     private GameUIPanel gameUIPanel;
     private Camera camera;
     private Thread gameThread;
@@ -74,6 +78,8 @@ public class GameController implements Runnable {
 		
         gamePanel = new GamePanel();
         gameUIPanel = new GameUIPanel();
+        
+        gameGLPanel = new GameGLPanel();
 
         showMainMenu();
     }
@@ -189,11 +195,12 @@ public class GameController implements Runnable {
         camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
+        gameGLPanel.setCamera(camera);
         
         KeyHandler.getInstance().reset();
         MouseHandler.getInstance().setCamera(camera);
 
-        window.showGame(gamePanel, gameUIPanel);
+        window.showGame(gameGLPanel, gameUIPanel);
         showGame();
         System.out.println("Starting game");
         startGameThread();
@@ -225,35 +232,27 @@ public class GameController implements Runnable {
             deltaTime = currentTime - latestTime;
             latestTime = currentTime;
 
-            try {
-                update.acquire();
+            if (state == GameState.PLAYING) {
+			    accumTime += deltaTime;
 
-                if (state == GameState.PLAYING) {
-                    accumTime += deltaTime;
-
-                    while (accumTime > SIM_STEP) {
-                        update(SIM_STEP / Math.pow(10, 9));
-                        accumTime -= SIM_STEP;
-                    }
-                } else {
-                    accumTime = 0;
-                }
-
-                draw.release();
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+			    while (accumTime > SIM_STEP) {
+			        update(SIM_STEP / Math.pow(10, 9));
+			        accumTime -= SIM_STEP;
+			    }
+			} else {
+			    accumTime = 0;
+			}
 
             SwingUtilities.invokeLater(() -> {
                 gamePanel.repaint();
+                //gameGLPanel.repaint();
                 gameUIPanel.repaint();
             });
 
             try {
                 // Small sleep to prevent CPU hogging
                 Thread.sleep(1);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e) { 
                 e.printStackTrace();
             }
         }

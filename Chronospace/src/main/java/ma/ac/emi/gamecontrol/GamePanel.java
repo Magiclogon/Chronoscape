@@ -31,7 +31,7 @@ public class GamePanel extends JPanel {
 		addMouseListener(MouseHandler.getInstance());
 		addMouseMotionListener(MouseHandler.getInstance());
 		addMouseWheelListener(MouseHandler.getInstance());
-		KeyHandler.getInstance().setupKeyBindings(this);
+		//KeyHandler.getInstance().setupKeyBindings(this);
 		
 		this.drawables = new ArrayList<>();
 		drawables = Collections.synchronizedList(drawables);
