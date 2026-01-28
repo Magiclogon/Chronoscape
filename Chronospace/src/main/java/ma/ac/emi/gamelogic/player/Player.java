@@ -23,6 +23,7 @@ import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -47,6 +48,7 @@ public class Player extends LivingEntity {
 		hitbox = new Rectangle(22, 28);
 		bound = new Rectangle(22, 8);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
+		
 	}
 	
 	@Override
@@ -127,6 +129,9 @@ public class Player extends LivingEntity {
         setupAnimations();
         if(!isIdle()) stateMachine.trigger("Stop");
         
+        setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
+        
+        
 	}
 
 	public void resetBaseStats() {
@@ -135,10 +140,6 @@ public class Player extends LivingEntity {
 	}
 	
 	public void initWeapons() {
-		/*for(int i = 0; i < Inventory.MAX_EQU; i++) {
-			if(getEquippedWeapons()[i] == null) continue;
-			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[i]);
-		}*/
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
 			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
@@ -153,8 +154,9 @@ public class Player extends LivingEntity {
 	
 
 	@Override
-	public void update(double step) {		
-		velocity.init();
+	public void update(double step) {
+		velocity.init();		
+		
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
@@ -209,10 +211,9 @@ public class Player extends LivingEntity {
 		changeStateDirection();
 		stateMachine.update(step);
 		
+		getLight().setPosition((float) getPos().getX(), (float) getPos().getY());
 		
 		super.update(step);
-		
-
 		
 	}
 	

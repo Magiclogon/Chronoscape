@@ -9,35 +9,26 @@ public class Framebuffer {
     private int rboId = 0;
 
     public void init(GL3 gl, int width, int height) {
-        // Clean up if already exists (on resize)
         dispose(gl);
-
-        // 1. Create Framebuffer Object
         int[] bufs = new int[1];
         gl.glGenFramebuffers(1, bufs, 0);
         fboId = bufs[0];
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, fboId);
 
-        // 2. Create the Color Texture
         gl.glGenTextures(1, bufs, 0);
         textureId = bufs[0];
         gl.glBindTexture(GL3.GL_TEXTURE_2D, textureId);
+        
+        // Use RGBA16F for HDR bloom data
         gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGBA16F, width, height, 0, GL3.GL_RGBA, GL3.GL_FLOAT, null);
+        
+        // Use Linear filtering for "free" extra blur during downscaling
         gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
         gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S, GL3.GL_CLAMP_TO_EDGE);  // Add this
+        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T, GL3.GL_CLAMP_TO_EDGE);
+        
         gl.glFramebufferTexture2D(GL3.GL_FRAMEBUFFER, GL3.GL_COLOR_ATTACHMENT0, GL3.GL_TEXTURE_2D, textureId, 0);
-
-        // 3. Create Renderbuffer for Depth/Stencil (Necessary for 3D/Z-layering)
-        gl.glGenRenderbuffers(1, bufs, 0);
-        rboId = bufs[0];
-        gl.glBindRenderbuffer(GL3.GL_RENDERBUFFER, rboId);
-        gl.glRenderbufferStorage(GL3.GL_RENDERBUFFER, GL3.GL_DEPTH24_STENCIL8, width, height);
-        gl.glFramebufferRenderbuffer(GL3.GL_FRAMEBUFFER, GL3.GL_DEPTH_STENCIL_ATTACHMENT, GL3.GL_RENDERBUFFER, rboId);
-
-        if (gl.glCheckFramebufferStatus(GL3.GL_FRAMEBUFFER) != GL3.GL_FRAMEBUFFER_COMPLETE) {
-            System.err.println("Error: Framebuffer is incomplete!");
-        }
-
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
     }
 

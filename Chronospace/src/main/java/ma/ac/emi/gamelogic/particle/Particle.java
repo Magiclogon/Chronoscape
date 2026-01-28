@@ -2,13 +2,13 @@ package ma.ac.emi.gamelogic.particle;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 
 import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
@@ -16,39 +16,46 @@ import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
-public class Particle extends GameObject{
-
+public class Particle extends GameObject {
     private double age;
     private double frameTimer;
-
     private int frameIndex;
     private ParticlePhase phase;
-
     private final ParticleDefinition definition;
     private final ParticleAnimation animation;
-
     public boolean alive = true;
-
+    
     public Particle(ParticleDefinition def, Vector3D pos) {
         this.definition = def;
         this.pos = new Vector3D(pos);
-
         this.animation = ParticleAnimationCache.get(def);
         this.phase = ParticlePhase.INIT;
         
+        baseColorCorrection = def.getColorCorrection();
+        setLightingStrategy(def.getLightingStrategy());
         
+        setLight(getLightingStrategy().getLight());
+        if(getLight() != null) {
+            getLight().x = (float)pos.getX();
+            getLight().y = (float)pos.getY();
+            getLight().radius = Math.max(def.getAnimationDetails().spriteWidth, 
+                                        def.getAnimationDetails().spriteHeight);
+        }
+        
+        GameController.getInstance().getGameGLPanel().getRenderer().removeDrawable(this);
     }
-
+    
     public void update(double step) {
+        super.update(step);
         age += step;
         frameTimer += step;
-
         double frameTime = 1.0/24;
+        
         if (frameTimer >= frameTime) {
             frameTimer = 0;
             frameIndex++;
         }
-
+        
         switch (phase) {
             case INIT -> {
                 if (frameIndex >= animation.initFrames.length) {
@@ -70,12 +77,18 @@ public class Particle extends GameObject{
                 }
             }
         }
-
+        
+        // Update light position if present
+        if (getLight() != null) {
+            getLight().x = (float)pos.getX();
+            getLight().y = (float)pos.getY();
+        }
     }
-
+    
     public void draw(Graphics g) {
-        Sprite sprite = getCurrentSprite();
+        Sprite sprite = animation.getSprite(phase, frameIndex);
         if (sprite == null) return;
+        
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(
             sprite.getSprite(),
@@ -86,30 +99,46 @@ public class Particle extends GameObject{
             null
         );
     }
-
-    private Sprite getCurrentSprite() {
-        return switch (phase) {
-            case INIT -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
-            case LOOP -> animation.loopFrames[frameIndex % animation.loopFrames.length];
-            case FINISH -> animation.finishFrames[Math.min(frameIndex, animation.finishFrames.length - 1)];
-        };
+    
+    @Override
+    public double getDrawnHeight() {
+        Sprite sprite = animation.getSprite(phase, frameIndex);
+        return sprite != null ? sprite.getSprite().getHeight() : 0;
     }
-
-	@Override
-	public double getDrawnHeight() {
-		return getCurrentSprite().getSprite().getHeight();
-	}
-
-	@Override
-	public void drawGL(GL3 gl, GLGraphics glGraphics) {
-		Sprite sprite = getCurrentSprite();
-		Texture texture = sprite.getTexture(gl);
-		glGraphics.drawSprite(gl, texture, 
-				(float)(getPos().getX()-sprite.getWidth()/2), 
-				(float)(getPos().getY()-sprite.getHeight()/2),
-				sprite.getWidth(),
-				sprite.getHeight()
-			);
-	}
-
+    
+    @Override
+    public void drawGL(GL3 gl, GLGraphics glGraphics) {
+        // Get pre-cached texture directly
+        Texture texture = animation.getTexture(phase, frameIndex);
+        Sprite sprite = animation.getSprite(phase, frameIndex);
+        
+        if (texture == null || sprite == null) return;
+        
+        glGraphics.drawSprite(gl, texture, 
+            (float)(getPos().getX() - sprite.getWidth() / 2), 
+            (float)(getPos().getY() - sprite.getHeight() / 2),
+            sprite.getWidth(),
+            sprite.getHeight(),
+            getLightingStrategy(),
+            getColorCorrection()
+        );
+    }
+    
+    /**
+     * Batched rendering - texture already bound, skip binding
+     */
+    public void drawGLBatched(GL3 gl, GLGraphics glGraphics, Texture texture) {
+        Sprite sprite = animation.getSprite(phase, frameIndex);
+        if (sprite == null) return;
+        
+        // Use a version of drawSprite that doesn't bind texture
+        glGraphics.drawSpriteBatched(gl, texture,
+            (float)(getPos().getX() - sprite.getWidth() / 2), 
+            (float)(getPos().getY() - sprite.getHeight() / 2),
+            sprite.getWidth(),
+            sprite.getHeight(),
+            getLightingStrategy(),
+            getColorCorrection()
+        );
+    }
 }

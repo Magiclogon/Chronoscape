@@ -8,7 +8,7 @@ import ma.ac.emi.glgraphics.Shader;
 public class BloomCombineEffect implements PostEffect {
     private final Shader shader;
     private final int originalSceneTexture;
-    private float intensity = 1.0f;
+    private float intensity = 0.05f;
 
     public BloomCombineEffect(GL3 gl, int originalSceneTexture) {
         this.originalSceneTexture = originalSceneTexture;

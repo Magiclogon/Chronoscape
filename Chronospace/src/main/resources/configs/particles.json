@@ -5,38 +5,63 @@
       "lifetime": 0.33,
       "spawnRate": 50,
       "animationDetails": {
-      	"spritePath": "particles/smoke1-Sheet.png",
-      	"spriteWidth": 16,
-      	"spriteHeight": 16,
-      	"initLength": 3,
-      	"loopLength": 3,
-      	"finishLength": 9
-      }
+        "spritePath": "particles/smoke1-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 3,
+        "loopLength": 3,
+        "finishLength": 9
+      },
+      "postProcessingDetails": {}
     },
     {
       "id": "smoke2",
       "lifetime": 0.2,
       "spawnRate": 60,
       "animationDetails": {
-      	"spritePath": "particles/smoke2-Sheet.png",
-      	"spriteWidth": 16,
-      	"spriteHeight": 16,
-      	"initLength": 3,
-      	"loopLength": 3,
-      	"finishLength": 9
-      }
+        "spritePath": "particles/smoke2-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 3,
+        "loopLength": 3,
+        "finishLength": 9
+      },
+      "postProcessingDetails": {}
     },
     {
       "id": "explosion",
       "lifetime": 0.8,
       "spawnRate": 50,
       "animationDetails": {
-      	"spritePath": "particles/explosion-Sheet.png",
-      	"spriteWidth": 128,
-      	"spriteHeight": 128,
-      	"initLength": 35,
-      	"loopLength": 1,
-      	"finishLength": 1
+        "spritePath": "particles/explosion-Sheet.png",
+        "spriteWidth": 128,
+        "spriteHeight": 128,
+        "initLength": 35,
+        "loopLength": 1,
+        "finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.2,
+            "g": 1.0,
+            "b": 0.8,
+            "a": 1.0
+          },
+          "brightness": 0.1,
+          "contrast": 1.2,
+          "saturation": 1.3
+        },
+        "lighting": {
+          "type": "bloom_glow",
+          "intensity": 1.5,
+          "color": {
+            "r": 1.0,
+            "g": 0.6,
+            "b": 0.2
+          },
+          "bloomBoost": 3.0
+        }
       }
     },
     {
@@ -44,12 +69,34 @@
       "lifetime": 1,
       "spawnRate": 1,
       "animationDetails": {
-      	"spritePath": "particles/fire1-Sheet.png",
-	    "spriteWidth": 16,
-	    "spriteHeight": 16,
-      	"initLength": 1,
-      	"loopLength": 9,
-      	"finishLength": 13
+        "spritePath": "particles/fire1-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 1,
+        "loopLength": 9,
+        "finishLength": 13
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.1,
+            "g": 0.9,
+            "b": 0.7
+          },
+          "saturation": 1.4,
+          "brightness": 0.05
+        },
+        "lighting": {
+          "type": "pulsating_glow",
+          "baseIntensity": 0.8,
+          "pulseSpeed": 3.0,
+          "pulseAmount": 0.4,
+          "color": {
+            "r": 1.0,
+            "g": 0.5,
+            "b": 0.1
+          }
+        }
       }
     },
     {
@@ -57,12 +104,29 @@
       "lifetime": 1.5,
       "spawnRate": 1,
       "animationDetails": {
-      	"spritePath": "particles/fire2-Sheet.png",
-	    "spriteWidth": 32,
-	    "spriteHeight": 32,
-      	"initLength": 13,
-      	"loopLength": 8,
-      	"finishLength": 21
+        "spritePath": "particles/fire2-Sheet.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "initLength": 13,
+        "loopLength": 8,
+        "finishLength": 21
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": 0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.0,
+            "g": 0.4,
+            "b": 0.0
+          }
+        }
       }
     },
     {
@@ -70,12 +134,32 @@
       "lifetime": 0.08,
       "spawnRate": 150,
       "animationDetails": {
-      	"spritePath": "particles/fire_trail-Sheet.png",
-	    "spriteWidth": 16,
-	    "spriteHeight": 16,
-      	"initLength": 1,
-      	"loopLength": 1,
-      	"finishLength": 10
+        "spritePath": "particles/fire_trail-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 1,
+        "loopLength": 1,
+        "finishLength": 10
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.3,
+            "g": 0.9,
+            "b": 0.6,
+            "a": 0.8
+          },
+          "saturation": 1.6
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 0.6,
+          "color": {
+            "r": 1.0,
+            "g": 0.7,
+            "b": 0.3
+          }
+        }
       }
     },
     {
@@ -83,12 +167,32 @@
       "lifetime": 0.08,
       "spawnRate": 60,
       "animationDetails": {
-      	"spritePath": "particles/fire_trail2-Sheet.png",
-	    "spriteWidth": 16,
-	    "spriteHeight": 16,
-      	"initLength": 1,
-      	"loopLength": 1,
-      	"finishLength": 9
+        "spritePath": "particles/fire_trail2-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 1,
+        "loopLength": 1,
+        "finishLength": 9
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.2,
+            "g": 1.0,
+            "b": 0.7
+          },
+          "brightness": 0.05,
+          "saturation": 1.4
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 0.5,
+          "color": {
+            "r": 1.0,
+            "g": 0.6,
+            "b": 0.2
+          }
+        }
       }
     },
     {
@@ -96,13 +200,26 @@
       "lifetime": 0.1,
       "spawnRate": 3,
       "animationDetails": {
-      	"spritePath": "particles/dust-Sheet.png",
-      	"spriteWidth": 16,
-      	"spriteHeight": 16,
-      	"initLength": 3,
-      	"loopLength": 3,
-      	"finishLength": 9
+        "spritePath": "particles/dust-Sheet.png",
+        "spriteWidth": 16,
+        "spriteHeight": 16,
+        "initLength": 3,
+        "loopLength": 3,
+        "finishLength": 9
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 0.9,
+            "g": 0.9,
+            "b": 0.85,
+            "a": 0.6
+          },
+          "saturation": 0.7,
+          "brightness": -0.1
+        }
       }
     }
+    
   ]
 }

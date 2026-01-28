@@ -24,8 +24,6 @@ public class Shader {
     	
     	String vertexsrc = loadShaderSource(vertexSource);
     	String fragmentsrc = loadShaderSource(fragmentSource);
-    	System.out.println(vertexsrc);
-    	System.out.println(fragmentsrc);
         int vertexShader = compile(gl, GL3.GL_VERTEX_SHADER, vertexsrc);
         int fragmentShader = compile(gl, GL3.GL_FRAGMENT_SHADER, fragmentsrc);
 
@@ -78,6 +76,20 @@ public class Shader {
     
     public void setBoolean(GL3 gl, String name, boolean value) {
     	setInt(gl, name, value ? 1 : 0);
+    }
+    
+    public void setVec2(GL3 gl, String name, float x, float y) {
+    	int loc = gl.glGetUniformLocation(programId, name);
+    	gl.glUniform2f(loc, x, y);
+    }
+    
+    public void setVec3(GL3 gl, String name, float x, float y, float z) {
+    	int loc = gl.glGetUniformLocation(programId, name);
+    	gl.glUniform3f(loc, x, y, z);
+    }
+    public void setVec4(GL3 gl, String name, float x, float y, float z, float w) {
+    	int loc = gl.glGetUniformLocation(programId, name);
+    	gl.glUniform4f(loc, x, y, z, w);
     }
 
     /* ===============================

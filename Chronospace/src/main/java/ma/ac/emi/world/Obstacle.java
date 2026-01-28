@@ -15,6 +15,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.TextureCache;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -51,7 +52,13 @@ public class Obstacle extends GameObject{
 			else 
 				setHitbox(new Rectangle());
 		}
+		
+		
+		baseColorCorrection = new SpriteColorCorrection();
+		baseColorCorrection.setValue(0.3f);
+		
 	}
+	
 	@Override
 	public void draw(Graphics g) {
 		g.drawImage(getSpriteSheet().getSprite(0,0,GamePanel.TILE_SIZE,GamePanel.TILE_SIZE).getSprite(),
@@ -84,7 +91,8 @@ public class Obstacle extends GameObject{
 				(int)(getPos().getX()-GamePanel.TILE_SIZE/2), 
 				(int)(getPos().getY()-GamePanel.TILE_SIZE/2),
 				GamePanel.TILE_SIZE,
-				GamePanel.TILE_SIZE
+				GamePanel.TILE_SIZE,
+				this.getBaseColorCorrection()
 			);
 	}
 }

@@ -76,8 +76,8 @@
         {
           "type": "particle_spawn",
           "particleId": "fire1",
-          "count": 50,
-          "radius": 70,
+          "count": 20,
+          "radius": 50,
           "emitterRadius": 20,
           "ageMax": 3.5,
           "isOneTime": false
@@ -85,8 +85,8 @@
         {
           "type": "particle_spawn",
           "particleId": "fire2",
-          "count": 20,
-          "radius": 60,
+          "count": 10,
+          "radius": 50,
           "emitterRadius": 10,
           "ageMax": 3.5,
           "isOneTime": false

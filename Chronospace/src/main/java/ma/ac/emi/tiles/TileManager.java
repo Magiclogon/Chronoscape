@@ -20,6 +20,7 @@ import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 
 @Getter
 public class TileManager implements GameDrawable{
@@ -31,6 +32,7 @@ public class TileManager implements GameDrawable{
     private TileMap currentMap;
 
     private Sprite mapCache;
+    public static SpriteColorCorrection colorCorrection;
 
     public TileManager(MapTheme theme) {
         this.theme = theme;
@@ -40,6 +42,9 @@ public class TileManager implements GameDrawable{
         this.mapCache = new Sprite();
 
         loadTileSprites(); 
+        
+        colorCorrection = new SpriteColorCorrection();
+		colorCorrection.setValue(0.5f);
     }
     
     public void addMap(TileMap map) {
@@ -138,7 +143,7 @@ public class TileManager implements GameDrawable{
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		if (mapCache != null) {
 			Texture texture = mapCache.getTexture(gl);
-            glGraphics.drawSprite(gl, texture, 0, 0, mapCache.getWidth(), mapCache.getHeight());
+            glGraphics.drawSprite(gl, texture, 0, 0, mapCache.getWidth(), mapCache.getHeight(), colorCorrection);
         }
 	}
 }

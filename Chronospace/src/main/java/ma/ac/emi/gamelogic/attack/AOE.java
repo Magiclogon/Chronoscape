@@ -42,9 +42,13 @@ public class AOE extends AttackObject{
         
         this.hitbox = new Rectangle(def.getAnimationDetails().spriteWidth, def.getAnimationDetails().spriteHeight);
         this.pos.setZ(-1);
+        
+        getBaseColorCorrection().saturation = 0.5f;
+        getBaseColorCorrection().value = 0.5f;
     }
 
     public void update(double step) {
+    	super.update(step);
     	hitbox.x = (int)getPos().getX();
 		hitbox.y = (int)getPos().getY();
 		lastAge = age;
@@ -103,7 +107,8 @@ public class AOE extends AttackObject{
     			(int) (pos.getX() - definition.getAnimationDetails().spriteWidth / 2),
     			(int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
     			definition.getAnimationDetails().spriteWidth,
-    			definition.getAnimationDetails().spriteHeight
+    			definition.getAnimationDetails().spriteHeight,
+    			getColorCorrection()
     		);
     }
 

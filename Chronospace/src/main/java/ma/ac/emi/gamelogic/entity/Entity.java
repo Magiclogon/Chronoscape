@@ -14,6 +14,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -25,11 +26,15 @@ public abstract class Entity extends GameObject{
 	public Entity() {
 		stateMachine = new StateMachine();
 		initStateMachine();
+
+		baseColorCorrection = new SpriteColorCorrection();
+		baseColorCorrection.setValue(0.5f);
 	}
 	
 	@Override
 	public void update(double step) {
-		setPos(getPos().add(getVelocity().mult(step)));
+		super.update(step);
+		if(getVelocity() != null) setPos(getPos().add(getVelocity().mult(step)));
 	}
 	
 	@Override
@@ -61,7 +66,8 @@ public abstract class Entity extends GameObject{
 	            (float)(getPos().getX() - sprite.getWidth() / 2f),
 	            (float)(getPos().getY() - sprite.getHeight() / 2f),
 	            sprite.getWidth(),
-	            sprite.getHeight()
+	            sprite.getHeight(),
+	            getColorCorrection()
 	    );
 	}
 

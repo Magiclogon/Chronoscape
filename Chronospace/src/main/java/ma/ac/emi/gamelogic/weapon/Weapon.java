@@ -247,7 +247,7 @@ public class Weapon extends Entity{
 
         Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
         
-        glGraphics.drawSprite(gl, texture, model);
+        glGraphics.drawSprite(gl, texture, model, null, bearer.getColorCorrection());
     }
     
     
