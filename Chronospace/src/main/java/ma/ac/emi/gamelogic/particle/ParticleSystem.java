@@ -4,8 +4,10 @@ import java.util.*;
 import com.jogamp.opengl.GL3;
 import lombok.Getter;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.lighting.LightParticle;
 import ma.ac.emi.glgraphics.lighting.LightingSystem;
 import ma.ac.emi.math.Vector3D;
 
@@ -49,7 +51,7 @@ public class ParticleSystem {
         loader.loadFromJson(filePath, definitions, lastSpawnTimes);
     }
     
-    public void spawnEffect(String id, Vector3D position, Object source, double currentTime) {
+    public void spawnEffect(String id, Vector3D position, GameObject source, double currentTime) {
         ParticleDefinition def = definitions.get(id);
         if (def == null) {
             System.err.println("Unknown particle effect: " + id);
@@ -58,7 +60,23 @@ public class ParticleSystem {
         String key = source.hashCode() + ":" + id;
         double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
         if (currentTime - lastTime >= 1.0 / def.getSpawnRate()) {
-            Particle p = new Particle(def, new Vector3D(position));
+        	Particle p = new Particle(def, new Vector3D(position));
+            activeEffects.add(p);
+            lastSpawnTimes.put(key, currentTime);
+        }
+    }
+    
+    public void spawnLightParticle(Vector3D position, double lightRadius, GameObject source, double currentTime) {
+    	String id = LightParticle.LIGHT_ID;
+    	ParticleDefinition def = definitions.get(id);
+        if (def == null) {
+            System.err.println("Unknown particle effect: " + id);
+            return;
+        }
+        String key = source.hashCode() + ":" + id;
+        double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
+        if (currentTime - lastTime >= 1.0 / def.getSpawnRate()) {
+        	Particle p = new LightParticle(new Vector3D(position), (float) lightRadius);
             activeEffects.add(p);
             lastSpawnTimes.put(key, currentTime);
         }

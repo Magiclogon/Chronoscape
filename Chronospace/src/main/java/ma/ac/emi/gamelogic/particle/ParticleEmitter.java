@@ -60,13 +60,17 @@ public class ParticleEmitter extends GameObject{
 				(int)((spawnPos.getY()+GamePanel.TILE_SIZE/2)/GamePanel.TILE_SIZE))
 			|| strategy instanceof OneTimeStrategy) 
 		{
-			GameController.getInstance().getParticleSystem().spawnEffect(particleId, spawnPos, this, GameTime.get());
+			spawnParticle(spawnPos);
 			hasEmitted = true;
 		}
 		if(strategy.shouldDesactivate(this))
 			isActive = false;
 		
 		age -= step;
+	}
+	
+	protected void spawnParticle(Vector3D spawnPostion) {
+		GameController.getInstance().getParticleSystem().spawnEffect(particleId, spawnPostion, this, GameTime.get());
 	}
 
 	@Override
