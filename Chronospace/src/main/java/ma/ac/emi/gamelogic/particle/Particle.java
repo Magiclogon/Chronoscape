@@ -34,15 +34,15 @@ public class Particle extends GameObject {
         baseColorCorrection = def.getColorCorrection();
         setLightingStrategy(def.getLightingStrategy());
         
-        setLight(getLightingStrategy().getLight());
-        if(getLight() != null) {
-            getLight().x = (float)pos.getX();
-            getLight().y = (float)pos.getY();
-            getLight().radius = Math.max(def.getAnimationDetails().spriteWidth, 
-                                        def.getAnimationDetails().spriteHeight);
-        }
+//        setLight(getLightingStrategy().getLight());
+//        if(getLight() != null) {
+//            getLight().x = (float)pos.getX();
+//            getLight().y = (float)pos.getY();
+//            getLight().radius = Math.max(def.getAnimationDetails().spriteWidth, 
+//                                        def.getAnimationDetails().spriteHeight);
+//        }
         
-        GameController.getInstance().getGameGLPanel().getRenderer().removeDrawable(this);
+        GameController.getInstance().removeDrawable(this);
     }
     
     public void update(double step) {

@@ -43,6 +43,7 @@ public class ParticleEmitter extends GameObject{
 		this.radius = radius;
 		
 		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
+		GameController.getInstance().removeDrawable(this);
 	}
 
 	@Override
@@ -70,5 +71,10 @@ public class ParticleEmitter extends GameObject{
 
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {}
+	
+	@Override
+	public double getDrawnHeight() {
+		return 0;
+	}
 
 }
