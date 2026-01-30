@@ -10,6 +10,8 @@ import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.glgraphics.lighting.LightObject;
+import ma.ac.emi.glgraphics.lighting.LightObjectManager;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.tiles.TileType;
 
@@ -33,6 +35,7 @@ public class WorldContext {
     private AttackObjectManager attackObjectManager;
     private PickableManager pickableManager;
     private WaveManager waveManager;
+    private LightObjectManager lightObjectManager;
     private PathFinder pathFinder;
     
     // Game configuration
@@ -44,7 +47,7 @@ public class WorldContext {
     
     private final Color voidColor;
     
-    public WorldContext(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
+    public WorldContext(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager, LightObjectManager lightObjectManager) {
         this.worldWidth = width;
         this.worldHeight = height;
         this.worldBounds = new Rectangle(width * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE, 
@@ -54,6 +57,7 @@ public class WorldContext {
         // Initialize collections
         this.obstacles = new ArrayList<>();
         this.tileManager = tileManager;
+        this.lightObjectManager = lightObjectManager;
         
         this.voidColor = new Color(tileManager.getTileSprites().get(TileType.VOID).getSprite().getRGB(0, 0), true);
     }
@@ -97,4 +101,12 @@ public class WorldContext {
     public void refreshCurrentMap() {
     	this.tileManager.refreshCurrentMap();
     }
+
+	public void addLightObject(LightObject lightObject) {
+		this.lightObjectManager.addLightObject(lightObject);
+	}
+	
+	public void removeLightObject(LightObject lightObject) {
+		this.lightObjectManager.removeLightObject(lightObject);
+	}
 }

@@ -36,6 +36,24 @@ public class ItemLoader {
                 switch (type) {
                     case "weapon":
                         def = gson.fromJson(obj, WeaponItemDefinition.class);
+                        
+                        WeaponItemDefinition weaponDef = (WeaponItemDefinition) def;
+                        if(obj.has("attackStrategy")) {
+                        	String attackType = obj.get("attackStrategy").getAsJsonObject().get("type").getAsString();
+                        	
+                        	switch(attackType) {
+                        	case "range":
+                        		int projectileCount = obj.get("attackStrategy").getAsJsonObject().get("projectileCount").getAsInt();
+                        		double spread = obj.get("attackStrategy").getAsJsonObject().get("spread").getAsDouble();
+                        		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.RangeStrategyDefinition(projectileCount, spread));
+                        		break;
+                        	
+                        	case "melee":
+                        		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.MeleeStrategyDefinition());
+                        	}
+                        }
+                        
+                        def = weaponDef;
                         break;
                     case "statModifier":
                         def = gson.fromJson(obj, StatModifierItemDefinition.class);

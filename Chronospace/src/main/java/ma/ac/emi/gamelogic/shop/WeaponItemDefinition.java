@@ -1,13 +1,15 @@
 package ma.ac.emi.gamelogic.shop;
 
 import lombok.*;
+import ma.ac.emi.gamelogic.weapon.AttackStrategy;
+import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
+import ma.ac.emi.gamelogic.weapon.RangeStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
 @Getter
 @Setter
 @ToString
 public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
-    private String attackStrategy;
     private double damage;
     private double range;
     private double attackSpeed;
@@ -18,6 +20,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private int relativeProjectilePosY;
     
     private WeaponAnimationDetails animationDetails;
+    private AttackStrategyDefinition attackStrategyDefinition;
 
 	@Override
 	public ShopItem getItem() {
@@ -44,7 +47,6 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.setIconPath(other.getIconPath());
         this.setRarity(other.getRarity());
 
-        this.attackStrategy = other.attackStrategy;
         this.damage = other.damage;
         this.range = other.range;
         this.attackSpeed = other.attackSpeed;
@@ -62,6 +64,36 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     public WeaponItemDefinition clone() {
 		return new WeaponItemDefinition(this);
     	
+    }
+    
+    public static abstract class AttackStrategyDefinition{
+    	public abstract AttackStrategy create();
+    }
+    
+    public static class RangeStrategyDefinition extends AttackStrategyDefinition{
+		public final int projectileCount;
+    	public final double spread; //angle
+    	
+       	public RangeStrategyDefinition(int projectileCount, double spread) {
+    			this.projectileCount = projectileCount;
+    			this.spread = spread;
+    	}
+       	public RangeStrategyDefinition(RangeStrategyDefinition def) {
+       		this(def.projectileCount, def.spread);
+       	}
+		@Override
+		public AttackStrategy create() {
+			return new RangeStrategy(projectileCount, spread);
+		}
+    }
+    
+    public static class MeleeStrategyDefinition extends AttackStrategyDefinition{
+
+		@Override
+		public AttackStrategy create() {
+			return new MeleeStrategy();
+		}
+
     }
     
     public static class WeaponAnimationDetails{

@@ -1,8 +1,10 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
+import lombok.Getter;
 import ma.ac.emi.gamelogic.attack.behavior.Behavior;
 import ma.ac.emi.gamelogic.attack.behavior.ParticleSpawnBehavior;
 
+@Getter
 public class ParticleSpawnBehaviorDefinition extends BehaviorDefinition{
 
 	private final String particleId;

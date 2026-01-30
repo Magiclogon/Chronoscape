@@ -4,6 +4,10 @@ import com.google.gson.*;
 import ma.ac.emi.gamelogic.attack.behavior.Behavior;
 import ma.ac.emi.gamelogic.attack.behavior.BehaviorFactory;
 import ma.ac.emi.gamelogic.attack.behavior.definition.BehaviorDefinition;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.lighting.LightingStrategy;
+import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,7 +34,7 @@ public class ProjectileLoader {
 
             for (JsonElement element : projectiles) {
 
-                JsonObject node = element.getAsJsonObject();
+            	JsonObject node = element.getAsJsonObject();
 
                 String id = node.get("id").getAsString();
                 double speed = node.get("speed").getAsDouble();
@@ -43,7 +47,7 @@ public class ProjectileLoader {
                 if (node.has("behaviors")) {
                     JsonArray behaviorArray = node.getAsJsonArray("behaviors");
                     for (JsonElement b : behaviorArray) {
-                        JsonObject behaviorJson = b.getAsJsonObject();
+                    	JsonObject behaviorJson = b.getAsJsonObject();
                         behaviors.add(BehaviorFactory.create(behaviorJson));
                     }
                 }
@@ -56,6 +60,21 @@ public class ProjectileLoader {
                         height,
                         behaviors
                 );
+                
+                Gson gson = new Gson();
+                
+                if (node.has("postProcessingDetails")) {
+	                JsonObject ppDetails = node.getAsJsonObject("postProcessingDetails");
+	                PostProcessingDetails postProcessing = gson.fromJson(ppDetails, PostProcessingDetails.class);
+	                
+	                // Create ColorCorrection from config
+	                SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(postProcessing);
+	                def.setColorCorrection(colorCorrection);
+	                
+	                // Create LightingStrategy from config
+	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
+	                def.setLightingStrategy(lightingStrategy);
+	            }
 
                 projectileDefinitions.put(id, def);
             }

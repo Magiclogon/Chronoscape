@@ -219,6 +219,19 @@
           "brightness": -0.1
         }
       }
+    },
+    {
+      "id": "light",
+      "lifetime": 5.5,
+      "spawnRate": 3,
+      "animationDetails": {
+        "spritePath": "particles/none_particle.png",
+        "spriteWidth": 1,
+        "spriteHeight": 1,
+        "initLength": 1,
+        "loopLength": 1,
+        "finishLength": 1
+      }
     }
     
   ]

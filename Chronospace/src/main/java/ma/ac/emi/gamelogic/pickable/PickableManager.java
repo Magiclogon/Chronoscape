@@ -33,7 +33,7 @@ public class PickableManager implements WaveListener, DifficultyObserver{
     }
     
     public void init() {
-    	if(pickables != null) pickables.forEach(p -> GameController.getInstance().getGamePanel().removeDrawable(p));
+    	if(pickables != null) pickables.forEach(p -> GameController.getInstance().removeDrawable(p));
         this.pickables = new ArrayList<>();
         this.random = new Random();
         this.pickableTypes = new ArrayList<>();

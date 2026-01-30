@@ -123,8 +123,7 @@ public class WorldManager {
 			
 			System.out.println("Loaded " + world.getWaveManager().getWaves().size() + " waves from " + filepath);
 			
-			GameController.getInstance().getGamePanel().removeDrawable(world);
-			GameController.getInstance().getGameGLPanel().getRenderer().removeDrawable(world);
+			GameController.getInstance().removeDrawable(world);
 			worlds.add(world);
 		}
 	}
@@ -142,7 +141,7 @@ public class WorldManager {
 	}
 	
 	public void nextWorld() {
-		if(currentWorld != null) GameController.getInstance().getGamePanel().removeDrawable(currentWorld);
+		if(currentWorld != null) GameController.getInstance().removeDrawable(currentWorld);
 		currentWorldIndex++;
 
 		if (currentWorldIndex < worlds.size()) {
@@ -150,7 +149,7 @@ public class WorldManager {
 		} else {
 			currentWorld = endlessGenerator.generateWorld(currentWorldIndex);
 		}
-		GameController.getInstance().getGamePanel().addDrawable(currentWorld);;
+		GameController.getInstance().addDrawable(currentWorld);;
 		
 		System.out.println("Switched to world with species: " + 
 			currentWorld.getSpecieFactory().getClass().getName());

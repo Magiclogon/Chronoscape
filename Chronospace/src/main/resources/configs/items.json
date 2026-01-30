@@ -7,7 +7,6 @@
       "description": "Automatic rifle with high fire rate.",
       "rarity": "RARE",
       "basePrice": 500,
-      "attackStrategy": "Range",
       "damage": 12,
       "range": 500,
       "attackSpeed": 8,
@@ -28,6 +27,12 @@
 	      "reloadInitLength": 12,
 	      "reloadLength": 4,
 	      "reloadFinishLength": 12
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
       }
     },
     {
@@ -37,7 +42,6 @@
       "description": "Crush enemies with a powerful ground slam.",
       "rarity": "EPIC",
       "basePrice": 800,
-      "attackStrategy": "Melee",
       "damage": 80,
       "range": 0,
       "attackSpeed": 0.8,
@@ -56,6 +60,10 @@
 	      "reloadInitLength": 0,
 	      "reloadLength": 0,
 	      "reloadFinishLength": 21
+      },
+      
+      "attackStrategy": {
+      	"type": "melee"
       }
     },
     {
@@ -66,7 +74,6 @@
       "description": "Balanced melee weapon for close combat.",
       "rarity": "RARE",
       "basePrice": 350,
-      "attackStrategy": "Melee",
       "damage": 45,
       "range": 40,
       "attackSpeed": 2.0,
@@ -83,6 +90,10 @@
 	      "reloadInitLength": 0,
 	      "reloadLength": 0,
 	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "melee"
       }
     },
     {
@@ -92,7 +103,6 @@
       "description": "Fires a rocket that explodes on impact.",
       "rarity": "LEGENDARY",
       "basePrice": 1200,
-      "attackStrategy": "Range",
       "damage": 400,
       "range": 1000,
       "attackSpeed": 2,
@@ -113,6 +123,12 @@
 	      "reloadInitLength": 12,
 	      "reloadLength": 4,
 	      "reloadFinishLength": 12
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
       }
     },
     {
@@ -122,14 +138,19 @@
       "description": "Simple but precise ranged weapon.",
       "rarity": "COMMON",
       "basePrice": 250,
-      "attackStrategy": "Range",
       "damage": 35,
       "range": 300,
       "attackSpeed": 2,
       "projectileId": "arrow",
       "reloadingTime": 1.2,
       "magazineSize": 1,
-      "stackable": false
+      "stackable": false,
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
+      }
     },
     {
       "type": "weapon",
@@ -138,12 +159,15 @@
       "description": "Your good old fists.",
       "rarity": "LEGENDARY",
       "basePrice": 1,
-      "attackStrategy": "Melee",
       "damage": 10,
       "range": 35,
       "attackSpeed": 1.5,
       "projectileId": "noneSingle",
-      "stackable": false
+      "stackable": false,
+      
+      "attackStrategy": {
+      	"type": "melee"
+      }
     },
     {
       "type": "upgrade",

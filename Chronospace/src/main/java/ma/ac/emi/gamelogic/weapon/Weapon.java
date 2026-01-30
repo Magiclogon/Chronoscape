@@ -57,7 +57,7 @@ public class Weapon extends Entity{
         
         if(weaponItem != null) {
         	WeaponItemDefinition definition = (WeaponItemDefinition) weaponItem.getItemDefinition();
-        	attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+        	attackStrategy = definition.getAttackStrategyDefinition().create();
             setAmmo(definition.getMagazineSize());
         }
         

@@ -14,11 +14,12 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 @Getter
 public class Camera {
-	private double scalingFactor = 0.5;
+	private double scalingFactor = 0.3;
 	private volatile Vector3D pos;
 	private double width;
 	private double height;
 	private volatile AffineTransform camTransform;
+	private double renderScale;
 	
 	private GameGLPanel gameGLPanel;
 	private Entity followed;
@@ -29,6 +30,8 @@ public class Camera {
 		this.height = h;
 		this.gameGLPanel = gameGLPanel;
 		this.followed = followed;
+		
+		this.renderScale = 1;
 		calculateTransform();
 
 	}
@@ -76,8 +79,8 @@ public class Camera {
 	}
 	
 	public float[] getViewMatrix() {
-	    float sx = (float)(1.0 / scalingFactor);
-	    float sy = (float)(1.0 / scalingFactor);
+	    float sx = (float)(1.0 / scalingFactor * renderScale);
+	    float sy = (float)(1.0 / scalingFactor * renderScale);
 
 	    float tx = (float)(-pos.getX()-width/2);
 	    float ty = (float)(-pos.getY()-height/2);

@@ -33,7 +33,7 @@ public abstract class GameObject implements GameDrawable{
 		pos = new Vector3D();
 		hitbox = new Rectangle();
 		GameController.getInstance().getGamePanel().addDrawable(this);
-		GameController.getInstance().getGameGLPanel().getRenderer().addDrawable(this);
+		GameController.getInstance().addDrawable(this);
 	}
 
     public void setColorCorrection(SpriteColorCorrection color) {
@@ -70,12 +70,14 @@ public abstract class GameObject implements GameDrawable{
 	public double getDrawnHeight() {
 		return spriteSheet.getTileHeight();
 	}
+	
+	public double getZOrder() {
+		return getDrawnHeight()/2 + getPos().getY() + getPos().getZ() * 100000;
+	}
 		
 	@Override
 	public int compareTo(GameObject gameObject) {
-		if(getPos().getZ() == gameObject.getPos().getZ())
-			return (int)Math.signum(getPos().getY() + getDrawnHeight()/2 - gameObject.getPos().getY() - gameObject.getDrawnHeight()/2);
-		else
-			return (int)Math.signum(getPos().getZ() - gameObject.getPos().getZ());
+		return 
+				(int)Math.signum(getZOrder() - gameObject.getZOrder());
 	}
 }

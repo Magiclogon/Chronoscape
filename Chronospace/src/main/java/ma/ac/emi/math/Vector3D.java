@@ -57,6 +57,7 @@ public class Vector3D {
 	}
 
 	public Vector3D normalize() {
+		if(norm() == 0) return new Vector3D();
 		return new Vector3D(this.getX() / norm(), this.getY() / norm(), this.getZ() / norm());
 	}
 

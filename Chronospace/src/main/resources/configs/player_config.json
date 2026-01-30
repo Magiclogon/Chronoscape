@@ -1,0 +1,16 @@
+{
+  "pseudoname": "player",
+  "money": 10000.0,
+
+  "baseHP": 100.0,
+  "baseHPMax": 100.0,
+  "baseSpeed": 200,
+  "baseStrength": 10.0,
+  "regenerationSpeed": 0.8,
+  
+  "postProcessingDetails": {
+  	"colorCorrection": {
+  		"value": 0.5
+  	}
+  }
+}

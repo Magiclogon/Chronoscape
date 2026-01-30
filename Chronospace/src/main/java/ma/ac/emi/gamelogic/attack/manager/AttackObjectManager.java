@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.world.World;
@@ -40,6 +41,7 @@ public class AttackObjectManager {
         copy.forEach((object) -> {
         	if(!(object.isActive())) {
         		object.onDesactivate();
+        		GameController.getInstance().removeDrawable(object);
         	}
         });
         

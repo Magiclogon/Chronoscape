@@ -14,6 +14,7 @@ import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
@@ -22,6 +23,7 @@ import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
+import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -281,5 +283,25 @@ public class GameController implements Runnable {
 	public void addDifficultyObserver(DifficultyObserver observer) {
 		this.difficultyObservers.add(observer);
 		if(difficulty != null) notifyDifficultyObservers();
+	}
+
+	public void removeDrawable(GameObject object) {
+		this.gameGLPanel.getRenderer().removeDrawable(object);
+	}
+
+	public void addDrawable(GameObject object) {
+		this.gameGLPanel.getRenderer().addDrawable(object);
+	}
+	
+	public double getFPS() {
+		return gameGLPanel.getRenderer().getFPS();
+	}
+	
+	public void addLightObject(LightObject lightObject) {
+		getWorldManager().getCurrentWorld().addLightObject(lightObject);
+	}
+	
+	public void removeLightObject(LightObject lightObject) {
+		getWorldManager().getCurrentWorld().removeLightObject(lightObject);
 	}
 }

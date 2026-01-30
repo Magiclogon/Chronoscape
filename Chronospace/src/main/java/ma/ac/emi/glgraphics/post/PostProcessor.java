@@ -15,8 +15,9 @@ public class PostProcessor {
     private final List<PostEffect> effects = new ArrayList<>();
     private int currentWidth, currentHeight;
     private int bloomDownscale = 2; 
+    private float renderScale;
     
-    public PostProcessor(GL3 gl, int width, int height) {
+    public PostProcessor(GL3 gl, int width, int height, float renderScale) {
         this.currentWidth = width;
         this.currentHeight = height;
         
@@ -26,11 +27,15 @@ public class PostProcessor {
         this.bloomFboA = new Framebuffer();
         this.bloomFboB = new Framebuffer();
         
-        this.sceneFBO.init(gl, width, height);
-        this.fboA.init(gl, width, height);
-        this.fboB.init(gl, width, height);
+        this.sceneFBO.init(gl, width, height, true);
+        this.fboA.init(gl, width, height, true);
+        this.fboB.init(gl, width, height, true);
+        bloomFboA.init(gl, width / bloomDownscale, height / bloomDownscale, false);
+        bloomFboB.init(gl, width / bloomDownscale, height / bloomDownscale, false);
         
         this.quad = new FullscreenQuad(gl);
+        
+        this.renderScale = renderScale;
     }
     
     public void setBloomDownscale(int factor) {
@@ -69,8 +74,6 @@ public class PostProcessor {
                 destination = bloomFboB;
                 renderWidth = currentWidth / bloomDownscale;
                 renderHeight = currentHeight / bloomDownscale;
-                bloomFboA.init(gl, renderWidth, renderHeight);
-                bloomFboB.init(gl, renderWidth, renderHeight);
             } else if (effect instanceof BloomCombineEffect) {
                 inBloomSection = false;
                 source = fboA;
@@ -94,7 +97,7 @@ public class PostProcessor {
         
         // Final pass to screen
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
-        gl.glViewport(0, 0, currentWidth, currentHeight);
+        gl.glViewport(0, 0, (int)(currentWidth/renderScale), (int)(currentHeight/renderScale));
         
         if (!effects.isEmpty()) {
             effects.get(effects.size() - 1).apply(gl, currentInputTexture, quad);
@@ -114,15 +117,15 @@ public class PostProcessor {
         return sceneFBO.getTextureId();
     }
     
-    public void resize(GL3 gl, int w, int h) {
-        this.currentWidth = w;
-        this.currentHeight = h;
+    public void resize(GL3 gl, int width, int height) {
+        this.currentWidth = width;
+        this.currentHeight = height;
         
-        sceneFBO.init(gl, w, h);
-        fboA.init(gl, w, h);
-        fboB.init(gl, w, h);
-        bloomFboA.init(gl, w / bloomDownscale, h / bloomDownscale);
-        bloomFboB.init(gl, w / bloomDownscale, h / bloomDownscale);
+        this.sceneFBO.init(gl, width, height, true);
+        this.fboA.init(gl, width, height, true);
+        this.fboB.init(gl, width, height, true);
+        bloomFboA.init(gl, width / bloomDownscale, height / bloomDownscale, false);
+        bloomFboB.init(gl, width / bloomDownscale, height / bloomDownscale, false);
     }
     
     public void dispose(GL3 gl) {

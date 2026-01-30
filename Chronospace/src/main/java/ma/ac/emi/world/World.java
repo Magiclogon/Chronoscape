@@ -20,6 +20,8 @@ import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.lighting.LightObject;
+import ma.ac.emi.glgraphics.lighting.LightObjectManager;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -33,7 +35,7 @@ public class World extends GameObject{
 	private final CollisionManager collisionManager;
 	
 	public World(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
-		context = new WorldContext(width, height, specieFactory, tileManager);
+		context = new WorldContext(width, height, specieFactory, tileManager, new LightObjectManager());
 		
 		initializeManagers();
 
@@ -147,8 +149,9 @@ public class World extends GameObject{
 		}
 		
 		context.getPickableManager().update(step);
-		// Update managers
 		context.getAttackObjectManager().update(step);
+		context.getLightObjectManager().update(step);
+		
 		collisionManager.handleCollisions(step);
 	}
 
@@ -227,10 +230,19 @@ public class World extends GameObject{
 		return context.getVoidColor();
 	}
 
+	public void addLightObject(LightObject lightObject) {
+		context.addLightObject(lightObject);
+	}
+	
+	public void removeLightObject(LightObject lightObject) {
+		context.removeLightObject(lightObject);
+	}
+
 	@Override
 	public double getDrawnHeight() {
 		return context.getWorldHeight()*GamePanel.TILE_SIZE;
 	}
+
 
 	
 }

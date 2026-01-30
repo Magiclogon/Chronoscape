@@ -99,7 +99,7 @@ public class Projectile extends AttackObject{
 
     	        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
     	        
-    			glGraphics.drawSprite(gl, texture, model);
+    			glGraphics.drawSprite(gl, texture, model, getLightingStrategy(), getColorCorrection());
     			
     		}
     	}

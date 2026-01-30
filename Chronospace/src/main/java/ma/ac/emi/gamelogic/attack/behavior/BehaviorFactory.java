@@ -37,6 +37,19 @@ public class BehaviorFactory {
                         json.get("ageMax").getAsDouble(),
                         json.get("isOneTime").getAsBoolean()
                 );
+            case "light_spawn":
+            	return new LightSpawnBehaviorDefinition(
+            			json.get("count").getAsInt(),
+            			json.get("radius").getAsDouble(),
+            			json.get("lightRadius").getAsDouble(),
+            			json.get("ageMax").getAsDouble(),
+            			json.get("intensity").getAsDouble()
+            			);
+            case "light":
+            	return new LightBehaviorDefinition(
+            			json.get("lightRadius").getAsDouble(),
+            			json.get("intensity").getAsDouble()
+            			);
 
             default:
                 throw new IllegalArgumentException("Unknown behavior type: " + type);

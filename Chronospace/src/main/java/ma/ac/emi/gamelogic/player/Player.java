@@ -13,13 +13,10 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
-import ma.ac.emi.fx.Frame;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
-import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
-import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -110,13 +107,18 @@ public class Player extends LivingEntity {
 		baseHPMax = 100;
 		baseSpeed = 200;
 
-		resetBaseStats();
 		hp = 100;
 		money = 10000;
 		weaponIndex = 0;
 		
 		weaponXOffset = 9;
 		weaponYOffset = 5;
+		
+		PlayerConfig config = PlayerConfigLoader.load("/configs/player_config.json");
+		applyBaseStats(config);
+		
+		setBaseColorCorrection(config.colorCorrection);
+		setLightingStrategy(config.lightingStrategy);
 		
 		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("rpg7");
 		WeaponItem fists = new WeaponItem(fistsDef);
@@ -133,17 +135,34 @@ public class Player extends LivingEntity {
         
         
 	}
+	
+	public void applyBaseStats(PlayerConfig cfg) {
+	    this.pseudoname = cfg.pseudoname;
+	    this.money = cfg.money;
+
+	    this.baseHP = cfg.baseHP;
+	    this.baseHPMax = cfg.baseHPMax;
+	    this.baseSpeed = cfg.baseSpeed;
+	    this.baseStrength = cfg.baseStrength;
+	    this.regenerationSpeed = cfg.regenerationSpeed;
+	    
+	    // Initialize current stats from base stats
+	    resetBaseStats();
+	}
+
 
 	public void resetBaseStats() {
-		hpMax = baseHPMax;
-		speed = baseSpeed;
+		this.hpMax = baseHPMax;
+	    this.hp = baseHP;
+	    this.speed = baseSpeed;
+	    this.strength = baseStrength;
 	}
 	
 	public void initWeapons() {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
 			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
-			GameController.getInstance().getGamePanel().removeDrawable(weapon);
+			GameController.getInstance().removeDrawable(weapon);
 
 			weapon.setAttackObjectManager(attackObjectManager);
 			weapon.snapTo(this);
@@ -155,7 +174,7 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
-		velocity.init();		
+		velocity.init();
 		
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
@@ -191,8 +210,7 @@ public class Player extends LivingEntity {
 			velocity.setX(1);
 		}
 		
-		
-		if(velocity.norm() != 0) velocity = velocity.normalize().mult(speed);
+		velocity = velocity.normalize().mult(speed);
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {

@@ -19,8 +19,13 @@ public class ProjectileFactory {
         projectile.setVelocity(dir.mult(def.getBaseSpeed()));
         projectile.setHitbox(new Rectangle(def.getBoundWidth(), def.getBoundHeight()));
         
-        def.getBehaviorDefinitions().forEach(b -> projectile.addBehavior(b.create()));
+        def.getBehaviorDefinitions().forEach(b -> {
+        	projectile.addBehavior(b.create());
+        });
         projectile.setSprite(AssetsLoader.getSprite(def.getSpritePath()));
+        
+        projectile.setBaseColorCorrection(def.getColorCorrection());
+        projectile.setLightingStrategy(def.getLightingStrategy());
         projectile.init();
         
 	    return projectile;

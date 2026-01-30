@@ -26,7 +26,7 @@ public class LightingSystem {
     
     public LightingSystem(GL3 gl, int width, int height) {
         lightFBO = new Framebuffer();
-        lightFBO.init(gl, width, height);
+        lightFBO.init(gl, width, height, false);
         
         // Shader for rendering individual lights
         lightShader = Shader.load(gl, "post.vert", "light.frag");
@@ -113,7 +113,7 @@ public class LightingSystem {
     }
     
     public void resize(GL3 gl, int width, int height) {
-        lightFBO.init(gl, width, height);
+        lightFBO.init(gl, width, height, false);
     }
     
     public void dispose(GL3 gl) {

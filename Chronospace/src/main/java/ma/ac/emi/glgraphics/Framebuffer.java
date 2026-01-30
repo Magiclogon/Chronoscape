@@ -7,8 +7,13 @@ public class Framebuffer {
     private int fboId = 0;
     private int textureId = 0;
     private int rboId = 0;
+    
+    private int width, height;
 
-    public void init(GL3 gl, int width, int height) {
+    public void init(GL3 gl, int width, int height, boolean isScene) {
+    	this.width = width;
+    	this.height = height;
+    	
         dispose(gl);
         int[] bufs = new int[1];
         gl.glGenFramebuffers(1, bufs, 0);
@@ -23,8 +28,15 @@ public class Framebuffer {
         gl.glTexImage2D(GL3.GL_TEXTURE_2D, 0, GL3.GL_RGBA16F, width, height, 0, GL3.GL_RGBA, GL3.GL_FLOAT, null);
         
         // Use Linear filtering for "free" extra blur during downscaling
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
-        gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+        if(isScene) {
+        	gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_NEAREST);
+        	gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_NEAREST);
+
+        }else {
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MIN_FILTER, GL3.GL_LINEAR);
+            gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_MAG_FILTER, GL3.GL_LINEAR);
+        }
+
         gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_S, GL3.GL_CLAMP_TO_EDGE);  // Add this
         gl.glTexParameteri(GL3.GL_TEXTURE_2D, GL3.GL_TEXTURE_WRAP_T, GL3.GL_CLAMP_TO_EDGE);
         
@@ -48,4 +60,11 @@ public class Framebuffer {
         if (rboId != 0) gl.glDeleteRenderbuffers(1, new int[]{rboId}, 0);
         fboId = textureId = rboId = 0;
     }
+
+	public int getWidth() {
+		return width;
+	}
+	public int getHeight() {
+		return height;
+	}
 }
