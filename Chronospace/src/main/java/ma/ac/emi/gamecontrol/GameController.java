@@ -19,6 +19,7 @@ import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
 import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
@@ -89,7 +90,8 @@ public class GameController implements Runnable {
         gameUIPanel = new GameUIPanel();
         
         gameGLPanel = new GameGLPanel();
-
+        
+        window.showGame(gameGLPanel, gameUIPanel);
         showMainMenu();
     }
 
@@ -146,6 +148,7 @@ public class GameController implements Runnable {
     public void showShop() {
     	state = GameState.SHOP;
     	shopManager.init();
+    	particleSystem.init();
     	    	
     	SwingUtilities.invokeLater(() -> {
         	System.out.println("showing shop..");
@@ -197,8 +200,10 @@ public class GameController implements Runnable {
 
 
 	public void restartGame() {
-		gamePanel.removeAllDrawables();
-		gamePanel.addDrawable(Player.getInstance());
+		removeAllDrawables();
+        particleSystem.init();
+
+		addDrawable(Player.getInstance());
 		Player.getInstance().setDrawn(true);
 		Player.getInstance().init();
         shopManager = new ShopManager(Player.getInstance());
@@ -207,26 +212,25 @@ public class GameController implements Runnable {
 		startGame();
 	}
 
-
-    public void startGame() {
+	public void startGame() {
         state = GameState.PLAYING;
 
         soundManager.stopAll();
         
         World world = worldManager.getCurrentWorld();
         world.getPickableManager().init();
-    	particleSystem.init();
 
         camera = new Camera(new Vector3D(), 640, 480, gameGLPanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
+        camera.setRenderScale(gameGLPanel.getRenderer().getRenderScale());
         gamePanel.setCamera(camera);
         gameGLPanel.setCamera(camera);
         
         KeyHandler.getInstance().reset();
         MouseHandler.getInstance().setCamera(camera);
 
-        window.showGame(gameGLPanel, gameUIPanel);
         showGame();
+        
         System.out.println("Starting game");
         startGameThread();
     }
@@ -314,6 +318,10 @@ public class GameController implements Runnable {
 
 	public void addDrawable(GameObject object) {
 		this.gameGLPanel.getRenderer().addDrawable(object);
+	}
+	
+    private void removeAllDrawables() {
+		gameGLPanel.getRenderer().removeAllDrawables();
 	}
 	
 	public double getFPS() {

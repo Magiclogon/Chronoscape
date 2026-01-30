@@ -67,6 +67,9 @@ public class ShopManager {
     		if(item == null || availableItems.contains(item.getItem())) continue;
     		if(!item.isStackable() && item.isBought()) continue;
     		
+    		if(item instanceof WeaponItemDefinition weap) {
+    			System.out.println(weap.getAttackStrategyDefinition());
+    		}
     		availableItems.add(item.getItem());
     		i++;
     	}

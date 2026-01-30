@@ -7,6 +7,7 @@ import com.jogamp.opengl.GL3;
 public class SpriteQuad {
 
     public static int VAO;
+    public static int VBO;
 
     public static void init(GL3 gl) {
         float[] vertices = {
@@ -23,7 +24,7 @@ public class SpriteQuad {
         gl.glBindVertexArray(VAO);
 
         gl.glGenBuffers(1, tmp, 0);
-        int VBO = tmp[0];
+        VBO = tmp[0];
         gl.glBindBuffer(GL3.GL_ARRAY_BUFFER, VBO);
 
         gl.glBufferData(
@@ -43,5 +44,11 @@ public class SpriteQuad {
 
         gl.glBindVertexArray(0);
     }
+    
+    public static void dispose(GL3 gl) {
+        gl.glDeleteVertexArrays(1, new int[]{VAO}, 0);
+        gl.glDeleteBuffers(1, new int[]{VBO}, 0);
+		
+	}
 }
 

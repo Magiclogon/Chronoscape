@@ -9,10 +9,10 @@ public class ParticleAnimation {
     public final Sprite[] loopFrames;
     public final Sprite[] finishFrames;
     
-    // Cached GL textures
     private Texture[] initTextures;
     private Texture[] loopTextures;
     private Texture[] finishTextures;
+    private volatile boolean texturesInitialized = false;
     
     public ParticleAnimation(Sprite[] initFrames, Sprite[] loopFrames, Sprite[] finishFrames) {
         this.initFrames = initFrames;
@@ -20,37 +20,40 @@ public class ParticleAnimation {
         this.finishFrames = finishFrames;
     }
     
-    /**
-     * Initialize all textures at once (call this once during loading)
-     */
     public void initializeTextures(GL3 gl) {
-        if (initTextures == null) {
-            initTextures = new Texture[initFrames.length];
-            for (int i = 0; i < initFrames.length; i++) {
-                initTextures[i] = initFrames[i].getTexture(gl);
-            }
+        if (texturesInitialized) return;
+        
+        initTextures = new Texture[initFrames.length];
+        for (int i = 0; i < initFrames.length; i++) {
+            initTextures[i] = initFrames[i].getTexture(gl);
         }
         
-        if (loopTextures == null) {
-            loopTextures = new Texture[loopFrames.length];
-            for (int i = 0; i < loopFrames.length; i++) {
-                loopTextures[i] = loopFrames[i].getTexture(gl);
-            }
+        loopTextures = new Texture[loopFrames.length];
+        for (int i = 0; i < loopFrames.length; i++) {
+            loopTextures[i] = loopFrames[i].getTexture(gl);
         }
         
-        if (finishTextures == null) {
-            finishTextures = new Texture[finishFrames.length];
-            for (int i = 0; i < finishFrames.length; i++) {
-                finishTextures[i] = finishFrames[i].getTexture(gl);
-            }
+        finishTextures = new Texture[finishFrames.length];
+        for (int i = 0; i < finishFrames.length; i++) {
+            finishTextures[i] = finishFrames[i].getTexture(gl);
         }
+        
+        texturesInitialized = true;
     }
     
     public Texture getTexture(ParticlePhase phase, int frameIndex) {
+        // Safety check - if textures not initialized, return null
+        if (!texturesInitialized) {
+            return null;
+        }
+        
         return switch (phase) {
-            case INIT -> initTextures[Math.min(frameIndex, initTextures.length - 1)];
-            case LOOP -> loopTextures[frameIndex % loopTextures.length];
-            case FINISH -> finishTextures[Math.min(frameIndex, finishTextures.length - 1)];
+            case INIT -> initTextures != null && initTextures.length > 0 ? 
+                        initTextures[Math.min(frameIndex, initTextures.length - 1)] : null;
+            case LOOP -> loopTextures != null && loopTextures.length > 0 ? 
+                        loopTextures[frameIndex % loopTextures.length] : null;
+            case FINISH -> finishTextures != null && finishTextures.length > 0 ? 
+                          finishTextures[Math.min(frameIndex, finishTextures.length - 1)] : null;
         };
     }
     
@@ -60,5 +63,37 @@ public class ParticleAnimation {
             case LOOP -> loopFrames[frameIndex % loopFrames.length];
             case FINISH -> finishFrames[Math.min(frameIndex, finishFrames.length - 1)];
         };
+    }
+    
+    public boolean areTexturesInitialized() {
+        return texturesInitialized;
+    }
+    
+    /**
+     * Dispose of all textures
+     */
+    public void dispose(GL3 gl) {
+        if (initTextures != null) {
+            for (Texture tex : initTextures) {
+                if (tex != null) tex.dispose(gl);
+            }
+            initTextures = null;
+        }
+        
+        if (loopTextures != null) {
+            for (Texture tex : loopTextures) {
+                if (tex != null) tex.dispose(gl);
+            }
+            loopTextures = null;
+        }
+        
+        if (finishTextures != null) {
+            for (Texture tex : finishTextures) {
+                if (tex != null) tex.dispose(gl);
+            }
+            finishTextures = null;
+        }
+        
+        texturesInitialized = false;
     }
 }

@@ -32,11 +32,12 @@ public class ParticleSystem {
     public ParticleSystem() {
         definitions = new HashMap<>();
         batchCache = new HashMap<>();
-        zLayersSnapshot = new HashMap<>();
-        init();
-        
+        zLayersSnapshot = new HashMap<>();        
         emitterManager = new ParticleEmitterManager();
         loader = new ParticleLoader();
+        
+        init();
+
     }
     
     public void init() {
@@ -45,6 +46,13 @@ public class ParticleSystem {
         }
         lastSpawnTimes = new HashMap<>();
         activeEffects = new ArrayList<>();
+        emitterManager.clear();
+        
+        for(ParticleDefinition def: definitions.values()) {
+            ParticleAnimationCache.get(def);
+
+        }
+        System.out.println("In particle system init(), map size: " + definitions.size());
     }
     
     public void loadFromJson(String filePath) {
@@ -77,7 +85,6 @@ public class ParticleSystem {
         }
         
         emitterManager.update(step);
-        
         // Update z-layers snapshot
         updateZLayersSnapshot();
     }

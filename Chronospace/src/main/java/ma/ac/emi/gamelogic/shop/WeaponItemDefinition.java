@@ -57,6 +57,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.relativeProjectilePosY = other.relativeProjectilePosY;
         
         this.animationDetails = other.animationDetails;
+        this.attackStrategyDefinition = other.attackStrategyDefinition;
     }
     
     

@@ -29,5 +29,7 @@ public class BloomExtractEffect implements PostEffect {
     }
 
     @Override
-    public void dispose(GL3 gl) { }
+    public void dispose(GL3 gl) {
+    	extractShader.dispose(gl);
+    }
 }

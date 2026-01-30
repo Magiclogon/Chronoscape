@@ -34,7 +34,8 @@ public class SpriteSheet {
 
         if (cache.containsKey(key))
             return cache.get(key);
-
+        
+        if(sheet == null) return new Sprite();
         Sprite sprite = sheet.getSubimage(
                 col * tileWidth,
                 row * tileHeight,

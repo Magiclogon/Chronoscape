@@ -18,6 +18,8 @@ import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.particle.ParticleEmitter;
+import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.lighting.Light;
@@ -133,6 +135,8 @@ public class Player extends LivingEntity {
         
         setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
         
+        dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
+		dustEmitter.setStrategy(new UndeterminedStrategy());
         
 	}
 	
