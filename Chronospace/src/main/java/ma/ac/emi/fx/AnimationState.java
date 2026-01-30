@@ -15,6 +15,7 @@ public class AnimationState {
 	
 	private transient int currentFrameIndex;
 	private transient double timeTracker;
+	private transient double playSpeed;
 	
 	private Sprite defaultSprite;
 	private boolean doesLoop;
@@ -30,6 +31,7 @@ public class AnimationState {
 		this.timeTracker = 0;
 		this.doesLoop = true;
 		this.defaultSprite = defaultSprite;
+		this.playSpeed = 1;
 	}
 	
 	public void addFrame(Sprite sprite, double frameTime) {
@@ -53,7 +55,8 @@ public class AnimationState {
 			
 			if (!isLastFrame || doesLoop) {
 				currentFrameIndex = (currentFrameIndex + 1) % frames.size();
-				timeTracker = frames.get(currentFrameIndex).getFrameTime();
+				if(playSpeed > 0) timeTracker += frames.get(currentFrameIndex).getFrameTime()/playSpeed;
+
 			}
 		}
 	}
@@ -66,7 +69,6 @@ public class AnimationState {
 	}
 	
 	public boolean isAnimationDone() {
-		if(doesLoop) return false;
 		return currentFrameIndex == frames.size() - 1;
 	}
 	

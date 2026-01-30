@@ -21,6 +21,8 @@ public class Window extends JFrame {
     private GameOverPanel gameOverPanel;
     
     private final JLayeredPane gamePane;
+    
+    //private final GameGLPanel gameGLPanel;
 
     public Window() {
         layout = new CardLayout();
@@ -34,6 +36,8 @@ public class Window extends JFrame {
         gamePane = new JLayeredPane();
         shopUI = new ShopUI();
         gameOverPanel = new GameOverPanel();
+        
+        //gameGLPanel = new GameGLPanel();
 
         mainPanel.add(loadingScreen, "LOADING");
         mainPanel.add(mainMenu, "MENU");
@@ -51,6 +55,8 @@ public class Window extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
+        
+
     }
     
     public void refreshShop() {
@@ -62,17 +68,19 @@ public class Window extends JFrame {
         revalidate();
         repaint();
     }
+    
 
-    public void showGame(GamePanel gamePanel, GameUIPanel uiPanel) {
+    public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
     	gamePane.removeAll();
-        gamePanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+    	gamePane.setSize(getSize());
+        gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
         uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
         
         gamePane.addComponentListener(new ComponentListener() {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				gamePanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
+				gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
 		        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
 				
 			}
@@ -97,7 +105,7 @@ public class Window extends JFrame {
         	
         });
         
-        gamePane.add(gamePanel, Integer.valueOf(0));
+        gamePane.add(gameGLPanel, Integer.valueOf(0));
         gamePane.add(uiPanel, Integer.valueOf(1));
     }
 }

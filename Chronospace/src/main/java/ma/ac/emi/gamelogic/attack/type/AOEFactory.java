@@ -19,7 +19,7 @@ public class AOEFactory {
 	        throw new IllegalArgumentException("Unknown AOE id: " + id);
 	    }
 	
-	    return new AOE(pos, def, weapon);
+	    return new AOE(def, pos, weapon);
 	}
 
 }

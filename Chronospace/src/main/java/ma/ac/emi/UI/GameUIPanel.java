@@ -48,6 +48,12 @@ public class GameUIPanel extends JPanel {
 		drawMoney(g2, player, panelWidth, panelHeight);
 		drawWeaponSlots(g2, inventory, player.getWeaponIndex(), panelWidth, panelHeight);
 		drawMinimap(g2, player, panelWidth, panelHeight);
+		
+		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 24));
+		g2.setColor(GOLD_COLOR);
+		
+		String fps = "FPS: " + String.valueOf(GameController.getInstance().getFPS());
+		g2.drawString(fps, panelWidth-100, panelHeight-8);
 	}
 
 
@@ -166,7 +172,7 @@ public class GameUIPanel extends JPanel {
 			if (currentWorld == null) return;
 
 			TileManager tileManager = currentWorld.getTileManager();
-			BufferedImage mapImage = tileManager.getMapCache();
+			BufferedImage mapImage = tileManager.getMapCache().getSprite();
 			if (mapImage == null) return;
 
 			// Minimap Logic

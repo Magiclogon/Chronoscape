@@ -6,11 +6,15 @@ import java.util.concurrent.Semaphore;
 
 import javax.swing.*;
 
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLProfile;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
@@ -19,6 +23,7 @@ import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
+import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -48,6 +53,7 @@ public class GameController implements Runnable {
     private final Window window;
     private WorldManager worldManager;
     private GamePanel gamePanel;
+    private GameGLPanel gameGLPanel;
     private GameUIPanel gameUIPanel;
     private Camera camera;
     private Thread gameThread;
@@ -81,12 +87,10 @@ public class GameController implements Runnable {
 		
         gamePanel = new GamePanel();
         gameUIPanel = new GameUIPanel();
+        
+        gameGLPanel = new GameGLPanel();
 
-        Timer timer = new Timer(3000, e -> {
-            showMainMenu();
-        });
-        timer.setRepeats(false);
-        timer.start();
+        showMainMenu();
     }
 
     private void loadSounds() {
@@ -213,14 +217,15 @@ public class GameController implements Runnable {
         world.getPickableManager().init();
     	particleSystem.init();
 
-        camera = new Camera(new Vector3D(), 640, 480, gamePanel, world.getPlayer());
+        camera = new Camera(new Vector3D(), 640, 480, gameGLPanel, world.getPlayer());
         camera.snapTo(world.getPlayer());
         gamePanel.setCamera(camera);
+        gameGLPanel.setCamera(camera);
         
         KeyHandler.getInstance().reset();
         MouseHandler.getInstance().setCamera(camera);
 
-        window.showGame(gamePanel, gameUIPanel);
+        window.showGame(gameGLPanel, gameUIPanel);
         showGame();
         System.out.println("Starting game");
         startGameThread();
@@ -252,35 +257,27 @@ public class GameController implements Runnable {
             deltaTime = currentTime - latestTime;
             latestTime = currentTime;
 
-            try {
-                update.acquire();
+            if (state == GameState.PLAYING) {
+			    accumTime += deltaTime;
 
-                if (state == GameState.PLAYING) {
-                    accumTime += deltaTime;
-
-                    while (accumTime > SIM_STEP) {
-                        update(SIM_STEP / Math.pow(10, 9));
-                        accumTime -= SIM_STEP;
-                    }
-                } else {
-                    accumTime = 0;
-                }
-
-                draw.release();
-
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+			    while (accumTime > SIM_STEP) {
+			        update(SIM_STEP / Math.pow(10, 9));
+			        accumTime -= SIM_STEP;
+			    }
+			} else {
+			    accumTime = 0;
+			}
 
             SwingUtilities.invokeLater(() -> {
-                gamePanel.repaint();
+                //gamePanel.repaint();
+                //gameGLPanel.repaint();
                 gameUIPanel.repaint();
             });
 
             try {
                 // Small sleep to prevent CPU hogging
                 Thread.sleep(1);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e) { 
                 e.printStackTrace();
             }
         }
@@ -292,8 +289,8 @@ public class GameController implements Runnable {
         Player.getInstance().update(step);
 
         particleSystem.update(step);
-        gamePanel.update(step);
-        
+        //gamePanel.update(step);
+        gameGLPanel.update(step);
         GameTime.addTime(step);
     }
     
@@ -309,5 +306,25 @@ public class GameController implements Runnable {
 	public void addDifficultyObserver(DifficultyObserver observer) {
 		this.difficultyObservers.add(observer);
 		if(difficulty != null) notifyDifficultyObservers();
+	}
+
+	public void removeDrawable(GameObject object) {
+		this.gameGLPanel.getRenderer().removeDrawable(object);
+	}
+
+	public void addDrawable(GameObject object) {
+		this.gameGLPanel.getRenderer().addDrawable(object);
+	}
+	
+	public double getFPS() {
+		return gameGLPanel.getRenderer().getFPS();
+	}
+	
+	public void addLightObject(LightObject lightObject) {
+		getWorldManager().getCurrentWorld().addLightObject(lightObject);
+	}
+	
+	public void removeLightObject(LightObject lightObject) {
+		getWorldManager().getCurrentWorld().removeLightObject(lightObject);
 	}
 }

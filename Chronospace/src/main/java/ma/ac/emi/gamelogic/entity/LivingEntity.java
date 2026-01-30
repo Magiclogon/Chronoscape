@@ -9,6 +9,8 @@ import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.particle.ParticleEmitter;
+import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
@@ -40,8 +42,12 @@ public abstract class LivingEntity extends Entity {
 	
 	protected int weaponXOffset, weaponYOffset;
 	
+	protected ParticleEmitter dustEmitter;
+	
 	public LivingEntity() {
 		bound = new Rectangle();
+		dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
+		dustEmitter.setStrategy(new UndeterminedStrategy());
 	}
 	
 	@Override
@@ -52,6 +58,9 @@ public abstract class LivingEntity extends Entity {
 		
 		bound.x = (int) (getPos().getX());
 		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
+		
+		dustEmitter.setShouldEmit(!isIdle());
+		dustEmitter.setPos(getPos());
 	}
 	
 	@Override
@@ -64,7 +73,6 @@ public abstract class LivingEntity extends Entity {
 	
 	@Override
 	public void initStateMachine() {
-		// Create all animation states programmatically
 		for (String action : ACTIONS) {
 			for (String direction : DIRECTIONS) {
 				String stateName = action + "_" + direction;
@@ -74,15 +82,13 @@ public abstract class LivingEntity extends Entity {
 			}
 		}
 		
-		// Add transitions for running and stopping
 		addMovementTransitions(TRIGGER_RUN, "Idle", "Running");
 		addMovementTransitions(TRIGGER_STOP, "Running", "Idle");
 		addMovementTransitions(TRIGGER_DIE, "Idle", "Dying");
 		addMovementTransitions(TRIGGER_STOP, "Dying", "Idle");
-		// Add transitions for backing and stopping
+		
 		addBackingTransitions();
 		
-		// Add look direction transitions
 		addLookTransitions();
 		
 		stateMachine.setDefaultState("Idle_Right");
@@ -97,7 +103,6 @@ public abstract class LivingEntity extends Entity {
 	}
 	
 	private void addBackingTransitions() {
-		// Backing reverses the direction
 		stateMachine.addStateTransfer(TRIGGER_BACK, "Idle_Left", "Backing_Right");
 		stateMachine.addStateTransfer(TRIGGER_STOP, "Backing_Right", "Idle_Left");
 		stateMachine.addStateTransfer(TRIGGER_BACK, "Idle_Right", "Backing_Left");
@@ -143,15 +148,12 @@ public abstract class LivingEntity extends Entity {
 		DirectionInfo directionInfo = determineDirection();
 		boolean wasMoving = isRunning() || isBacking();
 		
-		// Stop movement if currently moving
 		if (wasMoving) {
 			stateMachine.trigger(TRIGGER_STOP);
 		}
 		
-		// Update facing direction
 		updateFacingDirection(directionInfo.direction);
 		
-		// Resume movement if was moving
 		if (wasMoving) {
 			Vector3D rightVect = new Vector3D(1, 0, 0);
 			boolean movingForward = rightVect.mult(getVelocity().dotP(rightVect)).dotP(dir) >= 0;
@@ -191,7 +193,7 @@ public abstract class LivingEntity extends Entity {
 	}
 	
 	public void pointAt(Vector3D target) {
-        setDir(target.sub(getPos()).normalize());
+        setDir(target.sub(getPos().add(new Vector3D(this.weaponXOffset, this.weaponYOffset))).normalize());
     }
 	
 	private static class DirectionInfo {

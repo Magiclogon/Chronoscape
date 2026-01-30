@@ -57,11 +57,24 @@ public class Vector3D {
 	}
 
 	public Vector3D normalize() {
+		if(norm() == 0) return new Vector3D();
 		return new Vector3D(this.getX() / norm(), this.getY() / norm(), this.getZ() / norm());
 	}
 
 	public double distance(Vector3D v) {
 		return (this.sub(v)).norm();
+	}
+	
+	public Vector3D rotateXY(double theta) {
+		return new Vector3D(
+				Math.cos(theta)*x - Math.sin(theta)*y,
+				Math.sin(theta)*x + Math.cos(theta)*y,
+				z
+			);
+	}
+	
+	public double getAngle() {
+		return Math.atan2(y, x);
 	}
 
 	public Vector3D applyTransform(AffineTransform transform) {
@@ -73,6 +86,11 @@ public class Vector3D {
 	
 	public static Vector3D lerp(Vector3D a, Vector3D b, double t) {
 		return a.add(b.sub(a).mult(t));
+	}
+	
+	public static Vector3D randomUnit2() {
+		double theta = Math.random() * 2 * Math.PI;
+		return new Vector3D(Math.cos(theta), Math.sin(theta));
 	}
 	
 	

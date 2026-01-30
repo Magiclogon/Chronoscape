@@ -1,20 +1,30 @@
 {
   "aoes": [
     {
-      "id": "explosion",
-      "sprite": "assets/effects/explosion.png",
-      "boundWidth": 100,
-      "boundHeight": 100,
+      "id": "explosion_aoe",
       "effectRate": 2.0,
-      "ageMax": 1.5
+      "ageMax": 2,
+      "animationDetails": {
+      	"spritePath": "aoes/explosion_aoe-Sheet.png",
+      	"spriteWidth": 128,
+      	"spriteHeight": 128,
+      	"initLength": 7,
+      	"loopLength": 1,
+      	"finishLength": 41
+      }
     },
     {
-      "id": "groundSlam",
-      "sprite": "assets/effects/ground_slam.png",
-      "boundWidth": 80,
-      "boundHeight": 80,
+      "id": "shockwave",
       "effectRate": 1.2,
-      "ageMax": 1.0
+      "ageMax": 1.0,
+      "animationDetails": {
+      	"spritePath": "aoes/shockwave-Sheet.png",
+      	"spriteWidth": 80,
+      	"spriteHeight": 80,
+      	"initLength": 9,
+      	"loopLength": 1,
+      	"finishLength": 1
+      }
     },
     {
       "id": "poisonCloud",

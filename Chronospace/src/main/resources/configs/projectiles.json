@@ -1,44 +1,170 @@
 {
-  "singleHit": [
-  	{
-  	  "id": "noneSingle",
-      "sprite": "assets/projectiles/none.png",
+  "projectiles": [
+    {
+      "id": "noneSingle",
+      "sprite": "projectiles/none_projectile.png",
       "speed": 800,
-      "width": 2,
-      "height": 2
-  	},
+      "width": 8,
+      "height": 8,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        }
+      ]
+    },
     {
       "id": "bullet",
-      "sprite": "assets/projectiles/bullet.png",
+      "sprite": "projectiles/bullet.png",
       "speed": 800,
-      "width": 4,
-      "height": 2
+      "width": 8,
+      "height": 8,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        },
+        {
+          "type": "light",
+          "lightRadius": 20,
+          "intensity": 1
+        }
+      ],
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.2,
+            "g": 1.0,
+            "b": 0.7
+          },
+          "brightness": 0.05,
+          "saturation": 1.4
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 0.5,
+          "color": {
+            "r": 1.0,
+            "g": 0.6,
+            "b": 0.2
+          }
+        }
+      }
     },
     {
       "id": "arrow",
       "sprite": "assets/projectiles/arrow.png",
       "speed": 700,
       "width": 3,
-      "height": 10
-    }
-  ],
+      "height": 10,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        }
+      ]
+    },
 
-  "aoe": [
     {
       "id": "rocket",
-      "sprite": "assets/projectiles/rocket.png",
+      "sprite": "projectiles/rocket.png",
       "speed": 400,
-      "width": 8,
-      "height": 8,
-      "aoeId": "explosion"
+      "width": 32,
+      "height": 32,
+      "behaviors": [
+        
+        {
+          "type": "particle_trail",
+          "particleId": "smoke1",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "smoke2",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "fire_trail",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "fire_trail2",
+          "emitterRadius": 10
+        },
+        {
+          "type": "particle_trail",
+          "particleId": "smoke2",
+          "emitterRadius": 5
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "fire1",
+          "count": 20,
+          "radius": 50,
+          "emitterRadius": 20,
+          "ageMax": 3.5,
+          "isOneTime": false
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "fire2",
+          "count": 10,
+          "radius": 50,
+          "emitterRadius": 10,
+          "ageMax": 3.5,
+          "isOneTime": false
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "explosion",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "light_spawn",
+          "count": 1,
+          "radius": 50,
+          "lightRadius": 100,
+          "ageMax": 5.5,
+          "intensity": 1
+        },
+        {
+          "type": "light",
+          "lightRadius": 50,
+          "intensity": 0.2
+        },
+        {
+          "type": "aoe_spawn",
+          "aoeId": "explosion_aoe",
+          "count": 1,
+          "radius": 80
+        }
+        
+      ]
     },
     {
       "id": "hammerShockwave",
-      "sprite": "assets/projectiles/hammer_wave.png",
-      "speed": 250,
-      "width": 20,
-      "height": 20,
-      "aoeId": "groundSlam"
+      "sprite": "projectiles/none_projectile.png",
+      "speed": 10,
+      "width": 8,
+      "height": 8,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        },
+        {
+          "type": "aoe_spawn",
+          "aoeId": "shockwave",
+          "count": 1,
+          "radius": 80
+        }
+      ]
     }
   ]
 }

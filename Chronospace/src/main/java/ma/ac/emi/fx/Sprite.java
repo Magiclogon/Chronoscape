@@ -5,13 +5,17 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.glgraphics.Texture;
 
 @Getter
 @Setter
 public class Sprite {
 	private BufferedImage sprite;
+	private Texture texture;
 	
 	public Sprite() {
 		//Load default image from assets
@@ -35,4 +39,20 @@ public class Sprite {
 	public Sprite getSubimage(int x, int y, int width, int height) {
 		return new Sprite(sprite.getSubimage(x, y, width, height));
 	}
+	
+
+    public Texture getTexture(GL3 gl) {
+        if (texture == null) {
+            texture = new Texture(gl, this);
+        }
+        return texture;
+    }
+    
+    public int getWidth() {
+    	return sprite.getWidth();
+    }
+    
+    public int getHeight() {
+    	return sprite.getHeight();
+    }
 }

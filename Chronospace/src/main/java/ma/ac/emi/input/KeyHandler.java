@@ -1,5 +1,7 @@
 package ma.ac.emi.input;
 
+import java.awt.Canvas;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;

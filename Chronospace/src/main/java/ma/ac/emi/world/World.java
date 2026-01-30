@@ -3,6 +3,8 @@ package ma.ac.emi.world;
 import java.awt.*;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
@@ -17,6 +19,9 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.lighting.LightObject;
+import ma.ac.emi.glgraphics.lighting.LightObjectManager;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -30,14 +35,15 @@ public class World extends GameObject{
 	private final CollisionManager collisionManager;
 	
 	public World(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
-		context = new WorldContext(width, height, specieFactory, tileManager);
+		context = new WorldContext(width, height, specieFactory, tileManager, new LightObjectManager());
 		
 		initializeManagers();
 
 		collisionManager = new CollisionManager(context);
 		
 		syncMapObstacles();
-
+		
+		getPos().setZ(-2);
 	}
 
 	private void initializeManagers() {
@@ -143,8 +149,9 @@ public class World extends GameObject{
 		}
 		
 		context.getPickableManager().update(step);
-		// Update managers
 		context.getAttackObjectManager().update(step);
+		context.getLightObjectManager().update(step);
+		
 		collisionManager.handleCollisions(step);
 	}
 
@@ -173,6 +180,13 @@ public class World extends GameObject{
 	public void draw(Graphics g) {
 		if (context.getTileManager() != null) {
 			context.getTileManager().draw(g);
+		}
+	}
+	
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		if (context.getTileManager() != null) {
+			context.getTileManager().drawGL(gl, glGraphics);
 		}
 	}
 
@@ -215,4 +229,20 @@ public class World extends GameObject{
 	public Color getVoidColor() {
 		return context.getVoidColor();
 	}
+
+	public void addLightObject(LightObject lightObject) {
+		context.addLightObject(lightObject);
+	}
+	
+	public void removeLightObject(LightObject lightObject) {
+		context.removeLightObject(lightObject);
+	}
+
+	@Override
+	public double getDrawnHeight() {
+		return context.getWorldHeight()*GamePanel.TILE_SIZE;
+	}
+
+
+	
 }

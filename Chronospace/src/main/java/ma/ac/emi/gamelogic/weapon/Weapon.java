@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,13 +19,16 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.input.MouseHandler;
+import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
 public class Weapon extends Entity{
-	private static final String[] ACTIONS = {"Idle", "Attacking", "Reload_Init", "Reload", "Reload_Finish", "Switching"};
+	private static final String[] ACTIONS = {"Idle", "Attacking_Init", "Attacking", "Reload_Init", "Reload", "Reload_Finish", "Switching"};
 	private static final String[] DIRECTIONS = {"Left", "Right"};
 	
 	private static final String TRIGGER_STOP = "Stop";
@@ -39,6 +44,8 @@ public class Weapon extends Entity{
     private double tssr;
     private AttackObjectManager attackObjectManager;
     
+    private Vector3D relativeProjectilePos;
+    
     protected AttackStrategy attackStrategy;
         
     public Weapon(WeaponItem weaponItem) {
@@ -50,10 +57,11 @@ public class Weapon extends Entity{
         
         if(weaponItem != null) {
         	WeaponItemDefinition definition = (WeaponItemDefinition) weaponItem.getItemDefinition();
-        	attackStrategy = WeaponStrategies.STRATEGIES.get(definition.getAttackStrategy());
+        	attackStrategy = definition.getAttackStrategyDefinition().create();
             setAmmo(definition.getMagazineSize());
         }
         
+        this.relativeProjectilePos = new Vector3D();
         setupAnimations();
     }
     
@@ -63,12 +71,19 @@ public class Weapon extends Entity{
 			for (String direction : DIRECTIONS) {
 				String stateName = action + "_" + direction;
 				AnimationState state = new AnimationState(stateName);
-				if(action.equals("Reload_Init") || action.equals("Reload_Finish") || action.equals("Switching")) state.setDoesLoop(false);
+				if(
+						action.equals("Attacking_Init") ||
+						action.equals("Reload_Init") || 
+						action.equals("Reload_Finish") || 
+						action.equals("Switching")
+					) 
+					state.setDoesLoop(false);
 				stateMachine.addAnimationState(state);
 			}
 		}
 		
-		addTransitions(TRIGGER_ATTACK, "Idle", "Attacking");
+		addTransitions(TRIGGER_ATTACK, "Idle", "Attacking_Init");
+		addTransitions(TRIGGER_ATTACK, "Attacking_Init", "Attacking");
 		addTransitions(TRIGGER_STOP, "Attacking", "Idle");
 		addTransitions(TRIGGER_RELOAD, "Idle", "Reload_Init");
 		addTransitions(TRIGGER_RELOAD, "Reload_Init", "Reload");
@@ -101,11 +116,14 @@ public class Weapon extends Entity{
 	@Override
 	public void setupAnimations() {
 		WeaponItemDefinition definition = (WeaponItemDefinition)(getWeaponItem().getItemDefinition());
-		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(definition.getSpriteSheetPath()), definition.getSpriteWidth(), definition.getSpriteHeight());
+		WeaponItemDefinition.WeaponAnimationDetails animationDetails = definition.getAnimationDetails();
+		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.spriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
 		if(spriteSheet.getSheet() == null) return;
 		
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
+		AnimationState attacking_init_left = stateMachine.getAnimationStateByTitle("Attacking_Init_Left");
+		AnimationState attacking_init_right = stateMachine.getAnimationStateByTitle("Attacking_Init_Right");
 		AnimationState attacking_left = stateMachine.getAnimationStateByTitle("Attacking_Left");
 		AnimationState attacking_right = stateMachine.getAnimationStateByTitle("Attacking_Right");
 		AnimationState reload_init_left = stateMachine.getAnimationStateByTitle("Reload_Init_Left");
@@ -117,57 +135,71 @@ public class Weapon extends Entity{
 		AnimationState switching_left = stateMachine.getAnimationStateByTitle("Switching_Left");
 		AnimationState switching_right = stateMachine.getAnimationStateByTitle("Switching_Right");
 
-		
-		for(Sprite sprite : spriteSheet.getAnimationRow(0, 1)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
 			idle_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, 1)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
 			idle_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(1, 8)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
+			attacking_init_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
+			attacking_init_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
 			attacking_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, 8)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
 			attacking_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(2, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
 			reload_init_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
 			reload_init_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(3, 4)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
 			reload_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(8, 4)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
 			reload_right.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(4, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
 			reload_finish_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(9, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
 			reload_finish_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(4, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
 			switching_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(9, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
 			switching_right.addFrame(sprite);
 		}
+		
 		
 	}
     
     public void attack() {
         if (getAttackStrategy() != null) {
-            getAttackStrategy().execute(this);
-            if(isInState("Idle")) stateMachine.trigger(TRIGGER_ATTACK);
+            if(isInState("Idle")) {
+            	stateMachine.trigger(TRIGGER_ATTACK);
+            }
+        	if(isInState("Attacking")) getAttackStrategy().execute(this);
+
         }
     }
     
 
 	public void stopAttacking() {
-		if(isInState("Attacking")) stateMachine.trigger(TRIGGER_STOP);
+		if(isInState("Attacking_Init")) {
+			stateMachine.trigger(TRIGGER_ATTACK);
+			stateMachine.trigger(TRIGGER_STOP);
+		}
+		else if(isInState("Attacking")) stateMachine.trigger(TRIGGER_STOP);
+
 	}
     
     public void draw(Graphics g) {
@@ -180,6 +212,7 @@ public class Weapon extends Entity{
         if(stateMachine.getCurrentAnimationState() != null) {
         	BufferedImage sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite().getSprite();
         	g.drawImage(sprite, (int)(getBearer().getWeaponXOffset()-sprite.getWidth()/2), (int)(-sprite.getHeight()/2), null);
+        	g.drawString(String.valueOf(stateMachine.getCurrentAnimationState().getCurrentFrameIndex()), 0, - 30);
         }else {
         	g.setColor(Color.gray);
         	g.fillRect(0, 0, 16, 8);
@@ -187,7 +220,43 @@ public class Weapon extends Entity{
         g2d.setTransform(oldTransform);
     }
     
+    @Override
+    public void drawGL(GL3 gl, GLGraphics glGraphics) {
+        // --- 1) Determine sprite ---
+        Sprite sprite;
+        if (stateMachine.getCurrentAnimationState() != null) {
+            sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite();
+        } else {
+            sprite = AssetsLoader.getSprite("default_weapon.png");
+        }
+        Texture texture = sprite.getTexture(gl);
+
+        float[] model = new float[16];
+        Matrix4.identity(model);
+
+        float px = (float) getBearer().getPos().getX();
+        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset());
+        Matrix4.translate(model, px, py, 0f);
+
+        double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
+        Matrix4.rotateZ(model, (float) theta);
+
+        float wx = (float) getBearer().getWeaponXOffset() - sprite.getWidth() / 2f;
+        float wy = -sprite.getHeight() / 2f;
+        Matrix4.translate(model, wx, wy, 0f);
+
+        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+        
+        glGraphics.drawSprite(gl, texture, model, null, bearer.getColorCorrection());
+    }
+    
+    
     public void update(double step) {
+    	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());
+    	double playSpeed = def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24;
+    	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
+    	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(playSpeed);
+    	
     	if(isInState("Reload_Init"))
     		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
     			stateMachine.getCurrentAnimationState().reset();
@@ -202,30 +271,48 @@ public class Weapon extends Entity{
     		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
     			stateMachine.getCurrentAnimationState().reset();
     			stateMachine.trigger(TRIGGER_STOP);
+
+    		}
+    	if(isInState("Attacking_Init"))
+    		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+    			stateMachine.getCurrentAnimationState().reset();
+    			stateMachine.trigger(TRIGGER_ATTACK);
+    			stateMachine.getCurrentAnimationState().reset();
+    			
     		}
     			
     	
         setPos(getBearer().getPos());
         setTsla(getTsla() + step);
-        
-        if (getAmmo() == 0) {
+        if (getAmmo() <= 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
-            	if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
-            	stateMachine.trigger(TRIGGER_RELOAD);
+        		if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+        			stateMachine.getCurrentAnimationState().reset();
+        			if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
+        			stateMachine.trigger(TRIGGER_RELOAD);
+        		}
         	}
 
             if(stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Left") ||
             	stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Right")) setTssr(getTssr() + step);
         }
         
-        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime()) {
+        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime() && 
+        		((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
         	stateMachine.trigger(TRIGGER_STOP);
             setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
             setTssr(0);
         }
         
         setDir(getBearer().getDir());
-        
+        if(getDir() != null) {
+        	int invert = (int) Math.signum(getDir().dotP(new Vector3D(1, 0)));
+        	setRelativeProjectilePos(new Vector3D(
+        			def.getRelativeProjectilePosX()+getBearer().getWeaponXOffset(), 
+        			(def.getRelativeProjectilePosY()+getBearer().getWeaponYOffset()) * invert)
+        		.rotateXY(getDir().getAngle()));
+        }
+       
         changeStateDirection();
         stateMachine.update(step);
     }
@@ -246,7 +333,7 @@ public class Weapon extends Entity{
 
     public boolean isInState(String action) {
 		String currentState = stateMachine.getCurrentAnimationState().getTitle();
-		return currentState.startsWith(action + "_");
+		return currentState.equals(action+"_Left") || currentState.equals(action+"_Right");
 	}
     
     private boolean isLooking(String dir) {
@@ -271,9 +358,16 @@ public class Weapon extends Entity{
 	}
 	
 	public void triggerSwitching() {
-		if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
+		if(!isInState("Idle")) {
+			stateMachine.trigger(TRIGGER_STOP);
+		}
 		stateMachine.trigger(TRIGGER_SWITCH);
 	}
+	
+	public boolean isReloadingAnimation() {
+		return isInState("Reload") || isInState("Reload_Init") || isInState("Reload_Finish");
+	}
+
 
 
 }

@@ -7,19 +7,20 @@ import java.awt.Color;
 
 import javax.swing.SwingUtilities;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
-import ma.ac.emi.fx.Frame;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
-import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
-import ma.ac.emi.gamecontrol.GameTime;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -44,6 +45,7 @@ public class Player extends LivingEntity {
 		hitbox = new Rectangle(22, 28);
 		bound = new Rectangle(22, 8);
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
+		
 	}
 	
 	@Override
@@ -105,7 +107,6 @@ public class Player extends LivingEntity {
 		baseHPMax = 100;
 		baseSpeed = 200;
 
-		resetBaseStats();
 		hp = 100;
 		money = 10000;
 		weaponIndex = 0;
@@ -113,8 +114,13 @@ public class Player extends LivingEntity {
 		weaponXOffset = 9;
 		weaponYOffset = 5;
 		
-		//WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("fists");
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.RARE).get("ak47");
+		PlayerConfig config = PlayerConfigLoader.load("/configs/player_config.json");
+		applyBaseStats(config);
+		
+		setBaseColorCorrection(config.colorCorrection);
+		setLightingStrategy(config.lightingStrategy);
+		
+		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("rpg7");
 		WeaponItem fists = new WeaponItem(fistsDef);
 		
 		getInventory().init();
@@ -125,22 +131,38 @@ public class Player extends LivingEntity {
         setupAnimations();
         if(!isIdle()) stateMachine.trigger("Stop");
         
+        setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
+        
+        
+	}
+	
+	public void applyBaseStats(PlayerConfig cfg) {
+	    this.pseudoname = cfg.pseudoname;
+	    this.money = cfg.money;
+
+	    this.baseHP = cfg.baseHP;
+	    this.baseHPMax = cfg.baseHPMax;
+	    this.baseSpeed = cfg.baseSpeed;
+	    this.baseStrength = cfg.baseStrength;
+	    this.regenerationSpeed = cfg.regenerationSpeed;
+	    
+	    // Initialize current stats from base stats
+	    resetBaseStats();
 	}
 
+
 	public void resetBaseStats() {
-		hpMax = baseHPMax;
-		speed = baseSpeed;
+		this.hpMax = baseHPMax;
+	    this.hp = baseHP;
+	    this.speed = baseSpeed;
+	    this.strength = baseStrength;
 	}
 	
 	public void initWeapons() {
-		/*for(int i = 0; i < Inventory.MAX_EQU; i++) {
-			if(getEquippedWeapons()[i] == null) continue;
-			GameController.getInstance().getGamePanel().removeDrawable(equippedWeapons[i]);
-		}*/
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
 			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
-			GameController.getInstance().getGamePanel().removeDrawable(weapon);
+			GameController.getInstance().removeDrawable(weapon);
 
 			weapon.setAttackObjectManager(attackObjectManager);
 			weapon.snapTo(this);
@@ -153,6 +175,7 @@ public class Player extends LivingEntity {
 	@Override
 	public void update(double step) {
 		velocity.init();
+		
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
@@ -187,8 +210,7 @@ public class Player extends LivingEntity {
 			velocity.setX(1);
 		}
 		
-		
-		if(velocity.norm() != 0) velocity = velocity.normalize().mult(speed);
+		velocity = velocity.normalize().mult(speed);
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
@@ -201,19 +223,15 @@ public class Player extends LivingEntity {
 			activeWeapon.update(step);
 		}
 		
-		if (!isIdle()) {
-		    GameController.getInstance().getParticleSystem().spawnEffect("smoke", pos, this, GameTime.get());
-		}
 		
 		pointAt(MouseHandler.getInstance().getMouseWorldPos());
 		
 		changeStateDirection();
 		stateMachine.update(step);
 		
+		getLight().setPosition((float) getPos().getX(), (float) getPos().getY());
 		
 		super.update(step);
-		
-
 		
 	}
 	
@@ -222,6 +240,14 @@ public class Player extends LivingEntity {
 		super.draw(g);
 		if(activeWeapon != null)
 			activeWeapon.draw(g);
+	}
+	
+	
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		super.drawGL(gl, glGraphics);
+		if(activeWeapon != null)
+			activeWeapon.drawGL(gl, glGraphics);
 	}
 
 	public void setWeapon(Weapon weapon) {

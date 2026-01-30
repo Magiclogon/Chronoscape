@@ -11,6 +11,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -48,6 +49,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	
 	public Vector3D getMouseWorldPos() {
 		calculateMouseWorldPos();
+		
 		return mouseWorldPos;
 	}
 
