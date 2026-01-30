@@ -37,6 +37,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 	protected abstract void initStats();
 	
 	public void initWeapon() {
+		if(getWeapon() == null) return;
 		getWeapon().setAttackObjectManager(getAttackObjectManager());
 		getWeapon().snapTo(this);
 	}
@@ -47,6 +48,7 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
+			if(dustEmitter.isActive()) dustEmitter.setActive(false);
 			return;
 		}
 		

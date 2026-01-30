@@ -47,7 +47,6 @@ public class ParticleLoader {
                 lastSpawnTimes.put(def.getId(), -999.0);
                 
                 // Pre-load animation into cache
-                ParticleAnimationCache.get(def);
             }
   
         } catch (IOException ex) {

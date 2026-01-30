@@ -2,6 +2,7 @@ package ma.ac.emi.gamelogic.particle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ParticleEmitterManager {
 	private List<ParticleEmitter> emitters;
@@ -24,5 +25,13 @@ public class ParticleEmitterManager {
 		});
 		
 		emitters.removeIf(e -> !e.isActive());
+	}
+
+	public void clear() {
+		emitters.clear();
+	}
+
+	public List<ParticleEmitter> getEmitters() {
+		return emitters;
 	}
 }

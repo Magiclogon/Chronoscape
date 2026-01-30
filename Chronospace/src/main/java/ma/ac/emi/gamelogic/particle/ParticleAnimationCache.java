@@ -41,7 +41,7 @@ public class ParticleAnimationCache {
 
     public static void clear(GL3 gl) {
         for (ParticleAnimation anim : CACHE.values()) {
-            // Dispose textures if needed
+            anim.dispose(gl);
         }
         CACHE.clear();
         texturesInitialized = false;

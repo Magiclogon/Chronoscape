@@ -40,5 +40,8 @@ public class BloomCombineEffect implements PostEffect {
     public void setIntensity(float intensity) { this.intensity = intensity; }
 
     @Override
-    public void dispose(GL3 gl) { }
+    public void dispose(GL3 gl) { 
+    	shader.dispose(gl);
+    	
+    }
 }

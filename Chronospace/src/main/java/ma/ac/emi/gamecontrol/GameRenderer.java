@@ -2,6 +2,7 @@ package ma.ac.emi.gamecontrol;
 
 import com.jogamp.opengl.*;
 import ma.ac.emi.camera.Camera;
+import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
 import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -51,10 +52,13 @@ public class GameRenderer implements GLEventListener {
     public void update() {
         drawables.removeIf(d -> !d.isDrawn());
         Collections.sort(drawables);
+        
     }
 
     @Override
     public void init(GLAutoDrawable drawable) {
+        System.out.println("Initializing Renderer..");
+
         GL3 gl = drawable.getGL().getGL3();
         
         camera.setRenderScale(renderScale);
@@ -94,6 +98,7 @@ public class GameRenderer implements GLEventListener {
                 .getWorldManager()
                 .getCurrentWorld()
                 .getVoidColor();
+        
     }
 
     @Override
@@ -177,6 +182,9 @@ public class GameRenderer implements GLEventListener {
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
         postProcessor.render(gl);
+        
+        gl.glDisable(GL.GL_BLEND);
+
     }
 
     private void renderInterleavedWithParticles(
@@ -238,7 +246,18 @@ public class GameRenderer implements GLEventListener {
     }
 
     @Override
-    public void dispose(GLAutoDrawable drawable) {}
+    public void dispose(GLAutoDrawable drawable) {
+    	GL3 gl = drawable.getGL().getGL3();
+    	System.out.println("Disposing of Renderer..");
+    	
+    	ParticleAnimationCache.clear(gl);
+    	
+    	glGraphics.dispose(gl);
+    	postProcessor.dispose(gl);
+    	lightingSystem.dispose(gl);
+    	
+    	AssetsLoader.disposeAll(gl);
+    }
 
     public LightingSystem getLightingSystem() {
         return lightingSystem;
@@ -246,5 +265,17 @@ public class GameRenderer implements GLEventListener {
 
 	public double getFPS() {
 		return fps;
+	}
+
+	public void removeAllDrawables() {
+		this.drawables.clear();
+	}
+
+	public void initParticleCache(GL3 gl) {
+		ParticleAnimationCache.initializeAllTextures(gl);
+	}
+
+	public double getRenderScale() {
+		return this.renderScale;
 	}
 }

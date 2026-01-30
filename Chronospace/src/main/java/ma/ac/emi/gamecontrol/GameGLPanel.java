@@ -23,6 +23,7 @@ public class GameGLPanel extends GLJPanel {
         addMouseMotionListener(MouseHandler.getInstance());
         addMouseWheelListener(MouseHandler.getInstance());
         KeyHandler.getInstance().setupKeyBindings(this);
+        
     }
     
     public void setCamera(Camera camera) {
@@ -36,4 +37,11 @@ public class GameGLPanel extends GLJPanel {
     public void update(double step) {
     	getRenderer().update();
     }
+
+    public void initParticleCache() {
+    	if(getGL() == null) return;
+    	GL3 gl = this.getGL().getGL3();
+    	this.getRenderer().initParticleCache(gl);
+    }
+
 }

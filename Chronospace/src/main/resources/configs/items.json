@@ -127,8 +127,8 @@
       
       "attackStrategy": {
       	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0
+      	"projectileCount": 3,
+      	"spread": 0.5
       }
     },
     {
@@ -145,6 +145,8 @@
       "reloadingTime": 1.2,
       "magazineSize": 1,
       "stackable": false,
+      
+      "animationDetails": {},
       
       "attackStrategy": {
       	"type": "range",
@@ -164,6 +166,8 @@
       "attackSpeed": 1.5,
       "projectileId": "noneSingle",
       "stackable": false,
+      
+      "animationDetails": {},
       
       "attackStrategy": {
       	"type": "melee"

@@ -45,5 +45,6 @@ public class ColorCorrectionEffect implements PostEffect {
 
     @Override
     public void dispose(GL3 gl) {
+    	shader.dispose(gl);
     }
 }

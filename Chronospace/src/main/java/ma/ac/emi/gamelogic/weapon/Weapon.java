@@ -118,8 +118,7 @@ public class Weapon extends Entity{
 		WeaponItemDefinition definition = (WeaponItemDefinition)(getWeaponItem().getItemDefinition());
 		WeaponItemDefinition.WeaponAnimationDetails animationDetails = definition.getAnimationDetails();
 		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.spriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
-		if(spriteSheet.getSheet() == null) return;
-		
+
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
 		AnimationState attacking_init_left = stateMachine.getAnimationStateByTitle("Attacking_Init_Left");
@@ -134,7 +133,17 @@ public class Weapon extends Entity{
 		AnimationState reload_finish_right = stateMachine.getAnimationStateByTitle("Reload_Finish_Right");
 		AnimationState switching_left = stateMachine.getAnimationStateByTitle("Switching_Left");
 		AnimationState switching_right = stateMachine.getAnimationStateByTitle("Switching_Right");
-
+		
+		
+		if(spriteSheet.getSheet() == null) {
+			for(AnimationState state : stateMachine.getAnimationStates()) {
+				state.addFrame(new Sprite());
+			}
+			spriteSheet = new SpriteSheet(new Sprite(), 32, 32);
+			return;
+		}
+		
+		
 		for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
 			idle_left.addFrame(sprite);
 		}
@@ -222,6 +231,8 @@ public class Weapon extends Entity{
     
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
+    	if(getBearer() == null) return;
+    	
         // --- 1) Determine sprite ---
         Sprite sprite;
         if (stateMachine.getCurrentAnimationState() != null) {
@@ -229,6 +240,8 @@ public class Weapon extends Entity{
         } else {
             sprite = AssetsLoader.getSprite("default_weapon.png");
         }
+        
+        if(sprite == null) sprite = new Sprite();
         Texture texture = sprite.getTexture(gl);
 
         float[] model = new float[16];

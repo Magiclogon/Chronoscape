@@ -68,6 +68,7 @@ public abstract class GameObject implements GameDrawable{
     }
 	
 	public double getDrawnHeight() {
+		if(spriteSheet == null) return 0;
 		return spriteSheet.getTileHeight();
 	}
 	

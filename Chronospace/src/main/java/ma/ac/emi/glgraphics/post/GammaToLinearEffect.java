@@ -20,7 +20,6 @@ public class GammaToLinearEffect implements PostEffect {
 
 	@Override
 	public void dispose(GL3 gl) {
-		// TODO Auto-generated method stub
-		
-	}
+    	shader.dispose(gl);
+    }
 }

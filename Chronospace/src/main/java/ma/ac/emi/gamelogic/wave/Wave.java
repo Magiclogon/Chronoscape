@@ -92,6 +92,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         		GameController.getInstance().removeDrawable(enemy);
         		GameController.getInstance().removeDrawable(enemy.getWeapon());
         	}
+        	//System.out.println("enemy spotted!");
         });
         enemies.removeIf(enemy -> enemy.getHp() <= 0 && enemy.deathAnimationDone());
         for(Ennemy e: enemies) {

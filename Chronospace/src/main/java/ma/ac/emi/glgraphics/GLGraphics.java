@@ -76,6 +76,7 @@ public class GLGraphics {
 		gl.glBindTexture(GL3.GL_TEXTURE_2D, texture.id);
 		gl.glBindVertexArray(SpriteQuad.VAO);
 		gl.glDrawArrays(GL3.GL_TRIANGLE_FAN, 0, 4);
+		
 	}
     
     
@@ -87,8 +88,6 @@ public class GLGraphics {
         drawQuad(gl, x, y, w, h, gray, gray, gray, 1f);
     }
     
- // In GLGraphics class
-
     /**
      * Draw sprite assuming texture is already bound (for batching)
      */
@@ -149,11 +148,13 @@ public class GLGraphics {
         // Restore default behavior for sprites
         spriteShader.setInt(gl, "uUseTexture", 1);
     }
-
-		
-
     
     public void endFrame(GL3 gl) {
         gl.glBindVertexArray(0);
+    }
+    
+    public void dispose(GL3 gl) {
+    	this.spriteShader.dispose(gl);
+    	SpriteQuad.dispose(gl);
     }
 }

@@ -1,6 +1,9 @@
 package ma.ac.emi.fx;
 
 import javax.imageio.ImageIO;
+
+import com.jogamp.opengl.GL3;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +16,7 @@ import java.util.jar.JarFile;
 public class AssetsLoader {
 
     private final static Map<String, Sprite> sprites = new HashMap<>();
+    private static String rootFolder;
     
     public static Sprite getSprite(String key) {
         return sprites.get(key);
@@ -38,7 +42,9 @@ public class AssetsLoader {
                     loadFromJar(url, rootFolder);
                 }
             }
-
+            
+            AssetsLoader.rootFolder = rootFolder;
+            System.out.println("Assets loaded successfully from: " + AssetsLoader.rootFolder + "!");
         } catch (IOException e) {
             throw new RuntimeException("Failed to load assets folder: " + rootFolder, e);
         }
@@ -103,5 +109,19 @@ public class AssetsLoader {
                lower.endsWith(".jpeg") ||
                lower.endsWith(".gif");
     }
+    
+    public static void disposeAll(GL3 gl) {
+        for (Sprite sprite : sprites.values()) {
+            sprite.dispose(gl);
+        }
+        sprites.clear();
+        
+        System.out.println("Disposing of sprites");
+    }
+
+	public static void reloadAssets() {
+		loadAssets(rootFolder);
+	}
+
 }
 

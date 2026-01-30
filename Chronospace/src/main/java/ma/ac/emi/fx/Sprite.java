@@ -40,6 +40,14 @@ public class Sprite {
 		return new Sprite(sprite.getSubimage(x, y, width, height));
 	}
 	
+    
+    public int getWidth() {
+    	return sprite.getWidth();
+    }
+    
+    public int getHeight() {
+    	return sprite.getHeight();
+    }
 
     public Texture getTexture(GL3 gl) {
         if (texture == null) {
@@ -48,11 +56,10 @@ public class Sprite {
         return texture;
     }
     
-    public int getWidth() {
-    	return sprite.getWidth();
-    }
-    
-    public int getHeight() {
-    	return sprite.getHeight();
+    public void dispose(GL3 gl) {
+        if (texture != null) {
+            texture.dispose(gl);
+            texture = null;
+        }
     }
 }
