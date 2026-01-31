@@ -19,6 +19,7 @@
       
       "animationDetails": {
 	      "spriteSheetPath": "weapons/ak47-Sheet.png",
+	      "handSpriteSheetPath": "hands/ak47_hands-Sheet.png",
 	      "spriteWidth": 72,
 	      "spriteHeight": 59,
 	      "idleLength": 1,
@@ -52,6 +53,7 @@
       
       "animationDetails": {
 	      "spriteSheetPath": "weapons/hammer-Sheet.png",
+	      "handSpriteSheetPath": "hands/hammer_hands-Sheet.png",
 	      "spriteWidth": 82,
 	      "spriteHeight": 76,
 	      "idleLength": 1,
@@ -63,7 +65,12 @@
       },
       
       "attackStrategy": {
-      	"type": "melee"
+      	"type": "melee",
+      	
+      	"cameraShake": {
+      		"intensity": 5,
+      		"damping": 0.9
+      	}
       }
     },
     {
@@ -82,6 +89,7 @@
       
       "animationDetails": {
 	      "spriteSheetPath": "weapons/sword-Sheet.png",
+	      "handSpriteSheetPath": "hands/sword_hands-Sheet.png",
 	      "spriteWidth": 82,
 	      "spriteHeight": 72,
 	      "idleLength": 1,
@@ -115,6 +123,7 @@
       
       "animationDetails": {
 	      "spriteSheetPath": "weapons/rpg7-Sheet.png",
+	      "handSpriteSheetPath": "hands/rpg7_hands-Sheet.png",
 	      "spriteWidth": 80,
 	      "spriteHeight": 64,
 	      "idleLength": 1,
@@ -128,7 +137,12 @@
       "attackStrategy": {
       	"type": "range",
       	"projectileCount": 3,
-      	"spread": 0.5
+      	"spread": 0.5,
+      	
+      	"cameraShake": {
+      		"intensity": 5,
+      		"damping": 0.9
+      	}
       }
     },
     {
@@ -171,6 +185,42 @@
       
       "attackStrategy": {
       	"type": "melee"
+      }
+    },
+    {
+      "type": "weapon",
+      "id": "blaster404",
+      "name": "BLASTER 404",
+      "description": "Slow but moderately powerful close range weapon",
+      "rarity": "COMMON",
+      "basePrice": 50,
+      "damage": 10,
+      "range": 300,
+      "attackSpeed": 1,
+      "projectileId": "bullet",
+      "reloadingTime": 1,
+      "magazineSize": 4,
+      "relativeProjectilePosX": 13,
+      "relativeProjectilePosY": 2,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/blaster404-Sheet.png",
+	      "handSpriteSheetPath": "hands/blaster404_hands-Sheet.png",
+	      "spriteWidth": 56,
+	      "spriteHeight": 44,
+	      "idleLength": 1,
+	      "attackingInitLength": 19,
+	      "attackingLength": 30,
+	      "reloadInitLength": 11,
+	      "reloadLength": 4,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
       }
     },
     {

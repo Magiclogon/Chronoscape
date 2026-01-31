@@ -16,7 +16,7 @@
     {
       "id": "bullet",
       "sprite": "projectiles/bullet.png",
-      "speed": 800,
+      "speed": 150,
       "width": 8,
       "height": 8,
       "behaviors": [

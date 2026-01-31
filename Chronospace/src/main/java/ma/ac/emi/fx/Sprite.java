@@ -1,5 +1,6 @@
 package ma.ac.emi.fx;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -16,7 +17,7 @@ import ma.ac.emi.glgraphics.Texture;
 public class Sprite {
 	private BufferedImage sprite;
 	private Texture texture;
-	
+		
 	public Sprite() {
 		//Load default image from assets
 		this("assets/default_sprite.png");
@@ -38,6 +39,20 @@ public class Sprite {
 	
 	public Sprite getSubimage(int x, int y, int width, int height) {
 		return new Sprite(sprite.getSubimage(x, y, width, height));
+	}
+	
+	public static Sprite superimpose(Sprite s1, Sprite s2) {
+		int width = Math.max(s1.getWidth(), s2.getWidth());
+        int height = Math.max(s1.getHeight(), s2.getHeight());
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        
+        Graphics2D g = combined.createGraphics();
+        g.drawImage(s1.getSprite(), 0, 0, null);
+        g.drawImage(s2.getSprite(), 0, 0, null);
+        
+        g.dispose();
+        
+        return new Sprite(combined);
 	}
 	
     

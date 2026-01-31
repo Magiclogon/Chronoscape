@@ -72,7 +72,7 @@ public class SpeedsterEnnemy extends Ennemy{
 
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("sword")));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("sword"), this));
         super.initWeapon();
     }
 

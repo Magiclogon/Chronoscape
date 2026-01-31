@@ -111,4 +111,10 @@ public class StateMachine {
 	public boolean hasTransition(String trigger, String fromState) {
 		return stateTransfers.containsKey(new StateTrigger(trigger, fromState));
 	}
+
+	public void clearAllStates() {
+		for(AnimationState state : getAnimationStates()) {
+			state.clear();
+		}
+	}
 }

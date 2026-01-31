@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.shop;
 
 import com.google.gson.*;
 
+import ma.ac.emi.camera.CameraShakeDefinition;
+
 import java.io.FileReader;
 import java.util.*;
 
@@ -39,7 +41,8 @@ public class ItemLoader {
                         
                         WeaponItemDefinition weaponDef = (WeaponItemDefinition) def;
                         if(obj.has("attackStrategy")) {
-                        	String attackType = obj.get("attackStrategy").getAsJsonObject().get("type").getAsString();
+                        	JsonObject attackStrategyObj = obj.get("attackStrategy").getAsJsonObject();
+                        	String attackType = attackStrategyObj.get("type").getAsString();
                         	
                         	switch(attackType) {
                         	case "range":
@@ -50,6 +53,15 @@ public class ItemLoader {
                         	
                         	case "melee":
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.MeleeStrategyDefinition());
+                        		break;
+                        	}
+                        	
+                        	if(attackStrategyObj.has("cameraShake")) {
+                        		double intensity = attackStrategyObj.get("cameraShake").getAsJsonObject().get("intensity").getAsDouble();
+                        		double dampingFactor = attackStrategyObj.get("cameraShake").getAsJsonObject().get("damping").getAsDouble();
+                        		CameraShakeDefinition camDef = new CameraShakeDefinition(intensity, dampingFactor);
+                        		
+                        		weaponDef.getAttackStrategyDefinition().setCameraShakeDefinition(camDef);
                         	}
                         }
                         

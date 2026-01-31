@@ -72,7 +72,7 @@ public class TankEnnemy extends Ennemy{
 
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("hammer")));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("hammer"), this));
         super.initWeapon();
     }
 

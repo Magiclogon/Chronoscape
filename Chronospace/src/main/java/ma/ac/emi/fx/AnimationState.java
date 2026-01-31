@@ -78,4 +78,8 @@ public class AnimationState {
 			timeTracker = frames.get(0).getFrameTime();
 		}
 	}
+
+	public void clear() {
+		this.getFrames().clear();
+	}
 }

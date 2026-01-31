@@ -203,7 +203,6 @@ public class GameRenderer implements GLEventListener {
 
         Float[] sortedZLayers = zLayers.toArray(new Float[0]);
         Arrays.sort(sortedZLayers);
-
         int layerIndex = 0;
         for (GameObject obj : objects) {
             double objZ = obj.getZOrder();
@@ -216,6 +215,7 @@ public class GameRenderer implements GLEventListener {
                 layerIndex++;
             }
             obj.drawGL(gl, glGraphics);
+            
         }
 
         while (layerIndex < sortedZLayers.length) {

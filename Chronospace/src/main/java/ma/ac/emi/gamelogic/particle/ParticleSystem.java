@@ -87,11 +87,9 @@ public class ParticleSystem {
         emitterManager.update(step);
         // Update z-layers snapshot
         updateZLayersSnapshot();
+        
     }
-    
-    /**
-     * Group particles by z-layers and create immutable snapshot for thread-safe rendering
-     */
+ 
     private void updateZLayersSnapshot() {
         Map<Float, List<Particle>> tempLayers = new HashMap<>();
         
@@ -112,16 +110,12 @@ public class ParticleSystem {
         zLayersSnapshot = snapshot;
     }
     
-    /**
-     * Get all z-layers (thread-safe)
-     */
+  
     public Set<Float> getZLayers() {
-        return zLayersSnapshot.keySet(); // Already immutable since snapshot is replaced atomically
+        return zLayersSnapshot.keySet(); 
     }
     
-    /**
-     * Render particles at a specific z-layer in batched mode (thread-safe)
-     */
+
     public void renderBatchedAtZ(GL3 gl, GLGraphics glGraphics, float zLayer) {
         Map<Float, List<Particle>> snapshot = zLayersSnapshot;
         List<Particle> particles = snapshot.get(zLayer);
@@ -159,10 +153,7 @@ public class ParticleSystem {
         
         gl.glBindTexture(GL3.GL_TEXTURE_2D, 0);
     }
-    
-    /**
-     * Add all particle lights to the lighting system (optimized)
-     */
+  
     public void addAllLights(LightingSystem lightingSystem) {
         Map<Float, List<Particle>> snapshot = zLayersSnapshot;
         
