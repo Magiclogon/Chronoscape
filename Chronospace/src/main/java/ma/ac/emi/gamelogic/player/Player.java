@@ -21,6 +21,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.input.KeyHandler;
@@ -52,6 +53,7 @@ public class Player extends LivingEntity {
 	
 	@Override
 	public void setupAnimations() {
+		stateMachine.clearAllStates();
 		spriteSheet = new SpriteSheet(AssetsLoader.getSprite("player/main_character-Sheet.png"), 
 				GamePanel.TILE_SIZE, 
 				GamePanel.TILE_SIZE);
@@ -122,8 +124,8 @@ public class Player extends LivingEntity {
 		setBaseColorCorrection(config.colorCorrection);
 		setLightingStrategy(config.lightingStrategy);
 		
-		WeaponItemDefinition fistsDef = (WeaponItemDefinition) ItemLoader.getInstance().getItemsByRarity().get(Rarity.LEGENDARY).get("rpg7");
-		WeaponItem fists = new WeaponItem(fistsDef);
+		
+		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("rpg7");
 		
 		getInventory().init();
         getInventory().addItem(fists);
@@ -165,7 +167,7 @@ public class Player extends LivingEntity {
 	public void initWeapons() {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
-			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i]);
+			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i], this);
 			GameController.getInstance().removeDrawable(weapon);
 
 			weapon.setAttackObjectManager(attackObjectManager);
@@ -183,8 +185,11 @@ public class Player extends LivingEntity {
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
+			if(deathAnimationDone()) {
+				SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
+				return;
+			}
 			stateMachine.update(step);
-			if(deathAnimationDone()) SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
 			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {

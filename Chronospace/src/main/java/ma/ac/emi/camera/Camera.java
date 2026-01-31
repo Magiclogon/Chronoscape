@@ -20,6 +20,7 @@ public class Camera {
 	private double height;
 	private volatile AffineTransform camTransform;
 	private double renderScale;
+	private double shakeIntensity, dampingFactor;
 	
 	private GameGLPanel gameGLPanel;
 	private Entity followed;
@@ -50,17 +51,30 @@ public class Camera {
 			
 			targetPos = targetPos.sub(relativeCamCenter);
 			
-			setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
 			// get world borders from panel
 			double worldPixelWidth = GameController.getInstance().getWorldManager().getCurrentWorld().getWidth() * GamePanel.TILE_SIZE;
 			double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
 			
-			calculateTransform();
 
 			// bloquer cam aux bordures
 			//this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
 			//this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
+			setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
+
+			if(shakeIntensity > 0) {
+				Vector3D offset = Vector3D.randomUnit2().mult(shakeIntensity);
+				setPos(getPos().add(offset));
+				shakeIntensity *= dampingFactor;
+				if(shakeIntensity < 0.0001) shakeIntensity = 0;
+			}
+			calculateTransform();
+
 		}
+	}
+	
+	public void shake(double intensity, double damping) {
+		setShakeIntensity(intensity);
+		setDampingFactor(damping);
 	}
 	
 	public void calculateTransform() {

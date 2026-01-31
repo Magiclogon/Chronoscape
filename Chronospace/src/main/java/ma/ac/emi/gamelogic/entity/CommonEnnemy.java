@@ -14,6 +14,9 @@ import java.awt.*;
 public class CommonEnnemy extends Ennemy{
     public CommonEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
+        
+        this.weaponXOffset = 8;
+        this.weaponYOffset = 0;
     }
     
     @Override
@@ -71,7 +74,7 @@ public class CommonEnnemy extends Ennemy{
     
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("fists")));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("blaster404"), this));
         super.initWeapon();
     }
 

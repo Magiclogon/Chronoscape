@@ -35,7 +35,7 @@ public class AssetsLoader {
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 String protocol = url.getProtocol();
-
+                
                 if (protocol.equals("file")) {
                     loadFromFileSystem(url, rootFolder);
                 } else if (protocol.equals("jar")) {

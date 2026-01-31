@@ -35,7 +35,9 @@ public class Weapon extends Entity{
 	private static final String TRIGGER_ATTACK = "Attack";
 	private static final String TRIGGER_RELOAD = "Reload";
 	private static final String TRIGGER_SWITCH = "Switch";
-	protected WeaponItem weaponItem;
+	
+	private WeaponItem weaponItem;
+	private SpriteSheet handSheet;
 	
     private Vector3D dir;
     private LivingEntity bearer;
@@ -48,7 +50,7 @@ public class Weapon extends Entity{
     
     protected AttackStrategy attackStrategy;
         
-    public Weapon(WeaponItem weaponItem) {
+    public Weapon(WeaponItem weaponItem, LivingEntity bearer) {
     	this.weaponItem = weaponItem;
         pos = new Vector3D();
         dir = new Vector3D();
@@ -61,6 +63,7 @@ public class Weapon extends Entity{
             setAmmo(definition.getMagazineSize());
         }
         
+        setBearer(bearer);
         this.relativeProjectilePos = new Vector3D();
         setupAnimations();
     }
@@ -118,6 +121,7 @@ public class Weapon extends Entity{
 		WeaponItemDefinition definition = (WeaponItemDefinition)(getWeaponItem().getItemDefinition());
 		WeaponItemDefinition.WeaponAnimationDetails animationDetails = definition.getAnimationDetails();
 		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.spriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
+		if(getBearer() instanceof Player) handSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.handSpriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
 
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
@@ -143,51 +147,122 @@ public class Weapon extends Entity{
 			return;
 		}
 		
-		
-		for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
-			idle_left.addFrame(sprite);
+		if(handSheet == null) {
+			for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
+				idle_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
+				idle_right.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
+				attacking_init_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
+				attacking_init_right.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
+				attacking_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
+				attacking_right.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
+				reload_init_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
+				reload_init_right.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
+				reload_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
+				reload_right.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
+				reload_finish_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
+				reload_finish_right.addFrame(sprite);
+			}
+			
+			for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
+				switching_left.addFrame(sprite);
+			}
+			for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
+				switching_right.addFrame(sprite);
+			}
+		}else {
+			for(int i = 0; i < animationDetails.idleLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(0, animationDetails.idleLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(0, animationDetails.idleLength)[i];
+				idle_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.idleLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(6, animationDetails.idleLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(6, animationDetails.idleLength)[i];
+				idle_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.attackingInitLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(1, animationDetails.attackingInitLength)[i];
+				attacking_init_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.attackingInitLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(7, animationDetails.attackingInitLength)[i];
+				attacking_init_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.attackingLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(2, animationDetails.attackingLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(2, animationDetails.attackingLength)[i];
+				attacking_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.attackingLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(8, animationDetails.attackingLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(8, animationDetails.attackingLength)[i];
+				attacking_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadInitLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(3, animationDetails.reloadInitLength)[i];
+				reload_init_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadInitLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(9, animationDetails.reloadInitLength)[i];
+				reload_init_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(4, animationDetails.reloadLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(4, animationDetails.reloadLength)[i];
+				reload_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(10, animationDetails.reloadLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(10, animationDetails.reloadLength)[i];
+				reload_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
+				reload_finish_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
+				reload_finish_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
+				switching_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
+			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
+				Sprite weaponSprite = spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
+				Sprite handSprite = handSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
+				switching_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
+			}
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
-			idle_right.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
-			attacking_init_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
-			attacking_init_right.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
-			attacking_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
-			attacking_right.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
-			reload_init_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
-			reload_init_right.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
-			reload_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
-			reload_right.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
-			reload_finish_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
-			reload_finish_right.addFrame(sprite);
-		}
-		
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
-			switching_left.addFrame(sprite);
-		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
-			switching_right.addFrame(sprite);
-		}
-		
 		
 	}
     

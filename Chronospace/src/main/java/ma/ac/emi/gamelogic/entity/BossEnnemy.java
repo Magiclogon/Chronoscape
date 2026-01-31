@@ -26,7 +26,7 @@ public class BossEnnemy extends Ennemy{
     
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("ak47")));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("ak47"), this));
         super.initWeapon();
     }
     

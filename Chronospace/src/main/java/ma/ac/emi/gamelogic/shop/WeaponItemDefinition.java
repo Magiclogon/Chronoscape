@@ -1,10 +1,10 @@
 package ma.ac.emi.gamelogic.shop;
 
 import lombok.*;
+import ma.ac.emi.camera.CameraShakeDefinition;
 import ma.ac.emi.gamelogic.weapon.AttackStrategy;
 import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 import ma.ac.emi.gamelogic.weapon.RangeStrategy;
-import ma.ac.emi.gamelogic.weapon.Weapon;
 
 @Getter
 @Setter
@@ -68,7 +68,12 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     }
     
     public static abstract class AttackStrategyDefinition{
+    	public CameraShakeDefinition cameraShakeDefinition;
+    	
+    	public AttackStrategyDefinition() {this.cameraShakeDefinition = new CameraShakeDefinition(0, 0);}
     	public abstract AttackStrategy create();
+    	
+    	public void setCameraShakeDefinition(CameraShakeDefinition cameraShakeDefinition) {this.cameraShakeDefinition = cameraShakeDefinition;}
     }
     
     public static class RangeStrategyDefinition extends AttackStrategyDefinition{
@@ -76,15 +81,15 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     	public final double spread; //angle
     	
        	public RangeStrategyDefinition(int projectileCount, double spread) {
-    			this.projectileCount = projectileCount;
-    			this.spread = spread;
+			this.projectileCount = projectileCount;
+			this.spread = spread;
     	}
        	public RangeStrategyDefinition(RangeStrategyDefinition def) {
        		this(def.projectileCount, def.spread);
        	}
 		@Override
 		public AttackStrategy create() {
-			return new RangeStrategy(projectileCount, spread);
+			return new RangeStrategy(projectileCount, spread, new CameraShakeDefinition(cameraShakeDefinition));
 		}
     }
     
@@ -92,21 +97,23 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
 
 		@Override
 		public AttackStrategy create() {
-			return new MeleeStrategy();
+			return new MeleeStrategy(new CameraShakeDefinition(cameraShakeDefinition));
 		}
 
     }
     
     public static class WeaponAnimationDetails{
     	public String spriteSheetPath;
+    	public String handSpriteSheetPath;
 		public int spriteWidth;
     	public int spriteHeight;
     	public int idleLength, attackingInitLength, attackingLength, reloadInitLength, reloadLength, reloadFinishLength;
     	
 
-    	public WeaponAnimationDetails(String spriteSheetPath, int spriteWidth, int spriteHeight, int idleLength,
+    	public WeaponAnimationDetails(String spriteSheetPath, String handSpriteSheetPath, int spriteWidth, int spriteHeight, int idleLength,
 				int attackingInitLength, int attackingLength, int reloadInitLength, int reloadLength, int reloadFinishLength) {
 			this.spriteSheetPath = spriteSheetPath;
+			this.handSpriteSheetPath = handSpriteSheetPath;
 			this.spriteWidth = spriteWidth;
 			this.spriteHeight = spriteHeight;
 			this.idleLength = idleLength;
@@ -119,6 +126,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     	
     	public WeaponAnimationDetails(WeaponAnimationDetails details) {
     		this(details.spriteSheetPath,
+    			details.handSpriteSheetPath,
     			details.spriteWidth,
     			details.spriteHeight,
     			details.idleLength,

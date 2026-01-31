@@ -1,15 +1,18 @@
 package ma.ac.emi.gamelogic.weapon;
 
+import ma.ac.emi.camera.CameraShakeDefinition;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.math.Vector3D;
 
-public class RangeStrategy implements AttackStrategy {
+public class RangeStrategy extends AttackStrategy {
 	private int projectileCount;
 	private double spread;
 	
-	public RangeStrategy(int projectileCount, double spread) {
+	public RangeStrategy(int projectileCount, double spread, CameraShakeDefinition cameraShakeDefinition) {
+		super(cameraShakeDefinition);
 		this.projectileCount = projectileCount;
 		this.spread = spread;
 	}
@@ -34,6 +37,8 @@ public class RangeStrategy implements AttackStrategy {
         	
             weapon.setTsla(0);
             weapon.getStateMachine().getCurrentAnimationState().reset();
+            
+            GameController.getInstance().getCamera().shake(cameraShakeDefinition.intensity, cameraShakeDefinition.damping);
         }
     }
 }

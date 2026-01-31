@@ -72,7 +72,7 @@ public class RangedEnnemy extends Ennemy{
 	}
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("bow")));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("bow"), this));
         super.initWeapon();
     }
 
