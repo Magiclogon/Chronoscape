@@ -13,6 +13,7 @@ import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -21,7 +22,6 @@ import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
-import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
@@ -37,7 +37,6 @@ public class Weapon extends Entity{
 	private static final String TRIGGER_SWITCH = "Switch";
 	
 	private WeaponItem weaponItem;
-	private SpriteSheet handSheet;
 	
     private Vector3D dir;
     private LivingEntity bearer;
@@ -48,12 +47,15 @@ public class Weapon extends Entity{
     
     private Vector3D relativeProjectilePos;
     
-    protected AttackStrategy attackStrategy;
+    private AttackStrategy attackStrategy;
+    
+    private Hands hands;
         
     public Weapon(WeaponItem weaponItem, LivingEntity bearer) {
     	this.weaponItem = weaponItem;
         pos = new Vector3D();
         dir = new Vector3D();
+        this.relativeProjectilePos = new Vector3D();
         tsla = 0;
         tssr = 0;
         
@@ -61,11 +63,18 @@ public class Weapon extends Entity{
         	WeaponItemDefinition definition = (WeaponItemDefinition) weaponItem.getItemDefinition();
         	attackStrategy = definition.getAttackStrategyDefinition().create();
             setAmmo(definition.getMagazineSize());
+            
+            setBaseColorCorrection(definition.getColorCorrection());
+            setLightingStrategy(definition.getLightingStrategy());
+
         }
         
         setBearer(bearer);
-        this.relativeProjectilePos = new Vector3D();
+        
         setupAnimations();
+        
+        if(bearer instanceof Player) hands = new Hands(this);
+
     }
     
 	@Override
@@ -121,7 +130,6 @@ public class Weapon extends Entity{
 		WeaponItemDefinition definition = (WeaponItemDefinition)(getWeaponItem().getItemDefinition());
 		WeaponItemDefinition.WeaponAnimationDetails animationDetails = definition.getAnimationDetails();
 		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.spriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
-		if(getBearer() instanceof Player) handSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.handSpriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
 
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
@@ -147,121 +155,48 @@ public class Weapon extends Entity{
 			return;
 		}
 		
-		if(handSheet == null) {
-			for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
-				idle_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
-				idle_right.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
-				attacking_init_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
-				attacking_init_right.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
-				attacking_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
-				attacking_right.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
-				reload_init_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
-				reload_init_right.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
-				reload_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
-				reload_right.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
-				reload_finish_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
-				reload_finish_right.addFrame(sprite);
-			}
-			
-			for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
-				switching_left.addFrame(sprite);
-			}
-			for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
-				switching_right.addFrame(sprite);
-			}
-		}else {
-			for(int i = 0; i < animationDetails.idleLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(0, animationDetails.idleLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(0, animationDetails.idleLength)[i];
-				idle_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.idleLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(6, animationDetails.idleLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(6, animationDetails.idleLength)[i];
-				idle_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.attackingInitLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(1, animationDetails.attackingInitLength)[i];
-				attacking_init_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.attackingInitLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(7, animationDetails.attackingInitLength)[i];
-				attacking_init_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.attackingLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(2, animationDetails.attackingLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(2, animationDetails.attackingLength)[i];
-				attacking_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.attackingLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(8, animationDetails.attackingLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(8, animationDetails.attackingLength)[i];
-				attacking_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadInitLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(3, animationDetails.reloadInitLength)[i];
-				reload_init_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadInitLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(9, animationDetails.reloadInitLength)[i];
-				reload_init_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(4, animationDetails.reloadLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(4, animationDetails.reloadLength)[i];
-				reload_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(10, animationDetails.reloadLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(10, animationDetails.reloadLength)[i];
-				reload_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
-				reload_finish_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
-				reload_finish_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(5, animationDetails.reloadFinishLength)[i];
-				switching_left.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
-			for(int i = 0; i < animationDetails.reloadFinishLength; i++) {
-				Sprite weaponSprite = spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
-				Sprite handSprite = handSheet.getAnimationRow(11, animationDetails.reloadFinishLength)[i];
-				switching_right.addFrame(Sprite.superimpose(weaponSprite, handSprite));
-			}
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
+			idle_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
+			idle_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
+			attacking_init_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
+			attacking_init_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
+			attacking_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
+			attacking_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
+			reload_init_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
+			reload_init_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
+			reload_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
+			reload_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
+			reload_finish_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
+			reload_finish_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
+			switching_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
+			switching_right.addFrame(sprite);
 		}
 		
 	}
@@ -335,11 +270,13 @@ public class Weapon extends Entity{
 
         Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
         
-        glGraphics.drawSprite(gl, texture, model, null, bearer.getColorCorrection());
+        glGraphics.drawSprite(gl, texture, model, null, getColorCorrection());
+        if(hands != null) hands.drawGL(gl, glGraphics);
     }
     
     
     public void update(double step) {
+    	super.update(step);
     	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());
     	double playSpeed = def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24;
     	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
@@ -403,10 +340,14 @@ public class Weapon extends Entity{
        
         changeStateDirection();
         stateMachine.update(step);
+        if(hands != null) hands.update(step);
     }
     
     public void snapTo(LivingEntity entity) {
         setBearer(entity);
+        if(hands != null) {
+        	hands.setBaseColorCorrection(entity.getBaseColorCorrection());
+        }
     }
 
     public void reload() {

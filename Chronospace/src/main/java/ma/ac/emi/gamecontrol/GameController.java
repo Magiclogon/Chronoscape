@@ -122,7 +122,7 @@ public class GameController implements Runnable {
         SwingUtilities.invokeLater(() -> {
         	window.showScreen("MENU");
     	});
-        soundManager.loop("main_menu_music");
+        //soundManager.loop("main_menu_music");
     }
 
     public void showDifficultyMenu() {

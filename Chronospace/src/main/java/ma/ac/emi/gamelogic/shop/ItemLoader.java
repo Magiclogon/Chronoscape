@@ -3,6 +3,10 @@ package ma.ac.emi.gamelogic.shop;
 import com.google.gson.*;
 
 import ma.ac.emi.camera.CameraShakeDefinition;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.lighting.LightingStrategy;
+import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.FileReader;
 import java.util.*;
@@ -64,6 +68,20 @@ public class ItemLoader {
                         		weaponDef.getAttackStrategyDefinition().setCameraShakeDefinition(camDef);
                         	}
                         }
+                        
+                        if (obj.has("postProcessingDetails")) {
+                        	System.out.println("Weapon with id: " + obj.get("id").getAsString());
+        	                JsonObject ppDetails = obj.getAsJsonObject("postProcessingDetails");
+        	                PostProcessingDetails postProcessing = gson.fromJson(ppDetails, PostProcessingDetails.class);
+        	                
+        	                // Create ColorCorrection from config
+        	                SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(postProcessing);
+        	                weaponDef.setColorCorrection(colorCorrection);
+        	                
+        	                // Create LightingStrategy from config
+        	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
+        	                weaponDef.setLightingStrategy(lightingStrategy);
+        	            }
                         
                         def = weaponDef;
                         break;

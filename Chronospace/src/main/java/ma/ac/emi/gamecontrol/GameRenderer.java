@@ -26,7 +26,7 @@ public class GameRenderer implements GLEventListener {
     private int width, height;
     private int internalWidth, internalHeight;
 
-    private final float renderScale = 0.3f;
+    private final float renderScale = 0.4f;
 
     private PostProcessor postProcessor;
     private LightingSystem lightingSystem;

@@ -59,8 +59,8 @@
 	      "idleLength": 1,
 	      "attackingInitLength": 10,
 	      "attackingLength": 23,
-	      "reloadInitLength": 0,
-	      "reloadLength": 0,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
 	      "reloadFinishLength": 21
       },
       
@@ -84,7 +84,7 @@
       "damage": 45,
       "range": 40,
       "attackSpeed": 2.0,
-      "projectileId": "noneSingle",
+      "projectileId": "none",
       "stackable": false,
       
       "animationDetails": {
@@ -95,8 +95,8 @@
 	      "idleLength": 1,
 	      "attackingInitLength": 8,
 	      "attackingLength": 17,
-	      "reloadInitLength": 0,
-	      "reloadLength": 0,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
 	      "reloadFinishLength": 11
       },
       
@@ -178,7 +178,7 @@
       "damage": 10,
       "range": 35,
       "attackSpeed": 1.5,
-      "projectileId": "noneSingle",
+      "projectileId": "none",
       "stackable": false,
       
       "animationDetails": {},
@@ -221,6 +221,57 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
+      }
+    },
+    {
+      "type": "weapon",
+      "id": "lightsaber",
+      "name": "LightSaber",
+      "description": "Lightsaber from s**ar wars. Very potent.. and hot..'",
+      "rarity": "RARE",
+      "basePrice": 120,
+      "damage": 30,
+      "range": 40,
+      "attackSpeed": 1.4,
+      "projectileId": "none",
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/lightsaber-Sheet.png",
+	      "handSpriteSheetPath": "hands/lightsaber_hands-Sheet.png",
+	      "spriteWidth": 84,
+	      "spriteHeight": 72,
+	      "idleLength": 1,
+	      "attackingInitLength": 8,
+	      "attackingLength": 17,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "melee"
+      },
+      
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.2,
+            "g": 1.0,
+            "b": 0.7
+          },
+          "brightness": 0.05,
+          "saturation": 1.4
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 0.5,
+          "color": {
+            "r": 1.0,
+            "g": 0.6,
+            "b": 0.2
+          }
+        }
       }
     },
     {
