@@ -1,6 +1,7 @@
 package ma.ac.emi.UI;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 
@@ -22,22 +23,28 @@ public class Window extends JFrame {
     
     private final JLayeredPane gamePane;
     
-    //private final GameGLPanel gameGLPanel;
+    private final JLayeredPane transitionPane;
+    private final FadeOverlay fadeOverlay;
 
     public Window() {
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
+
+        transitionPane = new JLayeredPane();
+        transitionPane.setLayout(null);
+
+        fadeOverlay = new FadeOverlay();
 
         loadingScreen = new LoadingScreen();
         mainMenu = new MainMenu();
         pauseMenu = new PauseMenu();
         difficultyMenu = new DifficultyMenu();
         levelSelection = new LevelSelection();
-        gamePane = new JLayeredPane();
         shopUI = new ShopUI();
         gameOverPanel = new GameOverPanel();
-        
-        //gameGLPanel = new GameGLPanel();
+
+        gamePane = new JLayeredPane();
+        gamePane.setLayout(null);
 
         mainPanel.add(loadingScreen, "LOADING");
         mainPanel.add(mainMenu, "MENU");
@@ -48,16 +55,31 @@ public class Window extends JFrame {
         mainPanel.add(shopUI, "SHOP");
         mainPanel.add(gameOverPanel, "GAMEOVER");
 
-        add(mainPanel);
+        transitionPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
+        transitionPane.add(fadeOverlay, JLayeredPane.PALETTE_LAYER);
+
+        add(transitionPane);
 
         setSize(1280, 720);
         setLocationRelativeTo(null);
-        setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
-        
 
+
+        transitionPane.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                Dimension d = transitionPane.getSize();
+                mainPanel.setBounds(0, 0, d.width, d.height);
+                fadeOverlay.setBounds(0, 0, d.width, d.height);
+            }
+        });
+        
+        transitionPane.setBounds(0, 0, getWidth(), getHeight());
+        mainPanel.setBounds(0, 0, getWidth(), getHeight());
+        fadeOverlay.setBounds(0, 0, getWidth(), getHeight());
     }
+
     
     public void refreshShop() {
     	shopUI.refresh();
@@ -67,6 +89,7 @@ public class Window extends JFrame {
         layout.show(mainPanel, name);
         revalidate();
         repaint();
+
     }
     
 
@@ -76,36 +99,48 @@ public class Window extends JFrame {
         gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
         uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
         
-        gamePane.addComponentListener(new ComponentListener() {
+        for (ComponentListener l : gamePane.getComponentListeners()) {
+            gamePane.removeComponentListener(l);
+        }
 
+        gamePane.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
 		        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
 				
 			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-        	
         });
         
         gamePane.add(gameGLPanel, Integer.valueOf(0));
         gamePane.add(uiPanel, Integer.valueOf(1));
     }
+    
+    public void transition(Runnable midAction) {
+
+        Timer timer = new Timer(16, null);
+        final float[] alpha = {0f};
+        final boolean[] fadingOut = {true};
+        
+        timer.addActionListener(e -> {
+            if (fadingOut[0]) {
+                alpha[0] += 0.02f;
+                if (alpha[0] >= 1f) {
+                    alpha[0] = 1f;
+                    fadingOut[0] = false;
+                    midAction.run();
+                }
+            } else {
+                alpha[0] -= 0.02f;
+                if (alpha[0] <= 0f) {
+                    alpha[0] = 0f;
+                    timer.stop();
+                }
+            }
+            fadeOverlay.setAlpha(alpha[0]);
+        });
+
+        timer.start();
+    }
+
 }
