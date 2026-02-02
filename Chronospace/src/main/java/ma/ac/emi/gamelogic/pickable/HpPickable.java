@@ -2,7 +2,6 @@ package ma.ac.emi.gamelogic.pickable;
 
 import lombok.Getter;
 import lombok.Setter;
-import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.player.Player;
 
 import java.awt.*;
@@ -10,33 +9,26 @@ import java.awt.*;
 @Getter
 @Setter
 public class HpPickable extends Pickable {
-    private double baseHpGain;
-    private double hpGain;
 
     public HpPickable(double hpGain, double dropProbability) {
-        super(dropProbability);
-        this.baseHpGain = hpGain;
-        this.hpGain = hpGain;
+        super(dropProbability, hpGain);
     }
 
     @Override
     public void applyEffect(Player player) {
         double currentHp = player.getHp();
         double maxHp = player.getHpMax();
-        double newHp = Math.min(currentHp + hpGain, maxHp);
+
+        double newHp = Math.min(currentHp + this.value, maxHp);
+
         player.setHp(newHp);
-        System.out.println("Player healed by " + hpGain);
+        System.out.println("Player healed by " + this.value);
         this.isPickedUp = true;
     }
 
     @Override
-    public void adjustForDifficulty(double difficultyMultiplier) {
-        this.hpGain = baseHpGain * difficultyMultiplier;
-    }
-
-    @Override
     public Pickable createInstance() {
-        return new HpPickable(baseHpGain, dropProbability);
+        return new HpPickable(this.value, this.dropProbability);
     }
 
     @Override
@@ -47,6 +39,4 @@ public class HpPickable extends Pickable {
         g.setColor(Color.GREEN);
         //g.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
     }
-
-
 }
