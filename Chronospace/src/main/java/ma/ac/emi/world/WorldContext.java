@@ -2,16 +2,19 @@ package ma.ac.emi.world;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.PathFinder;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.glgraphics.lighting.LightObjectManager;
+import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.tiles.TileType;
 
@@ -26,7 +29,7 @@ public class WorldContext {
     // World properties
     private final int worldWidth;
     private final int worldHeight;
-    private final Rectangle worldBounds;
+    private final AABB worldBounds;
     
     // Core entities
     private Player player;
@@ -50,8 +53,7 @@ public class WorldContext {
     public WorldContext(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager, LightObjectManager lightObjectManager) {
         this.worldWidth = width;
         this.worldHeight = height;
-        this.worldBounds = new Rectangle(width * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE, 
-                                          height * ma.ac.emi.gamecontrol.GamePanel.TILE_SIZE);
+        this.worldBounds = new AABB(new Vector3D(width * GamePanel.TILE_SIZE/2, height * GamePanel.TILE_SIZE/2), new Vector3D(width/2 * GamePanel.TILE_SIZE, height/2 * GamePanel.TILE_SIZE));
         this.specieFactory = specieFactory;
         
         // Initialize collections

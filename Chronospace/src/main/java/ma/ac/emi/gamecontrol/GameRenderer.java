@@ -183,7 +183,6 @@ public class GameRenderer implements GLEventListener {
 
         postProcessor.render(gl);
         
-        gl.glDisable(GL.GL_BLEND);
 
     }
 

@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.color.TemporaryColorEffect;
 import ma.ac.emi.glgraphics.lighting.Light;
@@ -17,7 +18,7 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 public abstract class GameObject implements GameDrawable{
 	protected volatile Vector3D pos;
-	protected Rectangle hitbox;
+	protected AABB hitbox;
 	protected SpriteSheet spriteSheet;
 	protected boolean drawn;
 	
@@ -31,7 +32,7 @@ public abstract class GameObject implements GameDrawable{
 	
 	public GameObject() {
 		pos = new Vector3D();
-		hitbox = new Rectangle();
+		hitbox = new AABB();
 		GameController.getInstance().getGamePanel().addDrawable(this);
 		GameController.getInstance().addDrawable(this);
 	}

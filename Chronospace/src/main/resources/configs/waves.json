@@ -37,7 +37,7 @@
       "waves": [
         {
           "waveNumber": 1,
-          "enemies": { "common": 5 , "speedster": 1},
+          "enemies": { "common": 5},
           "spawnDelay": 1.0,
           "isBossWave": false
         },

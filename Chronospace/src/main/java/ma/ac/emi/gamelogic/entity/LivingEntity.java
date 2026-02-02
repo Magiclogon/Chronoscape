@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
@@ -11,7 +13,9 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -38,14 +42,14 @@ public abstract class LivingEntity extends Entity {
 	protected double speed;
 	protected AttackObjectManager attackObjectManager;
 	
-	protected Rectangle bound;
+	protected AABB bound;
 	
 	protected int weaponXOffset, weaponYOffset;
 	
 	protected ParticleEmitter dustEmitter;
 	
 	public LivingEntity() {
-		bound = new Rectangle();
+		bound = new AABB();
 		dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
 		dustEmitter.setStrategy(new UndeterminedStrategy());
 	}
@@ -53,12 +57,9 @@ public abstract class LivingEntity extends Entity {
 	@Override
 	public void update(double step) {
 		super.update(step);
-		hitbox.x = (int) (getPos().getX());
-		hitbox.y = (int) (getPos().getY()-hitbox.height/2+GamePanel.TILE_SIZE/2);
-		
-		bound.x = (int) (getPos().getX());
-		bound.y = (int) (getPos().getY()-bound.height/2+GamePanel.TILE_SIZE/2);
-		
+		hitbox.center = new Vector3D(getPos().getX(), getPos().getY()+GamePanel.TILE_SIZE/2);
+		bound.center = new Vector3D(getPos().getX(), getPos().getY()+GamePanel.TILE_SIZE/2);
+				
 		dustEmitter.setShouldEmit(!isIdle());
 		dustEmitter.setPos(getPos());
 	}
@@ -68,7 +69,7 @@ public abstract class LivingEntity extends Entity {
 		super.draw(g);
         
         g.setColor(Color.red);
-        g.drawRect(bound.x-bound.width/2, bound.y-bound.height/2, bound.width, bound.height);
+        g.drawRect((int) bound.center.getX(), (int) bound.center.getY(), (int) bound.half.getX() * 2, (int) bound.half.getY() * 2);
 	}
 	
 	@Override
@@ -211,5 +212,11 @@ public abstract class LivingEntity extends Entity {
 	}
 
 	public abstract void consumeAmmo();
+	
+//	@Override
+//	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+//		if(bound != null) glGraphics.drawQuad(gl, (float) (bound.center.getX()-bound.half.getX()), (float)(bound.center.getY()-bound.half.getY()), (float)bound.half.getX() * 2, (float)bound.half.getY() * 2);
+//		super.drawGL(gl, glGraphics);
+//	}
 
 }

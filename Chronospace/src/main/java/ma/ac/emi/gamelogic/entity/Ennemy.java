@@ -8,6 +8,7 @@ import ma.ac.emi.gamelogic.ai.AIBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 import java.awt.*;
@@ -26,12 +27,17 @@ public abstract class Ennemy extends LivingEntity implements DifficultyObserver{
 		this.pos = pos;
 		this.speed = speed;
 		this.velocity = new Vector3D();
-		hitbox = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
-		bound = new Rectangle(GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+
 
 		GameController.getInstance().addDifficultyObserver(this);
+		GameController.getInstance().removeDrawable(this);
 		initStats();
 		setupAnimations();
+		
+		double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
+		double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
+		hitbox = new AABB(new Vector3D(), new Vector3D(width, height).mult(0.5));
+		bound = new AABB(new Vector3D(), new Vector3D(width, height/4).mult(0.5));
 	}
 
 	protected abstract void initStats();
