@@ -5,24 +5,16 @@ import ma.ac.emi.gamelogic.pickable.Pickable;
 import ma.ac.emi.gamelogic.shop.StatModifier;
 import ma.ac.emi.gamelogic.wave.Wave;
 
-public class EasyDifficultyStrategy implements DifficultyStrategy {
+public class EasyDifficultyStrategy extends AbstractDifficultyStrategy {
     @Override
-    public void adjustEnemyStats(Ennemy enemy) {
-        
-    }
+    public double getEnemyHpMultiplier() { return 0.8; }
 
     @Override
-    public void adjustPickableDrop(Pickable pickable) {
-        pickable.adjustForDifficulty(1.5);
-    }
+    public double getEnemyDamageMultiplier() { return 0.8; }
 
     @Override
-    public void adjustEnemiesNumberWave(Wave wave) {
-        // Increase enemy number
-    }
+    public double getPickableDropRate() { return 1.2; }
 
     @Override
-    public double getPickableMultiplier() {
-        return 1.5;
-    }
+    public double getEnemyCountMultiplier() { return 1; }
 }

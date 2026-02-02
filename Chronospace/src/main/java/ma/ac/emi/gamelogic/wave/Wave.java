@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
-import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
@@ -15,9 +14,14 @@ import java.util.*;
 
 @Getter
 @Setter
-public class Wave extends WaveNotifier implements DifficultyObserver{
+public class Wave extends WaveNotifier {
     private int number;
+
+    // for logic
     private int enemiesNumber;
+    // from config
+    private int baseEnemiesNumber;
+
     private List<Ennemy> enemies;
     private EnnemySpecieFactory specieFactory;
     private Map<String, Integer> enemyComposition;
@@ -31,12 +35,13 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
     private int worldWidth;
     private int worldHeight;
     private double enemyNumberMultiplier;
-    
+
     private AttackObjectManager attackObjectManager;
 
-    public Wave(int number, int enemiesNumber, EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight) {
+    public Wave(int number, int baseEnemiesNumber, EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight) {
         this.number = number;
-        this.enemiesNumber = enemiesNumber;
+        this.baseEnemiesNumber = baseEnemiesNumber;
+        this.enemiesNumber = baseEnemiesNumber;
         this.specieFactory = specieFactory;
         this.enemies = new ArrayList<>();
         this.isBossWave = false;
@@ -48,10 +53,21 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         spawnPoints = new ArrayList<>();
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
-        
+
         this.enemyNumberMultiplier = 1;
-        
-        GameController.getInstance().addDifficultyObserver(this);
+
+    }
+
+    // called by WaveManager to apply difficulty
+    public void applyDifficulty(DifficultyStrategy strategy) {
+        if (strategy == null) return;
+
+        this.enemyNumberMultiplier = strategy.getEnemyCountMultiplier();
+        this.enemiesNumber = (int) (this.baseEnemiesNumber * this.enemyNumberMultiplier);
+
+        if (this.baseEnemiesNumber > 0 && this.enemiesNumber == 0) {
+            this.enemiesNumber = 1;
+        }
     }
 
     public void spawn() {
@@ -81,20 +97,20 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
             if(e.getHp() <= 0 && e.deathAnimationDone()) deadEnemyPositions.add(e.getPos());
         });
 
-        // Notify
+        // Notify Pickable manager
         if (!deadEnemyPositions.isEmpty()) {
-            System.out.println("Number of points: " + deadEnemyPositions.size());
             notifyListeners(deadEnemyPositions);
         }
-        
+
         enemies.forEach(enemy -> {
-        	if(enemy.getHp() <= 0 && enemy.deathAnimationDone()) {
-        		GameController.getInstance().removeDrawable(enemy);
-        		GameController.getInstance().removeDrawable(enemy.getWeapon());
-        	}
-        	//System.out.println("enemy spotted!");
+            if(enemy.getHp() <= 0 && enemy.deathAnimationDone()) {
+                GameController.getInstance().removeDrawable(enemy);
+                GameController.getInstance().removeDrawable(enemy.getWeapon());
+            }
         });
+
         enemies.removeIf(enemy -> enemy.getHp() <= 0 && enemy.deathAnimationDone());
+
         for(Ennemy e: enemies) {
             e.update(deltaTime, playerPos);
         }
@@ -102,12 +118,15 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
 
     private void spawnEnemy() {
         Ennemy enemy = spawnFromComposition();
+
         enemy.setAttackObjectManager(getAttackObjectManager());
         enemy.initWeapon();
-        
+
         if (enemy != null) {
             setRandomSpawnPosition(enemy);
             enemies.add(enemy);
+            // Ensure enemy is drawn
+            GameController.getInstance().addDrawable(enemy);
         }
     }
 
@@ -115,10 +134,12 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         double x, y;
         List<Obstacle> obstacles = GameController.getInstance().getWorldManager().getCurrentWorld().getContext().getObstacles();
 
+        int attempts = 0;
         do {
             x = random.nextDouble() * worldWidth * 32;
             y = random.nextDouble() * worldHeight * 32;
-        } while(Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles));
+            attempts++;
+        } while(Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles) && attempts < 100);
 
         enemy.setPos(new Vector3D(x, y));
     }
@@ -149,7 +170,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
             case "speedster" -> specieFactory.createSpeedster();
             case "common" -> specieFactory.createCommon();
             case "ranged" -> specieFactory.createRanged();
-            default -> null;
+            default -> specieFactory.createCommon();
         };
     }
 
@@ -172,9 +193,4 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
     private enum WaveSpawnState {
         NOT_STARTED, SPAWNING, SPAWN_COMPLETE
     }
-
-	@Override
-	public void refreshDifficulty(DifficultyStrategy difficutly) {
-		difficutly.adjustEnemiesNumberWave(this);
-	}
 }

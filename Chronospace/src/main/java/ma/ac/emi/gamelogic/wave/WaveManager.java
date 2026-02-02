@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.math.Vector3D;
@@ -12,12 +13,9 @@ import ma.ac.emi.world.WorldContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
-
 @Getter
 @Setter
-public class WaveManager {
+public class WaveManager implements DifficultyObserver {
     private int currentWaveNumber;
     private List<Wave> waves;
     private WaveFactory waveFactory;
@@ -27,8 +25,9 @@ public class WaveManager {
     private int worldWidth;
     private int worldHeight;
     private WorldContext context;
-    
+
     private AttackObjectManager attackObjectManager;
+    private DifficultyStrategy currentDifficulty;
 
     public WaveManager(WorldContext context) {
         this.worldWidth = context.getWorldWidth();
@@ -39,9 +38,20 @@ public class WaveManager {
         this.state = WaveState.WAITING;
         this.waveDelay = 3;
         this.waveTimer = 0;
-        
+
         this.context = context;
+
+        // Register as Observer
+        GameController.getInstance().addDifficultyObserver(this);
+        // Get initial difficulty
+        this.currentDifficulty = GameController.getInstance().getDifficulty();
+
         this.context.refreshCurrentMap();
+    }
+
+    @Override
+    public void refreshDifficulty(DifficultyStrategy difficulty) {
+        this.currentDifficulty = difficulty;
     }
 
     public void update(double deltaTime, Vector3D playerPos) {
@@ -58,7 +68,7 @@ public class WaveManager {
                 if (currentWave != null) {
                     currentWave.update(deltaTime, playerPos);
                     if (currentWave.isCompleted()) {
-                    	waveTimer += deltaTime;
+                        waveTimer += deltaTime;
                         if (waveTimer >= waveDelay) {
                             onWaveCompleted();
                         }
@@ -67,9 +77,8 @@ public class WaveManager {
                 break;
 
             case COMPLETED:
-            	GameController.getInstance().showShop();
-            	GameController.getInstance().nextWorld();
-            	break;
+                // Logic handled in onWaveCompleted
+                break;
             case LOST:
                 break;
         }
@@ -79,7 +88,11 @@ public class WaveManager {
         if (currentWaveNumber < waves.size()) {
             System.out.println("Starting wave " + (currentWaveNumber + 1) + " of " + waves.size());
             Wave wave = waves.get(currentWaveNumber);
+
+            // apply difficulty
+            wave.applyDifficulty(currentDifficulty);
             wave.spawn();
+
             currentWaveNumber++;
             state = WaveState.ACTIVE;
             waveTimer = 0;
@@ -96,6 +109,8 @@ public class WaveManager {
         System.out.println("Wave " + currentWaveNumber + " completed");
         if (currentWaveNumber >= waves.size()) {
             state = WaveState.COMPLETED;
+            GameController.getInstance().showShop();
+            GameController.getInstance().nextWorld();
         } else {
             state = WaveState.WAITING;
             waveTimer = 0;

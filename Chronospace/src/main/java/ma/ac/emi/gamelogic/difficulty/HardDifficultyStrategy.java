@@ -1,27 +1,15 @@
 package ma.ac.emi.gamelogic.difficulty;
 
-import ma.ac.emi.gamelogic.entity.Ennemy;
-import ma.ac.emi.gamelogic.pickable.Pickable;
-import ma.ac.emi.gamelogic.wave.Wave;
-
-public class HardDifficultyStrategy implements DifficultyStrategy{
+public class HardDifficultyStrategy extends AbstractDifficultyStrategy {
     @Override
-    public void adjustEnemyStats(Ennemy enemy) {
-        // Increase enemy stats for hard mode
-    }
+    public double getEnemyHpMultiplier() { return 1.5; }
 
     @Override
-    public void adjustPickableDrop(Pickable pickable) {
-        pickable.adjustForDifficulty(0.6);
-    }
+    public double getEnemyDamageMultiplier() { return 2.0; }
 
     @Override
-    public void adjustEnemiesNumberWave(Wave wave) {
-        // Increase enemy number
-    }
+    public double getPickableDropRate() { return 0.3; }
 
     @Override
-    public double getPickableMultiplier() {
-        return 0.6;
-    }
+    public double getEnemyCountMultiplier() { return 1.5; }
 }
