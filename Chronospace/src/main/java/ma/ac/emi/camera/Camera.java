@@ -14,7 +14,7 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 @Getter
 public class Camera {
-	private double scalingFactor = 0.3;
+	private double scalingFactor = 0.4;
 	private volatile Vector3D pos;
 	private double width;
 	private double height;

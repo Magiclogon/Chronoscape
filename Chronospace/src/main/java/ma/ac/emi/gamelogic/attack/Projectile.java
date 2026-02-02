@@ -46,8 +46,7 @@ public class Projectile extends AttackObject{
 	public void update(double step) {
         super.update(step);
         
-        hitbox.x = (int) getPos().getX();
-        hitbox.y = (int) getPos().getY();
+        hitbox.center = pos;
         
         if(isOutOfRange()) {
         	setActive(false);
@@ -71,7 +70,7 @@ public class Projectile extends AttackObject{
 	            g2d.fillOval((int)(pos.getX() - radius), (int)(pos.getY() - radius),
 	                         (int)(radius * 2), (int)(radius * 2));
 	            g2d.setColor(Color.black);
-	            g2d.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
+	           // g2d.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
     		}
     	}
         
@@ -102,6 +101,8 @@ public class Projectile extends AttackObject{
     			glGraphics.drawSprite(gl, texture, model, getLightingStrategy(), getColorCorrection());
     			
     		}
+//    		glGraphics.drawQuad(gl, (float)(hitbox.center.getX()-hitbox.half.getX()), (float)(hitbox.center.getY()-hitbox.half.getY()), 
+//    				(float)(hitbox.half.getX()*2), (float)(hitbox.half.getY()*2));
     	}
     	
     }

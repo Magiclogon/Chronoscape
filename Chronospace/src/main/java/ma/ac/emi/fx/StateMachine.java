@@ -117,4 +117,28 @@ public class StateMachine {
 			state.clear();
 		}
 	}
+	
+	public StateMachine getSkeleton() {
+		StateMachine skeleton = new StateMachine();
+		
+		for(AnimationState state: statesByTitle.values()) {
+			AnimationState stateSkeleton = new AnimationState(state.getTitle());
+			stateSkeleton.setDoesLoop(state.isDoesLoop());
+			
+			skeleton.addAnimationState(stateSkeleton);
+		}
+		
+		for(StateTrigger trigger: stateTransfers.keySet()) {
+			skeleton.addStateTransfer(trigger.trigger, trigger.state, stateTransfers.get(trigger));
+		}
+		
+		skeleton.setDefaultState(defaultStateTitle);
+		
+		return skeleton;
+				
+	}
+
+	public void setCurrentAnimationState(String title) {
+		this.currentAnimationState = getAnimationStateByTitle(title);
+	}
 }

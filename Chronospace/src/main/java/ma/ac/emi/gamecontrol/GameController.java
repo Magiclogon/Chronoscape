@@ -122,7 +122,7 @@ public class GameController implements Runnable {
         SwingUtilities.invokeLater(() -> {
         	window.showScreen("MENU");
     	});
-        soundManager.loop("main_menu_music");
+        //soundManager.loop("main_menu_music");
     }
 
     public void showDifficultyMenu() {
@@ -141,7 +141,7 @@ public class GameController implements Runnable {
     
     public void showGame() {
     	SwingUtilities.invokeLater(() -> {
-        	window.showScreen("GAME");
+            window.showScreen("GAME");
     	});
     }
     
@@ -198,6 +198,9 @@ public class GameController implements Runnable {
     }
 
 
+	public void restartGameWithTransition() {
+		window.transition(this::restartGame);
+	}
 
 	public void restartGame() {
 		removeAllDrawables();
@@ -334,4 +337,5 @@ public class GameController implements Runnable {
 	public void removeLightObject(LightObject lightObject) {
 		getWorldManager().getCurrentWorld().removeLightObject(lightObject);
 	}
+
 }

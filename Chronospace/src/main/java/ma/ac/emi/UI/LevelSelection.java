@@ -49,7 +49,7 @@ public class LevelSelection extends JPanel implements Soundable{
 
 		configureButtonSounds(level1Button, "hover_menu", "select_menu");
 
-		level1Button.addActionListener((e) -> GameController.getInstance().restartGame());
+		level1Button.addActionListener((e) -> GameController.getInstance().restartGameWithTransition());
 		level1Button.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		this.setBackground(Color.BLACK);

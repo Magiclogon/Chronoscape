@@ -20,6 +20,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -41,12 +42,12 @@ public class Player extends LivingEntity {
 	private Weapon activeWeapon;
 	
 	private static Player instance;
-		
+	private Rectangle posDiffBound;
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector3D();
-		hitbox = new Rectangle(22, 28);
-		bound = new Rectangle(22, 8);
+		hitbox = new AABB(new Vector3D(), new Vector3D(11, 14));
+		bound = new AABB(new Vector3D(), new Vector3D(11, 4));
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 		
 	}
@@ -125,7 +126,7 @@ public class Player extends LivingEntity {
 		setLightingStrategy(config.lightingStrategy);
 		
 		
-		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("rpg7");
+		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("ak47");
 		
 		getInventory().init();
         getInventory().addItem(fists);
@@ -239,7 +240,6 @@ public class Player extends LivingEntity {
 		stateMachine.update(step);
 		
 		getLight().setPosition((float) getPos().getX(), (float) getPos().getY());
-		
 		super.update(step);
 		
 	}
@@ -257,6 +257,8 @@ public class Player extends LivingEntity {
 		super.drawGL(gl, glGraphics);
 		if(activeWeapon != null)
 			activeWeapon.drawGL(gl, glGraphics);
+		
+		if(posDiffBound != null) glGraphics.drawQuad(gl, posDiffBound.x, posDiffBound.y, posDiffBound.width, posDiffBound.height);
 	}
 
 	public void setWeapon(Weapon weapon) {

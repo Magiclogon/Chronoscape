@@ -15,6 +15,9 @@ public class SpeedsterEnnemy extends Ennemy{
 
     public SpeedsterEnnemy(Vector3D pos, double speed) {
         super(pos, speed);
+        
+        this.weaponXOffset = 14;
+        this.weaponYOffset = 3;
     }
 
     @Override
@@ -72,7 +75,7 @@ public class SpeedsterEnnemy extends Ennemy{
 
     @Override
     public void initWeapon() {
-        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("sword"), this));
+        setWeapon(new Weapon(WeaponItemFactory.getInstance().createWeaponItem("lightsaber"), this));
         super.initWeapon();
     }
 

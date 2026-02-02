@@ -41,7 +41,7 @@ public class MoneyPickable extends Pickable {
         g.setColor(Color.YELLOW);
         g.fillOval((int)pos.getX(), (int)pos.getY(), 10, 10);
         g.setColor(Color.GREEN);
-        g.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        //g.drawRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
     }
 
 }

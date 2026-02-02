@@ -121,6 +121,7 @@ public class Wave extends WaveNotifier implements DifficultyObserver{
         } while(Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles));
 
         enemy.setPos(new Vector3D(x, y));
+        GameController.getInstance().addDrawable(enemy);
     }
 
     private Ennemy spawnFromComposition() {

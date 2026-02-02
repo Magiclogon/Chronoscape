@@ -1,7 +1,7 @@
 {
   "projectiles": [
     {
-      "id": "noneSingle",
+      "id": "none",
       "sprite": "projectiles/none_projectile.png",
       "speed": 800,
       "width": 8,

@@ -44,10 +44,10 @@ public abstract class Entity extends GameObject{
         	g.drawImage(sprite, (int)(getPos().getX()-sprite.getWidth()/2), (int)(getPos().getY()-sprite.getHeight()/2), null);
         }
         else
-            g.drawImage(AssetsLoader.getSprite("default_sprite.png").getSprite(), (int)(pos.getX()-hitbox.width/2), (int)(pos.getY()-hitbox.height/2), null);
+            //g.drawImage(AssetsLoader.getSprite("default_sprite.png").getSprite(), (int)(pos.getX()-hitbox.width/2), (int)(pos.getY()-hitbox.height/2), null);
 
         g.setColor(Color.yellow);
-        g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
+        //g.drawRect(hitbox.x-hitbox.width/2, hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
 
 	}
 	
@@ -69,6 +69,7 @@ public abstract class Entity extends GameObject{
 	            sprite.getHeight(),
 	            getColorCorrection()
 	    );
+	    
 	}
 
 	

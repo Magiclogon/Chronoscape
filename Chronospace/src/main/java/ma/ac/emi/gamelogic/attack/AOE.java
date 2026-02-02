@@ -16,6 +16,7 @@ import ma.ac.emi.gamelogic.particle.ParticleAnimation;
 import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
 import ma.ac.emi.gamelogic.particle.ParticleDefinition;
 import ma.ac.emi.gamelogic.particle.ParticlePhase;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -40,7 +41,7 @@ public class AOE extends AttackObject{
         this.animation = AOEAnimationCache.get(def);
         this.phase = AOEPhase.INIT;
         
-        this.hitbox = new Rectangle(def.getAnimationDetails().spriteWidth, def.getAnimationDetails().spriteHeight);
+        this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth, def.getAnimationDetails().spriteHeight));
         this.pos.setZ(-1);
         
         getBaseColorCorrection().saturation = 0.5f;
@@ -49,8 +50,7 @@ public class AOE extends AttackObject{
 
     public void update(double step) {
     	super.update(step);
-    	hitbox.x = (int)getPos().getX();
-		hitbox.y = (int)getPos().getY();
+    	hitbox.center = pos;
 		lastAge = age;
         age += step;
         frameTimer += step;
