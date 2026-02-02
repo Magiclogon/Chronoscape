@@ -126,7 +126,7 @@ public class Player extends LivingEntity {
 		setLightingStrategy(config.lightingStrategy);
 		
 		
-		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("ak47");
+		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("snipnk");
 		
 		getInventory().init();
         getInventory().addItem(fists);
@@ -187,6 +187,7 @@ public class Player extends LivingEntity {
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			if(deathAnimationDone()) {
+				stateMachine.getCurrentAnimationState().reset();
 				SwingUtilities.invokeLater(() -> GameController.getInstance().showGameOver());
 				return;
 			}

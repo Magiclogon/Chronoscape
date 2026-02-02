@@ -275,6 +275,42 @@
       }
     },
     {
+      "type": "weapon",
+      "id": "snipnk",
+      "name": "Snipnk",
+      "description": "Pinky, shiny, glowy, and deadly..",
+      "rarity": "EPIC",
+      "basePrice": 300,
+      "damage": 90,
+      "range": 800,
+      "attackSpeed": 0.5,
+      "projectileId": "sniping_bullet",
+      "reloadingTime": 2.5,
+      "magazineSize": 2,
+      "relativeProjectilePosX": 37,
+      "relativeProjectilePosY": -1,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/snipnk-Sheet.png",
+	      "handSpriteSheetPath": "hands/snipnk_hands-Sheet.png",
+	      "spriteWidth": 136,
+	      "spriteHeight": 120,
+	      "idleLength": 1,
+	      "attackingInitLength": 3,
+	      "attackingLength": 13,
+	      "reloadInitLength": 11,
+	      "reloadLength": 4,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
+      }
+    },
+    {
       "type": "upgrade",
       "id": "weapon_damage_boost",
       "name": "Damage Amplifier",
