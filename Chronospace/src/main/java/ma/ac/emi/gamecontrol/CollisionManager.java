@@ -1,13 +1,8 @@
 package ma.ac.emi.gamecontrol;
 
-import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,14 +11,11 @@ import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.physics.AABB;
-import ma.ac.emi.gamelogic.physics.RayHit;
 import ma.ac.emi.gamelogic.pickable.Pickable;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
-import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
-import ma.ac.emi.world.World;
 import ma.ac.emi.world.WorldContext;
 
 @Getter
