@@ -3,7 +3,6 @@
     {
       "id": "none",
       "sprite": "projectiles/none_projectile.png",
-      "speed": 800,
       "width": 8,
       "height": 8,
       "behaviors": [
@@ -16,7 +15,6 @@
     {
       "id": "bullet",
       "sprite": "projectiles/bullet.png",
-      "speed": 150,
       "width": 8,
       "height": 8,
       "behaviors": [
@@ -54,7 +52,6 @@
     {
       "id": "sniping_bullet",
       "sprite": "projectiles/bullet.png",
-      "speed": 900,
       "width": 8,
       "height": 8,
       "behaviors": [
@@ -92,7 +89,6 @@
     {
       "id": "arrow",
       "sprite": "assets/projectiles/arrow.png",
-      "speed": 700,
       "width": 3,
       "height": 10,
       "behaviors": [
@@ -106,7 +102,6 @@
     {
       "id": "rocket",
       "sprite": "projectiles/rocket.png",
-      "speed": 400,
       "width": 32,
       "height": 32,
       "behaviors": [
@@ -188,7 +183,6 @@
     {
       "id": "hammerShockwave",
       "sprite": "projectiles/none_projectile.png",
-      "speed": 10,
       "width": 8,
       "height": 8,
       "behaviors": [

@@ -29,6 +29,7 @@ public class RangeStrategy extends AttackStrategy {
             			definition.getProjectileId(),
             			weapon.getPos().add(weapon.getRelativeProjectilePos()),
             			dir,
+            			definition.getProjectileSpeed(),
             			weapon
             		);
                 weapon.getAttackObjectManager().addObject(projectile);
