@@ -4,6 +4,7 @@
   	"hpMax": 100,
   	
   	"weaponId": "blaster404",
+  	"projectileSpeedMultiplier": 0.3,
   	
   	"animationDetails": {
   		"spriteSheetPath": "enemies/common_robot-Sheet.png",
@@ -13,8 +14,10 @@
   		"runningLength": 6,
   		"backingLength": 6,
   		"dyingLength": 28
+  	},
   	
-  	}
+  	"weaponXOffset": 8,
+  	"weaponYOffset": 0
   },
     	
   "ranged": {
@@ -22,6 +25,7 @@
   	"hpMax": 100,
   	
   	"weaponId": "snipnk",
+  	"projectileSpeedMultiplier": 0.3,
   	
   	"animationDetails": {
   		"spriteSheetPath": "enemies/ranged_robot-Sheet.png",
@@ -32,7 +36,10 @@
   		"backingLength": 7,
   		"dyingLength": 29
   	
-  	}
+  	},
+  	
+  	"weaponXOffset": 13,
+  	"weaponYOffset": -2
   },
   		
   "speedster":{
@@ -40,6 +47,7 @@
   	"hpMax": 60,
   	
   	"weaponId": "lightsaber",
+  	"projectileSpeedMultiplier": 1,
   	
   	"animationDetails": {
   		"spriteSheetPath": "enemies/speedster_robot-Sheet.png",
@@ -50,7 +58,10 @@
   		"backingLength": 8,
   		"dyingLength": 28
   	
-  	}
+  	},
+  	
+  	"weaponXOffset": 14,
+  	"weaponYOffset": 3
   },
   		
   "tank": {
@@ -58,6 +69,7 @@
   	"hpMax": 450,
   	
   	"weaponId": "hammer",
+  	"projectileSpeedMultiplier": 1,
   	
   	"animationDetails": {
   		"spriteSheetPath": "enemies/tank_robot-Sheet.png",
@@ -76,6 +88,7 @@
   	"hpMax": 1000,
   	
   	"weaponId": "ak47",
+  	"projectileSpeedMultiplier": 0.3,
   	
   	"animationDetails": {
   		"spriteSheetPath": "enemies/boss_robot-Sheet.png",

@@ -6,7 +6,6 @@ public class CommonEnnemy extends Ennemy{
 
     public CommonEnnemy(EnemyDefinition definition) {
 		super(definition);
-		this.weaponXOffset = 8;
-        this.weaponYOffset = 0;	}
+    }
 
 }

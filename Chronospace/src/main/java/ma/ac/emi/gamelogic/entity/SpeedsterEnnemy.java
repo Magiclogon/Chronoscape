@@ -7,8 +7,8 @@ public class SpeedsterEnnemy extends Ennemy{
 
     public SpeedsterEnnemy(EnemyDefinition definition) {
 		super(definition);
-		this.weaponXOffset = 14;
-        this.weaponYOffset = 3;	}
+   
+    }
 	
 
 }

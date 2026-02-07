@@ -37,12 +37,16 @@ public abstract class Ennemy extends LivingEntity {
 		hitbox = new AABB(new Vector3D(), new Vector3D(width, height).mult(0.5));
 		bound = new AABB(new Vector3D(), new Vector3D(width, height/4).mult(0.5));
 		
+		weaponXOffset = definition.getWeaponXOffset();
+		weaponYOffset = definition.getWeaponYOffset();
+		
 		GameController.getInstance().removeDrawable(this);
 	}
 
 	protected void initStats() {
 		this.speed = definition.getSpeed();
 		this.hpMax = definition.getHpMax();
+		this.projectileSpeedMultiplier = definition.getProjectileSpeedMultiplier();
 		
 		this.hp = hpMax;
 	}
