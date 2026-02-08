@@ -120,7 +120,7 @@ public abstract class Ennemy extends LivingEntity {
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
-			if(dustEmitter.isActive()) dustEmitter.setActive(false);
+			super.update(step);
 			return;
 		}
 

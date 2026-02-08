@@ -245,6 +245,10 @@ public class World extends GameObject{
 		return context.getWorldHeight()*GamePanel.TILE_SIZE;
 	}
 
+	public void clearAttackObjects() {
+		this.getAttackObjectManager().clearObjects();
+	}
+
 
 	
 }

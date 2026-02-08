@@ -1,15 +1,21 @@
 package ma.ac.emi.gamelogic.player;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorDefinition;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorFactory;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
 import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
 import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerConfigLoader {
 
@@ -33,6 +39,17 @@ public class PlayerConfigLoader {
             LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
             config.lightingStrategy = lightingStrategy;
         }
+        
+        List<EntityBehaviorDefinition> behaviors = new ArrayList<>();
+    	if (obj.has("behaviors")) {
+            JsonArray behaviorArray = obj.getAsJsonArray("behaviors");
+            for (JsonElement b : behaviorArray) {
+            	JsonObject behaviorJson = b.getAsJsonObject();
+                behaviors.add(EntityBehaviorFactory.create(behaviorJson));
+            }
+        }
+    	
+    	config.behaviorDefinitions = behaviors;
         
         return config;
     }

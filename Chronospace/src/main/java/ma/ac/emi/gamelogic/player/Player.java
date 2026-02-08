@@ -42,7 +42,7 @@ public class Player extends LivingEntity {
 	private Weapon activeWeapon;
 	
 	private static Player instance;
-	private Rectangle posDiffBound;
+	
 	private Player() {
 		inventory = new Inventory();
 		velocity = new Vector3D();
@@ -107,6 +107,7 @@ public class Player extends LivingEntity {
 		return instance;
 	}
 	
+	@Override
 	public void init() {
 		baseHP = 100;
 		baseHPMax = 100;
@@ -125,12 +126,14 @@ public class Player extends LivingEntity {
 		setBaseColorCorrection(config.colorCorrection);
 		setLightingStrategy(config.lightingStrategy);
 		
+		behaviors.clear();
+		config.behaviorDefinitions.forEach(b -> this.behaviors.add(b.create()));
 		
-		WeaponItem fists = WeaponItemFactory.getInstance().createWeaponItem("snipnk");
+		WeaponItem startingWeaponItem = WeaponItemFactory.getInstance().createWeaponItem(config.startingWeaponId);
 		
 		getInventory().init();
-        getInventory().addItem(fists);
-        getInventory().equipWeapon(fists, 0);
+        getInventory().addItem(startingWeaponItem);
+        getInventory().equipWeapon(startingWeaponItem, 0);
         initWeapons();
         
         setupAnimations();
@@ -138,9 +141,7 @@ public class Player extends LivingEntity {
         
         setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
         
-        dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
-		dustEmitter.setStrategy(new UndeterminedStrategy());
-        
+        behaviors.forEach(b -> b.onInit(this));
 	}
 	
 	public void applyBaseStats(PlayerConfig cfg) {
@@ -256,10 +257,8 @@ public class Player extends LivingEntity {
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		super.drawGL(gl, glGraphics);
-		if(activeWeapon != null)
+		if(activeWeapon != null && hp > 0)
 			activeWeapon.drawGL(gl, glGraphics);
-		
-		if(posDiffBound != null) glGraphics.drawQuad(gl, posDiffBound.x, posDiffBound.y, posDiffBound.width, posDiffBound.height);
 	}
 
 	public void setWeapon(Weapon weapon) {

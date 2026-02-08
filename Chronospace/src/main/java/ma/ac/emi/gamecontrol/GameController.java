@@ -196,6 +196,11 @@ public class GameController implements Runnable {
         SwingUtilities.invokeLater(() -> window.showScreen("GAME"));
         soundManager.stopAll();
     }
+    
+    public void nextWave() {
+    	worldManager.getCurrentWorld().clearAttackObjects();
+    	resumeGame();
+    }
 
 
 	public void restartGameWithTransition() {
