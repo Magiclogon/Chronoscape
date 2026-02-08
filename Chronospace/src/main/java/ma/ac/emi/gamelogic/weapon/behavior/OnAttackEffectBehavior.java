@@ -1,4 +1,4 @@
-package ma.ac.emi.gamelogic.entity.behavior;
+package ma.ac.emi.gamelogic.weapon.behavior;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,30 +7,35 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.AgeStrategy;
 import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
+import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
-public class OnHitEffectBehavior implements EntityBehavior{
-	protected String particleId;
-	protected int count;
-	protected double radius;
-	protected double emitterRadius;
-	protected double ageMax;
-	protected boolean isOneTime;
+public class OnAttackEffectBehavior extends WeaponBehavior {
+	private String particleId;
+	private int count;
+	private double radius;
+	private double emitterRadius;
+	private double ageMax;
+	private boolean isOneTime;
+	
 	protected List<ParticleEmitter> emitters = new ArrayList<>();
 
-	public OnHitEffectBehavior(String particleId, int count, double radius, double emitterRadius, double ageMax, boolean isOneTime) {
+	public OnAttackEffectBehavior(String particleId, double offset, int count, double radius, double emitterRadius,
+			double ageMax, boolean isOneTime) {
+		super(offset);
 		this.particleId = particleId;
+		this.offset = offset;
 		this.count = count;
 		this.radius = radius;
-		this.ageMax = ageMax;
-		this.isOneTime = isOneTime;
 		this.emitterRadius = emitterRadius;
+		this.ageMax = ageMax;
+		this.isOneTime = isOneTime;	
 	}
+
 	
-
-	public void onInit(LivingEntity entity) {
+	@Override
+	public void onInit(Weapon weapon) {
 		emitters.clear();
-
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
 			ParticleEmitter emitter = initEmitter(offset);
@@ -41,28 +46,25 @@ public class OnHitEffectBehavior implements EntityBehavior{
 	}
 
 	@Override
-	public void onUpdate(LivingEntity entity, double step) {
-		// TODO Auto-generated method stub
-		
+	public void onUpdate(Weapon weapon, double step) {		
 	}
 	
 	@Override
-	public void onHit(LivingEntity entity) {
+	public void onAttack(Weapon weapon, double step) {
 		//Spawn particles
-		if(entity.getHp() <= 0) return;
+		Vector3D offset = weapon.getDir().normalize().mult(this.offset);
 		emitters.forEach(e -> {
-			e.setPos(e.getPos().add(entity.getPos()));
+			e.setPos(e.getPos()
+					.add(weapon.getPos())
+					.add(offset)
+					.add(weapon.getBearer().getVelocity().mult(step)));
 			e.setShouldEmit(true);
 		});
-		onInit(entity);
-	}
-
-	@Override
-	public void onDeath(LivingEntity entity) {
-		
+		onInit(weapon);
 	}
 	
 	private ParticleEmitter initEmitter(Vector3D pos) {
 		return new ParticleEmitter(particleId, pos, ageMax, emitterRadius, false);
 	}
+
 }

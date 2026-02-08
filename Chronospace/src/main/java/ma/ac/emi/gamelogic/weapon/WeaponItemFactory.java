@@ -22,6 +22,7 @@ public class WeaponItemFactory {
 		}
 		
 		if(weaponDef == null) System.out.println("Couldn't find the weapon item for id: " + id);
+		
 		return new WeaponItem(weaponDef);
 	}
 }

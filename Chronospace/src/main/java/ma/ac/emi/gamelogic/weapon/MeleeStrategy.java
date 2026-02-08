@@ -14,7 +14,7 @@ public class MeleeStrategy extends AttackStrategy {
 	}
 
 	@Override
-    public void execute(Weapon weapon) {
+    public void execute(Weapon weapon, double step) {
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
         if (weapon.getTsla() >= 1/definition.getAttackSpeed()) {
         	Projectile projectile = ProjectileFactory.createProjectile(
@@ -28,6 +28,7 @@ public class MeleeStrategy extends AttackStrategy {
             weapon.setTsla(0);
             weapon.getStateMachine().getCurrentAnimationState().reset();
             
+            weapon.getBehaviors().forEach(b -> b.onAttack(weapon, step));
             GameController.getInstance().getCamera().shake(cameraShakeDefinition.intensity, cameraShakeDefinition.damping);
         }
     }

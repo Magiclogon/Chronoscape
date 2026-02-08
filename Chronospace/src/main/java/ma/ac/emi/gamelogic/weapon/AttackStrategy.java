@@ -8,5 +8,5 @@ public abstract class AttackStrategy {
 	public AttackStrategy(CameraShakeDefinition cameraShakeDefinition) {
 		this.cameraShakeDefinition = cameraShakeDefinition;
 	}
-    public abstract void execute(Weapon weapon);
+    public abstract void execute(Weapon weapon, double step);
 }

@@ -1,5 +1,7 @@
 package ma.ac.emi.gamelogic.entity;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
@@ -11,8 +13,12 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.AIBehavior;
 import ma.ac.emi.gamelogic.factory.EnemyDefinition;
 import ma.ac.emi.gamelogic.physics.AABB;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehavior;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -52,11 +58,18 @@ public abstract class Ennemy extends LivingEntity {
 	}
 
 	public void initWeapon() {
-		setWeapon(new Weapon(
-				WeaponItemFactory.getInstance().createWeaponItem(definition.getWeaponId()),
+		WeaponItem item = WeaponItemFactory.getInstance().createWeaponItem(definition.getWeaponId());
+		Weapon weapon = new Weapon(
+				item,
 				this
-			)
-		);
+			);
+		
+		List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
+		
+		behaviors.forEach(b -> weapon.getBehaviors().add(b.create()));
+		weapon.init();
+		
+		setWeapon(weapon);
 		
 		if(getWeapon() == null) return;
 		getWeapon().setAttackObjectManager(getAttackObjectManager());
@@ -130,7 +143,7 @@ public abstract class Ennemy extends LivingEntity {
 			setVelocity(direction.mult(getSpeed()));
 
 			if (aiBehavior.shouldAttack(this, targetPos)) {
-				attack();
+				attack(step);
 			} else {
 				stopAttacking();
 			}
@@ -161,9 +174,9 @@ public abstract class Ennemy extends LivingEntity {
 	}
 
 	@Override
-	public void attack() {
+	public void attack(double step) {
 		if (this.weapon != null) {
-			this.weapon.attack();
+			this.weapon.attack(step);
 		}
 	}
 

@@ -35,7 +35,20 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
-      }
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onAttackEffect",
+          "particleId": "muzzle_flash",
+          "offset": 30,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 3,
+          "isOneTime": true
+        }
+      ]
     },
     {
       "type": "weapon",
