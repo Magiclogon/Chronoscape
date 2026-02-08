@@ -221,16 +221,16 @@
       }
     },
     {
-      "id": "light",
-      "lifetime": 5.5,
-      "spawnRate": 3,
+      "id": "shockwave",
+      "lifetime": 0.8,
+      "spawnRate": 50,
       "animationDetails": {
-        "spritePath": "particles/none_particle.png",
-        "spriteWidth": 1,
-        "spriteHeight": 1,
-        "initLength": 1,
-        "loopLength": 1,
-        "finishLength": 1
+      	"spritePath": "particles/shockwave-Sheet.png",
+      	"spriteWidth": 80,
+      	"spriteHeight": 80,
+      	"initLength": 9,
+      	"loopLength": 1,
+      	"finishLength": 1
       }
     }
     

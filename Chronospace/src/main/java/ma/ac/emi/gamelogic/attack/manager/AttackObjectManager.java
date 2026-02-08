@@ -62,4 +62,8 @@ public class AttackObjectManager {
     public List<Projectile> getProjectiles(){
     	return getAttackObjects().stream().filter(o -> o instanceof Projectile).map(o -> (Projectile) o).toList();
     }
+
+	public void clearObjects() {
+		this.attackObjects.forEach(o -> o.setActive(false));
+	}
 }

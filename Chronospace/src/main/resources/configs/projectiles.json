@@ -3,7 +3,6 @@
     {
       "id": "none",
       "sprite": "projectiles/none_projectile.png",
-      "speed": 800,
       "width": 8,
       "height": 8,
       "behaviors": [
@@ -16,7 +15,43 @@
     {
       "id": "bullet",
       "sprite": "projectiles/bullet.png",
-      "speed": 150,
+      "width": 8,
+      "height": 8,
+      "behaviors": [
+        {
+          "type": "damage",
+          "destroyOnHit": true
+        },
+        {
+          "type": "light",
+          "lightRadius": 20,
+          "intensity": 1
+        }
+      ],
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.2,
+            "g": 1.0,
+            "b": 0.7
+          },
+          "brightness": 0.05,
+          "saturation": 1.4
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 0.5,
+          "color": {
+            "r": 1.0,
+            "g": 0.6,
+            "b": 0.2
+          }
+        }
+      }
+    },
+    {
+      "id": "sniping_bullet",
+      "sprite": "projectiles/bullet.png",
       "width": 8,
       "height": 8,
       "behaviors": [
@@ -54,7 +89,6 @@
     {
       "id": "arrow",
       "sprite": "assets/projectiles/arrow.png",
-      "speed": 700,
       "width": 3,
       "height": 10,
       "behaviors": [
@@ -68,7 +102,6 @@
     {
       "id": "rocket",
       "sprite": "projectiles/rocket.png",
-      "speed": 400,
       "width": 32,
       "height": 32,
       "behaviors": [
@@ -150,7 +183,6 @@
     {
       "id": "hammerShockwave",
       "sprite": "projectiles/none_projectile.png",
-      "speed": 10,
       "width": 8,
       "height": 8,
       "behaviors": [

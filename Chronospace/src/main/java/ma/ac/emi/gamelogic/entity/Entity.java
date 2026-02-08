@@ -24,6 +24,8 @@ public abstract class Entity extends GameObject{
 	protected StateMachine stateMachine;
 	
 	public Entity() {
+		this.velocity = new Vector3D();
+		
 		stateMachine = new StateMachine();
 		initStateMachine();
 

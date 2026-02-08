@@ -3,6 +3,8 @@ package ma.ac.emi.gamelogic.entity;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.opengl.GL3;
 
@@ -11,6 +13,8 @@ import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehavior;
+import ma.ac.emi.gamelogic.entity.behavior.OnHitFlashBehavior;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.physics.AABB;
@@ -31,6 +35,9 @@ public abstract class LivingEntity extends Entity {
 	private static final String TRIGGER_DIE = "Die";
 	
 	protected Vector3D dir;
+	protected boolean active = false;
+	protected boolean invincible = false;
+	
 	protected double hp;
 	protected double hpMax;
 	protected double baseHP;
@@ -40,28 +47,46 @@ public abstract class LivingEntity extends Entity {
 	protected double baseStrength;
 	protected double regenerationSpeed;
 	protected double speed;
+	protected double projectileSpeedMultiplier = 1;
 	protected AttackObjectManager attackObjectManager;
 	
 	protected AABB bound;
 	
 	protected int weaponXOffset, weaponYOffset;
 	
-	protected ParticleEmitter dustEmitter;
+	protected List<EntityBehavior> behaviors = new ArrayList<>();
 	
 	public LivingEntity() {
 		bound = new AABB();
-		dustEmitter = new ParticleEmitter("dust", getPos(), 999, 5);
-		dustEmitter.setStrategy(new UndeterminedStrategy());
+		active = true;
+	}
+	
+	public void init() {
+		behaviors.forEach(b -> b.onInit(this));
+
+	}
+	
+	public void onHit() {
+		behaviors.forEach(b -> b.onHit(this));
 	}
 	
 	@Override
 	public void update(double step) {
 		super.update(step);
-		hitbox.center = new Vector3D(getPos().getX(), getPos().getY()+GamePanel.TILE_SIZE/2);
-		bound.center = new Vector3D(getPos().getX(), getPos().getY()+GamePanel.TILE_SIZE/2);
-				
-		dustEmitter.setShouldEmit(!isIdle());
-		dustEmitter.setPos(getPos());
+		invincible = false;
+		
+		hitbox.center = getPos();
+		bound.center = getPos().add(new Vector3D(0, GamePanel.TILE_SIZE/2));
+		
+		behaviors.forEach(b -> b.onUpdate(this, step));
+		
+		if(hp <= 0) {
+			if(active) {
+				active = false;
+				behaviors.forEach(b -> b.onDeath(this));
+			}
+		}
+		
 	}
 	
 	@Override

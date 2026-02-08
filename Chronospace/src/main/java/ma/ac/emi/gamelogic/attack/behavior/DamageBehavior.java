@@ -19,8 +19,11 @@ public class DamageBehavior implements Behavior{
 	@Override
 	public void onHit(Projectile p, LivingEntity entity) {
 		WeaponItemDefinition definition = (WeaponItemDefinition) p.getWeapon().getWeaponItem().getItemDefinition();
-		entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
-		System.out.println("Target hit, damage: " + definition.getDamage() + ", remaining hp: " + entity.getHp());
+		if(!entity.isInvincible()) {
+			entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+			System.out.println("Target hit, damage: " + definition.getDamage() + ", remaining hp: " + entity.getHp());
+			entity.onHit();
+		}
 	}
 
 	@Override
