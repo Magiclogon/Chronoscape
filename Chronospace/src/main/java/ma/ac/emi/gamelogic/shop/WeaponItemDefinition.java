@@ -10,8 +10,8 @@ import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 import ma.ac.emi.gamelogic.weapon.RangeStrategy;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
 
 @Getter
 @Setter

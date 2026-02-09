@@ -212,11 +212,10 @@
           "tint": {
             "r": 0.9,
             "g": 0.9,
-            "b": 0.85,
+            "b": 1.2,
             "a": 0.6
           },
-          "saturation": 0.7,
-          "brightness": -0.1
+          "saturation": 0.7
         }
       }
     },

@@ -11,7 +11,7 @@
       "range": 500,
       "attackSpeed": 8,
       "projectileId": "bullet",
-      "projectileSpeed": 800,
+      "projectileSpeed": 150,
       "reloadingTime": 2.5,
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
@@ -153,8 +153,8 @@
       
       "attackStrategy": {
       	"type": "range",
-      	"projectileCount": 3,
-      	"spread": 0.5,
+      	"projectileCount": 1,
+      	"spread": 0,
       	
       	"cameraShake": {
       		"intensity": 5,

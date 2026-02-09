@@ -40,7 +40,7 @@ public class Obstacle extends GameObject {
         this.hitbox = createHitbox(type);
 
         baseColorCorrection = new SpriteColorCorrection();
-        baseColorCorrection.setValue(0.3f);
+        baseColorCorrection.setValue(0.5f);
     }
 
     /* ============================

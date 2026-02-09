@@ -213,12 +213,12 @@ public class Weapon extends Entity{
 		
 	}
     
-    public void attack(double step) {
+    public void attack(Vector3D target, double step) {
         if (getAttackStrategy() != null) {
             if(isInState("Idle")) {
             	stateMachine.trigger(TRIGGER_ATTACK);
             }
-        	if(isInState("Attacking")) getAttackStrategy().execute(this, step);
+        	if(isInState("Attacking")) getAttackStrategy().execute(this, target, step);
 
         }
     }
@@ -270,7 +270,7 @@ public class Weapon extends Entity{
         Matrix4.identity(model);
 
         float px = (float) getBearer().getPos().getX();
-        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset());
+        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset() - getBearer().getPos().getZ());
         Matrix4.translate(model, px, py, 0f);
 
         double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;

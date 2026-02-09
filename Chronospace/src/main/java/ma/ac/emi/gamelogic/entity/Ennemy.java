@@ -143,7 +143,7 @@ public abstract class Ennemy extends LivingEntity {
 			setVelocity(direction.mult(getSpeed()));
 
 			if (aiBehavior.shouldAttack(this, targetPos)) {
-				attack(step);
+				attack(targetPos, step);
 			} else {
 				stopAttacking();
 			}
@@ -174,9 +174,9 @@ public abstract class Ennemy extends LivingEntity {
 	}
 
 	@Override
-	public void attack(double step) {
+	public void attack(Vector3D target, double step) {
 		if (this.weapon != null) {
-			this.weapon.attack(step);
+			this.weapon.attack(target, step);
 		}
 	}
 

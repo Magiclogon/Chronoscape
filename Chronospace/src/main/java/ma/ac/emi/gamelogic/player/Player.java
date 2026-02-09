@@ -141,7 +141,7 @@ public class Player extends LivingEntity {
         setupAnimations();
         if(!isIdle()) stateMachine.trigger("Stop");
         
-        setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
+        setLight(new Light(getPos(), 200));
         
         behaviors.forEach(b -> b.onInit(this));
 	}
@@ -203,7 +203,7 @@ public class Player extends LivingEntity {
 			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
-			attack(step);
+			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
 		}else {
 			stopAttacking();
 		}
@@ -250,7 +250,7 @@ public class Player extends LivingEntity {
 		changeStateDirection();
 		stateMachine.update(step);
 		
-		getLight().setPosition((float) getPos().getX(), (float) getPos().getY());
+		getLight().setPosition(getPos());
 		super.update(step);
 		
 	}
@@ -268,6 +268,7 @@ public class Player extends LivingEntity {
 		super.drawGL(gl, glGraphics);
 		if(activeWeapon != null && hp > 0)
 			activeWeapon.drawGL(gl, glGraphics);
+		
 	}
 
 	public void setWeapon(Weapon weapon) {
@@ -280,8 +281,8 @@ public class Player extends LivingEntity {
 	}
 
 	@Override
-	public void attack(double step) {
-		if(activeWeapon != null) this.activeWeapon.attack(step);
+	public void attack(Vector3D target, double step) {
+		if(activeWeapon != null) this.activeWeapon.attack(target, step);
 	}
 	
 	@Override
