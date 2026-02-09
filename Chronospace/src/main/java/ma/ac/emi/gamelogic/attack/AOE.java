@@ -41,11 +41,8 @@ public class AOE extends AttackObject{
         this.animation = AOEAnimationCache.get(def);
         this.phase = AOEPhase.INIT;
         
-        this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth, def.getAnimationDetails().spriteHeight));
+        this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth/2, def.getAnimationDetails().spriteHeight/2));
         this.pos.setZ(-0.01);
-        
-        getBaseColorCorrection().saturation = 0.5f;
-        getBaseColorCorrection().value = 0.5f;
     }
 
     public void update(double step) {

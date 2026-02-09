@@ -8,7 +8,7 @@
   "baseStrength": 10.0,
   "regenerationSpeed": 0.8,
   
-  "startingWeaponId": "ak47",
+  "startingWeaponId": "flamethrower",
   
   "postProcessingDetails": {
   	"colorCorrection": {

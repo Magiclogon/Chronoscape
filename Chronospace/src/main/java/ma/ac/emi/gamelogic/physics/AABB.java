@@ -6,7 +6,7 @@ public class AABB {
     public Vector3D center;
     public Vector3D half;
     
-    public final double z_tolerance = 1;
+    public final double z_tolerance = 5;
 
     public AABB(Vector3D center, Vector3D half) {
         this.center = center;

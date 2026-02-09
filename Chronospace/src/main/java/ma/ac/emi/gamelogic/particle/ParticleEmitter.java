@@ -58,6 +58,7 @@ public class ParticleEmitter extends GameObject{
 		if(!GameController.getInstance().getWorldManager().getCurrentWorld().isObstacle(
 				(int)((spawnPos.getX()+GamePanel.TILE_SIZE/2)/GamePanel.TILE_SIZE), 
 				(int)((spawnPos.getY()+GamePanel.TILE_SIZE/2)/GamePanel.TILE_SIZE))
+			|| spawnPos.getZ() > 0
 			|| strategy instanceof OneTimeStrategy) 
 		{
 			spawnParticle(spawnPos);

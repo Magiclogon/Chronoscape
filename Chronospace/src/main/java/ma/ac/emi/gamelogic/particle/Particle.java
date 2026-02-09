@@ -107,12 +107,13 @@ public class Particle extends GameObject {
         
         glGraphics.drawSprite(gl, texture, 
             (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2),
+            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
             sprite.getWidth(),
             sprite.getHeight(),
             getLightingStrategy(),
             getColorCorrection()
         );
+        
     }
     
     @Override
@@ -120,9 +121,6 @@ public class Particle extends GameObject {
     	return animation.getSprite(phase, frameIndex);
     }
     
-    /**
-     * Batched rendering - texture already bound, skip binding
-     */
     public void drawGLBatched(GL3 gl, GLGraphics glGraphics, Texture texture) {
         Sprite sprite = animation.getSprite(phase, frameIndex);
         if (sprite == null) return;
@@ -130,7 +128,7 @@ public class Particle extends GameObject {
         // Use a version of drawSprite that doesn't bind texture
         glGraphics.drawSpriteBatched(gl, texture,
             (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2),
+            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
             sprite.getWidth(),
             sprite.getHeight(),
             getLightingStrategy(),

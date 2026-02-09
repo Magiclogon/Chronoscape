@@ -6,6 +6,7 @@ import java.util.List;
 import lombok.*;
 import ma.ac.emi.camera.CameraShakeDefinition;
 import ma.ac.emi.gamelogic.weapon.AttackStrategy;
+import ma.ac.emi.gamelogic.weapon.LobbedStrategy;
 import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 import ma.ac.emi.gamelogic.weapon.RangeStrategy;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
@@ -118,6 +119,28 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
 		}
 
     }
+    
+    public static class LobbedStrategyDefinition extends AttackStrategyDefinition{
+		public final int projectileCount;
+    	public final double radius;
+    	public final double gravity;
+    	public final double scale;
+    	
+       	public LobbedStrategyDefinition(int projectileCount, double radius, double gravity, double scale) {
+			this.projectileCount = projectileCount;
+			this.radius = radius;
+			this.gravity = gravity;
+			this.scale = scale;
+    	}
+       	public LobbedStrategyDefinition(LobbedStrategyDefinition def) {
+       		this(def.projectileCount, def.radius, def.gravity, def.scale);
+       	}
+		@Override
+		public AttackStrategy create() {
+			return new LobbedStrategy(radius, projectileCount, gravity, scale, new CameraShakeDefinition(cameraShakeDefinition));
+		}
+    }
+    
     
     public static class WeaponAnimationDetails{
     	public String spriteSheetPath;

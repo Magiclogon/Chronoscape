@@ -52,7 +52,8 @@ public class BehaviorFactory {
             			);
             case "lobbing":
             	return new LobbingBehaviorDefinition(
-            			json.get("gravity").getAsDouble()
+            			json.get("gravity").getAsDouble(),
+            			json.get("scale").getAsDouble()
             			);
 
             default:

@@ -34,7 +34,8 @@ public class AttackObjectManager {
         for (AttackObject attackObject : attackObjects) {
         	attackObject.update(step);
         	if(attackObject.isOutOfWorld(context)) {
-            	attackObject.setActive(false);
+        		System.out.println("Out of world");
+            	attackObject.desactivate();
             }
         }
         List<AttackObject> copy = new ArrayList<>(getAttackObjects());

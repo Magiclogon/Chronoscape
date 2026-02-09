@@ -58,7 +58,6 @@ public class Obstacle extends GameObject {
         Vector3D halfSize = new Vector3D(half, half);
 
         switch (type) {
-            // [Keep your existing switch cases here...]
             case LEFT_EDGE_IN:
             case RIGHT_EDGE_OUT:
                 halfSize = new Vector3D(half / 2.0, half);
@@ -74,7 +73,7 @@ public class Obstacle extends GameObject {
             case TOP_LEFT_IN:
             case TOP_RIGHT_IN:
                 halfSize = new Vector3D(half, half / 2.0);
-                center = pos.add(new Vector3D(0, -half / 2.0)); // Fixed Y direction (usually up is negative or centered)
+                center = pos.add(new Vector3D(0, half / 2.0));
                 break;
             case BOTTOM_EDGE_IN:
             case BOTTOM_EDGE_OUT:
@@ -147,6 +146,12 @@ public class Obstacle extends GameObject {
                 GamePanel.TILE_SIZE,
                 baseColorCorrection
         );
+        
+//        if(hitbox != null) glGraphics.drawQuad(gl, 
+//        		(float)(hitbox.center.getX()-hitbox.half.getX()),
+//        		(float)(hitbox.center.getY()-hitbox.half.getY()),
+//        		(float)(hitbox.half.getX()*2),
+//        		(float)(hitbox.half.getY()*2));
     }
 
     @Override
