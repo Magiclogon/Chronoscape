@@ -12,6 +12,7 @@
       "range": 500,
       "attackSpeed": 8,
       "projectileId": "bullet",
+      "projectileSpeed": 800,
       "reloadingTime": 2.5,
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
@@ -46,9 +47,10 @@
       "basePrice": 800,
       "damage": 80,
       "recoilForce": 0,
-      "range": 0,
+      "range": 24,
       "attackSpeed": 0.8,
       "projectileId": "hammerShockwave",
+      "projectileSpeed": 100,
       "relativeProjectilePosX": 20,
       "relativeProjectilePosY": 13,
       "stackable": false,
@@ -88,6 +90,7 @@
       "range": 40,
       "attackSpeed": 2.0,
       "projectileId": "none",
+      "projectileSpeed": 800,
       "stackable": false,
       
       "animationDetails": {
@@ -119,6 +122,7 @@
       "range": 1000,
       "attackSpeed": 2,
       "projectileId": "rocket",
+      "projectileSpeed": 400,
       "reloadingTime": 0.5,
       "magazineSize": 100,
       "relativeProjectilePosX": 18,
@@ -161,6 +165,7 @@
       "range": 300,
       "attackSpeed": 2,
       "projectileId": "arrow",
+      "projectileSpeed": 300,
       "reloadingTime": 1.2,
       "magazineSize": 1,
       "stackable": false,
@@ -185,6 +190,7 @@
       "range": 35,
       "attackSpeed": 1.5,
       "projectileId": "none",
+      "projectileSpeed": 800,
       "stackable": false,
       
       "animationDetails": {},
@@ -205,6 +211,7 @@
       "range": 300,
       "attackSpeed": 1,
       "projectileId": "bullet",
+      "projectileSpeed": 600,
       "reloadingTime": 1,
       "magazineSize": 4,
       "relativeProjectilePosX": 13,
@@ -242,6 +249,7 @@
       "range": 40,
       "attackSpeed": 1.4,
       "projectileId": "none",
+      "projectileSpeed": 800,
       "stackable": false,
       
       "animationDetails": {
@@ -280,6 +288,43 @@
             "b": 0.2
           }
         }
+      }
+    },
+    {
+      "type": "weapon",
+      "id": "snipnk",
+      "name": "Snipnk",
+      "description": "Pinky, shiny, glowy, and deadly..",
+      "rarity": "EPIC",
+      "basePrice": 300,
+      "damage": 90,
+      "range": 800,
+      "attackSpeed": 0.5,
+      "projectileId": "sniping_bullet",
+      "projectileSpeed": 900,
+      "reloadingTime": 2.5,
+      "magazineSize": 2,
+      "relativeProjectilePosX": 37,
+      "relativeProjectilePosY": -1,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/snipnk-Sheet.png",
+	      "handSpriteSheetPath": "hands/snipnk_hands-Sheet.png",
+	      "spriteWidth": 136,
+	      "spriteHeight": 120,
+	      "idleLength": 1,
+	      "attackingInitLength": 3,
+	      "attackingLength": 13,
+	      "reloadInitLength": 11,
+	      "reloadLength": 4,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 1,
+      	"spread": 0
       }
     },
     {

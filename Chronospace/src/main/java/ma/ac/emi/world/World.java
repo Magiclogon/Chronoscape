@@ -8,6 +8,7 @@ import com.jogamp.opengl.GL3;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.CollisionManager;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.*;
@@ -170,6 +171,7 @@ public class World extends GameObject{
 
 			setupEnemyAI(minion);
 
+			GameController.getInstance().addDrawable(minion);
 			context.getWaveManager().addEnemyToCurrentWave(minion);
 		}
 
@@ -241,6 +243,10 @@ public class World extends GameObject{
 	@Override
 	public double getDrawnHeight() {
 		return context.getWorldHeight()*GamePanel.TILE_SIZE;
+	}
+
+	public void clearAttackObjects() {
+		this.getAttackObjectManager().clearObjects();
 	}
 
 

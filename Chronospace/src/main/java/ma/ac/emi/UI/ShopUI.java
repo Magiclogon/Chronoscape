@@ -153,7 +153,7 @@ public class ShopUI extends JPanel {
         nextWaveButton.setPreferredSize(new Dimension(160, 45));
         nextWaveButton.addActionListener((e) -> {
             Player.getInstance().initWeapons();
-            GameController.getInstance().resumeGame();
+            GameController.getInstance().nextWave();
         });
 
         header.add(moneyLabel, BorderLayout.WEST);

@@ -5,7 +5,9 @@ import ma.ac.emi.math.Vector3D;
 
 public class RobotFactory extends EnnemySpecieFactory{
 	private static RobotFactory instance;
-    private RobotFactory() {}
+    private RobotFactory() {
+    	loadConfig("src/main/resources/configs/robots.json");
+    }
 
 	public static RobotFactory getInstance() {
 		if(instance == null) instance = new RobotFactory();
@@ -14,7 +16,10 @@ public class RobotFactory extends EnnemySpecieFactory{
 
     @Override
     public Ennemy createCommon() {
-        CommonEnnemy enemy = new CommonEnnemy(new Vector3D(), 115);
+    	CommonEnemyDefinition def = (CommonEnemyDefinition) definitions.get("common");
+        CommonEnnemy enemy = new CommonEnnemy(def);
+        def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
+        enemy.init();
         applyDifficultyStats(enemy);
 
         return enemy;
@@ -22,28 +27,44 @@ public class RobotFactory extends EnnemySpecieFactory{
 
     @Override
     public Ennemy createSpeedster() {
-        SpeedsterEnnemy enemy = new SpeedsterEnnemy(new Vector3D(), 210);
+    	SpeedsterEnemyDefinition def = (SpeedsterEnemyDefinition) definitions.get("speedster");
+        SpeedsterEnnemy enemy = new SpeedsterEnnemy(def);
+        def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
+        enemy.init();
+        
         applyDifficultyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createTank() {
-        TankEnnemy enemy = new TankEnnemy(new Vector3D(), 90);
+    	TankEnemyDefinition def = (TankEnemyDefinition) definitions.get("tank");
+        TankEnnemy enemy = new TankEnnemy(def);
+        def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
+        enemy.init();
+        
         applyDifficultyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createRanged() {
-        RangedEnnemy enemy = new RangedEnnemy(new Vector3D(), 130);
+    	RangedEnemyDefinition def = (RangedEnemyDefinition) definitions.get("ranged");
+        RangedEnnemy enemy = new RangedEnnemy(def);
+        def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
+        enemy.init();
+        
         applyDifficultyStats(enemy);
         return enemy;
     }
 
     @Override
     public Ennemy createBoss() {
-        BossEnnemy enemy = new BossEnnemy(new Vector3D(), 40);
+    	BossEnemyDefinition def = (BossEnemyDefinition) definitions.get("boss");
+        BossEnnemy enemy = new BossEnnemy(def);
+        def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
+        enemy.init();
+        
         applyDifficultyStats(enemy);
         return enemy;
     }

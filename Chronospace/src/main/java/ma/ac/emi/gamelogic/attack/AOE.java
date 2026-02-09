@@ -133,7 +133,10 @@ public class AOE extends AttackObject{
 		
 		if(getLastAge() <= closestInfCoolDownMultiple && getAge() >= closestInfCoolDownMultiple) {
 	    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
-			entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+			if(!entity.isInvincible()) {
+				entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+				entity.onHit();
+			}
 		}
 		
 	}

@@ -21,6 +21,7 @@ public class MeleeStrategy extends AttackStrategy {
         			definition.getProjectileId(),
         			weapon.getPos().add(weapon.getRelativeProjectilePos()),
         			weapon.getDir(),
+        			definition.getProjectileSpeed(),
         			weapon
         		);
 

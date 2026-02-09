@@ -37,7 +37,6 @@ public class ProjectileLoader {
             	JsonObject node = element.getAsJsonObject();
 
                 String id = node.get("id").getAsString();
-                double speed = node.get("speed").getAsDouble();
                 int width = node.get("width").getAsInt();
                 int height = node.get("height").getAsInt();
                 String spritePath = node.get("sprite").getAsString();
@@ -55,7 +54,6 @@ public class ProjectileLoader {
                 ProjectileDefinition def = new ProjectileDefinition(
                         id,
                         spritePath,
-                        speed,
                         width,
                         height,
                         behaviors

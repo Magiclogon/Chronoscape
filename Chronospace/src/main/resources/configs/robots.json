@@ -1,0 +1,178 @@
+{	
+
+  "types": [
+	  {
+	  	"type": "common",
+	  	"speed": 50,
+	  	"hpMax": 100,
+	  	
+	  	"weaponId": "blaster404",
+	  	"projectileSpeedMultiplier": 0.3,
+	  	
+	  	"animationDetails": {
+	  		"spriteSheetPath": "enemies/common_robot-Sheet.png",
+	  		"spriteWidth": 32,
+	  		"spriteHeight": 32,
+	  		"idleLength": 1,
+	  		"runningLength": 6,
+	  		"backingLength": 6,
+	  		"dyingLength": 28
+	  	},
+	  	
+	  	"weaponXOffset": 8,
+	  	"weaponYOffset": 0,
+	  	
+	  	"behaviors": [
+		  	{
+	          "type": "onMovement",
+	          "particleId": "dust",
+	          "emitterRadius": 5
+	        },
+	        {
+	          "type": "onHitFlash",
+	          "duration": 0.1,
+	          "intensity": 1
+	        }
+	    ]
+	  },
+	    	
+	  {
+	  	"type": "ranged",
+	  	"speed": 35,
+	  	"hpMax": 100,
+	  	
+	  	"weaponId": "snipnk",
+	  	"projectileSpeedMultiplier": 0.3,
+	  	
+	  	"animationDetails": {
+	  		"spriteSheetPath": "enemies/ranged_robot-Sheet.png",
+	  		"spriteWidth": 32,
+	  		"spriteHeight": 32,
+	  		"idleLength": 1,
+	  		"runningLength": 7,
+	  		"backingLength": 7,
+	  		"dyingLength": 29
+	  	
+	  	},
+	  	
+	  	"weaponXOffset": 13,
+	  	"weaponYOffset": -2,
+	  	
+	  	"behaviors": [
+		  	{
+	          "type": "onMovement",
+	          "particleId": "dust",
+	          "emitterRadius": 5
+	        },
+	        {
+	          "type": "onHitFlash",
+	          "duration": 0.1,
+	          "intensity": 1
+	        }
+	    ]
+	  },
+	  		
+	  {
+	  	"type": "speedster",
+	  	"speed": 100,
+	  	"hpMax": 60,
+	  	
+	  	"weaponId": "lightsaber",
+	  	"projectileSpeedMultiplier": 1,
+	  	
+	  	"animationDetails": {
+	  		"spriteSheetPath": "enemies/speedster_robot-Sheet.png",
+	  		"spriteWidth": 48,
+	  		"spriteHeight": 48,
+	  		"idleLength": 1,
+	  		"runningLength": 8,
+	  		"backingLength": 8,
+	  		"dyingLength": 28
+	  	
+	  	},
+	  	
+	  	"weaponXOffset": 14,
+	  	"weaponYOffset": 3,
+	  	
+	  	"behaviors": [
+		  	{
+	          "type": "onMovement",
+	          "particleId": "dust",
+	          "emitterRadius": 5
+	        },
+	        {
+	          "type": "onHitFlash",
+	          "duration": 0.1,
+	          "intensity": 1
+	        }
+	    ]
+	  },
+	  		
+	  {
+	  	"type": "tank",
+	  	"speed": 20,
+	  	"hpMax": 450,
+	  	
+	  	"weaponId": "hammer",
+	  	"projectileSpeedMultiplier": 1,
+	  	
+	  	"animationDetails": {
+	  		"spriteSheetPath": "enemies/tank_robot-Sheet.png",
+	  		"spriteWidth": 48,
+	  		"spriteHeight": 48,
+	  		"idleLength": 1,
+	  		"runningLength": 15,
+	  		"backingLength": 15,
+	  		"dyingLength": 29
+	  	
+	  	},
+	  	
+	  	"behaviors": [
+		  	{
+	          "type": "onMovement",
+	          "particleId": "dust",
+	          "emitterRadius": 5
+	        },
+	        {
+	          "type": "onHitFlash",
+	          "duration": 0.1,
+	          "intensity": 1
+	        }
+	    ]
+	  },
+	  		
+	  {
+	  	"type": "boss",
+	  	"speed": 50,
+	  	"hpMax": 1000,
+	  	
+	  	"weaponId": "ak47",
+	  	"projectileSpeedMultiplier": 0.3,
+	  	
+	  	"animationDetails": {
+	  		"spriteSheetPath": "enemies/boss_robot-Sheet.png",
+	  		"spriteWidth": 96,
+	  		"spriteHeight": 96,
+	  		"idleLength": 18,
+	  		"runningLength": 32,
+	  		"backingLength": 32,
+	  		"dyingLength": 106
+	  	
+	  	},
+	  	
+	  	"behaviors": [
+		  	{
+	          "type": "onMovement",
+	          "particleId": "dust",
+	          "emitterRadius": 5
+	        },
+	        {
+	          "type": "onHitFlash",
+	          "duration": 0.1,
+	          "intensity": 1
+	        }
+	    ]
+	  }
+  ]
+
+}
