@@ -37,7 +37,7 @@ public class RangeStrategy extends AttackStrategy {
                 weapon.consumeAmmo();
         	}
 
-			super.execute(weapon);
+			super.execute(weapon, target, step);
 
             weapon.setTsla(0);
             weapon.getStateMachine().getCurrentAnimationState().reset();

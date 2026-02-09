@@ -27,7 +27,7 @@ public class MeleeStrategy extends AttackStrategy {
         			target
         		);
 
-			super.execute(weapon);
+			super.execute(weapon, target, step);
 
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.setTsla(0);
