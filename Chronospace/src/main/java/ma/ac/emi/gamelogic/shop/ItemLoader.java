@@ -58,6 +58,14 @@ public class ItemLoader {
                         		double spread = obj.get("attackStrategy").getAsJsonObject().get("spread").getAsDouble();
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.RangeStrategyDefinition(projectileCount, spread));
                         		break;
+                        		
+                        	case "lobbed":
+                        		int projectileCount1 = obj.get("attackStrategy").getAsJsonObject().get("projectileCount").getAsInt();
+                        		double radius = obj.get("attackStrategy").getAsJsonObject().get("radius").getAsDouble();
+                        		double gravity = obj.get("attackStrategy").getAsJsonObject().get("gravity").getAsDouble();
+                        		double scale = obj.get("attackStrategy").getAsJsonObject().get("scale").getAsDouble();
+                        		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.LobbedStrategyDefinition(projectileCount1, radius, gravity, scale));
+                        		break;
 
                         	case "melee":
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.MeleeStrategyDefinition());

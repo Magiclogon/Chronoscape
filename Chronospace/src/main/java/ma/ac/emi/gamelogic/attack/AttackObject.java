@@ -26,12 +26,9 @@ public abstract class AttackObject extends Entity{
 		
 	}
    	
-   	public void initStateMachine() {
-   	}
+   	public void initStateMachine() {}
    	
-   	public void setupAnimations() {
-   		
-   	}
+   	public void setupAnimations() {}
    	
     public boolean isOutOfWorld(WorldContext context) {
     	return !(context.getWorldBounds().intersects(this.getHitbox()));
@@ -43,5 +40,10 @@ public abstract class AttackObject extends Entity{
 		GameController.getInstance().getGamePanel().removeDrawable(this);
 
     }
+    
+	public void desactivate() {
+		getPos().setZ(0);
+    	setActive(false);
+	}
     
 }

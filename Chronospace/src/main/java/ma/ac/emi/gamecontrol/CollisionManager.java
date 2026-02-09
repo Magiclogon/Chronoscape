@@ -59,7 +59,7 @@ public class CollisionManager{
 				context.getAttackObjectManager().getProjectiles().forEach(p -> {
 				if(obstacle.getHitbox() == null) return;
 				if(p.getHitbox().intersectsZ(obstacle.getHitbox())) {
-					p.setActive(false);
+					p.desactivate();
 				}
 			});
 		});

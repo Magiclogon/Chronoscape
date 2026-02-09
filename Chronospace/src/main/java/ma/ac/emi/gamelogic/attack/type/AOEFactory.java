@@ -18,8 +18,12 @@ public class AOEFactory {
 		if (def == null) {
 	        throw new IllegalArgumentException("Unknown AOE id: " + id);
 	    }
-	
-	    return new AOE(def, pos, weapon);
+		
+		AOE aoe = new AOE(def, pos, weapon);
+		aoe.setBaseColorCorrection(def.getColorCorrection());
+		aoe.setLightingStrategy(def.getLightingStrategy());
+		
+	    return aoe;
 	}
 
 }

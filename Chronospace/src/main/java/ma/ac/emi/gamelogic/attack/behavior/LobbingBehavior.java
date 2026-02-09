@@ -6,12 +6,14 @@ import ma.ac.emi.math.Vector3D;
 
 public class LobbingBehavior implements Behavior{
 	private double g;
+	private double scale;
 	private Vector3D v;
 	
 	private double t = 0;
 	
-	public LobbingBehavior(double g) {
+	public LobbingBehavior(double g, double scale) {
 		this.g = g;
+		this.scale = scale;
 	}
 	
 	@Override
@@ -28,7 +30,7 @@ public class LobbingBehavior implements Behavior{
 
 	@Override
 	public void onUpdate(Projectile p, double step) {
-		p.getPos().setZ((-g*t*t + v.getZ()*t));
+		p.getPos().setZ((-g*t*t + v.getZ()*t)*scale);
 		t += step;
 		
 	}

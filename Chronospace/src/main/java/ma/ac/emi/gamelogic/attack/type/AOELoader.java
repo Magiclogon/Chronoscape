@@ -6,6 +6,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
+import ma.ac.emi.glgraphics.lighting.LightingStrategy;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,6 +36,20 @@ public class AOELoader {
                 for (JsonElement element : aoesArray) {
                     JsonObject node = element.getAsJsonObject();
                     AOEDefinition def = gson.fromJson(node, AOEDefinition.class);
+                                        
+                    if (node.has("postProcessingDetails")) {
+    	                JsonObject ppDetails = node.getAsJsonObject("postProcessingDetails");
+    	                PostProcessingDetails postProcessing = gson.fromJson(ppDetails, PostProcessingDetails.class);
+    	                
+    	                // Create ColorCorrection from config
+    	                SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(postProcessing);
+    	                def.setColorCorrection(colorCorrection);
+    	                
+    	                // Create LightingStrategy from config
+    	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
+    	                def.setLightingStrategy(lightingStrategy);
+    	            }
+                    
                     aoeDefinitions.put(def.getId(), def);
                 }
             }

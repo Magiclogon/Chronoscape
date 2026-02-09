@@ -54,12 +54,14 @@ public class Projectile extends AttackObject{
         
         hitbox.center = pos;
         
-        behaviors.forEach(b -> b.onUpdate(this, step));
+        
 
         if(isOutOfRange() || pos.getZ() <= GameController.getInstance().getWorldZ()) {
-        	setActive(false);
+            desactivate();
         }
         
+        if(active) behaviors.forEach(b -> b.onUpdate(this, step));
+
     }
 
     public void draw(Graphics g) {
@@ -118,14 +120,17 @@ public class Projectile extends AttackObject{
     
     public boolean isOutOfRange() {
     	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
-    	return getPos().sub(getStartingPos()).norm() > definition.getRange();
+    	Vector3D diff = getPos().sub(getStartingPos());
+    	Vector3D diffProj = new Vector3D(diff.getX(), diff.getY());
+    	
+    	return diffProj.norm() > definition.getRange();
     }
 
 	@Override
 	public void applyEffect(LivingEntity entity) {
 		System.out.println("applying effect");
 		behaviors.forEach(b -> b.onHit(this, entity));
-		setActive(false);
+		desactivate();
 	}
 	
 	@Override
@@ -150,5 +155,7 @@ public class Projectile extends AttackObject{
 	public Sprite getCurrentSprite() {
 		return sprite;
 	}
+
+
 
 }

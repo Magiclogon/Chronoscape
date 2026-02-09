@@ -14,6 +14,30 @@
       }
     },
     {
+      "id": "small_fire_aoe",
+      "effectRate": 2,
+      "ageMax": 3,
+      "animationDetails": {
+      	"spritePath": "aoes/small_fire_aoe-Sheet.png",
+      	"spriteWidth": 24,
+      	"spriteHeight": 24,
+      	"initLength": 1,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      
+      "postProcessingDetails":{
+      	"colorCorrection":{
+      		"tint":{
+      		  "r": 1,
+      		  "g": 1,
+      		  "b": 1,
+      		  "a": 0.7
+      		}
+      	}
+      }
+    },
+    {
       "id": "shockwave",
       "effectRate": 1.2,
       "ageMax": 1.0,
