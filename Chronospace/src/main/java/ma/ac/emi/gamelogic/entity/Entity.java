@@ -21,6 +21,8 @@ import ma.ac.emi.math.Vector3D;
 @Getter
 public abstract class Entity extends GameObject{
 	protected Vector3D velocity;
+	protected Vector3D knockback;
+	protected double friction = 0.9;
 	protected StateMachine stateMachine;
 	
 	public Entity() {
@@ -29,12 +31,25 @@ public abstract class Entity extends GameObject{
 
 		baseColorCorrection = new SpriteColorCorrection();
 		baseColorCorrection.setValue(0.5f);
+		this.knockback = new Vector3D(0, 0);
+	}
+
+	public void applyKnockback(Vector3D force) {
+		this.knockback = this.knockback.add(force);
 	}
 	
 	@Override
 	public void update(double step) {
 		super.update(step);
 		if(getVelocity() != null) setPos(getPos().add(getVelocity().mult(step)));
+
+
+		if (Math.abs(knockback.getX()) > 0.1 || Math.abs(knockback.getY()) > 0.1) {
+			setPos(getPos().add(knockback.mult(step)));
+			knockback = knockback.mult(friction);
+		} else {
+			knockback.init();
+		}
 	}
 	
 	@Override
@@ -75,5 +90,6 @@ public abstract class Entity extends GameObject{
 	
 	public abstract void initStateMachine();
 	public abstract void setupAnimations();
+
 	
 }

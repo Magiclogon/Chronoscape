@@ -42,47 +42,47 @@ public class ItemLoader {
                 switch (type) {
                     case "weapon":
                         def = gson.fromJson(obj, WeaponItemDefinition.class);
-                        
                         WeaponItemDefinition weaponDef = (WeaponItemDefinition) def;
+
                         if(obj.has("attackStrategy")) {
                         	JsonObject attackStrategyObj = obj.get("attackStrategy").getAsJsonObject();
                         	String attackType = attackStrategyObj.get("type").getAsString();
-                        	
+
                         	switch(attackType) {
                         	case "range":
                         		int projectileCount = obj.get("attackStrategy").getAsJsonObject().get("projectileCount").getAsInt();
                         		double spread = obj.get("attackStrategy").getAsJsonObject().get("spread").getAsDouble();
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.RangeStrategyDefinition(projectileCount, spread));
                         		break;
-                        	
+
                         	case "melee":
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.MeleeStrategyDefinition());
                         		break;
                         	}
-                        	
+
                         	if(attackStrategyObj.has("cameraShake")) {
                         		double intensity = attackStrategyObj.get("cameraShake").getAsJsonObject().get("intensity").getAsDouble();
                         		double dampingFactor = attackStrategyObj.get("cameraShake").getAsJsonObject().get("damping").getAsDouble();
                         		CameraShakeDefinition camDef = new CameraShakeDefinition(intensity, dampingFactor);
-                        		
+
                         		weaponDef.getAttackStrategyDefinition().setCameraShakeDefinition(camDef);
                         	}
                         }
-                        
+
                         if (obj.has("postProcessingDetails")) {
                         	System.out.println("Weapon with id: " + obj.get("id").getAsString());
         	                JsonObject ppDetails = obj.getAsJsonObject("postProcessingDetails");
         	                PostProcessingDetails postProcessing = gson.fromJson(ppDetails, PostProcessingDetails.class);
-        	                
+
         	                // Create ColorCorrection from config
         	                SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(postProcessing);
         	                weaponDef.setColorCorrection(colorCorrection);
-        	                
+
         	                // Create LightingStrategy from config
         	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
         	                weaponDef.setLightingStrategy(lightingStrategy);
         	            }
-                        
+
                         def = weaponDef;
                         break;
                     case "statModifier":

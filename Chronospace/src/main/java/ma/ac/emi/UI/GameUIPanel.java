@@ -15,12 +15,10 @@ import javax.swing.JPanel;
 
 public class GameUIPanel extends JPanel {
 
-	// --- CONFIG ---
 	private static final String FONT_NAME = "ByteBounce";
 	private static final double MINIMAP_SCALE_PERCENT = 0.20;
 	private static final int MINIMAP_PADDING = 20;
 
-	// --- COLORS ---
 	private static final Color UI_BORDER_DARK  = new Color(20, 20, 25);
 	private static final Color UI_BORDER_LIGHT = new Color(200, 200, 210);
 	private static final Color HP_RED_DARK     = new Color(150, 0, 0);

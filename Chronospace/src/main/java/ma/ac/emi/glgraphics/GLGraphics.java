@@ -79,7 +79,7 @@ public class GLGraphics {
 		
 	}
     
-    
+
     public void drawQuad(GL3 gl, float x, float y, float w, float h) {
         drawQuad(gl, x, y, w, h, 1f, 1f, 1f, 1f);
     }

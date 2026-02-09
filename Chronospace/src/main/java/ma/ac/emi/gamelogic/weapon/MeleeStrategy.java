@@ -23,6 +23,9 @@ public class MeleeStrategy extends AttackStrategy {
         			weapon.getDir(),
         			weapon
         		);
+
+			super.execute(weapon);
+
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.setTsla(0);
             weapon.getStateMachine().getCurrentAnimationState().reset();
