@@ -1,6 +1,8 @@
 package ma.ac.emi.UI;
 
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.entity.BossEnnemy;
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
@@ -9,23 +11,28 @@ import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.world.World;
 
+import java.util.List;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 public class GameUIPanel extends JPanel {
 
-	// --- CONFIG ---
 	private static final String FONT_NAME = "ByteBounce";
 	private static final double MINIMAP_SCALE_PERCENT = 0.20;
 	private static final int MINIMAP_PADDING = 20;
 
-	// --- COLORS ---
-	private static final Color UI_BORDER_DARK  = new Color(20, 20, 25);
+	private static final Color UI_BORDER_DARK = new Color(20, 20, 25);
 	private static final Color UI_BORDER_LIGHT = new Color(200, 200, 210);
-	private static final Color HP_RED_DARK     = new Color(150, 0, 0);
-	private static final Color HP_RED_LIGHT    = new Color(230, 50, 50);
-	private static final Color GOLD_COLOR      = new Color(255, 215, 0);
+	private static final Color HP_RED_DARK = new Color(150, 0, 0);
+	private static final Color HP_RED_LIGHT = new Color(230, 50, 50);
+	private static final Color GOLD_COLOR = new Color(255, 215, 0);
+
+	// Boss bar colors
+	private static final Color BOSS_BAR_BG = new Color(20, 0, 0, 200);
+	private static final Color BOSS_BAR_FILL = new Color(138, 3, 3);
+	private static final Color BOSS_BAR_BORDER = new Color(0, 0, 0);
+	private static final Color PHASE_MARKER_COLOR = new Color(0, 0, 0, 180);
 
 	public GameUIPanel() {
 		this.setOpaque(false);
@@ -44,20 +51,22 @@ public class GameUIPanel extends JPanel {
 		int panelWidth = getWidth();
 		int panelHeight = getHeight();
 
-		drawRetroHPBar(g2, player, panelWidth, panelHeight);
+		drawHPBar(g2, player, panelWidth, panelHeight);
 		drawMoney(g2, player, panelWidth, panelHeight);
 		drawWeaponSlots(g2, inventory, player.getWeaponIndex(), panelWidth, panelHeight);
 		drawMinimap(g2, player, panelWidth, panelHeight);
-		
+
 		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 24));
 		g2.setColor(GOLD_COLOR);
-		
+
 		String fps = "FPS: " + String.valueOf(GameController.getInstance().getFPS());
-		g2.drawString(fps, panelWidth-100, panelHeight-8);
+		g2.drawString(fps, panelWidth - 100, panelHeight - 8);
+
+		drawBossHud(g2, getWidth(), getHeight());
 	}
 
 
-	private void drawRetroHPBar(Graphics2D g2, Player player, int w, int h) {
+	private void drawHPBar(Graphics2D g2, Player player, int w, int h) {
 		int barW = (int) (0.25 * w);
 		int barH = 30;
 		int x = (int) (0.03 * w);
@@ -85,7 +94,7 @@ public class GameUIPanel extends JPanel {
 			g2.fillRect(x + 3, y + 3, fillWidth, fillHeight / 2);
 		}
 
-		String hpText = (int)hp + " / " + (int)maxHp;
+		String hpText = (int) hp + " / " + (int) maxHp;
 		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 24));
 		FontMetrics fm = g2.getFontMetrics();
 		int textX = x + (barW - fm.stringWidth(hpText)) / 2;
@@ -98,7 +107,7 @@ public class GameUIPanel extends JPanel {
 	}
 
 	private void drawMoney(Graphics2D g2, Player player, int w, int h) {
-		String moneyText = "GOLD: " + (int)player.getMoney();
+		String moneyText = "GOLD: " + (int) player.getMoney();
 
 		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 32));
 		FontMetrics fm = g2.getFontMetrics();
@@ -204,5 +213,86 @@ public class GameUIPanel extends JPanel {
 
 		} catch (Exception e) {
 		}
+	}
+
+	private void drawBossHud(Graphics2D g2, int w, int h) {
+		World world = GameController.getInstance().getWorldManager().getCurrentWorld();
+		if (world == null) return;
+
+		// Active boss?
+		List<Ennemy> enemies = world.getWaveManager().getCurrentEnemies();
+		BossEnnemy activeBoss = null;
+
+		for (Ennemy e : enemies) {
+			if (e instanceof BossEnnemy && e.getHp() > 0) {
+				activeBoss = (BossEnnemy) e;
+				break;
+			}
+		}
+
+		// Boss found? draw bar :D
+		if (activeBoss != null) {
+			drawBossHealthBar(g2, activeBoss, w, h);
+		}
+	}
+
+	private void drawBossHealthBar(Graphics2D g2, BossEnnemy boss, int screenW, int screenH) {
+
+		// position and dims
+		int barWidth = (int) (screenW * 0.4);
+		int barHeight = 25;
+		int x = (screenW - barWidth) / 2;
+		int y = 80;
+
+		double hp = boss.getHp();
+		double maxHp = boss.getHpMax();
+		float hpPercent = (float) Math.max(0, Math.min(1, hp / maxHp));
+
+		// background
+		g2.setColor(BOSS_BAR_BG);
+		g2.fillRect(x, y, barWidth, barHeight);
+
+		// fill
+		int fillWidth = (int) (barWidth * hpPercent);
+		g2.setColor(BOSS_BAR_FILL);
+		g2.fillRect(x, y, fillWidth, barHeight);
+
+		// Optional: Add a "glint" on the top half for a 3D effect
+		g2.setColor(new Color(255, 255, 255, 30));
+		g2.fillRect(x, y, fillWidth, barHeight / 2);
+
+		// phase markers
+		g2.setStroke(new BasicStroke(3));
+		g2.setColor(PHASE_MARKER_COLOR);
+
+		int xPhase2 = x + (int) (barWidth * 0.333);
+		int xPhase1 = x + (int) (barWidth * 0.666);
+
+		g2.drawLine(xPhase1, y - 2, xPhase1, y + barHeight + 2);
+		g2.drawLine(xPhase2, y - 2, xPhase2, y + barHeight + 2);
+
+		// border
+		g2.setStroke(new BasicStroke(4));
+		g2.setColor(BOSS_BAR_BORDER);
+		g2.drawRect(x, y, barWidth, barHeight);
+
+		// Inner white trim for style
+		g2.setStroke(new BasicStroke(2));
+		g2.setColor(new Color(200, 200, 200, 100));
+		g2.drawRect(x - 2, y - 2, barWidth + 4, barHeight + 4);
+
+
+		String name = "BOSS";
+		g2.setFont(new Font("ByteBounce", Font.BOLD, 24));
+		FontMetrics fm = g2.getFontMetrics();
+		int textX = x + (barWidth - fm.stringWidth(name)) / 2;
+		int textY = y - 10;
+
+		// Text Shadow
+		g2.setColor(Color.BLACK);
+		g2.drawString(name, textX + 2, textY + 2);
+		// Text Color
+		g2.setColor(Color.WHITE);
+		g2.drawString(name, textX, textY);
 	}
 }

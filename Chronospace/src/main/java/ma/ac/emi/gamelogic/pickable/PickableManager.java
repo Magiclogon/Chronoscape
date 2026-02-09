@@ -11,6 +11,7 @@ import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.WorldContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -125,4 +126,12 @@ public class PickableManager implements WaveListener, DifficultyObserver {
     public void refreshDifficulty(DifficultyStrategy difficulty) {
         this.currentDifficulty = difficulty;
     }
+
+    public List<Pickable> getPickables(){
+        if (this.pickables == null) {
+            return Collections.emptyList();
+        }
+        return this.pickables;
+    }
+
 }

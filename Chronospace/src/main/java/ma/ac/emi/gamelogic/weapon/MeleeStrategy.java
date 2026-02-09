@@ -24,6 +24,9 @@ public class MeleeStrategy extends AttackStrategy {
         			definition.getProjectileSpeed(),
         			weapon
         		);
+
+			super.execute(weapon);
+
             weapon.getAttackObjectManager().addObject(projectile);
             weapon.setTsla(0);
             weapon.getStateMachine().getCurrentAnimationState().reset();

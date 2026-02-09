@@ -82,7 +82,7 @@ public class World extends GameObject{
 	private void setupEnemyAI(Ennemy enemy) {
 		PathFinder pathfinder = context.getPathFinder();
 		
-		if (enemy instanceof RangedEnnemy) {
+		if (enemy instanceof RangedEnnemy || enemy instanceof CommonEnnemy) {
 			enemy.setAiBehavior(new RangedAIBehavior(
 				pathfinder, 
 				150, 
