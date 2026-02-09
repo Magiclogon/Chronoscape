@@ -125,7 +125,7 @@ public class Wave extends WaveNotifier {
         if (enemy != null) {
             setRandomSpawnPosition(enemy);
             enemies.add(enemy);
-            // Ensure enemy is drawn
+
             GameController.getInstance().addDrawable(enemy);
         }
     }
@@ -134,15 +134,44 @@ public class Wave extends WaveNotifier {
         double x, y;
         List<Obstacle> obstacles = GameController.getInstance().getWorldManager().getCurrentWorld().getContext().getObstacles();
 
+        int tileSize = 32;
+        // Half the size of your enemy (safe buffer to prevent clipping into walls)
+        double radius = 14.0;
+
         int attempts = 0;
+        boolean validPosition = false;
+
         do {
-            x = random.nextDouble() * worldWidth * 32;
-            y = random.nextDouble() * worldHeight * 32;
+            x = tileSize + random.nextDouble() * ((worldWidth - 2) * tileSize);
+            y = tileSize + random.nextDouble() * ((worldHeight - 2) * tileSize);
+
+            // Check Center
+            if (Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles)) {
+                attempts++;
+                continue;
+            }
+
+            // Check Corners to ensure body fits
+            boolean cornersClear =
+                    !Obstacle.isPositionInObstacles(new Vector3D(x - radius, y - radius), obstacles) &&
+                            !Obstacle.isPositionInObstacles(new Vector3D(x + radius, y + radius), obstacles) &&
+                            !Obstacle.isPositionInObstacles(new Vector3D(x + radius, y - radius), obstacles) &&
+                            !Obstacle.isPositionInObstacles(new Vector3D(x - radius, y + radius), obstacles);
+
+            if (cornersClear) {
+                validPosition = true;
+            }
+
             attempts++;
-        } while(Obstacle.isPositionInObstacles(new Vector3D(x, y), obstacles) && attempts < 100);
+        } while(!validPosition && attempts < 100);
+
+        if (!validPosition) {
+            System.err.println("Warning: Could not find valid spawn position for enemy. Defaulting to center.");
+            x = (worldWidth * tileSize) / 2.0;
+            y = (worldHeight * tileSize) / 2.0;
+        }
 
         enemy.setPos(new Vector3D(x, y));
-        GameController.getInstance().addDrawable(enemy);
     }
 
     private Ennemy spawnFromComposition() {
