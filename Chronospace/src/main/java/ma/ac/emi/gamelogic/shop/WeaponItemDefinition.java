@@ -24,6 +24,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private double projectileSpeed;
     private double reloadingTime;
     private int magazineSize;
+	private double recoilForce;
     private int relativeProjectilePosX;
     private int relativeProjectilePosY;
     
@@ -59,6 +60,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.setRarity(other.getRarity());
 
         this.damage = other.damage;
+		this.recoilForce = other.recoilForce;
         this.range = other.range;
         this.attackSpeed = other.attackSpeed;
         this.projectileId = other.projectileId;

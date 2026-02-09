@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.entity;
 
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AnimationState;
@@ -16,6 +18,7 @@ import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehavior;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
@@ -166,6 +169,44 @@ public abstract class Ennemy extends LivingEntity {
 		stateMachine.update(step);
 
 		super.update(step);
+	}
+
+	@Override
+	public void drawGL(GL3 gl, GLGraphics glGraphics) {
+		super.drawGL(gl, glGraphics);
+
+		if (getHp() > 0 && getHp() < getHpMax()) {
+			drawEnemyHpBarGL(gl, glGraphics);
+		}
+	}
+
+	private void drawEnemyHpBarGL(GL3 gl, GLGraphics glGraphics) {
+		final float TOTAL_WIDTH = 16f;
+		final float TOTAL_HEIGHT = 4f;
+		final float BORDER_SIZE = 1f;
+		final float Y_OFFSET = 25f;
+
+		//position
+		float outerX = (float) getPos().getX() - (TOTAL_WIDTH / 2f);
+		float outerY = (float) getPos().getY() - Y_OFFSET;
+
+		float innerX = outerX + BORDER_SIZE;
+		float innerY = outerY + BORDER_SIZE;
+		float innerMaxW = TOTAL_WIDTH - (BORDER_SIZE * 2);
+		float innerH = TOTAL_HEIGHT - (BORDER_SIZE * 2);
+
+		float hpPercent = (float) (getHp() / getHpMax());
+		hpPercent = Math.max(0f, Math.min(1f, hpPercent));
+		float currentFillW = innerMaxW * hpPercent;
+
+		// draw
+		glGraphics.drawQuad(gl, outerX, outerY, TOTAL_WIDTH, TOTAL_HEIGHT, 0.0f, 0.0f, 0.0f, 1.0f);
+
+		glGraphics.drawQuad(gl, innerX, innerY, innerMaxW, innerH, 0.4f, 0.0f, 0.0f, 1.0f);
+
+		if (hpPercent > 0) {
+			glGraphics.drawQuad(gl, innerX, innerY, currentFillW, innerH, 0.0f, 1.0f, 0.0f, 1.0f);
+		}
 	}
 
 	@Override
