@@ -9,9 +9,9 @@ import com.google.gson.JsonParser;
 import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorDefinition;
 import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorFactory;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
-import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;

@@ -3,10 +3,14 @@ package ma.ac.emi.gamelogic.shop;
 import com.google.gson.*;
 
 import ma.ac.emi.camera.CameraShakeDefinition;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorDefinition;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorFactory;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorFactory;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
-import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.FileReader;
 import java.util.*;
@@ -82,7 +86,18 @@ public class ItemLoader {
         	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
         	                weaponDef.setLightingStrategy(lightingStrategy);
         	            }
-
+                        
+                      List<WeaponBehaviorDefinition> behaviors = new ArrayList<>();
+                    	if (obj.has("behaviors")) {
+                            JsonArray behaviorArray = obj.getAsJsonArray("behaviors");
+                            for (JsonElement b : behaviorArray) {
+                            	JsonObject behaviorJson = b.getAsJsonObject();
+                                behaviors.add(WeaponBehaviorFactory.create(behaviorJson));
+                            }
+                        }
+                    	
+                    	weaponDef.setBehaviorDefinitions(behaviors);
+                        
                         def = weaponDef;
                         break;
                     case "statModifier":

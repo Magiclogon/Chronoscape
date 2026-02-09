@@ -29,6 +29,8 @@ public class OnHitEffectBehavior implements EntityBehavior{
 	
 
 	public void onInit(LivingEntity entity) {
+		emitters.clear();
+
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
 			ParticleEmitter emitter = initEmitter(offset);

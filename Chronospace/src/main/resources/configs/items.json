@@ -12,7 +12,7 @@
       "range": 500,
       "attackSpeed": 8,
       "projectileId": "bullet",
-      "projectileSpeed": 800,
+      "projectileSpeed": 150,
       "reloadingTime": 2.5,
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
@@ -36,7 +36,20 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
-      }
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onAttackEffect",
+          "particleId": "muzzle_flash",
+          "offset": 30,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 3,
+          "isOneTime": true
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -144,8 +157,8 @@
       
       "attackStrategy": {
       	"type": "range",
-      	"projectileCount": 3,
-      	"spread": 0.5,
+      	"projectileCount": 1,
+      	"spread": 0,
       	
       	"cameraShake": {
       		"intensity": 5,

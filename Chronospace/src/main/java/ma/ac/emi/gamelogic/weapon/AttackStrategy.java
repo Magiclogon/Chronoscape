@@ -10,7 +10,7 @@ public abstract class AttackStrategy {
 	public AttackStrategy(CameraShakeDefinition cameraShakeDefinition) {
 		this.cameraShakeDefinition = cameraShakeDefinition;
 	}
-    public void execute(Weapon weapon) {
+    public void execute(Weapon weapon, Vector3D target, double step) {
 
 		WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
 

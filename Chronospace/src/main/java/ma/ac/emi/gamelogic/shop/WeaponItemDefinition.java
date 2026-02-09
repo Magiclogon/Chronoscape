@@ -1,13 +1,17 @@
 package ma.ac.emi.gamelogic.shop;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.*;
 import ma.ac.emi.camera.CameraShakeDefinition;
 import ma.ac.emi.gamelogic.weapon.AttackStrategy;
 import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 import ma.ac.emi.gamelogic.weapon.RangeStrategy;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
 
 @Getter
 @Setter
@@ -28,6 +32,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private AttackStrategyDefinition attackStrategyDefinition;
     private transient SpriteColorCorrection colorCorrection;
     private transient LightingStrategy lightingStrategy;
+    
+    private List<WeaponBehaviorDefinition> behaviorDefinitions = new ArrayList<>();
 	@Override
 	public ShopItem getItem() {
 		return new WeaponItem(this);
@@ -68,6 +74,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.attackStrategyDefinition = other.attackStrategyDefinition;
         this.colorCorrection = other.colorCorrection;
         this.lightingStrategy = other.lightingStrategy;
+        this.behaviorDefinitions = other.behaviorDefinitions;
     }
     
     

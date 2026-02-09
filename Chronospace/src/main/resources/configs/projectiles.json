@@ -26,6 +26,10 @@
           "type": "light",
           "lightRadius": 20,
           "intensity": 1
+        },
+        {
+          "type": "lobbing",
+          "gravity": 300
         }
       ],
       "postProcessingDetails": {

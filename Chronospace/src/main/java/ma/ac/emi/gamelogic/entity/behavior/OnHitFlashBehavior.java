@@ -26,6 +26,7 @@ public class OnHitFlashBehavior implements EntityBehavior{
 
 	@Override
 	public void onHit(LivingEntity entity) {
+		if(entity.getHp() <= 0) return;
 		entity.addTemporaryEffect(new FlashEffect((float)duration, (float)intensity));
 		
 	}

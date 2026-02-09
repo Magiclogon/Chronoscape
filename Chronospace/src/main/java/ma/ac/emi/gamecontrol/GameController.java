@@ -343,4 +343,8 @@ public class GameController implements Runnable {
 		getWorldManager().getCurrentWorld().removeLightObject(lightObject);
 	}
 
+	public double getWorldZ() {
+		return getWorldManager().getCurrentWorld().getPos().getZ();
+	}
+
 }

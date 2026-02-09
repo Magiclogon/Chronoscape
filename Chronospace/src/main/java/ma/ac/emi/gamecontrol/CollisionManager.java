@@ -35,7 +35,7 @@ public class CollisionManager{
 		Player player = Player.getInstance();
 
 		for(AttackObject attackObject : context.getAttackObjectManager().getEnemyObjects()) {
-			if(player.getHitbox().intersects(attackObject.getHitbox()) && attackObject.isActive()) {
+			if(player.getHitbox().intersectsZ(attackObject.getHitbox()) && attackObject.isActive()) {
 				attackObject.applyEffect(player);
 				
 			}
@@ -43,13 +43,13 @@ public class CollisionManager{
 		
 		for(AttackObject attackObject : context.getAttackObjectManager().getPlayerObjects()) {
 			 for(Ennemy enemy : context.getWaveManager().getCurrentEnemies()){
-				if(enemy.getHitbox().intersects( attackObject.getHitbox()) && attackObject.isActive()) {
+				if(enemy.getHitbox().intersectsZ( attackObject.getHitbox()) && attackObject.isActive()) {
 					attackObject.applyEffect(enemy);
 				}
 			}
 		}
 		for(Pickable pickable : context.getPickableManager().getPickables()) {
-			if(player.getHitbox().intersects(pickable.getHitbox()) && !pickable.isPickedUp()) {
+			if(player.getHitbox().intersectsZ(pickable.getHitbox()) && !pickable.isPickedUp()) {
 				pickable.applyEffect(player);
 				pickable.setPickedUp(true);
 			}
@@ -58,7 +58,7 @@ public class CollisionManager{
 		context.getObstacles().forEach(obstacle -> {
 				context.getAttackObjectManager().getProjectiles().forEach(p -> {
 				if(obstacle.getHitbox() == null) return;
-				if(p.getHitbox().intersects(obstacle.getHitbox())) {
+				if(p.getHitbox().intersectsZ(obstacle.getHitbox())) {
 					p.setActive(false);
 				}
 			});
@@ -83,7 +83,7 @@ public class CollisionManager{
 		collidingObs = new ArrayList<>(); 
 		for(Obstacle obstacle : obstacles) {
 			if(obstacle.getHitbox() == null) continue;
-			if(entity.getBound().intersects(obstacle.getHitbox()) || !broad) { 
+			if(entity.getBound().intersectsZ(obstacle.getHitbox()) || !broad) { 
 				collidingObs.add(obstacle); 
 			} 
 		} 

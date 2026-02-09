@@ -7,11 +7,14 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.glgraphics.Mat4;
+import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -37,14 +40,30 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	}
 	
 	public void calculateMouseWorldPos() {
-		AffineTransform camTransform = camera.getCamTransform();
-		AffineTransform inverseCamTransform = new AffineTransform();
-		try {
-			inverseCamTransform = camTransform.createInverse();
-		} catch (NoninvertibleTransformException e) {
-			e.printStackTrace();
-		}
-		setMouseWorldPos(getMouseScreenPos().applyTransform(inverseCamTransform));
+	    float width = GameController.getInstance().getGameGLPanel().getWidth();
+	    float height = GameController.getInstance().getGameGLPanel().getHeight();
+
+	    float clipX = (float) ((getMouseScreenPos().getX() / width) - 0.5f);
+	    float clipY = (float) (0.5f - (getMouseScreenPos().getY() / height)); 
+
+	    float[] projection = Mat4.ortho(-width/2, width/2, height/2, -height/2);
+	    float[] view = camera.getViewMatrix();
+	    float[] viewProj = Matrix4.multiply(projection, view);
+
+	    AffineTransform transform = Mat4.toAffineTransform(viewProj);
+
+	    try {
+	        AffineTransform inverseTransform = transform.createInverse();
+
+	        Point2D.Double clipPoint = new Point2D.Double(clipX, clipY);
+	        Point2D.Double worldPoint = new Point2D.Double();
+	        inverseTransform.transform(clipPoint, worldPoint);
+
+	        setMouseWorldPos(new Vector3D(worldPoint.x, worldPoint.y));
+
+	    } catch (NoninvertibleTransformException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	public Vector3D getMouseWorldPos() {

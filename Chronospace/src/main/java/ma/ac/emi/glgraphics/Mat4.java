@@ -1,5 +1,7 @@
 package ma.ac.emi.glgraphics;
 
+import java.awt.geom.AffineTransform;
+
 public class Mat4 {
 
     public static float[] identity() {
@@ -27,5 +29,17 @@ public class Mat4 {
             0,0,1,0,
             x,y,0,1
         };
+    }
+    
+    public static AffineTransform toAffineTransform(float[] matrix) {
+  
+        return new AffineTransform(
+            matrix[0],  // m00 (scaleX/cosine)
+            matrix[1],  // m10 (shearY/sine)
+            matrix[4],  // m01 (shearX/-sine)
+            matrix[5],  // m11 (scaleY/cosine)
+            matrix[12], // m02 (translateX)
+            matrix[13]  // m12 (translateY)
+        );
     }
 }

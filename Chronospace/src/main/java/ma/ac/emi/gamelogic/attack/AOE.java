@@ -42,7 +42,7 @@ public class AOE extends AttackObject{
         this.phase = AOEPhase.INIT;
         
         this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth, def.getAnimationDetails().spriteHeight));
-        this.pos.setZ(-1);
+        this.pos.setZ(-0.01);
         
         getBaseColorCorrection().saturation = 0.5f;
         getBaseColorCorrection().value = 0.5f;
@@ -111,8 +111,9 @@ public class AOE extends AttackObject{
     			getColorCorrection()
     		);
     }
-
-    private Sprite getCurrentSprite() {
+    
+    @Override
+    public Sprite getCurrentSprite() {
         return switch (phase) {
             case INIT -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
             case LOOP -> animation.loopFrames[frameIndex % animation.loopFrames.length];

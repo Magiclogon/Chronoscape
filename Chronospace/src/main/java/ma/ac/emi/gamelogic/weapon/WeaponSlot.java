@@ -5,7 +5,7 @@ public class WeaponSlot {
 
     public void attack() {
         if (weapon != null) {
-            weapon.attack();
+            //weapon.attack();
         }
     }
 

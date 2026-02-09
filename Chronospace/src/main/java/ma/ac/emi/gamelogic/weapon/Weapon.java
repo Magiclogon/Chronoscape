@@ -1,8 +1,12 @@
 package ma.ac.emi.gamelogic.weapon;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.jogamp.opengl.GL3;
 
@@ -20,6 +24,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehavior;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.math.Matrix4;
@@ -50,6 +55,8 @@ public class Weapon extends Entity{
     private AttackStrategy attackStrategy;
     
     private Hands hands;
+    
+    private List<WeaponBehavior> behaviors;
         
     public Weapon(WeaponItem weaponItem, LivingEntity bearer) {
     	this.weaponItem = weaponItem;
@@ -75,6 +82,11 @@ public class Weapon extends Entity{
         
         if(bearer instanceof Player) hands = new Hands(this);
 
+        behaviors = new ArrayList<>();
+    }
+    
+    public void init() {
+    	behaviors.forEach(b -> b.onInit(this));
     }
     
 	@Override
@@ -201,12 +213,12 @@ public class Weapon extends Entity{
 		
 	}
     
-    public void attack() {
+    public void attack(Vector3D target, double step) {
         if (getAttackStrategy() != null) {
             if(isInState("Idle")) {
             	stateMachine.trigger(TRIGGER_ATTACK);
             }
-        	if(isInState("Attacking")) getAttackStrategy().execute(this);
+        	if(isInState("Attacking")) getAttackStrategy().execute(this, target, step);
 
         }
     }
@@ -258,7 +270,7 @@ public class Weapon extends Entity{
         Matrix4.identity(model);
 
         float px = (float) getBearer().getPos().getX();
-        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset());
+        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset() - getBearer().getPos().getZ());
         Matrix4.translate(model, px, py, 0f);
 
         double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
@@ -341,6 +353,8 @@ public class Weapon extends Entity{
         changeStateDirection();
         stateMachine.update(step);
         if(hands != null) hands.update(step);
+        
+        behaviors.forEach(b -> b.onUpdate(this, step));
     }
     
     public void snapTo(LivingEntity entity) {

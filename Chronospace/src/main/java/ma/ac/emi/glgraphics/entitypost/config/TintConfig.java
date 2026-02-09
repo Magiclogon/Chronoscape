@@ -1,9 +1,10 @@
-package ma.ac.emi.glgraphics.post.config;
+package ma.ac.emi.glgraphics.entitypost.config;
 
-public class ColorConfig {
+public class TintConfig {
     private float r = 1.0f;
     private float g = 1.0f;
     private float b = 1.0f;
+    private float a = 1.0f;
     
     // Getters and setters
     public float getR() { return r; }
@@ -12,4 +13,6 @@ public class ColorConfig {
     public void setG(float g) { this.g = g; }
     public float getB() { return b; }
     public void setB(float b) { this.b = b; }
+    public float getA() { return a; }
+    public void setA(float a) { this.a = a; }
 }

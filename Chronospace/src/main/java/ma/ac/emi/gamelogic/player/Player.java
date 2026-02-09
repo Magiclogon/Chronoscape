@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.player;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.util.List;
 import java.awt.Color;
 
 import javax.swing.SwingUtilities;
@@ -23,6 +24,7 @@ import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.input.KeyHandler;
@@ -139,7 +141,7 @@ public class Player extends LivingEntity {
         setupAnimations();
         if(!isIdle()) stateMachine.trigger("Stop");
         
-        setLight(new Light((float) getPos().getX(), (float) getPos().getY(), 200));
+        setLight(new Light(getPos(), 200));
         
         behaviors.forEach(b -> b.onInit(this));
 	}
@@ -169,7 +171,13 @@ public class Player extends LivingEntity {
 	public void initWeapons() {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) continue;
-			Weapon weapon = new Weapon(inventory.getEquippedWeapons()[i], this);
+			WeaponItem item = inventory.getEquippedWeapons()[i];
+			List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
+			Weapon weapon = new Weapon(item, this);
+			
+			behaviors.forEach(b -> weapon.getBehaviors().add(b.create()));
+			weapon.init();
+			
 			GameController.getInstance().removeDrawable(weapon);
 
 			weapon.setAttackObjectManager(attackObjectManager);
@@ -182,7 +190,6 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
-		velocity.init();
 		
 		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
 		if(getHp() <= 0) {
@@ -196,10 +203,12 @@ public class Player extends LivingEntity {
 			return;
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
-			attack();
+			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
 		}else {
 			stopAttacking();
 		}
+
+		velocity.init();
 
 		if(KeyHandler.getInstance().isUp()) {
 			if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
@@ -241,7 +250,7 @@ public class Player extends LivingEntity {
 		changeStateDirection();
 		stateMachine.update(step);
 		
-		getLight().setPosition((float) getPos().getX(), (float) getPos().getY());
+		getLight().setPosition(getPos());
 		super.update(step);
 		
 	}
@@ -259,6 +268,7 @@ public class Player extends LivingEntity {
 		super.drawGL(gl, glGraphics);
 		if(activeWeapon != null && hp > 0)
 			activeWeapon.drawGL(gl, glGraphics);
+		
 	}
 
 	public void setWeapon(Weapon weapon) {
@@ -271,8 +281,8 @@ public class Player extends LivingEntity {
 	}
 
 	@Override
-	public void attack() {
-		if(activeWeapon != null) this.activeWeapon.attack();
+	public void attack(Vector3D target, double step) {
+		if(activeWeapon != null) this.activeWeapon.attack(target, step);
 	}
 	
 	@Override

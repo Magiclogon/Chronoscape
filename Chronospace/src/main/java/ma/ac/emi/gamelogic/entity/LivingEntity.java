@@ -140,7 +140,7 @@ public abstract class LivingEntity extends Entity {
 		stateMachine.addStateTransfer("Look_Right", "Idle_Left", "Idle_Right");
 	}
 	
-	public abstract void attack();
+	public abstract void attack(Vector3D target, double step);
 	public abstract void stopAttacking();
 	
 	protected boolean isIdle() {
@@ -237,6 +237,7 @@ public abstract class LivingEntity extends Entity {
 	}
 
 	public abstract void consumeAmmo();
+
 	
 //	@Override
 //	public void drawGL(GL3 gl, GLGraphics glGraphics) {

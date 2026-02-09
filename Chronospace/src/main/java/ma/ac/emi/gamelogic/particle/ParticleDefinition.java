@@ -3,8 +3,8 @@ package ma.ac.emi.gamelogic.particle;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
 
 @Getter
 @Setter

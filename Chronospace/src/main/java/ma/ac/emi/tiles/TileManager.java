@@ -44,7 +44,6 @@ public class TileManager implements GameDrawable{
         loadTileSprites(); 
         
         colorCorrection = new SpriteColorCorrection();
-		colorCorrection.setValue(0.5f);
     }
     
     public void addMap(TileMap map) {

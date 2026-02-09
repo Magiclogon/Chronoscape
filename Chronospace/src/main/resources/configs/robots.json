@@ -10,7 +10,7 @@
 	  	"projectileSpeedMultiplier": 0.3,
 	  	
 	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/common_robot-Sheet.png",
+	  		"spriteSheetPath": "enemies/common robot-Sheet.png",
 	  		"spriteWidth": 32,
 	  		"spriteHeight": 32,
 	  		"idleLength": 1,
@@ -32,6 +32,15 @@
 	          "type": "onHitFlash",
 	          "duration": 0.1,
 	          "intensity": 1
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "lightning_small",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 0,
+	          "ageMax": 0,
+	          "isOneTime": true
 	        }
 	    ]
 	  },
@@ -45,7 +54,7 @@
 	  	"projectileSpeedMultiplier": 0.3,
 	  	
 	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/ranged_robot-Sheet.png",
+	  		"spriteSheetPath": "enemies/ranged robot-Sheet.png",
 	  		"spriteWidth": 32,
 	  		"spriteHeight": 32,
 	  		"idleLength": 1,
@@ -68,6 +77,15 @@
 	          "type": "onHitFlash",
 	          "duration": 0.1,
 	          "intensity": 1
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "lightning_small",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 0,
+	          "ageMax": 0,
+	          "isOneTime": true
 	        }
 	    ]
 	  },
@@ -81,7 +99,7 @@
 	  	"projectileSpeedMultiplier": 1,
 	  	
 	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/speedster_robot-Sheet.png",
+	  		"spriteSheetPath": "enemies/speedster robot-Sheet.png",
 	  		"spriteWidth": 48,
 	  		"spriteHeight": 48,
 	  		"idleLength": 1,
@@ -104,6 +122,15 @@
 	          "type": "onHitFlash",
 	          "duration": 0.1,
 	          "intensity": 1
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "lightning_small",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 0,
+	          "ageMax": 0,
+	          "isOneTime": true
 	        }
 	    ]
 	  },
@@ -117,7 +144,7 @@
 	  	"projectileSpeedMultiplier": 1,
 	  	
 	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/tank_robot-Sheet.png",
+	  		"spriteSheetPath": "enemies/tank robot-Sheet.png",
 	  		"spriteWidth": 48,
 	  		"spriteHeight": 48,
 	  		"idleLength": 1,
@@ -137,6 +164,15 @@
 	          "type": "onHitFlash",
 	          "duration": 0.1,
 	          "intensity": 1
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "lightning_medium",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 0,
+	          "ageMax": 0,
+	          "isOneTime": true
 	        }
 	    ]
 	  },
@@ -150,7 +186,7 @@
 	  	"projectileSpeedMultiplier": 0.3,
 	  	
 	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/boss_robot-Sheet.png",
+	  		"spriteSheetPath": "enemies/boss robot-Sheet.png",
 	  		"spriteWidth": 96,
 	  		"spriteHeight": 96,
 	  		"idleLength": 18,
@@ -170,6 +206,24 @@
 	          "type": "onHitFlash",
 	          "duration": 0.1,
 	          "intensity": 1
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "lightning_big",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 0,
+	          "ageMax": 0,
+	          "isOneTime": true
+	        },
+		    {
+	          "type": "onDeath",
+	          "particleId": "boss_death_smoke",
+	          "count": 1,
+	          "radius": 50,
+	          "emitterRadius": 5,
+	          "ageMax": 3,
+	          "isOneTime": false
 	        }
 	    ]
 	  }

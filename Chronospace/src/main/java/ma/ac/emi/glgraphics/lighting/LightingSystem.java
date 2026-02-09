@@ -55,9 +55,7 @@ public class LightingSystem {
         this.ambientB = b;
     }
     
-    /**
-     * Render all lights to the light accumulation buffer
-     */
+ 
     public void renderLights(GL3 gl, int screenWidth, int screenHeight, float[] viewMatrix, float[] projectionMatrix) {
         lightFBO.bind(gl);
         
@@ -80,7 +78,7 @@ public class LightingSystem {
             if (!light.isEnabled()) continue;
             
             // Transform light position from world space to clip space
-            float[] worldPos = {light.x, light.y, 0, 1};
+            float[] worldPos = {(float)light.pos.getX(), (float)(light.pos.getY()-light.pos.getZ()), 0, 1};
             float[] clipPos = Matrix4.multMatrixVector(viewProj, worldPos);
            
             // Convert from clip space [-1, 1] to screen space [0, width/height]

@@ -12,9 +12,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
-import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 public class ParticleLoader {
 	

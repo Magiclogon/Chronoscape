@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
@@ -20,6 +21,7 @@ public abstract class GameObject implements GameDrawable{
 	protected volatile Vector3D pos;
 	protected AABB hitbox;
 	protected SpriteSheet spriteSheet;
+	protected Sprite currentSprite;
 	protected boolean drawn;
 	
 	protected LightingStrategy lightingStrategy;
@@ -54,8 +56,7 @@ public abstract class GameObject implements GameDrawable{
         updateColorCorrection();
         
         if(getLight() != null) {
-        	getLight().x = (float) pos.getX();
-        	getLight().y = (float) pos.getY();
+        	getLight().setPosition(getPos());
         }
     }
     
