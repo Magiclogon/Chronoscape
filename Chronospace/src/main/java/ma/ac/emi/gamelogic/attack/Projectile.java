@@ -20,6 +20,7 @@ import ma.ac.emi.gamelogic.attack.behavior.LobbingBehavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -38,11 +39,19 @@ public class Projectile extends AttackObject{
     
     private Vector3D target;
     
-    public Projectile(Vector3D pos, Vector3D dir, Weapon weapon, Vector3D target) {
-    	super(pos, weapon);
-    	this.startingPos = pos;
-    	this.target = target;
-    	
+    public Projectile() {}
+    
+    public void reset(Vector3D pos, Vector3D dir, double speed, 
+    		double boundWidth, double boundHeight, Weapon weapon, Vector3D target) {
+    	setPos(pos);
+		setStartingPos(pos);
+		setWeapon(weapon);
+		setTarget(target);
+		
+		setVelocity(dir.mult(speed));
+		setHitbox(new AABB(pos, new Vector3D(boundWidth, boundHeight)));
+		
+		behaviors.clear();
     }
     
     public void init() {
@@ -54,14 +63,12 @@ public class Projectile extends AttackObject{
         
         hitbox.center = pos;
         
-        
-
         if(isOutOfRange() || pos.getZ() <= GameController.getInstance().getWorldZ()) {
             desactivate();
         }
         
         if(active) behaviors.forEach(b -> b.onUpdate(this, step));
-
+        
     }
 
     public void draw(Graphics g) {
@@ -87,34 +94,33 @@ public class Projectile extends AttackObject{
     
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
-    	if(isActive()) {
-    		if(sprite != null) {
-    			if(shadow != null) shadow.drawGL(gl, glGraphics, this);
-    			
-    			Texture texture = sprite.getTexture(gl);
-    			
-    			float[] model = new float[16];
-    	        Matrix4.identity(model);
+		if(sprite != null) {
+			if(shadow != null) shadow.drawGL(gl, glGraphics, this);
+			
+			Texture texture = sprite.getTexture(gl);
+			
+			float[] model = new float[16];
+	        Matrix4.identity(model);
 
-    	        float px = (float) getPos().getX();
-    	        float py = (float) (getPos().getY() - getPos().getZ());
-    	        Matrix4.translate(model, px, py, 0f);
+	        float px = (float) getPos().getX();
+	        float py = (float) (getPos().getY() - getPos().getZ());
+	        Matrix4.translate(model, px, py, 0f);
 
-    	        double theta = getVelocity() != null ? getVelocity().getAngle() : 0;
-    	        Matrix4.rotateZ(model, (float) theta);
+	        double theta = getVelocity() != null ? getVelocity().getAngle() : 0;
+	        Matrix4.rotateZ(model, (float) theta);
 
-    	        float wx = -sprite.getWidth()/2;
-    	        float wy = -sprite.getHeight() / 2f;
-    	        Matrix4.translate(model, wx, wy, 0f);
+	        float wx = -sprite.getWidth()/2;
+	        float wy = -sprite.getHeight() / 2f;
+	        Matrix4.translate(model, wx, wy, 0f);
 
-    	        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
-    	        
-    			glGraphics.drawSprite(gl, texture, model, getLightingStrategy(), getColorCorrection());
-    			
-    		}
+	        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+	        
+			glGraphics.drawSprite(gl, texture, model, getLightingStrategy(), getColorCorrection());
+			
+		}
 //    		glGraphics.drawQuad(gl, (float)(hitbox.center.getX()-hitbox.half.getX()), (float)(hitbox.center.getY()-hitbox.half.getY()), 
 //    				(float)(hitbox.half.getX()*2), (float)(hitbox.half.getY()*2));
-    	}
+	
     	
     }
     

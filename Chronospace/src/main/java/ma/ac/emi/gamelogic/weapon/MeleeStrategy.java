@@ -24,7 +24,8 @@ public class MeleeStrategy extends AttackStrategy {
         			weapon.getDir(),
         			definition.getProjectileSpeed(),
         			weapon,
-        			target
+        			target,
+        			weapon.getAttackObjectManager()
         		);
 
 			super.execute(weapon, target, step);

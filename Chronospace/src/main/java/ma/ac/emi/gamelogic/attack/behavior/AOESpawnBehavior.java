@@ -41,7 +41,8 @@ public class AOESpawnBehavior implements Behavior{
 			AOE aoe = AOEFactory.getInstance().createAOE(
 					aoeId, 
 					p.getPos().add(offset), 
-					p.getWeapon());
+					p.getWeapon(),
+					p.getWeapon().getAttackObjectManager());
 			p.getWeapon().getAttackObjectManager().addObject(aoe);
 		}
 		

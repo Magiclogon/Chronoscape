@@ -1,6 +1,8 @@
 package ma.ac.emi.gamelogic.attack.type;
 
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.AOE;
+import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
@@ -13,16 +15,22 @@ public class AOEFactory {
 		return instance;
 	}
 
-	public AOE createAOE(String id, Vector3D pos, Weapon weapon) {
+	public AOE createAOE(String id, Vector3D pos, Weapon weapon, AttackObjectManager manager) {
 		AOEDefinition def = AOELoader.getInstance().get(id);
 		if (def == null) {
 	        throw new IllegalArgumentException("Unknown AOE id: " + id);
 	    }
 		
-		AOE aoe = new AOE(def, pos, weapon);
+		AOE aoe = manager.getPool(AOE.class).obtain();
+		
+		aoe.reset(def, pos, weapon);
+		
 		aoe.setBaseColorCorrection(def.getColorCorrection());
 		aoe.setLightingStrategy(def.getLightingStrategy());
 		
+		aoe.activate();
+		
+		GameController.getInstance().addDrawable(aoe);
 	    return aoe;
 	}
 

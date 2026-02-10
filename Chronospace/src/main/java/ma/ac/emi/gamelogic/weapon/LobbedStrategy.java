@@ -43,7 +43,8 @@ public class LobbedStrategy extends AttackStrategy{
             			definition.getProjectileSpeed()*weapon.getBearer().getProjectileSpeedMultiplier(),
             			weapon,
             			newTarget,
-            			List.of(new LobbingBehavior(gravity, scale))
+            			List.of(new LobbingBehavior(gravity, scale)),
+            			weapon.getAttackObjectManager()
             		);
         		
         		

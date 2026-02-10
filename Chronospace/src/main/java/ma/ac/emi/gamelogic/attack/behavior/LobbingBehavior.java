@@ -32,6 +32,7 @@ public class LobbingBehavior implements Behavior{
 	public void onUpdate(Projectile p, double step) {
 		p.getPos().setZ((-g*t*t + v.getZ()*t)*scale);
 		t += step;
+
 		
 	}
 
@@ -46,5 +47,6 @@ public class LobbingBehavior implements Behavior{
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 }
