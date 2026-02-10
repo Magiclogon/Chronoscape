@@ -12,10 +12,6 @@ import lombok.Setter;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
-import ma.ac.emi.gamelogic.particle.ParticleAnimation;
-import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
-import ma.ac.emi.gamelogic.particle.ParticleDefinition;
-import ma.ac.emi.gamelogic.particle.ParticlePhase;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -31,15 +27,22 @@ public class AOE extends AttackObject{
     private int frameIndex;
     private AOEPhase phase;
 
-    private final AOEDefinition definition;
-    private final AOEAnimation animation;
+    private AOEDefinition definition;
+    private AOEAnimation animation;
 
-    public AOE(AOEDefinition def, Vector3D pos, Weapon weapon) {
-    	super(pos, weapon);
+    public AOE() {}
+    
+    public void reset(AOEDefinition def, Vector3D pos, Weapon weapon) {
+    	setPos(pos);
+    	setWeapon(weapon);
         this.definition = def;
 
         this.animation = AOEAnimationCache.get(def);
         this.phase = AOEPhase.INIT;
+        this.age = 0;
+        this.lastAge = 0;
+        this.frameIndex = 0;
+        this.frameTimer = 0;
         
         this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth/2, def.getAnimationDetails().spriteHeight/2));
         this.pos.setZ(-0.01);

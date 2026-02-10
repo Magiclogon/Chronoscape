@@ -18,13 +18,16 @@ public abstract class AttackObject extends Entity{
     protected Weapon weapon;
     protected boolean fromPlayer;
     
-   	public AttackObject(Vector3D pos, Weapon weapon) {
-   		this.pos = pos;
-		this.active = true;
+   	public AttackObject() {
+		this.active = false;
+    	GameController.getInstance().removeDrawable(this);
+
+	}
+   	
+   	public void setWeapon(Weapon weapon) {
 		this.weapon = weapon;
 		fromPlayer = weapon.isFromPlayer();
-		
-	}
+   	}
    	
    	public void initStateMachine() {}
    	
@@ -44,6 +47,9 @@ public abstract class AttackObject extends Entity{
 	public void desactivate() {
 		getPos().setZ(0);
     	setActive(false);
+	}
+	public void activate() {
+		setActive(true);
 	}
     
 }
