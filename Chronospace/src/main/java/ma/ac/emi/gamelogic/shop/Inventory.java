@@ -213,6 +213,8 @@ public class Inventory {
         double defenseMultiplierBonus = 0.0;
         double defenseAddBonus = 0.0;
         double healthRegenAddBonus = 0.0;
+        double luckMultiplierBonus = 0.0;
+        double luckAddBonus = 0.0;
 
         // Collect all modifications
         for (UpgradeItem upgrade : playerUpgrades) {
@@ -258,6 +260,15 @@ public class Inventory {
                                 healthRegenAddBonus += (mod.getValue() - 1.0) * player.getInventory().getHealthRegenRate();
                             }
                         }
+                        case LUCK -> {
+                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) {
+                                luckMultiplierBonus += (mod.getValue() - 1.0);
+                            } else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) {
+                                luckAddBonus += mod.getValue();
+                            } else if (mod.getOperation() == UpgradeItemDefinition.OperationType.DIVIDE) {
+                                luckMultiplierBonus -= (1.0 - (1.0 / mod.getValue()));
+                            }
+                        }
                     }
                 } catch (IllegalArgumentException e) {
                     System.err.println("Unknown player stat: " + mod.getStat());
@@ -273,6 +284,9 @@ public class Inventory {
 
         this.defenseMultiplier = 1.0 * (1.0 + defenseMultiplierBonus) + defenseAddBonus;
         this.healthRegenRate = healthRegenAddBonus;
+
+        double baseLuck = player.getBaseLuck();
+        player.setLuck(baseLuck + luckAddBonus + (baseLuck * luckMultiplierBonus));
     }
 
     private void applyWeaponUpgrades() {

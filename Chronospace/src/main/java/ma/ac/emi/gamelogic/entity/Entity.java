@@ -84,18 +84,17 @@ public abstract class Entity extends GameObject{
 		}
 	}
 
-	private boolean canMoveTo(Vector3D targetPos) {
+	private boolean canMoveTo(Vector3D nextPos) {
 		World world = GameController.getInstance().getWorldManager().getCurrentWorld();
 		if (world == null) return true;
 
-		List<Obstacle> obstacles = world.getContext().getObstacles();
-
 		AABB tempBox = new AABB(
-				targetPos.add(new Vector3D(0, GamePanel.TILE_SIZE/2)),
+				nextPos.add(new Vector3D(0, GamePanel.TILE_SIZE/2)),
 				hitbox.half
 		);
 
-		return !ma.ac.emi.world.Obstacle.isAABBInObstacles(tempBox, obstacles);
+		// Check against world obstacles
+		return !Obstacle.isAABBInObstacles(tempBox, world.getContext().getObstacles());
 	}
 	
 	@Override

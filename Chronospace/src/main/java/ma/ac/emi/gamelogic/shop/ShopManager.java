@@ -40,41 +40,55 @@ public class ShopManager {
         availableItems.remove(item);
     }
 
-    public void refreshAvailableItems() {
-    	if(rerollPrice > player.getMoney()) return;
-    	setAvailableItems(new ArrayList<>());
-    	int chanceSum = 0;
-    	for(Rarity rarity : Rarity.values()) {
-    		chanceSum += rarity.getChance();
-    	}
-    	int i = 0;
-    	while(i < SLOTNUM) {
-    		double r = Math.random()*chanceSum;
-    		ItemDefinition item = null;
-    		if(r < Rarity.COMMON.getChance()) {
-    			item = pickRandomItem(itemsMap.get(Rarity.COMMON));
-    		}else if(r >= Rarity.COMMON.getChance() &&
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()) {
-    			item = pickRandomItem(itemsMap.get(Rarity.RARE));
-    		}else if(r >= Rarity.COMMON.getChance()+Rarity.RARE.getChance() && 
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()+Rarity.EPIC.getChance()) {
-    			item = pickRandomItem(itemsMap.get(Rarity.EPIC));
-    		}else if(r >= Rarity.COMMON.getChance()+Rarity.RARE.getChance() && 
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()+Rarity.EPIC.getChance()+Rarity.LEGENDARY.getChance()) {
-    			item = pickRandomItem(itemsMap.get(Rarity.LEGENDARY));
-    		}
-    		
-    		if(item == null || availableItems.contains(item.getItem())) continue;
-    		if(!item.isStackable() && item.isBought()) continue;
-    		
-    		availableItems.add(item.getItem());
-    		i++;
-    	}
-    	
-    	this.player.setMoney(player.getMoney() - rerollPrice);
-    	if(rerollPrice == 0) rerollPrice += 5;
-    	else rerollPrice *= 1.2;
-    }
+	public void refreshAvailableItems() {
+		if(rerollPrice > player.getMoney()) return;
+
+		setAvailableItems(new ArrayList<>());
+
+		// Use a loop to fill slots
+		int i = 0;
+		while(i < SLOTNUM) {
+			Rarity selectedRarity = determineRarityWithLuck(player.getLuck());
+			ItemDefinition item = pickRandomItem(itemsMap.get(selectedRarity));
+
+			if(item == null || availableItems.contains(item.getItem())) continue;
+			if(!item.isStackable() && item.isBought()) continue;
+
+			availableItems.add(item.getItem());
+			i++;
+		}
+
+		this.player.setMoney(player.getMoney() - rerollPrice);
+		if(rerollPrice == 0) rerollPrice += 5;
+		else rerollPrice *= 1.2;
+	}
+
+	private Rarity determineRarityWithLuck(double luck) {
+		// Base Weights
+		double commonWeight = Rarity.COMMON.getChance();
+		double rareWeight = Rarity.RARE.getChance();
+		double epicWeight = Rarity.EPIC.getChance();
+		double legWeight = Rarity.LEGENDARY.getChance();
+
+		double luckFactor = Math.max(0, luck);
+
+		rareWeight *= (1.0 + (luckFactor * 0.15));
+		epicWeight *= (1.0 + (luckFactor * 0.25));
+		legWeight  *= (1.0 + (luckFactor * 0.50));
+
+		double totalWeight = commonWeight + rareWeight + epicWeight + legWeight;
+		double r = Math.random() * totalWeight;
+
+		if (r < commonWeight) {
+			return Rarity.COMMON;
+		} else if (r < commonWeight + rareWeight) {
+			return Rarity.RARE;
+		} else if (r < commonWeight + rareWeight + epicWeight) {
+			return Rarity.EPIC;
+		} else {
+			return Rarity.LEGENDARY;
+		}
+	}
     
     private ItemDefinition pickRandomItem(Map<String, ItemDefinition> items) {
     	if(items.isEmpty()) return null;
@@ -120,32 +134,18 @@ public class ShopManager {
 				break;
 			}
 		}
-    	int chanceSum = 0;
-    	for(Rarity rarity : Rarity.values()) {
-    		chanceSum += rarity.getChance();
-    	}
-    	int i = 0;
-    	while(i < 1) {
-    		double r = Math.random()*chanceSum;
-    		ItemDefinition newItem = null;
-    		if(r < Rarity.COMMON.getChance()) {
-    			newItem = pickRandomItem(itemsMap.get(Rarity.COMMON));
-    		}else if(r >= Rarity.COMMON.getChance() &&
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()) {
-    			newItem = pickRandomItem(itemsMap.get(Rarity.RARE));
-    		}else if(r >= Rarity.COMMON.getChance()+Rarity.RARE.getChance() && 
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()+Rarity.EPIC.getChance()) {
-    			newItem = pickRandomItem(itemsMap.get(Rarity.EPIC));
-    		}else if(r >= Rarity.COMMON.getChance()+Rarity.RARE.getChance() && 
-    				r < Rarity.COMMON.getChance()+Rarity.RARE.getChance()+Rarity.EPIC.getChance()+Rarity.LEGENDARY.getChance()) {
-    			newItem = pickRandomItem(itemsMap.get(Rarity.LEGENDARY));
-    		}
-    		
-    		if(newItem == null || availableItems.contains(newItem.getItem())) continue;
-    		
-    		availableItems.remove(item);
-    		availableItems.add(index, newItem.getItem());
-    		i++;
-    	}
+
+
+		int i = 0;
+		while(i < 1) {
+			Rarity selectedRarity = determineRarityWithLuck(player.getLuck());
+			ItemDefinition newItem = pickRandomItem(itemsMap.get(selectedRarity));
+
+			if(newItem == null || availableItems.contains(newItem.getItem())) continue;
+
+			availableItems.remove(item);
+			availableItems.add(index, newItem.getItem());
+			i++;
+		}
 	}
 }

@@ -15,7 +15,8 @@ public class PlayerConfig {
     public double baseSpeed;
     public double baseStrength;
     public double regenerationSpeed;
-    
+    public double baseLuck;
+
     public String startingWeaponId;
     
     public SpriteColorCorrection colorCorrection;
