@@ -11,6 +11,8 @@ import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.glgraphics.lighting.LightingSystem;
 import ma.ac.emi.glgraphics.post.*;
+import ma.ac.emi.glgraphics.post.config.PostFXConfig;
+import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
 
 import java.awt.Color;
 import java.util.*;
@@ -73,6 +75,8 @@ public class GameRenderer implements GLEventListener {
 
         glGraphics = new GLGraphics(gl);
         ParticleAnimationCache.initializeAllTextures(gl);
+        
+        PostFXConfig config = PostFXConfigLoader.load();
 
         // --- Lighting (LOW RES) ---
         lightingSystem = new LightingSystem(gl, internalWidth, internalHeight);
@@ -80,18 +84,51 @@ public class GameRenderer implements GLEventListener {
 
         // --- Post processing (LOW RES SCENE) ---
         postProcessor = new PostProcessor(gl, internalWidth, internalHeight, renderScale);
-        postProcessor.setBloomDownscale(4);
-
+        
         postProcessor.addEffect(new GammaToLinearEffect(gl));
-        postProcessor.addEffect(new LightCompositeEffect(gl, lightingSystem.getLightTextureId()));
+        
+        if (config.colorCorrection != null && config.colorCorrection.enabled) {
+            PostFXConfig.ColorCorrection cc = config.colorCorrection;
+            postProcessor.addEffect(
+                    new ColorCorrectionEffect(gl, 
+                    		cc.r, cc.g, cc.b, cc.a,
+                    		cc.brightness,
+                    		cc.contrast,
+                    		cc.saturation,
+                    		cc.hue,
+                    		cc.value
+                    )
+            );
+        }
 
-        postProcessor.addEffect(new SnapshotEffect(postProcessor));
-        postProcessor.addEffect(new BloomExtractEffect(gl, 0.05f));
-        postProcessor.addEffect(new BlurEffect(gl, true, 1.5f));
-        postProcessor.addEffect(new BlurEffect(gl, false, 1.5f));
-        postProcessor.addEffect(
-                new BloomCombineEffect(gl, postProcessor.getSnapshotTextureId())
-        );
+        postProcessor.addEffect(new LightCompositeEffect(gl, lightingSystem.getLightTextureId()));
+        
+        //Bloom
+        if (config.bloom != null && config.bloom.enabled) {
+
+            postProcessor.setBloomDownscale(config.bloom.downscale);
+
+            postProcessor.addEffect(new SnapshotEffect(postProcessor));
+            postProcessor.addEffect(
+                    new BloomExtractEffect(gl, config.bloom.threshold)
+            );
+
+            postProcessor.addEffect(
+                    new BlurEffect(gl, true, config.bloom.blurRadius)
+            );
+            postProcessor.addEffect(
+                    new BlurEffect(gl, false, config.bloom.blurRadius)
+            );
+
+            postProcessor.addEffect(
+                    new BloomCombineEffect(
+                            gl,
+                            postProcessor.getSnapshotTextureId()
+                    )
+            );
+        }
+
+        
         postProcessor.addEffect(new GammaEffect(gl));
 
         bg = GameController.getInstance()
@@ -152,10 +189,7 @@ public class GameRenderer implements GLEventListener {
         for (GameObject obj : snapshot) {
             if (obj.getLight() != null) {
                 Light light = obj.getLight();
-                light.setPosition(
-                        (float) obj.getPos().getX(),
-                        (float) obj.getPos().getY()
-                );
+                light.setPosition(obj.getPos());
                 lightingSystem.addLight(light);
             }
         }

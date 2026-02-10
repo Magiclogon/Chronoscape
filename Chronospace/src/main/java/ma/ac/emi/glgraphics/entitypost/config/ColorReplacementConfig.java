@@ -1,4 +1,4 @@
-package ma.ac.emi.glgraphics.post.config;
+package ma.ac.emi.glgraphics.entitypost.config;
 
 public class ColorReplacementConfig {
     private boolean enabled = false;

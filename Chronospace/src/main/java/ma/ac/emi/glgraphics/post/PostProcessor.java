@@ -137,4 +137,9 @@ public class PostProcessor {
         quad.dispose(gl);
         for (PostEffect e : effects) e.dispose(gl);
     }
+    
+    public void clearEffects(GL3 gl) {
+    	for (PostEffect e: effects) e.dispose(gl);
+    	effects.clear();
+    }
 }

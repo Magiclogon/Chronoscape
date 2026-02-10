@@ -14,7 +14,9 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.LobbingBehavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -34,9 +36,13 @@ public class Projectile extends AttackObject{
     private double radius = 2;
     private Sprite sprite;
     
-    public Projectile(Vector3D pos, Vector3D dir, Weapon weapon) {
+    private Vector3D target;
+    
+    public Projectile(Vector3D pos, Vector3D dir, Weapon weapon, Vector3D target) {
     	super(pos, weapon);
     	this.startingPos = pos;
+    	this.target = target;
+    	
     }
     
     public void init() {
@@ -48,11 +54,14 @@ public class Projectile extends AttackObject{
         
         hitbox.center = pos;
         
-        if(isOutOfRange()) {
-        	setActive(false);
+        
+
+        if(isOutOfRange() || pos.getZ() <= GameController.getInstance().getWorldZ()) {
+            desactivate();
         }
         
-        behaviors.forEach(b -> b.onUpdate(this, step));
+        if(active) behaviors.forEach(b -> b.onUpdate(this, step));
+
     }
 
     public void draw(Graphics g) {
@@ -80,13 +89,15 @@ public class Projectile extends AttackObject{
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
     	if(isActive()) {
     		if(sprite != null) {
+    			if(shadow != null) shadow.drawGL(gl, glGraphics, this);
+    			
     			Texture texture = sprite.getTexture(gl);
     			
     			float[] model = new float[16];
     	        Matrix4.identity(model);
 
     	        float px = (float) getPos().getX();
-    	        float py = (float) getPos().getY();
+    	        float py = (float) (getPos().getY() - getPos().getZ());
     	        Matrix4.translate(model, px, py, 0f);
 
     	        double theta = getVelocity() != null ? getVelocity().getAngle() : 0;
@@ -109,14 +120,17 @@ public class Projectile extends AttackObject{
     
     public boolean isOutOfRange() {
     	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
-    	return getPos().sub(getStartingPos()).norm() > definition.getRange();
+    	Vector3D diff = getPos().sub(getStartingPos());
+    	Vector3D diffProj = new Vector3D(diff.getX(), diff.getY());
+    	
+    	return diffProj.norm() > definition.getRange();
     }
 
 	@Override
 	public void applyEffect(LivingEntity entity) {
 		System.out.println("applying effect");
 		behaviors.forEach(b -> b.onHit(this, entity));
-		setActive(false);
+		desactivate();
 	}
 	
 	@Override
@@ -136,5 +150,12 @@ public class Projectile extends AttackObject{
 	public double getDrawnHeight() {
 		return radius*2;
 	}
+	
+	@Override
+	public Sprite getCurrentSprite() {
+		return sprite;
+	}
+
+
 
 }

@@ -31,7 +31,7 @@ public class Window extends JFrame {
         mainPanel = new JPanel(layout);
 
         transitionPane = new JLayeredPane();
-        transitionPane.setLayout(null);
+        transitionPane.setLayout(new OverlayLayout(transitionPane));
 
         fadeOverlay = new FadeOverlay();
 
@@ -44,7 +44,7 @@ public class Window extends JFrame {
         gameOverPanel = new GameOverPanel();
 
         gamePane = new JLayeredPane();
-        gamePane.setLayout(null);
+        gamePane.setLayout(new OverlayLayout(gamePane));
 
         mainPanel.add(loadingScreen, "LOADING");
         mainPanel.add(mainMenu, "MENU");
@@ -66,18 +66,10 @@ public class Window extends JFrame {
         setVisible(true);
 
 
-        transitionPane.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                Dimension d = transitionPane.getSize();
-                mainPanel.setBounds(0, 0, d.width, d.height);
-                fadeOverlay.setBounds(0, 0, d.width, d.height);
-            }
-        });
+        mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        fadeOverlay.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         
-        transitionPane.setBounds(0, 0, getWidth(), getHeight());
-        mainPanel.setBounds(0, 0, getWidth(), getHeight());
-        fadeOverlay.setBounds(0, 0, getWidth(), getHeight());
+        transitionPane.setSize(getWidth(), getHeight());
     }
 
     
@@ -94,27 +86,23 @@ public class Window extends JFrame {
     
 
     public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
-    	gamePane.removeAll();
-    	gamePane.setSize(getSize());
-        gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
-        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
-        
-        for (ComponentListener l : gamePane.getComponentListeners()) {
-            gamePane.removeComponentListener(l);
-        }
+        gamePane.removeAll();
 
-        gamePane.addComponentListener(new ComponentAdapter() {
-			@Override
-			public void componentResized(ComponentEvent e) {
-				gameGLPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
-		        uiPanel.setBounds(0, 0, gamePane.getSize().width, gamePane.getSize().height);
-				
-			}
-        });
-        
-        gamePane.add(gameGLPanel, Integer.valueOf(0));
+        Dimension max = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+
+        gameGLPanel.setPreferredSize(new Dimension(1280, 720));
+        gameGLPanel.setMaximumSize(max);
+
+        uiPanel.setPreferredSize(new Dimension(1280, 720));
+        uiPanel.setMaximumSize(max);
+
+        gamePane.add(gameGLPanel, Integer.valueOf(0)); 
         gamePane.add(uiPanel, Integer.valueOf(1));
+        
+        gamePane.revalidate();
+        gamePane.repaint();
     }
+
     
     public void transition(Runnable midAction) {
 

@@ -1,4 +1,4 @@
-package ma.ac.emi.glgraphics.post.config;
+package ma.ac.emi.glgraphics.entitypost.config;
 
 public class LightingConfig {
     private String type; // "glow", "bloom_glow", "pulsating_glow", "none"

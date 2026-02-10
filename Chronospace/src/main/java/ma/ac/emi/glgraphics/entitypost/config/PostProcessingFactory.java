@@ -1,4 +1,4 @@
-package ma.ac.emi.glgraphics.post.config;
+package ma.ac.emi.glgraphics.entitypost.config;
 
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.lighting.*;

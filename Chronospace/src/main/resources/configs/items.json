@@ -12,7 +12,7 @@
       "range": 500,
       "attackSpeed": 8,
       "projectileId": "bullet",
-      "projectileSpeed": 800,
+      "projectileSpeed": 150,
       "reloadingTime": 2.5,
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
@@ -36,7 +36,20 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
-      }
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onAttackEffect",
+          "particleId": "muzzle_flash",
+          "offset": 30,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 3,
+          "isOneTime": true
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -144,8 +157,8 @@
       
       "attackStrategy": {
       	"type": "range",
-      	"projectileCount": 3,
-      	"spread": 0.5,
+      	"projectileCount": 1,
+      	"spread": 0,
       	
       	"cameraShake": {
       		"intensity": 5,
@@ -298,6 +311,7 @@
       "rarity": "EPIC",
       "basePrice": 300,
       "damage": 90,
+      "recoilForce": 350,
       "range": 800,
       "attackSpeed": 0.5,
       "projectileId": "sniping_bullet",
@@ -325,6 +339,84 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
+      }
+    },
+    {
+      "type": "weapon",
+      "id": "shotgun",
+      "name": "Shotgun",
+      "description": "Glorified fireworks at long range, otherwise pretty solid!",
+      "rarity": "RARE",
+      "basePrice": 300,
+      "damage": 30,
+      "range": 250,
+      "recoilForce": 350,
+      "attackSpeed": 1.5,
+      "projectileId": "bullet",
+      "projectileSpeed": 300,
+      "reloadingTime": 1,
+      "magazineSize": 2,
+      "relativeProjectilePosX": 29,
+      "relativeProjectilePosY": 0,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/shotgun-Sheet.png",
+	      "handSpriteSheetPath": "hands/shotgun_hands-Sheet.png",
+	      "spriteWidth": 100,
+	      "spriteHeight": 88,
+	      "idleLength": 1,
+	      "attackingInitLength": 3,
+	      "attackingLength": 13,
+	      "reloadInitLength": 11,
+	      "reloadLength": 4,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 5,
+      	"spread": 0.8
+      }
+    },
+    {
+      "type": "weapon",
+      "id": "flamethrower",
+      "name": "Flamethrower",
+      "description": "Throws fire",
+      "rarity": "LEGENDARY",
+      "basePrice": 1000,
+      "damage": 5,
+      "range": 200,
+      "recoilForce": 0,
+      "attackSpeed": 10,
+      "projectileId": "flame",
+      "projectileSpeed": 150,
+      "reloadingTime": 1,
+      "magazineSize": 100,
+      "relativeProjectilePosX": 25,
+      "relativeProjectilePosY": 4,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/flamethrower-Sheet.png",
+	      "handSpriteSheetPath": "hands/flamethrower_hands-Sheet.png",
+	      "spriteWidth": 104,
+	      "spriteHeight": 92,
+	      "idleLength": 1,
+	      "attackingInitLength": 1,
+	      "attackingLength": 1,
+	      "reloadInitLength": 11,
+	      "reloadLength": 4,
+	      "reloadFinishLength": 11
+      },
+      
+      "attackStrategy": {
+      	"type": "lobbed",
+      	"projectileCount": 1,
+      	"radius": 0,
+      	"gravity": 8,
+      	"scale": 10
       }
     },
     {

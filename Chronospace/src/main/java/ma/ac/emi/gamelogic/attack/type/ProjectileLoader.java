@@ -5,9 +5,9 @@ import ma.ac.emi.gamelogic.attack.behavior.Behavior;
 import ma.ac.emi.gamelogic.attack.behavior.BehaviorFactory;
 import ma.ac.emi.gamelogic.attack.behavior.definition.BehaviorDefinition;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
-import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.FileReader;
 import java.io.IOException;

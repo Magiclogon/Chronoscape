@@ -13,6 +13,47 @@
       ]
     },
     {
+      "id": "flame",
+      "sprite": "projectiles/none_projectile.png",
+      "width": 8,
+      "height": 8,
+      "behaviors": [
+        {
+          "type": "particle_trail",
+          "particleId": "fire_trail2",
+          "emitterRadius": 3
+        },
+        {
+          "type": "particle_spawn",
+          "particleId": "fire2",
+          "count": 2,
+          "radius": 2,
+          "emitterRadius": 5,
+          "ageMax": 3.5,
+          "isOneTime": false
+        },
+        {
+          "type": "light_spawn",
+          "count": 1,
+          "radius": 50,
+          "lightRadius": 100,
+          "ageMax": 5.5,
+          "intensity": 0.1
+        },
+        {
+          "type": "light",
+          "lightRadius": 20,
+          "intensity": 0.1
+        },
+        {
+          "type": "aoe_spawn",
+          "aoeId": "small_fire_aoe",
+          "count": 1,
+          "radius": 80
+        }
+      ]
+    },
+    {
       "id": "bullet",
       "sprite": "projectiles/bullet.png",
       "width": 8,

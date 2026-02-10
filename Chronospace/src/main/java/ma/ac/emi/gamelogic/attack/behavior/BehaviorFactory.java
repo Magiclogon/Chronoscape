@@ -50,6 +50,11 @@ public class BehaviorFactory {
             			json.get("lightRadius").getAsDouble(),
             			json.get("intensity").getAsDouble()
             			);
+            case "lobbing":
+            	return new LobbingBehaviorDefinition(
+            			json.get("gravity").getAsDouble(),
+            			json.get("scale").getAsDouble()
+            			);
 
             default:
                 throw new IllegalArgumentException("Unknown behavior type: " + type);

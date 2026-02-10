@@ -9,13 +9,13 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  	"startingWeaponId": "ak47",
-
-  	"postProcessingDetails": {
-  		"colorCorrection": {
-  			"value": 0.5
-  		}
-  	},
+  "startingWeaponId": "flamethrower",
+  
+  "postProcessingDetails": {
+  	"colorCorrection": {
+  		"value": 1
+  	}
+  },
   
   	"behaviors": [
 		  	{

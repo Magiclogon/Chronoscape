@@ -212,11 +212,10 @@
           "tint": {
             "r": 0.9,
             "g": 0.9,
-            "b": 0.85,
+            "b": 1.2,
             "a": 0.6
           },
-          "saturation": 0.7,
-          "brightness": -0.1
+          "saturation": 0.7
         }
       }
     },
@@ -231,6 +230,151 @@
       	"initLength": 9,
       	"loopLength": 1,
       	"finishLength": 1
+      }
+    },
+    {
+      "id": "lightning_small",
+      "lifetime": 0.8,
+      "spawnRate": 50,
+      "animationDetails": {
+      	"spritePath": "particles/lightning_small-Sheet.png",
+      	"spriteWidth": 32,
+      	"spriteHeight": 32,
+      	"initLength": 26,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "lightning_medium",
+      "lifetime": 0.8,
+      "spawnRate": 50,
+      "animationDetails": {
+      	"spritePath": "particles/lightning_medium-Sheet.png",
+      	"spriteWidth": 48,
+      	"spriteHeight": 48,
+      	"initLength": 27,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "lightning_big",
+      "lifetime": 0.8,
+      "spawnRate": 50,
+      "animationDetails": {
+      	"spritePath": "particles/lightning_big-Sheet.png",
+      	"spriteWidth": 96,
+      	"spriteHeight": 96,
+      	"initLength": 104,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "boss_death_smoke",
+      "lifetime": 0.8,
+      "spawnRate": 2,
+      "animationDetails": {
+      	"spritePath": "particles/boss_death_smoke-Sheet.png",
+      	"spriteWidth": 96,
+      	"spriteHeight": 96,
+      	"initLength": 15,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 0.8
+          }
+        }
+      }
+    },
+    {
+      "id": "muzzle_flash",
+      "lifetime": 0.3,
+      "spawnRate": 2,
+      "animationDetails": {
+      	"spritePath": "particles/muzzle_flash-Sheet.png",
+      	"spriteWidth": 24,
+      	"spriteHeight": 24,
+      	"initLength": 3,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.5,
+            "g": 1.2,
+            "b": 0.8
+          }
+        }
       }
     }
     

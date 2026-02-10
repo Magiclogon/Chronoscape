@@ -24,7 +24,7 @@ public class LightObject extends GameObject{
     }
     
     public LightObject(Vector3D pos, double ageMax, float radius, float r, float g, float b, float intensity) {
-    	setLight(new Light((float) pos.getX(), (float) pos.getY(), radius, r, g, b, intensity));
+    	setLight(new Light(pos, radius, r, g, b, intensity));
     	this.ageMax = ageMax;
     	GameController.getInstance().addLightObject(this);
     	

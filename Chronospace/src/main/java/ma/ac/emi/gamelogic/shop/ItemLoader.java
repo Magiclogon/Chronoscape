@@ -3,10 +3,14 @@ package ma.ac.emi.gamelogic.shop;
 import com.google.gson.*;
 
 import ma.ac.emi.camera.CameraShakeDefinition;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorDefinition;
+import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorFactory;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorFactory;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
+import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
-import ma.ac.emi.glgraphics.post.config.PostProcessingDetails;
-import ma.ac.emi.glgraphics.post.config.PostProcessingFactory;
 
 import java.io.FileReader;
 import java.util.*;
@@ -54,6 +58,14 @@ public class ItemLoader {
                         		double spread = obj.get("attackStrategy").getAsJsonObject().get("spread").getAsDouble();
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.RangeStrategyDefinition(projectileCount, spread));
                         		break;
+                        		
+                        	case "lobbed":
+                        		int projectileCount1 = obj.get("attackStrategy").getAsJsonObject().get("projectileCount").getAsInt();
+                        		double radius = obj.get("attackStrategy").getAsJsonObject().get("radius").getAsDouble();
+                        		double gravity = obj.get("attackStrategy").getAsJsonObject().get("gravity").getAsDouble();
+                        		double scale = obj.get("attackStrategy").getAsJsonObject().get("scale").getAsDouble();
+                        		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.LobbedStrategyDefinition(projectileCount1, radius, gravity, scale));
+                        		break;
 
                         	case "melee":
                         		weaponDef.setAttackStrategyDefinition(new WeaponItemDefinition.MeleeStrategyDefinition());
@@ -82,7 +94,18 @@ public class ItemLoader {
         	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
         	                weaponDef.setLightingStrategy(lightingStrategy);
         	            }
-
+                        
+                      List<WeaponBehaviorDefinition> behaviors = new ArrayList<>();
+                    	if (obj.has("behaviors")) {
+                            JsonArray behaviorArray = obj.getAsJsonArray("behaviors");
+                            for (JsonElement b : behaviorArray) {
+                            	JsonObject behaviorJson = b.getAsJsonObject();
+                                behaviors.add(WeaponBehaviorFactory.create(behaviorJson));
+                            }
+                        }
+                    	
+                    	weaponDef.setBehaviorDefinitions(behaviors);
+                        
                         def = weaponDef;
                         break;
                     case "statModifier":

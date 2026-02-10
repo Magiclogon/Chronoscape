@@ -18,6 +18,7 @@ public class LightBehavior implements Behavior{
 	@Override
 	public void onInit(Projectile p) {
 		light = new LightObject(p.getPos(), 999999, (float) lightRadius, (float)intensity);
+		p.setShadow(null);
 	}
 
 	@Override

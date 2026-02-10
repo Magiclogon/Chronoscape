@@ -34,14 +34,6 @@ public class Particle extends GameObject {
         baseColorCorrection = def.getColorCorrection();
         setLightingStrategy(def.getLightingStrategy());
         
-//        setLight(getLightingStrategy().getLight());
-//        if(getLight() != null) {
-//            getLight().x = (float)pos.getX();
-//            getLight().y = (float)pos.getY();
-//            getLight().radius = Math.max(def.getAnimationDetails().spriteWidth, 
-//                                        def.getAnimationDetails().spriteHeight);
-//        }
-        
         GameController.getInstance().removeDrawable(this);
     }
     
@@ -80,8 +72,7 @@ public class Particle extends GameObject {
         
         // Update light position if present
         if (getLight() != null) {
-            getLight().x = (float)pos.getX();
-            getLight().y = (float)pos.getY();
+            getLight().setPosition(pos);
         }
     }
     
@@ -110,23 +101,26 @@ public class Particle extends GameObject {
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
         // Get pre-cached texture directly
         Texture texture = animation.getTexture(phase, frameIndex);
-        Sprite sprite = animation.getSprite(phase, frameIndex);
+        Sprite sprite = getCurrentSprite();
         
         if (texture == null || sprite == null) return;
         
         glGraphics.drawSprite(gl, texture, 
             (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2),
+            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
             sprite.getWidth(),
             sprite.getHeight(),
             getLightingStrategy(),
             getColorCorrection()
         );
+        
     }
     
-    /**
-     * Batched rendering - texture already bound, skip binding
-     */
+    @Override
+    public Sprite getCurrentSprite() {
+    	return animation.getSprite(phase, frameIndex);
+    }
+    
     public void drawGLBatched(GL3 gl, GLGraphics glGraphics, Texture texture) {
         Sprite sprite = animation.getSprite(phase, frameIndex);
         if (sprite == null) return;
@@ -134,7 +128,7 @@ public class Particle extends GameObject {
         // Use a version of drawSprite that doesn't bind texture
         glGraphics.drawSpriteBatched(gl, texture,
             (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2),
+            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
             sprite.getWidth(),
             sprite.getHeight(),
             getLightingStrategy(),
