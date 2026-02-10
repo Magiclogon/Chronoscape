@@ -5,6 +5,7 @@ import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.player.Player; // Import Player
 import ma.ac.emi.gamelogic.wave.WaveListener;
 import ma.ac.emi.gamelogic.wave.WaveNotifier;
 import ma.ac.emi.math.Vector3D;
@@ -80,8 +81,11 @@ public class PickableManager implements WaveListener, DifficultyObserver {
         System.out.println("Drop Chance: Processing " + spawnPoints.size() + " points");
 
         for (Vector3D pos : spawnPoints) {
-            // default 50% if w9e3 li w9e3 and diff null
+            // Base Drop Chance
             double dropChance = (currentDifficulty != null) ? currentDifficulty.getPickableDropRate() : 0.5;
+
+            // luck drop chance multiplier
+            dropChance *= (1.0 + Player.getInstance().getLuck() * 0.01);
 
             if (random.nextDouble() <= dropChance) {
                 Pickable pickable = createRandomPickable(pos);
@@ -95,9 +99,8 @@ public class PickableManager implements WaveListener, DifficultyObserver {
     private Pickable createRandomPickable(Vector3D position) {
         if (pickablePrototypes.isEmpty()) return null;
 
-        // Relative weight
+        // Relative weight selection
         double totalWeight = pickablePrototypes.stream().mapToDouble(Pickable::getDropProbability).sum();
-
         double roll = random.nextDouble() * totalWeight;
         double cumulative = 0.0;
 
@@ -108,8 +111,16 @@ public class PickableManager implements WaveListener, DifficultyObserver {
                 Pickable instance = prototype.createInstance();
                 instance.setPos(position);
 
+                // difficulty multiplier
                 if (currentDifficulty != null) {
                     instance.applyValueMultiplier(currentDifficulty.getPickableValueMultiplier());
+                }
+
+                // luck multiplier
+                Player player = Player.getInstance();
+                if (player != null) {
+                    double boostedValue = player.applyLuckToValue(instance.getValue());
+                    instance.setValue(boostedValue);
                 }
 
                 return instance;
@@ -133,5 +144,4 @@ public class PickableManager implements WaveListener, DifficultyObserver {
         }
         return this.pickables;
     }
-
 }
