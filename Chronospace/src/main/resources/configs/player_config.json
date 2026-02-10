@@ -1,45 +1,46 @@
 {
-  "pseudoname": "player",
-  "money": 10000.0,
+  	"pseudoname": "player",
+  	"money": 10000.0,
 
-  "baseHP": 100.0,
-  "baseHPMax": 100.0,
-  "baseSpeed": 200,
-  "baseStrength": 10.0,
-  "regenerationSpeed": 0.8,
+  	"baseHP": 100.0,
+  	"baseHPMax": 100.0,
+  	"baseSpeed": 200,
+  	"baseStrength": 10.0,
+  	"regenerationSpeed": 0.8,
+	"baseLuck": 22222,
   
-  "startingWeaponId": "ak47",
+  	"startingWeaponId": "ak47",
+
+  	"postProcessingDetails": {
+  		"colorCorrection": {
+  			"value": 0.5
+  		}
+  	},
   
-  "postProcessingDetails": {
-  	"colorCorrection": {
-  		"value": 0.5
-  	}
-  },
-  
-  "behaviors": [
-	  	{
-	      "type": "onMovement",
-	      "particleId": "dust",
-	      "emitterRadius": 5
-	    },
-	    {
-	      "type": "onHitFlash",
-	      "duration": 0.1,
-	      "intensity": 1
-	    },
-	    {
-	      "type": "onHitInvincible",
-	      "duration": 2,
-	      "flashingFrequency": 10
-	    },
-	    {
-          "type": "onHit",
-          "particleId": "shockwave",
-          "count": 1,
-          "radius": 50,
-          "emitterRadius": 0,
-          "ageMax": 0,
-          "isOneTime": true
-        }
+  	"behaviors": [
+		  	{
+		      "type": "onMovement",
+		      "particleId": "dust",
+		      "emitterRadius": 5
+		    },
+		    {
+		      "type": "onHitFlash",
+		      "duration": 0.1,
+		      "intensity": 1
+		    },
+		    {
+		      "type": "onHitInvincible",
+		      "duration": 2,
+		      "flashingFrequency": 10
+		    },
+		    {
+  	        "type": "onHit",
+  	        "particleId": "shockwave",
+  	        "count": 1,
+  	        "radius": 50,
+  	        "emitterRadius": 0,
+  	        "ageMax": 0,
+  	        "isOneTime": true
+  	      }
 	]
 }

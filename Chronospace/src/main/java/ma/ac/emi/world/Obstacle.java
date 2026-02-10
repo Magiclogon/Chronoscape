@@ -123,6 +123,20 @@ public class Obstacle extends GameObject {
         return false;
     }
 
+    public static boolean isAABBInObstacles(AABB box, List<Obstacle> obstacles) {
+        for (Obstacle o : obstacles) {
+            if (o.hitbox == null) continue;
+
+            boolean overlapX = Math.abs(box.center.getX() - o.hitbox.center.getX()) < (box.half.getX() + o.hitbox.half.getX());
+            boolean overlapY = Math.abs(box.center.getY() - o.hitbox.center.getY()) < (box.half.getY() + o.hitbox.half.getY());
+
+            if (overlapX && overlapY) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /* ============================
        RENDERING
        ============================ */
@@ -157,8 +171,8 @@ public class Obstacle extends GameObject {
                 GamePanel.TILE_SIZE,
                 baseColorCorrection
         );
-        
-        //if(hitbox != null) glGraphics.drawQuad(gl, (float)(hitbox.center.getX()-hitbox.half.getX()), (float)(hitbox.center.getY()-hitbox.half.getY()), 
+
+        //if(hitbox != null) glGraphics.drawQuad(gl, (float)(hitbox.center.getX()-hitbox.half.getX()), (float)(hitbox.center.getY()-hitbox.half.getY()),
         //		(float)(hitbox.half.getX()*2), (float)(hitbox.half.getY()*2));
     }
 

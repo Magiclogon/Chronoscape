@@ -35,6 +35,8 @@ import ma.ac.emi.gamelogic.shop.*;
 public class Player extends LivingEntity {
 	private String pseudoname;
 	private double money;
+	private double baseLuck;
+	private double luck;
 	private Gender gender;
 	private Inventory inventory;
 	private Weapon[] equippedWeapons;
@@ -115,6 +117,7 @@ public class Player extends LivingEntity {
 
 		hp = 100;
 		money = 10000;
+		luck = baseLuck;
 		weaponIndex = 0;
 		
 		weaponXOffset = 9;
@@ -153,6 +156,7 @@ public class Player extends LivingEntity {
 	    this.baseSpeed = cfg.baseSpeed;
 	    this.baseStrength = cfg.baseStrength;
 	    this.regenerationSpeed = cfg.regenerationSpeed;
+		this.baseLuck = cfg.baseLuck;
 	    
 	    // Initialize current stats from base stats
 	    resetBaseStats();
@@ -164,6 +168,7 @@ public class Player extends LivingEntity {
 	    this.hp = baseHP;
 	    this.speed = baseSpeed;
 	    this.strength = baseStrength;
+		this.luck = baseLuck;
 	}
 	
 	public void initWeapons() {
@@ -177,6 +182,11 @@ public class Player extends LivingEntity {
 			equippedWeapons[i] = weapon;
 		}
 		setActiveWeapon(equippedWeapons[weaponIndex]);
+	}
+
+	public double applyLuckToValue(double baseValue) {
+
+		return baseValue * (1.0 + (this.luck * 0.10));
 	}
 	
 

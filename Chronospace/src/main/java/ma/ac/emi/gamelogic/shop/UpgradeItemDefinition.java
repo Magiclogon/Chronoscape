@@ -39,7 +39,8 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable{
         MAX_HEALTH,
         MOVEMENT_SPEED,
         DEFENSE,
-        HEALTH_REGEN
+        HEALTH_REGEN,
+        LUCK
     }
 
     public enum OperationType {
