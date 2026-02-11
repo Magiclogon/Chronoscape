@@ -44,12 +44,14 @@
       	{
           "type": "onAttackEffect",
           "particleId": "muzzle_flash",
-          "offset": 30,
+          "offsetX": 30,
+          "offsetY": 0,
           "count": 1,
           "radius": 50,
           "emitterRadius": 2,
           "ageMax": 3,
-          "isOneTime": true
+          "isOneTime": true,
+          "aligned": true
         }
       ]
     },
@@ -445,7 +447,7 @@
       "rarity": "LEGENDARY",
       "basePrice": 300,
       "damage": 30,
-      "range": 300,
+      "range": 1000,
       "recoilForce": 250,
       "attackSpeed": 10,
       "projectileId": "bullet",
@@ -477,7 +479,22 @@
       	"type": "range",
       	"projectileCount": 3,
       	"spread": 0.4
-      }
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onAttackEffect",
+          "particleId": "big_gun_flash",
+          "offsetX": 130,
+          "offsetY": 6,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 3,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
     },
     {
       "type": "upgrade",

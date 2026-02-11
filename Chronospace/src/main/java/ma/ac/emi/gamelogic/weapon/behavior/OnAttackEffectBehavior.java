@@ -17,19 +17,23 @@ public class OnAttackEffectBehavior extends WeaponBehavior {
 	private double emitterRadius;
 	private double ageMax;
 	private boolean isOneTime;
-	
-	protected List<ParticleEmitter> emitters = new ArrayList<>();
+	private boolean aligned;
 
-	public OnAttackEffectBehavior(String particleId, double offset, int count, double radius, double emitterRadius,
-			double ageMax, boolean isOneTime) {
-		super(offset);
+	protected List<ParticleEmitter> emitters = new ArrayList<>();
+	
+	
+	public OnAttackEffectBehavior(String particleId, double offsetX, double offsetY, int count, 
+			double radius, double emitterRadius,
+			double ageMax, boolean isOneTime, boolean aligned) {
+		super(offsetX, offsetY);
+		
 		this.particleId = particleId;
-		this.offset = offset;
 		this.count = count;
 		this.radius = radius;
 		this.emitterRadius = emitterRadius;
 		this.ageMax = ageMax;
-		this.isOneTime = isOneTime;	
+		this.isOneTime = isOneTime;
+		this.aligned = aligned;
 	}
 
 	
@@ -38,7 +42,8 @@ public class OnAttackEffectBehavior extends WeaponBehavior {
 		emitters.clear();
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
-			ParticleEmitter emitter = initEmitter(offset);
+			Vector3D dir = Vector3D.randomUnit2();
+			ParticleEmitter emitter = initEmitter(offset, dir);
 			if(isOneTime) emitter.setStrategy(new OneTimeStrategy());
 			else emitter.setStrategy(new AgeStrategy());
 			emitters.add(emitter);
@@ -52,19 +57,24 @@ public class OnAttackEffectBehavior extends WeaponBehavior {
 	@Override
 	public void onAttack(Weapon weapon, double step) {
 		//Spawn particles
-		Vector3D offset = weapon.getDir().normalize().mult(this.offset);
+		int invert = (int) Math.signum(weapon.getDir().dotP(new Vector3D(1, 0)));
+		Vector3D relativeOffset = new Vector3D(offsetX, offsetY * invert);
+		Vector3D offset = relativeOffset.rotateXY(weapon.getDir().getAngle());
+		
 		emitters.forEach(e -> {
 			e.setPos(e.getPos()
 					.add(weapon.getPos())
 					.add(offset)
 					.add(weapon.getBearer().getVelocity().mult(step)));
+			
+			if(aligned) e.setDir(weapon.getDir());
 			e.setShouldEmit(true);
 		});
 		onInit(weapon);
 	}
 	
-	private ParticleEmitter initEmitter(Vector3D pos) {
-		return new ParticleEmitter(particleId, pos, ageMax, emitterRadius, false);
+	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
+		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}
 
 }

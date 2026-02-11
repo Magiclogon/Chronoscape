@@ -32,6 +32,9 @@
       "id": "explosion",
       "lifetime": 0.8,
       "spawnRate": 50,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
         "spritePath": "particles/explosion-Sheet.png",
         "spriteWidth": 128,
@@ -68,6 +71,9 @@
       "id": "fire1",
       "lifetime": 1,
       "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
         "spritePath": "particles/fire1-Sheet.png",
         "spriteWidth": 16,
@@ -103,6 +109,9 @@
       "id": "fire2",
       "lifetime": 1.5,
       "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
         "spritePath": "particles/fire2-Sheet.png",
         "spriteWidth": 32,
@@ -223,6 +232,9 @@
       "id": "shockwave",
       "lifetime": 0.8,
       "spawnRate": 50,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
       	"spritePath": "particles/shockwave-Sheet.png",
       	"spriteWidth": 80,
@@ -236,6 +248,9 @@
       "id": "lightning_small",
       "lifetime": 0.8,
       "spawnRate": 50,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
       	"spritePath": "particles/lightning_small-Sheet.png",
       	"spriteWidth": 32,
@@ -266,6 +281,9 @@
       "id": "lightning_medium",
       "lifetime": 0.8,
       "spawnRate": 50,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
       	"spritePath": "particles/lightning_medium-Sheet.png",
       	"spriteWidth": 48,
@@ -296,6 +314,9 @@
       "id": "lightning_big",
       "lifetime": 0.8,
       "spawnRate": 50,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
       	"spritePath": "particles/lightning_big-Sheet.png",
       	"spriteWidth": 96,
@@ -326,6 +347,9 @@
       "id": "boss_death_smoke",
       "lifetime": 0.8,
       "spawnRate": 2,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
       "animationDetails": {
       	"spritePath": "particles/boss_death_smoke-Sheet.png",
       	"spriteWidth": 96,
@@ -354,6 +378,38 @@
       	"spriteWidth": 24,
       	"spriteHeight": 24,
       	"initLength": 3,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "tint": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0,
+            "a": 1.0
+          }
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.5,
+            "g": 1.2,
+            "b": 0.8
+          }
+        }
+      }
+    },
+    {
+      "id": "big_gun_flash",
+      "lifetime": 0.3,
+      "spawnRate": 2,
+      "animationDetails": {
+      	"spritePath": "particles/big_gun_flash-Sheet.png",
+      	"spriteWidth": 65,
+      	"spriteHeight": 52,
+      	"initLength": 4,
       	"loopLength": 1,
       	"finishLength": 1
       },

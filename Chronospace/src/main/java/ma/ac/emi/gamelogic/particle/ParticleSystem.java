@@ -5,6 +5,7 @@ import com.jogamp.opengl.GL3;
 import lombok.Getter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.lighting.LightObject;
@@ -19,14 +20,11 @@ public class ParticleSystem {
     private ParticleEmitterManager emitterManager;
     private ParticleLoader loader;
     
-    // Batching cache - reuse to avoid allocations
     private Map<Texture, List<Particle>> batchCache;
     
-    // Z-layered rendering - thread-safe snapshots
     private volatile Map<Float, List<Particle>> zLayersSnapshot;
     private static final float Z_LAYER_THRESHOLD = 10.0f;
     
-    // Pre-allocate reusable lists
     private static final int INITIAL_BATCH_SIZE = 64;
     
     public ParticleSystem() {
@@ -40,12 +38,16 @@ public class ParticleSystem {
 
     }
     
-    public void init() {
+    public void clearActiveEffects() {
         if(activeEffects != null) {
             activeEffects.forEach(p -> GameController.getInstance().getGamePanel().removeDrawable(p));
         }
         lastSpawnTimes = new HashMap<>();
         activeEffects = new ArrayList<>();
+    }
+    
+    public void init() {
+    	clearActiveEffects();
         emitterManager.clear();
         
         for(ParticleDefinition def: definitions.values()) {
@@ -59,7 +61,7 @@ public class ParticleSystem {
         loader.loadFromJson(filePath, definitions, lastSpawnTimes);
     }
     
-    public void spawnEffect(String id, Vector3D position, GameObject source, double currentTime) {
+    public void spawnEffect(String id, Vector3D position, Vector3D dir, GameObject source, double currentTime) {
         ParticleDefinition def = definitions.get(id);
         if (def == null) {
             System.err.println("Unknown particle effect: " + id);
@@ -68,7 +70,7 @@ public class ParticleSystem {
         String key = source.hashCode() + ":" + id;
         double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
         if (currentTime - lastTime >= 1.0 / def.getSpawnRate()) {
-        	Particle p = new Particle(def, new Vector3D(position));
+        	Particle p = new Particle(def, position, dir);
             activeEffects.add(p);
             lastSpawnTimes.put(key, currentTime);
         }

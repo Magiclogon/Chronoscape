@@ -31,7 +31,8 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 	public void onInit(LivingEntity entity) {
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
-			ParticleEmitter emitter = initEmitter(offset);
+			Vector3D dir = Vector3D.randomUnit2();
+			ParticleEmitter emitter = initEmitter(offset, dir);
 			if(isOneTime) emitter.setStrategy(new OneTimeStrategy());
 			else emitter.setStrategy(new AgeStrategy());
 			emitters.add(emitter);
@@ -60,7 +61,7 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 		
 	}
 	
-	private ParticleEmitter initEmitter(Vector3D pos) {
-		return new ParticleEmitter(particleId, pos, ageMax, emitterRadius, false);
+	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
+		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}
 }

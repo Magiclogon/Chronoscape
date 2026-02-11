@@ -12,6 +12,8 @@ public class ParticleDefinition {
     private String id;
     private double lifetime;
     private double spawnRate;
+    private boolean hasFixedDir;
+    private double dirX, dirY;
     
     private AnimationDetails animationDetails;
     private transient SpriteColorCorrection colorCorrection;

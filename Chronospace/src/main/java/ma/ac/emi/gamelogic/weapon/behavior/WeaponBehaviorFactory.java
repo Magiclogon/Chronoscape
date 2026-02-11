@@ -11,12 +11,14 @@ public class WeaponBehaviorFactory {
 	        case "onAttackEffect":
 	        	return new OnAttackEffectBehaviorDefinition(
 	        			json.get("particleId").getAsString(),
-	        			json.get("offset").getAsDouble(),
+	        			json.get("offsetX").getAsDouble(),
+	        			json.get("offsetY").getAsDouble(),
 	        			json.get("count").getAsInt(),
 	        			json.get("radius").getAsDouble(),
 	        			json.get("emitterRadius").getAsDouble(),
 	        			json.get("ageMax").getAsDouble(),
-	        			json.get("isOneTime").getAsBoolean()
+	        			json.get("isOneTime").getAsBoolean(),
+	        			json.get("aligned").getAsBoolean()
 	        			);
             default:
                 throw new IllegalArgumentException("Unknown behavior type: " + type);
