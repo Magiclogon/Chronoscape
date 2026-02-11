@@ -27,19 +27,24 @@ public class Particle extends GameObject {
     public boolean alive = true;
     
     public Vector3D dir;
+    public GameObject source;
     
-    public Particle(ParticleDefinition def, Vector3D pos, Vector3D dir) {
+    public Particle(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {
         this.definition = def;
         this.pos = new Vector3D(pos);
         this.dir = new Vector3D(def.getDirX(), def.getDirY());
         if(!def.isHasFixedDir()) this.dir = new Vector3D(dir);
+        
         this.animation = ParticleAnimationCache.get(def);
         this.phase = ParticlePhase.INIT;
         
         baseColorCorrection = def.getColorCorrection();
         setLightingStrategy(def.getLightingStrategy());
         
+        this.source = source;
+        
         GameController.getInstance().removeDrawable(this);
+        
     }
     
     public void update(double step) {
@@ -78,6 +83,10 @@ public class Particle extends GameObject {
         // Update light position if present
         if (getLight() != null) {
             getLight().setPosition(pos);
+        }
+        
+        if(source != null) {
+        	if(definition.isShouldFollowSource()) setPos(source.getPos());
         }
     }
     

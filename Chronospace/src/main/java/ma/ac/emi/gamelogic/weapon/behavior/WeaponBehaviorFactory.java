@@ -20,6 +20,30 @@ public class WeaponBehaviorFactory {
 	        			json.get("isOneTime").getAsBoolean(),
 	        			json.get("aligned").getAsBoolean()
 	        			);
+	        case "onSwitchInEffect":
+	        	return new OnSwitchInEffectBehaviorDefinition(
+	        			json.get("particleId").getAsString(),
+	        			json.get("offsetX").getAsDouble(),
+	        			json.get("offsetY").getAsDouble(),
+	        			json.get("count").getAsInt(),
+	        			json.get("radius").getAsDouble(),
+	        			json.get("emitterRadius").getAsDouble(),
+	        			json.get("ageMax").getAsDouble(),
+	        			json.get("isOneTime").getAsBoolean(),
+	        			json.get("aligned").getAsBoolean()
+	        			);
+	        case "onSwitchOutEffect":
+	        	return new OnSwitchOutEffectBehaviorDefinition(
+	        			json.get("particleId").getAsString(),
+	        			json.get("offsetX").getAsDouble(),
+	        			json.get("offsetY").getAsDouble(),
+	        			json.get("count").getAsInt(),
+	        			json.get("radius").getAsDouble(),
+	        			json.get("emitterRadius").getAsDouble(),
+	        			json.get("ageMax").getAsDouble(),
+	        			json.get("isOneTime").getAsBoolean(),
+	        			json.get("aligned").getAsBoolean()
+	        			);
             default:
                 throw new IllegalArgumentException("Unknown behavior type: " + type);
         }

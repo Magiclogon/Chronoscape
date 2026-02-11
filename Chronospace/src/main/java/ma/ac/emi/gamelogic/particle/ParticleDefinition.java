@@ -14,6 +14,7 @@ public class ParticleDefinition {
     private double spawnRate;
     private boolean hasFixedDir;
     private double dirX, dirY;
+    private boolean shouldFollowSource;
     
     private AnimationDetails animationDetails;
     private transient SpriteColorCorrection colorCorrection;

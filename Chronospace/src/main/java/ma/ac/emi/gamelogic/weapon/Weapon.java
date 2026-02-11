@@ -424,6 +424,8 @@ public class Weapon extends Entity{
 			stateMachine.trigger(TRIGGER_STOP);
 		}
 		stateMachine.trigger(TRIGGER_SWITCH_IN);
+		
+		behaviors.forEach(b -> b.onSwitchIn(this));
 	}
 	
 	public void triggerSwitchingOut() {
@@ -432,6 +434,11 @@ public class Weapon extends Entity{
 			stateMachine.trigger(TRIGGER_STOP);
 		}
 		stateMachine.trigger(TRIGGER_SWITCH_OUT);
+		
+		behaviors.forEach(b -> {
+			b.onSwitchOut(this);
+			System.out.println(b);
+		});
 	}
 	
 	public boolean isReloadingAnimation() {

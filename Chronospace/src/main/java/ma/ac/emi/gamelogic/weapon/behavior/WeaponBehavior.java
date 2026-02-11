@@ -14,4 +14,6 @@ public abstract class WeaponBehavior {
 	public abstract void onInit(Weapon weapon);
 	public abstract void onUpdate(Weapon weapon, double step);
 	public abstract void onAttack(Weapon weapon, double step);
+	public abstract void onSwitchIn(Weapon weapon);
+	public abstract void onSwitchOut(Weapon weapon);
 }

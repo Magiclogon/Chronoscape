@@ -70,7 +70,7 @@ public class ParticleSystem {
         String key = source.hashCode() + ":" + id;
         double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
         if (currentTime - lastTime >= 1.0 / def.getSpawnRate()) {
-        	Particle p = new Particle(def, position, dir);
+        	Particle p = new Particle(def, position, dir, source);
             activeEffects.add(p);
             lastSpawnTimes.put(key, currentTime);
         }

@@ -20,6 +20,7 @@ import ma.ac.emi.math.Vector3D;
 public class ParticleEmitter extends GameObject{
 	private String particleId;
 	private double age;
+	private double ageMax;
 	private double radius;
 
 	private boolean shouldEmit;
@@ -43,6 +44,7 @@ public class ParticleEmitter extends GameObject{
 		this.shouldEmit = shouldEmit;
 		this.hasEmitted = false;
 		this.age = ageMax;
+		this.ageMax = ageMax;
 		this.radius = radius;
 		
 		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
@@ -83,6 +85,14 @@ public class ParticleEmitter extends GameObject{
 	@Override
 	public double getDrawnHeight() {
 		return 0;
+	}
+
+	public void activate() {
+		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
+		setActive(true);
+		setAge(ageMax);
+		setHasEmitted(false);
+		setShouldEmit(false);
 	}
 
 }

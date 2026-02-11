@@ -404,7 +404,7 @@
     {
       "id": "big_gun_flash",
       "lifetime": 0.3,
-      "spawnRate": 2,
+      "spawnRate": 8,
       "animationDetails": {
       	"spritePath": "particles/big_gun_flash-Sheet.png",
       	"spriteWidth": 65,
@@ -429,6 +429,74 @@
             "r": 1.5,
             "g": 1.2,
             "b": 0.8
+          }
+        }
+      }
+    },
+    {
+      "id": "lightning_boss_switch_in",
+      "lifetime": 0.8,
+      "spawnRate": 0.5,
+      "hasFixedDir": false,
+      "dirX": 1,
+      "dirY": 0,
+      "shouldFollowSource": true,
+      "animationDetails": {
+      	"spritePath": "particles/lightning_boss_switch_in-Sheet.png",
+      	"spriteWidth": 75,
+      	"spriteHeight": 84,
+      	"initLength": 15,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "lightning_boss_switch_out",
+      "lifetime": 0.8,
+      "spawnRate": 0.5,
+      "hasFixedDir": false,
+      "dirX": 1,
+      "dirY": 0,
+      "shouldFollowSource": true,
+      "animationDetails": {
+      	"spritePath": "particles/lightning_boss_switch_out-Sheet.png",
+      	"spriteWidth": 77,
+      	"spriteHeight": 103,
+      	"initLength": 15,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
           }
         }
       }

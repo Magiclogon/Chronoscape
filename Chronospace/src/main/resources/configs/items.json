@@ -490,7 +490,31 @@
           "count": 1,
           "radius": 50,
           "emitterRadius": 2,
-          "ageMax": 3,
+          "ageMax": 0.5,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchInEffect",
+          "particleId": "lightning_boss_switch_in",
+          "offsetX": -10,
+          "offsetY": 0,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchOutEffect",
+          "particleId": "lightning_boss_switch_out",
+          "offsetX": -10,
+          "offsetY": -3,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
           "isOneTime": true,
           "aligned": true
         }
