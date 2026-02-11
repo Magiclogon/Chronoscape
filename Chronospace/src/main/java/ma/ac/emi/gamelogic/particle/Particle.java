@@ -12,6 +12,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -25,16 +26,25 @@ public class Particle extends GameObject {
     private final ParticleAnimation animation;
     public boolean alive = true;
     
-    public Particle(ParticleDefinition def, Vector3D pos) {
+    public Vector3D dir;
+    public GameObject source;
+    
+    public Particle(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {
         this.definition = def;
         this.pos = new Vector3D(pos);
+        this.dir = new Vector3D(def.getDirX(), def.getDirY());
+        if(!def.isHasFixedDir()) this.dir = new Vector3D(dir);
+        
         this.animation = ParticleAnimationCache.get(def);
         this.phase = ParticlePhase.INIT;
         
         baseColorCorrection = def.getColorCorrection();
         setLightingStrategy(def.getLightingStrategy());
         
+        this.source = source;
+        
         GameController.getInstance().removeDrawable(this);
+        
     }
     
     public void update(double step) {
@@ -74,6 +84,10 @@ public class Particle extends GameObject {
         if (getLight() != null) {
             getLight().setPosition(pos);
         }
+        
+        if(source != null) {
+        	if(definition.isShouldFollowSource()) setPos(source.getPos());
+        }
     }
     
     public void draw(Graphics g) {
@@ -105,14 +119,35 @@ public class Particle extends GameObject {
         
         if (texture == null || sprite == null) return;
         
+        float[] model = new float[16];
+        Matrix4.identity(model);
+
+        float px = (float) getPos().getX();
+        float py = (float) (getPos().getY() - getPos().getZ());
+        Matrix4.translate(model, px, py, 0f);
+
+        double theta = getDir() != null ? getDir().getAngle() : 0;
+        Matrix4.rotateZ(model, (float) theta);
+
+        float wx = -sprite.getWidth()/2;
+        float wy = -sprite.getHeight() / 2f;
+        Matrix4.translate(model, wx, wy, 0f);
+
+        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+        
         glGraphics.drawSprite(gl, texture, 
-            (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
-            sprite.getWidth(),
-            sprite.getHeight(),
+            model,
             getLightingStrategy(),
             getColorCorrection()
         );
+//        glGraphics.drawSprite(gl, texture, 
+//        		(float)(getPos().getX() - sprite.getWidth() / 2), 
+//        		(float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
+//        		sprite.getWidth(),
+//        		sprite.getHeight(),
+//        		getLightingStrategy(),
+//        		getColorCorrection()
+//        		);
         
     }
     
@@ -126,11 +161,24 @@ public class Particle extends GameObject {
         if (sprite == null) return;
         
         // Use a version of drawSprite that doesn't bind texture
+        float[] model = new float[16];
+        Matrix4.identity(model);
+
+        float px = (float) getPos().getX();
+        float py = (float) (getPos().getY() - getPos().getZ());
+        Matrix4.translate(model, px, py, 0f);
+
+        double theta = getDir() != null ? getDir().getAngle() : 0;
+        Matrix4.rotateZ(model, (float) theta);
+
+        float wx = -sprite.getWidth()/2;
+        float wy = -sprite.getHeight() / 2f;
+        Matrix4.translate(model, wx, wy, 0f);
+
+        Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+        
         glGraphics.drawSpriteBatched(gl, texture,
-            (float)(getPos().getX() - sprite.getWidth() / 2), 
-            (float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
-            sprite.getWidth(),
-            sprite.getHeight(),
+            model,
             getLightingStrategy(),
             getColorCorrection()
         );

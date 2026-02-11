@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.entity.behavior;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
+import ma.ac.emi.gamelogic.player.Player;
 
 public class OnMovementEffectBehavior implements EntityBehavior{
 	private String particleId;
@@ -16,7 +17,7 @@ public class OnMovementEffectBehavior implements EntityBehavior{
 	
 	@Override
 	public void onInit(LivingEntity entity) {
-		this.emitter = new ParticleEmitter(particleId, entity.getPos(), 999, emitterRadius);
+		this.emitter = new ParticleEmitter(particleId, entity.getPos(), entity.getVelocity(), 999, emitterRadius);
 		this.emitter.setStrategy(new UndeterminedStrategy());
 	}
 
@@ -29,6 +30,7 @@ public class OnMovementEffectBehavior implements EntityBehavior{
 		else emitter.setShouldEmit(false);
 		
 		emitter.setPos(entity.getPos());
+		emitter.setDir(entity.getVelocity());
 	}
 
 	@Override

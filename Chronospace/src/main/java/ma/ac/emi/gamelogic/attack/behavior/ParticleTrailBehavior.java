@@ -17,7 +17,7 @@ public class ParticleTrailBehavior implements Behavior{
 	
 	@Override
 	public void onInit(Projectile p) {
-		this.emitter = new ParticleEmitter(particleId, p.getPos(), 999, emitterRadius);
+		this.emitter = new ParticleEmitter(particleId, p.getPos(), p.getVelocity(), 999, emitterRadius);
 		this.emitter.setStrategy(new UndeterminedStrategy());
 	}
 
@@ -25,6 +25,7 @@ public class ParticleTrailBehavior implements Behavior{
 	public void onUpdate(Projectile p, double step) {
 		//Spawn particles
 		emitter.setPos(p.getPos());
+		emitter.setDir(p.getVelocity());
 	}
 
 	@Override

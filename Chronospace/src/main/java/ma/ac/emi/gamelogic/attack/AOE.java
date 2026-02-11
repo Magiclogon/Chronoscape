@@ -30,7 +30,15 @@ public class AOE extends AttackObject{
     private AOEDefinition definition;
     private AOEAnimation animation;
 
-    public AOE() {}
+    public AOE() {
+        this.phase = AOEPhase.INIT;
+        this.age = 0;
+        this.lastAge = 0;
+        this.frameIndex = 0;
+        this.frameTimer = 0;
+        this.pos.setZ(-0.01);
+
+    }
     
     public void reset(AOEDefinition def, Vector3D pos, Weapon weapon) {
     	setPos(pos);
@@ -114,6 +122,9 @@ public class AOE extends AttackObject{
     
     @Override
     public Sprite getCurrentSprite() {
+    	if(phase == null) return null;
+    	if(animation == null) return null;
+    	
         return switch (phase) {
             case INIT -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
             case LOOP -> animation.loopFrames[frameIndex % animation.loopFrames.length];
@@ -123,6 +134,7 @@ public class AOE extends AttackObject{
 
 	@Override
 	public double getDrawnHeight() {
+		if(getCurrentSprite() == null) return 0;
 		return getCurrentSprite().getSprite().getHeight();
 	}
 	

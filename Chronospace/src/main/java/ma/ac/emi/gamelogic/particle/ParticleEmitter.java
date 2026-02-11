@@ -20,26 +20,31 @@ import ma.ac.emi.math.Vector3D;
 public class ParticleEmitter extends GameObject{
 	private String particleId;
 	private double age;
+	private double ageMax;
 	private double radius;
 
 	private boolean shouldEmit;
 	private boolean isActive;
 	private boolean hasEmitted;
 	
+	private Vector3D dir;
+	
 	private EmitterLifeCycleStrategy strategy;
 	
-	public ParticleEmitter(String particleId, Vector3D pos, double ageMax, double radius) {
-		this(particleId, pos, ageMax, radius, true);
+	public ParticleEmitter(String particleId, Vector3D pos, Vector3D dir, double ageMax, double radius) {
+		this(particleId, pos, dir, ageMax, radius, true);
 	}
 	
-	public ParticleEmitter(String particleId, Vector3D pos, double ageMax, double radius, boolean shouldEmit) {
+	public ParticleEmitter(String particleId, Vector3D pos, Vector3D dir, double ageMax, double radius, boolean shouldEmit) {
 		this.particleId = particleId;
 		this.pos = pos;
+		this.dir = dir;
 		this.drawn = false;
 		this.isActive = true;
 		this.shouldEmit = shouldEmit;
 		this.hasEmitted = false;
 		this.age = ageMax;
+		this.ageMax = ageMax;
 		this.radius = radius;
 		
 		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
@@ -54,14 +59,14 @@ public class ParticleEmitter extends GameObject{
 	public void update(double step) {
 		Vector3D offset = Vector3D.randomUnit2().mult(Math.random() * radius);
 		Vector3D spawnPos = pos.add(offset);
-		
 		if(!GameController.getInstance().getWorldManager().getCurrentWorld().isObstacle(
 				(int)((spawnPos.getX()+GamePanel.TILE_SIZE/2)/GamePanel.TILE_SIZE), 
 				(int)((spawnPos.getY()+GamePanel.TILE_SIZE/2)/GamePanel.TILE_SIZE))
 			|| spawnPos.getZ() > 0
 			|| strategy instanceof OneTimeStrategy) 
 		{
-			spawnParticle(spawnPos);
+
+			spawnParticle(spawnPos, getDir());
 			hasEmitted = true;
 		}
 		if(strategy.shouldDesactivate(this))
@@ -70,8 +75,8 @@ public class ParticleEmitter extends GameObject{
 		age -= step;
 	}
 	
-	protected void spawnParticle(Vector3D spawnPostion) {
-		GameController.getInstance().getParticleSystem().spawnEffect(particleId, spawnPostion, this, GameTime.get());
+	protected void spawnParticle(Vector3D spawnPostion, Vector3D dir) {
+		GameController.getInstance().getParticleSystem().spawnEffect(particleId, spawnPostion, dir, this, GameTime.get());
 	}
 
 	@Override
@@ -80,6 +85,14 @@ public class ParticleEmitter extends GameObject{
 	@Override
 	public double getDrawnHeight() {
 		return 0;
+	}
+
+	public void activate() {
+		GameController.getInstance().getParticleSystem().getEmitterManager().addEmitter(this);
+		setActive(true);
+		setAge(ageMax);
+		setHasEmitted(false);
+		setShouldEmit(false);
 	}
 
 }

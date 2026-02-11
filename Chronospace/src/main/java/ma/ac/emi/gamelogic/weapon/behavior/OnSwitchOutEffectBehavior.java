@@ -3,14 +3,13 @@ package ma.ac.emi.gamelogic.weapon.behavior;
 import java.util.ArrayList;
 import java.util.List;
 
-import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.AgeStrategy;
 import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.math.Vector3D;
 
-public class OnAttackEffectBehavior extends WeaponBehavior {
+public class OnSwitchOutEffectBehavior extends WeaponBehavior{
 	private String particleId;
 	private int count;
 	private double radius;
@@ -20,9 +19,9 @@ public class OnAttackEffectBehavior extends WeaponBehavior {
 	private boolean aligned;
 
 	protected List<ParticleEmitter> emitters = new ArrayList<>();
-protected List<Vector3D> randomOffsets = new ArrayList<>();
+	protected List<Vector3D> randomOffsets = new ArrayList<>();
 	
-	public OnAttackEffectBehavior(String particleId, double offsetX, double offsetY, int count, 
+	public OnSwitchOutEffectBehavior(String particleId, double offsetX, double offsetY, int count, 
 			double radius, double emitterRadius,
 			double ageMax, boolean isOneTime, boolean aligned) {
 		super(offsetX, offsetY);
@@ -75,28 +74,26 @@ protected List<Vector3D> randomOffsets = new ArrayList<>();
 	
 	@Override
 	public void onAttack(Weapon weapon, double step) {
-		//Spawn particles
-		emitters.forEach(e -> {
-			if(aligned) e.setDir(weapon.getDir());
-			e.setShouldEmit(true);
-		});
-				
+		
 	}
 
 	@Override
 	public void onSwitchIn(Weapon weapon) {
-		
 	}
 
 
 	@Override
 	public void onSwitchOut(Weapon weapon) {
-		// TODO Auto-generated method stub
-		
+		//Spawn particles
+		emitters.forEach(e -> {
+			if(aligned) e.setDir(weapon.getDir());
+			e.setShouldEmit(true);
+		});
+		System.out.println(particleId);
 	}
 	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}
-
+	
 }

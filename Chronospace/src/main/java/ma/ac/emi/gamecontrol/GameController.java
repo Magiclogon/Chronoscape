@@ -148,7 +148,7 @@ public class GameController implements Runnable {
     public void showShop() {
     	state = GameState.SHOP;
     	shopManager.init();
-    	particleSystem.init();
+    	particleSystem.clearActiveEffects();;
     	    	
     	SwingUtilities.invokeLater(() -> {
         	System.out.println("showing shop..");

@@ -29,7 +29,9 @@
 	      "attackingLength": 4,
 	      "reloadInitLength": 12,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 12
+	      "reloadFinishLength": 12,
+	      "switchingInLength": 12,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -42,12 +44,14 @@
       	{
           "type": "onAttackEffect",
           "particleId": "muzzle_flash",
-          "offset": 30,
+          "offsetX": 30,
+          "offsetY": 0,
           "count": 1,
           "radius": 50,
           "emitterRadius": 2,
           "ageMax": 3,
-          "isOneTime": true
+          "isOneTime": true,
+          "aligned": true
         }
       ]
     },
@@ -78,7 +82,9 @@
 	      "attackingLength": 23,
 	      "reloadInitLength": 1,
 	      "reloadLength": 1,
-	      "reloadFinishLength": 21
+	      "reloadFinishLength": 21,
+	      "switchingInLength": 21,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -116,7 +122,9 @@
 	      "attackingLength": 17,
 	      "reloadInitLength": 1,
 	      "reloadLength": 1,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -152,7 +160,9 @@
 	      "attackingLength": 8,
 	      "reloadInitLength": 12,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 12
+	      "reloadFinishLength": 12,
+	      "switchingInLength": 12,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -241,7 +251,9 @@
 	      "attackingLength": 30,
 	      "reloadInitLength": 11,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -275,7 +287,9 @@
 	      "attackingLength": 17,
 	      "reloadInitLength": 1,
 	      "reloadLength": 1,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -332,7 +346,9 @@
 	      "attackingLength": 13,
 	      "reloadInitLength": 11,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -370,7 +386,9 @@
 	      "attackingLength": 13,
 	      "reloadInitLength": 11,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -408,7 +426,9 @@
 	      "attackingLength": 1,
 	      "reloadInitLength": 11,
 	      "reloadLength": 4,
-	      "reloadFinishLength": 11
+	      "reloadFinishLength": 11,
+	      "switchingInLength": 11,
+	      "switchingOutLength": 1
       },
       
       "attackStrategy": {
@@ -418,6 +438,87 @@
       	"gravity": 8,
       	"scale": 10
       }
+    },
+    {
+      "type": "weapon",
+      "id": "robot_boss_machinegun",
+      "name": "Robots Boss's machinegun",
+      "description": "The robots boss's personal machinegun'",
+      "rarity": "LEGENDARY",
+      "basePrice": 300,
+      "damage": 30,
+      "range": 1000,
+      "recoilForce": 250,
+      "attackSpeed": 10,
+      "projectileId": "bullet",
+      "projectileSpeed": 400,
+      "reloadingTime": 1,
+      "magazineSize": 100,
+      "relativeProjectilePosX": 100,
+      "relativeProjectilePosY": 6,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/boss_machinegun-Sheet.png",
+	      "handSpriteSheetPath": "hands/boss_machinegun_hands_top-Sheet.png",
+	      "handBackSpriteSheetPath": "hands/boss_machinegun_hands_bottom-Sheet.png",
+	      "hasBackLayerHands": true,
+	      "spriteWidth": 242,
+	      "spriteHeight": 134,
+	      "idleLength": 1,
+	      "attackingInitLength": 2,
+	      "attackingLength": 6,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
+	      "reloadFinishLength": 1,
+	      "switchingInLength": 15,
+	      "switchingOutLength": 15
+      },
+      
+      "attackStrategy": {
+      	"type": "range",
+      	"projectileCount": 3,
+      	"spread": 0.4
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onAttackEffect",
+          "particleId": "big_gun_flash",
+          "offsetX": 130,
+          "offsetY": 6,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 0.5,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchInEffect",
+          "particleId": "lightning_boss_switch_in",
+          "offsetX": -10,
+          "offsetY": 0,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchOutEffect",
+          "particleId": "lightning_boss_switch_out",
+          "offsetX": -10,
+          "offsetY": -3,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
     },
     {
       "type": "upgrade",

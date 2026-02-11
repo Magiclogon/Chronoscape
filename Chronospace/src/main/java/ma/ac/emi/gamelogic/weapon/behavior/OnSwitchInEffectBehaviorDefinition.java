@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.weapon.behavior;
 
-public class OnAttackEffectBehaviorDefinition extends WeaponBehaviorDefinition {
+public class OnSwitchInEffectBehaviorDefinition extends WeaponBehaviorDefinition{
 	private String particleId;
 	private int count;
 	private double radius;
@@ -10,7 +10,7 @@ public class OnAttackEffectBehaviorDefinition extends WeaponBehaviorDefinition {
 	private boolean aligned;
 	
 	
-	public OnAttackEffectBehaviorDefinition(String particleId, double offsetX, double offsetY, 
+	public OnSwitchInEffectBehaviorDefinition(String particleId, double offsetX, double offsetY, 
 			int count, double radius, double emitterRadius,
 			double ageMax, boolean isOneTime, boolean aligned) {
 		super(offsetX, offsetY);
@@ -27,7 +27,6 @@ public class OnAttackEffectBehaviorDefinition extends WeaponBehaviorDefinition {
 
 	@Override
 	public WeaponBehavior create() {
-		return new OnAttackEffectBehavior(particleId, offsetX, offsetY, count, radius, emitterRadius, ageMax, isOneTime, aligned);
+		return new OnSwitchInEffectBehavior(particleId, offsetX, offsetY, count, radius, emitterRadius, ageMax, isOneTime, aligned);
 	}
-
 }

@@ -116,8 +116,6 @@ public class GLGraphics {
             spriteShader.setVec3(gl, "uEmissionColor", 0.0f, 0.0f, 0.0f);
         }
         
-        // Texture is already bound by batch renderer - don't bind again!
-        // gl.glBindTexture(GL3.GL_TEXTURE_2D, texture.id); // SKIP THIS
         
         gl.glBindVertexArray(SpriteQuad.VAO);
         gl.glDrawArrays(GL3.GL_TRIANGLE_FAN, 0, 4);
