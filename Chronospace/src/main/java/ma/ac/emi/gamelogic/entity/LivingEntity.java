@@ -53,6 +53,7 @@ public abstract class LivingEntity extends Entity {
 	protected AABB bound;
 	
 	protected int weaponXOffset, weaponYOffset;
+	protected boolean hasHands;
 	
 	protected List<EntityBehavior> behaviors = new ArrayList<>();
 	
@@ -238,6 +239,7 @@ public abstract class LivingEntity extends Entity {
 
 	public abstract void consumeAmmo();
 
+	public abstract void switchWeapons();
 	
 //	@Override
 //	public void drawGL(GL3 gl, GLGraphics glGraphics) {

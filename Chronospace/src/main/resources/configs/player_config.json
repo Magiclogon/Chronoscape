@@ -9,7 +9,7 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "flamethrower",
+  "startingWeaponId": "robot_boss_machinegun",
   
   "postProcessingDetails": {
   	"colorCorrection": {

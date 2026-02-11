@@ -230,5 +230,8 @@ public abstract class Ennemy extends LivingEntity {
 
 	@Override
 	public void consumeAmmo() {}
+	
+	@Override
+	public void switchWeapons() {}
 
 }

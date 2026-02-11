@@ -144,16 +144,24 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     
     public static class WeaponAnimationDetails{
     	public String spriteSheetPath;
-    	public String handSpriteSheetPath;
+    	public String handSpriteSheetPath, handBackSpriteSheetPath;
+    	public boolean hasBackLayerHands;
 		public int spriteWidth;
     	public int spriteHeight;
     	public int idleLength, attackingInitLength, attackingLength, reloadInitLength, reloadLength, reloadFinishLength;
+		public int switchingInLength, switchingOutLength;
     	
 
-    	public WeaponAnimationDetails(String spriteSheetPath, String handSpriteSheetPath, int spriteWidth, int spriteHeight, int idleLength,
-				int attackingInitLength, int attackingLength, int reloadInitLength, int reloadLength, int reloadFinishLength) {
+    	public WeaponAnimationDetails(String spriteSheetPath, 
+    			String handSpriteSheetPath, String handBackSpriteSheetPath, boolean hasBackLayerHands,
+    			int spriteWidth, int spriteHeight, int idleLength,
+				int attackingInitLength, int attackingLength, int reloadInitLength, 
+				int reloadLength, int reloadFinishLength,
+				int switchingInLength, int switchingOutLength) {
 			this.spriteSheetPath = spriteSheetPath;
 			this.handSpriteSheetPath = handSpriteSheetPath;
+			this.handBackSpriteSheetPath = handBackSpriteSheetPath;
+			this.hasBackLayerHands = hasBackLayerHands;
 			this.spriteWidth = spriteWidth;
 			this.spriteHeight = spriteHeight;
 			this.idleLength = idleLength;
@@ -162,11 +170,15 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
 			this.reloadInitLength = reloadInitLength;
 			this.reloadLength = reloadLength;
 			this.reloadFinishLength = reloadFinishLength;
+			this.switchingInLength = switchingInLength;
+			this.switchingOutLength = switchingOutLength;
 		}
     	
     	public WeaponAnimationDetails(WeaponAnimationDetails details) {
     		this(details.spriteSheetPath,
     			details.handSpriteSheetPath,
+    			details.handBackSpriteSheetPath,
+    			details.hasBackLayerHands,
     			details.spriteWidth,
     			details.spriteHeight,
     			details.idleLength,
@@ -174,7 +186,9 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     			details.attackingLength,
     			details.reloadInitLength,
     			details.reloadLength,
-    			details.reloadFinishLength
+    			details.reloadFinishLength,
+    			details.switchingInLength,
+    			details.switchingOutLength
     		);
     	}
     }

@@ -17,9 +17,11 @@ import ma.ac.emi.math.Matrix4;
 
 public class Hands extends Entity{
 	private Weapon weapon;
+	private boolean isBottom;
 	
-	public Hands(Weapon weapon) {
+	public Hands(Weapon weapon, boolean isBottom) {
 		this.weapon = weapon;
+		this.isBottom = isBottom;
 		
 		stateMachine = weapon.getStateMachine().getSkeleton();
 		setupAnimations();
@@ -82,7 +84,9 @@ public class Hands extends Entity{
 	public void setupAnimations() {
 		WeaponItemDefinition definition = (WeaponItemDefinition)(weapon.getWeaponItem().getItemDefinition());
 		WeaponItemDefinition.WeaponAnimationDetails animationDetails = definition.getAnimationDetails();
-		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(animationDetails.handSpriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
+		
+		String spriteSheetPath = isBottom ? animationDetails.handBackSpriteSheetPath : animationDetails.handSpriteSheetPath;
+		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(spriteSheetPath), animationDetails.spriteWidth, animationDetails.spriteHeight);
 
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
@@ -96,8 +100,10 @@ public class Hands extends Entity{
 		AnimationState reload_right = stateMachine.getAnimationStateByTitle("Reload_Right");
 		AnimationState reload_finish_left = stateMachine.getAnimationStateByTitle("Reload_Finish_Left");
 		AnimationState reload_finish_right = stateMachine.getAnimationStateByTitle("Reload_Finish_Right");
-		AnimationState switching_left = stateMachine.getAnimationStateByTitle("Switching_Left");
-		AnimationState switching_right = stateMachine.getAnimationStateByTitle("Switching_Right");
+		AnimationState switching_in_left = stateMachine.getAnimationStateByTitle("Switching_In_Left");
+		AnimationState switching_in_right = stateMachine.getAnimationStateByTitle("Switching_In_Right");
+		AnimationState switching_out_left = stateMachine.getAnimationStateByTitle("Switching_Out_Left");
+		AnimationState switching_out_right = stateMachine.getAnimationStateByTitle("Switching_Out_Right");
 		
 		
 		if(spriteSheet.getSheet() == null) {
@@ -111,45 +117,51 @@ public class Hands extends Entity{
 		for(Sprite sprite : spriteSheet.getAnimationRow(0, animationDetails.idleLength)) {
 			idle_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.idleLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.idleLength)) {
 			idle_right.addFrame(sprite);
 		}
 		for(Sprite sprite : spriteSheet.getAnimationRow(1, animationDetails.attackingInitLength)) {
 			attacking_init_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.attackingInitLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.attackingInitLength)) {
 			attacking_init_right.addFrame(sprite);
 		}
 		for(Sprite sprite : spriteSheet.getAnimationRow(2, animationDetails.attackingLength)) {
 			attacking_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(8, animationDetails.attackingLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.attackingLength)) {
 			attacking_right.addFrame(sprite);
 		}
 		for(Sprite sprite : spriteSheet.getAnimationRow(3, animationDetails.reloadInitLength)) {
 			reload_init_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(9, animationDetails.reloadInitLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadInitLength)) {
 			reload_init_right.addFrame(sprite);
 		}
 		for(Sprite sprite : spriteSheet.getAnimationRow(4, animationDetails.reloadLength)) {
 			reload_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(10, animationDetails.reloadLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(12, animationDetails.reloadLength)) {
 			reload_right.addFrame(sprite);
 		}
 		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
 			reload_finish_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(13, animationDetails.reloadFinishLength)) {
 			reload_finish_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, animationDetails.reloadFinishLength)) {
-			switching_left.addFrame(sprite);
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, animationDetails.switchingInLength)) {
+			switching_in_left.addFrame(sprite);
 		}
-		for(Sprite sprite : spriteSheet.getAnimationRow(11, animationDetails.reloadFinishLength)) {
-			switching_right.addFrame(sprite);
+		for(Sprite sprite : spriteSheet.getAnimationRow(14, animationDetails.switchingInLength)) {
+			switching_in_right.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, animationDetails.switchingOutLength)) {
+			switching_out_left.addFrame(sprite);
+		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(15, animationDetails.switchingOutLength)) {
+			switching_out_right.addFrame(sprite);
 		}
 	}
 	

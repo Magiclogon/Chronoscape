@@ -44,6 +44,7 @@ public class Player extends LivingEntity {
 	private Weapon[] equippedWeapons;
 	private int weaponIndex;
 	private Weapon activeWeapon;
+	private boolean switching;
 	
 	private static Player instance;
 	
@@ -54,6 +55,7 @@ public class Player extends LivingEntity {
 		bound = new AABB(new Vector3D(), new Vector3D(11, 4));
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 		
+		hasHands = true;
 	}
 	
 	@Override
@@ -175,7 +177,10 @@ public class Player extends LivingEntity {
 	
 	public void initWeapons() {
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
-			if(inventory.getEquippedWeapons()[i] == null) continue;
+			if(inventory.getEquippedWeapons()[i] == null) {
+				equippedWeapons[i] = null;
+				continue;
+			}
 			WeaponItem item = inventory.getEquippedWeapons()[i];
 			List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
 			Weapon weapon = new Weapon(item, this);
@@ -245,13 +250,16 @@ public class Player extends LivingEntity {
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
-			weaponIndex = Math.floorMod(weaponIndex+1, 3);
-			activeWeapon = equippedWeapons[weaponIndex];
-			if(activeWeapon != null) activeWeapon.triggerSwitching();
+			switching = true;
+			
 
 		}
 		if(activeWeapon != null) {
 			activeWeapon.update(step);
+		}
+		
+		if(switching) {
+			switchWeapons();
 		}
 		
 		
@@ -315,6 +323,30 @@ public class Player extends LivingEntity {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void switchWeapons() {
+		if(activeWeapon != null) {
+			activeWeapon.triggerSwitchingOut();
+		
+			if(activeWeapon.isCurrentAnimationDone()) {
+				activeWeapon.resetCurrentAnimation();
+				weaponIndex = Math.floorMod(weaponIndex+1, 3);
+				activeWeapon = equippedWeapons[weaponIndex];
+				
+				switching = false;
+				if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+
+			}
+		}else {
+			weaponIndex = Math.floorMod(weaponIndex+1, 3);
+			activeWeapon = equippedWeapons[weaponIndex];
+			
+			switching = false;
+			if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+
+		}
 	}
 	
 	
