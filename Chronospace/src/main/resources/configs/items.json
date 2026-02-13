@@ -521,6 +521,77 @@
       ]
     },
     {
+      "type": "weapon",
+      "id": "robot_boss_cannon",
+      "name": "Robots Boss's cannon",
+      "description": "The robots boss's personal cannon'",
+      "rarity": "LEGENDARY",
+      "basePrice": 300,
+      "damage": 30,
+      "range": 500,
+      "recoilForce": 250,
+      "attackSpeed": 1,
+      "projectileId": "bullet",
+      "projectileSpeed": 200,
+      "reloadingTime": 2,
+      "magazineSize": 50,
+      "relativeProjectilePosX": 17,
+      "relativeProjectilePosY": -20,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/boss_cannon-Sheet.png",
+	      "handSpriteSheetPath": "hands/boss_cannon_hands_top-Sheet.png",
+	      "handBackSpriteSheetPath": "hands/boss_cannon_hands_bottom-Sheet.png",
+	      "hasBackLayerHands": true,
+	      "spriteWidth": 164,
+	      "spriteHeight": 160,
+	      "idleLength": 1,
+	      "attackingInitLength": 17,
+	      "attackingLength": 22,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
+	      "reloadFinishLength": 1,
+	      "switchingInLength": 15,
+	      "switchingOutLength": 15
+      },
+      
+      "attackStrategy": {
+      	"type": "lobbed",
+      	"projectileCount": 30,
+      	"radius": 50,
+      	"gravity": 8,
+      	"scale": 50
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onSwitchInEffect",
+          "particleId": "lightning_boss_switch_in",
+          "offsetX": -10,
+          "offsetY": 0,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchOutEffect",
+          "particleId": "lightning_boss_switch_out",
+          "offsetX": -10,
+          "offsetY": -3,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
+    },
+    {
       "type": "upgrade",
       "id": "weapon_damage_boost",
       "name": "Damage Amplifier",

@@ -9,7 +9,7 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "robot_boss_machinegun",
+  "startingWeaponId": "robot_boss_cannon",
   
   "postProcessingDetails": {
   	"colorCorrection": {
