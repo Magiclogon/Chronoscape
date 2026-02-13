@@ -210,7 +210,7 @@ public class GameController implements Runnable {
 	public void restartGame() {
 		removeAllDrawables();
         particleSystem.init();
-
+        
 		addDrawable(Player.getInstance());
 		Player.getInstance().setDrawn(true);
         shopManager = new ShopManager(Player.getInstance());

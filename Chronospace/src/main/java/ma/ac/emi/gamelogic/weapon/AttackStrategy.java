@@ -22,5 +22,7 @@ public abstract class AttackStrategy {
 
 			weapon.getBearer().applyKnockback(recoilVector);
 		}
+		weapon.setAttacking(false);
+
 	}
 }

@@ -5,6 +5,7 @@ import com.jogamp.opengl.GL3;
 import lombok.Getter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
+import ma.ac.emi.gamecontrol.ObjectPool;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
@@ -17,6 +18,8 @@ public class ParticleSystem {
     private Map<String, ParticleDefinition> definitions;
     private Map<String, Double> lastSpawnTimes;
     private List<Particle> activeEffects;
+    private ObjectPool<Particle> particlePool;
+    
     private ParticleEmitterManager emitterManager;
     private ParticleLoader loader;
     
@@ -34,8 +37,8 @@ public class ParticleSystem {
         emitterManager = new ParticleEmitterManager();
         loader = new ParticleLoader();
         
-        init();
-
+        lastSpawnTimes = new HashMap<>();
+        activeEffects = new ArrayList<>();
     }
     
     public void clearActiveEffects() {
@@ -54,7 +57,17 @@ public class ParticleSystem {
             ParticleAnimationCache.get(def);
 
         }
+        
+        initPool();
+       
         System.out.println("In particle system init(), map size: " + definitions.size());
+    }
+    
+    public void initPool() {
+        particlePool = new ObjectPool<>(
+        		() -> new Particle(),
+        		100
+        	);
     }
     
     public void loadFromJson(String filePath) {
@@ -70,7 +83,9 @@ public class ParticleSystem {
         String key = source.hashCode() + ":" + id;
         double lastTime = lastSpawnTimes.getOrDefault(key, -999.0);
         if (currentTime - lastTime >= 1.0 / def.getSpawnRate()) {
-        	Particle p = new Particle(def, position, dir, source);
+        	Particle p = particlePool.obtain();
+        	p.init(def, position, dir, source);
+        	p.activate();
             activeEffects.add(p);
             lastSpawnTimes.put(key, currentTime);
         }
@@ -83,6 +98,7 @@ public class ParticleSystem {
             effect.update(step);
             if (!effect.isAlive()) {
                 iter.remove();
+                particlePool.free(effect);
             }
         }
         

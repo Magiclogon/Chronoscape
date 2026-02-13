@@ -367,7 +367,7 @@
       "damage": 30,
       "range": 250,
       "recoilForce": 350,
-      "attackSpeed": 1.5,
+      "attackSpeed": 1,
       "projectileId": "bullet",
       "projectileSpeed": 300,
       "reloadingTime": 1,
@@ -559,9 +559,83 @@
       "attackStrategy": {
       	"type": "lobbed",
       	"projectileCount": 30,
-      	"radius": 50,
+      	"radius": 200,
       	"gravity": 8,
       	"scale": 50
+      },
+      
+      "behaviors": [
+      	{
+          "type": "onSwitchInEffect",
+          "particleId": "lightning_boss_switch_in",
+          "offsetX": -10,
+          "offsetY": 0,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        },
+      	{
+          "type": "onSwitchOutEffect",
+          "particleId": "lightning_boss_switch_out",
+          "offsetX": -10,
+          "offsetY": -3,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        },
+        {
+          "type": "onAttackEffect",
+          "particleId": "explosion",
+          "offsetX": 17,
+          "offsetY": -20,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 2,
+          "ageMax": 1,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
+    },
+    {
+      "type": "weapon",
+      "id": "robot_boss_spear",
+      "name": "Robots Boss's spear",
+      "description": "The robots boss's personal spear'",
+      "rarity": "LEGENDARY",
+      "basePrice": 300,
+      "damage": 90,
+      "range": 170,
+      "attackSpeed": 2,
+      "projectileId": "none",
+      "projectileSpeed": 900,
+      "stackable": false,
+      
+      "animationDetails": {
+	      "spriteSheetPath": "weapons/boss_spear-Sheet.png",
+	      "handSpriteSheetPath": "hands/boss_spear_hands_top-Sheet.png",
+	      "handBackSpriteSheetPath": "hands/boss_spear_hands_bottom-Sheet.png",
+	      "hasBackLayerHands": true,
+	      "spriteWidth": 342,
+	      "spriteHeight": 230,
+	      "idleLength": 1,
+	      "attackingInitLength": 18,
+	      "attackingLength": 20,
+	      "reloadInitLength": 1,
+	      "reloadLength": 1,
+	      "reloadFinishLength": 1,
+	      "switchingInLength": 38,
+	      "switchingOutLength": 22
+      },
+      
+      "attackStrategy": {
+      	"type": "melee"
       },
       
       "behaviors": [

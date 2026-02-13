@@ -471,7 +471,7 @@
       "id": "lightning_boss_switch_out",
       "lifetime": 0.8,
       "spawnRate": 0.5,
-      "hasFixedDir": false,
+      "hasFixedDir": true,
       "dirX": 1,
       "dirY": 0,
       "shouldFollowSource": true,

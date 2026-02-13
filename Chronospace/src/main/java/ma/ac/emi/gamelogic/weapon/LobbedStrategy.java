@@ -29,7 +29,7 @@ public class LobbedStrategy extends AttackStrategy{
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
         if (weapon.getTsla() >= 1/definition.getAttackSpeed() && weapon.getAmmo() > 0) {
         	for(int i = 0; i < projectileCount; i++) {        		
-        		Vector3D newTarget = target.add(Vector3D.randomUnit2().mult(radius));
+        		Vector3D newTarget = target.add(Vector3D.randomUnit2().mult(radius*Math.random()));
         		Vector3D dir = newTarget.sub(weapon.getPos()).normalize();
         		
         		if(newTarget.sub(weapon.getPos()).norm() > definition.getRange()) {
