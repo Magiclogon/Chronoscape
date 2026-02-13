@@ -219,8 +219,6 @@ public class Player extends LivingEntity {
 		}
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
-		}else {
-			stopAttacking();
 		}
 
 		velocity.init();

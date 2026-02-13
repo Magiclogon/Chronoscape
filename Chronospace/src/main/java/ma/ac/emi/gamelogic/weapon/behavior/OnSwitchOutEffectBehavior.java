@@ -89,7 +89,6 @@ public class OnSwitchOutEffectBehavior extends WeaponBehavior{
 			if(aligned) e.setDir(weapon.getDir());
 			e.setShouldEmit(true);
 		});
-		System.out.println(particleId);
 	}
 	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {

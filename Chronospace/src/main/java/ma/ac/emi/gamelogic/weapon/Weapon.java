@@ -48,6 +48,8 @@ public class Weapon extends Entity{
     private double tsla;
     private int ammo;
     private double tssr;
+    private boolean attacking;
+    private Vector3D target;
     private AttackObjectManager attackObjectManager;
     
     private Vector3D relativeProjectilePos;
@@ -229,13 +231,9 @@ public class Weapon extends Entity{
 	}
     
     public void attack(Vector3D target, double step) {
-        if (getAttackStrategy() != null) {
-            if(isInState("Idle")) {
-            	stateMachine.trigger(TRIGGER_ATTACK);
-            }
-        	if(isInState("Attacking")) getAttackStrategy().execute(this, target, step);
-
-        }
+    	if(isReloadingAnimation()) return;
+        attacking = true;
+        this.target = target;
     }
     
 
@@ -338,13 +336,33 @@ public class Weapon extends Entity{
     			
     	
         setPos(getBearer().getPos());
+        
+        
+        if(!attacking) {
+        	stopAttacking();
+        }
+        
+        if(attacking) {
+        	if (getAttackStrategy() != null) {
+                if(isInState("Idle")) {
+                	stateMachine.trigger(TRIGGER_ATTACK);
+                }
+            	if(isInState("Attacking")) getAttackStrategy().execute(this, target, step);
+
+            }
+        }
+ 
         setTsla(getTsla() + step);
-        if (getAmmo() <= 0 && ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
+        
+        if(getTsla() <= 1/def.getAttackSpeed()) setAttacking(false);
+        
+        if (getAmmo() <= 0 && def.getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
         		if(isCurrentAnimationDone()) {
         			stateMachine.getCurrentAnimationState().reset();
         			if(!isInState("Idle")) stateMachine.trigger(TRIGGER_STOP);
         			stateMachine.trigger(TRIGGER_RELOAD);
+        			setAttacking(false);
         		}
         	}
 

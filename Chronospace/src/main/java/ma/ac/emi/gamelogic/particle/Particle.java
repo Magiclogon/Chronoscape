@@ -22,14 +22,19 @@ public class Particle extends GameObject {
     private double frameTimer;
     private int frameIndex;
     private ParticlePhase phase;
-    private final ParticleDefinition definition;
-    private final ParticleAnimation animation;
+    private ParticleDefinition definition;
+    private ParticleAnimation animation;
     public boolean alive = true;
     
     public Vector3D dir;
     public GameObject source;
     
-    public Particle(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {
+    public Particle() {
+        GameController.getInstance().removeDrawable(this);
+
+    }
+    
+    public void init(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {
         this.definition = def;
         this.pos = new Vector3D(pos);
         this.dir = new Vector3D(def.getDirX(), def.getDirY());
@@ -37,6 +42,9 @@ public class Particle extends GameObject {
         
         this.animation = ParticleAnimationCache.get(def);
         this.phase = ParticlePhase.INIT;
+        age = 0;
+        frameTimer = 0;
+        frameIndex = 0;
         
         baseColorCorrection = def.getColorCorrection();
         setLightingStrategy(def.getLightingStrategy());
@@ -45,6 +53,10 @@ public class Particle extends GameObject {
         
         GameController.getInstance().removeDrawable(this);
         
+    }
+    
+    public void activate() {
+    	setAlive(true);
     }
     
     public void update(double step) {
@@ -114,6 +126,8 @@ public class Particle extends GameObject {
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
         // Get pre-cached texture directly
+    	
+    	
         Texture texture = animation.getTexture(phase, frameIndex);
         Sprite sprite = getCurrentSprite();
         
