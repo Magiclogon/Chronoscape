@@ -13,6 +13,7 @@ import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.color.TemporaryColorEffect;
 import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
+import ma.ac.emi.glgraphics.lighting.NoLightingStrategy;
 import ma.ac.emi.math.Vector3D;
 
 @Getter
@@ -24,7 +25,7 @@ public abstract class GameObject implements GameDrawable{
 	protected Sprite currentSprite;
 	protected boolean drawn;
 	
-	protected LightingStrategy lightingStrategy;
+	protected LightingStrategy lightingStrategy = new NoLightingStrategy();
 	protected Light light;
 	
 	protected SpriteColorCorrection colorCorrection = SpriteColorCorrection.NORMAL;

@@ -16,6 +16,7 @@ import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -25,6 +26,7 @@ import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehavior;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
@@ -73,8 +75,8 @@ public class Weapon extends Entity{
         	attackStrategy = definition.getAttackStrategyDefinition().create();
             setAmmo(definition.getMagazineSize());
             
-            setBaseColorCorrection(definition.getColorCorrection());
-            setLightingStrategy(definition.getLightingStrategy());
+            if(definition.getColorCorrection() != null) setBaseColorCorrection(definition.getColorCorrection());
+            if(definition.getLightingStrategy() != null) setLightingStrategy(definition.getLightingStrategy());
             
             
             if(bearer.isHasHands()) {
@@ -89,6 +91,11 @@ public class Weapon extends Entity{
         setupAnimations();
 
         behaviors = new ArrayList<>();
+        
+        if(shadow != null) {
+        	GameController.getInstance().removeDrawable(shadow);
+        	shadow = null;
+        }
     }
     
     public void init() {
@@ -270,7 +277,6 @@ public class Weapon extends Entity{
     	
     	if(handsBottom != null) handsBottom.drawGL(gl, glGraphics);
     	
-        // --- 1) Determine sprite ---
         Sprite sprite;
         if (stateMachine.getCurrentAnimationState() != null) {
             sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite();
@@ -284,28 +290,51 @@ public class Weapon extends Entity{
         float[] model = new float[16];
         Matrix4.identity(model);
 
-        float px = (float) getBearer().getPos().getX();
-        float py = (float) (getBearer().getPos().getY() + getBearer().getWeaponYOffset() - getBearer().getPos().getZ());
+        float px = (float) getPos().getX();
+        float py = (float) (getPos().getY() - getPos().getZ());
         Matrix4.translate(model, px, py, 0f);
 
         double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
         Matrix4.rotateZ(model, (float) theta);
 
-        float wx = (float) getBearer().getWeaponXOffset() - sprite.getWidth() / 2f;
+        float wx = (float) - sprite.getWidth() / 2f;
         float wy = -sprite.getHeight() / 2f;
         Matrix4.translate(model, wx, wy, 0f);
 
         Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
         
         glGraphics.drawSprite(gl, texture, model, null, getColorCorrection());
-        
+                
         if(handsTop != null) handsTop.drawGL(gl, glGraphics);
     }
     
     
     public void update(double step) {
     	super.update(step);
+   
     	WeaponItemDefinition def = (WeaponItemDefinition)(weaponItem.getItemDefinition());
+
+        setPos(getBearer().getPos());
+        setDir(getBearer().getDir());
+        
+        if(getDir() != null) {
+        	int invert = (int) Math.signum(getDir().dotP(new Vector3D(1, 0)));
+        	
+        	Vector3D weaponOffset = new Vector3D(
+        			bearer.getWeaponXOffset(), 
+        			0
+        		);
+            weaponOffset = weaponOffset.rotateXY(getDir().getAngle());
+            weaponOffset = weaponOffset.add(new Vector3D(0, bearer.getWeaponYOffset()));
+            setPos(getPos().add(weaponOffset));
+            
+        	setRelativeProjectilePos(new Vector3D(
+        			def.getRelativeProjectilePosX()+getBearer().getWeaponXOffset(), 
+        			(def.getRelativeProjectilePosY()+getBearer().getWeaponYOffset()) * invert)
+        		.rotateXY(getDir().getAngle()));
+        }
+        
+    	
     	double playSpeed = def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24;
     	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
     	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(playSpeed);
@@ -333,10 +362,6 @@ public class Weapon extends Entity{
     			resetCurrentAnimation();
     			
     		}
-    			
-    	
-        setPos(getBearer().getPos());
-        
         
         if(!attacking) {
         	stopAttacking();
@@ -376,28 +401,24 @@ public class Weapon extends Entity{
             setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
             setTssr(0);
         }
-        
-        setDir(getBearer().getDir());
-        if(getDir() != null) {
-        	int invert = (int) Math.signum(getDir().dotP(new Vector3D(1, 0)));
-        	setRelativeProjectilePos(new Vector3D(
-        			def.getRelativeProjectilePosX()+getBearer().getWeaponXOffset(), 
-        			(def.getRelativeProjectilePosY()+getBearer().getWeaponYOffset()) * invert)
-        		.rotateXY(getDir().getAngle()));
-        }
        
         changeStateDirection();
         stateMachine.update(step);
+        
         if(handsTop != null) handsTop.update(step);
         if(handsBottom != null) handsBottom.update(step);
         
         behaviors.forEach(b -> b.onUpdate(this, step));
+        
     }
     
     public void snapTo(LivingEntity entity) {
         setBearer(entity);
         if(handsTop != null) {
         	handsTop.setBaseColorCorrection(entity.getBaseColorCorrection());
+        }
+        if(handsBottom != null) {
+        	handsBottom.setBaseColorCorrection(entity.getBaseColorCorrection());
         }
     }
 
@@ -469,6 +490,12 @@ public class Weapon extends Entity{
 
 	public void resetCurrentAnimation() {
 		stateMachine.getCurrentAnimationState().reset();
+	}
+
+	public void addInvincibilityFlashingEffect(double duration, double flashingFrequency) {
+		this.addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
+		if(handsTop != null) handsTop.addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
+		if(handsBottom != null) handsBottom.addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
 	}
 
 

@@ -80,7 +80,7 @@ public class GameRenderer implements GLEventListener {
 
         // --- Lighting (LOW RES) ---
         lightingSystem = new LightingSystem(gl, internalWidth, internalHeight);
-        lightingSystem.setAmbientLight(0.5f, 0.5f, 0.85f);
+        lightingSystem.setAmbientLight(0.2f, 0.2f, 0.6f);
 
         // --- Post processing (LOW RES SCENE) ---
         postProcessor = new PostProcessor(gl, internalWidth, internalHeight, renderScale);
@@ -100,15 +100,41 @@ public class GameRenderer implements GLEventListener {
                     )
             );
         }
+        
+        if (config.glow != null && config.glow.enabled) {
+            postProcessor.setBloomDownscale(config.glow.downscale);
+            
+            postProcessor.addEffect(new SnapshotEffect(gl, postProcessor));
+            
+            postProcessor.addEffect(
+                new GlowExtractEffect(postProcessor.getGlowTextureId())
+            );
+            
+            postProcessor.addEffect(
+                new BlurEffect(gl, true, config.glow.blurRadius)
+            );
+            postProcessor.addEffect(
+                new BlurEffect(gl, false, config.glow.blurRadius)
+            );
+            
+            postProcessor.addEffect(
+                new GlowCombineEffect(
+                    gl,
+                    postProcessor.getSnapshotTextureId(),
+                    config.glow.intensity
+                )
+            );
+        }
+        
 
         postProcessor.addEffect(new LightCompositeEffect(gl, lightingSystem.getLightTextureId()));
-        
+                
         //Bloom
         if (config.bloom != null && config.bloom.enabled) {
 
             postProcessor.setBloomDownscale(config.bloom.downscale);
 
-            postProcessor.addEffect(new SnapshotEffect(postProcessor));
+            postProcessor.addEffect(new SnapshotEffect(gl, postProcessor));
             postProcessor.addEffect(
                     new BloomExtractEffect(gl, config.bloom.threshold)
             );
@@ -120,15 +146,13 @@ public class GameRenderer implements GLEventListener {
                     new BlurEffect(gl, false, config.bloom.blurRadius)
             );
 
-            postProcessor.addEffect(
-                    new BloomCombineEffect(
-                            gl,
-                            postProcessor.getSnapshotTextureId()
-                    )
-            );
+            BloomCombineEffect bloomCombine = new BloomCombineEffect(gl, postProcessor.getSnapshotTextureId());
+            bloomCombine.setIntensity(config.bloom.intensity);
+            postProcessor.addEffect(bloomCombine);
         }
-
         
+        
+        postProcessor.addEffect(new ToneMappingEffect(gl));
         postProcessor.addEffect(new GammaEffect(gl));
 
         bg = GameController.getInstance()
@@ -181,6 +205,21 @@ public class GameRenderer implements GLEventListener {
 
         glGraphics.endFrame(gl);
         postProcessor.release(gl);
+        
+	     // ============================
+	     // PASS 1.5 — GLOW OBJECTS (LOW RES)
+	     // ============================
+	     postProcessor.captureGlow(gl);
+	     gl.glViewport(0, 0, internalWidth, internalHeight);
+	
+	     glGraphics.setCamera(camera);
+	     glGraphics.beginFrame(gl, internalWidth, internalHeight);
+	
+	     // Render only glowing objects
+	     renderGlowingInterleavedWithParticles(gl, glGraphics, snapshot, particleSystem);
+	     
+	     glGraphics.endFrame(gl);
+	     postProcessor.releaseGlow(gl);
 
         // ============================
         // PASS 2 — LIGHTING (LOW RES)
@@ -257,6 +296,47 @@ public class GameRenderer implements GLEventListener {
             );
             layerIndex++;
         }
+    }
+    private void renderGlowingInterleavedWithParticles(
+    		GL3 gl,
+    		GLGraphics glGraphics,
+    		List<GameObject> objects,
+    		ParticleSystem particleSystem
+    		) {
+    	Set<Float> zLayers = particleSystem.getZLayers();
+    	if (zLayers.isEmpty()) {
+    		for (GameObject o : objects) {
+    			if(o.getLightingStrategy() == null) continue;
+    			if(o.getLightingStrategy().shouldBloom()) o.drawGL(gl, glGraphics);
+    		}
+    		return;
+    	}
+    	
+    	Float[] sortedZLayers = zLayers.toArray(new Float[0]);
+    	Arrays.sort(sortedZLayers);
+    	int layerIndex = 0;
+    	for (GameObject obj : objects) {
+    		if(obj.getLightingStrategy() == null) continue;
+			if(!obj.getLightingStrategy().shouldBloom()) continue;
+    		double objZ = obj.getZOrder();
+    		
+    		while (layerIndex < sortedZLayers.length
+    				&& sortedZLayers[layerIndex] <= objZ) {
+    			particleSystem.renderGlowingBatchedAtZ(
+    					gl, glGraphics, sortedZLayers[layerIndex]
+    					);
+    			layerIndex++;
+    		}
+    		obj.drawGL(gl, glGraphics);
+    		
+    	}
+    	
+    	while (layerIndex < sortedZLayers.length) {
+    		particleSystem.renderGlowingBatchedAtZ(
+    				gl, glGraphics, sortedZLayers[layerIndex]
+    				);
+    		layerIndex++;
+    	}
     }
 
     @Override

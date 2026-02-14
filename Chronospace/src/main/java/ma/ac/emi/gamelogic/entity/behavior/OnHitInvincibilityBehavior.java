@@ -32,7 +32,7 @@ public class OnHitInvincibilityBehavior implements EntityBehavior{
 	public void onHit(LivingEntity entity) {
 		if(entity.getHp() <= 0) return;
 		timeTracker = duration;
-		entity.addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
+		entity.addInvincibilityFlashingEffect(duration, flashingFrequency);
 	}
 
 	@Override

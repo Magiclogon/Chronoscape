@@ -2,14 +2,14 @@
   	"pseudoname": "player",
   	"money": 10000.0,
 
-  	"baseHP": 100.0,
-  	"baseHPMax": 100.0,
+  	"baseHP": 1000000.0,
+  	"baseHPMax": 1000000.0,
   	"baseSpeed": 200,
   	"baseStrength": 10.0,
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "rpg7",
+  "startingWeaponId": "shotgun",
   
   "postProcessingDetails": {
   	"colorCorrection": {
@@ -21,7 +21,9 @@
 		  	{
 		      "type": "onMovement",
 		      "particleId": "dust",
-		      "emitterRadius": 5
+		      "emitterRadius": 5,
+		      "offsetX": 0,
+		      "offsetY": 16
 		    },
 		    {
 		      "type": "onHitFlash",

@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.attack.behavior;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.world.Obstacle;
 
 public class DamageBehavior implements Behavior{
 	private boolean destroyOnHit;
@@ -18,6 +19,7 @@ public class DamageBehavior implements Behavior{
 
 	@Override
 	public void onHit(Projectile p, LivingEntity entity) {
+		if(entity == null) return;
 		WeaponItemDefinition definition = (WeaponItemDefinition) p.getWeapon().getWeaponItem().getItemDefinition();
 		if(!entity.isInvincible()) {
 			entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
@@ -33,6 +35,11 @@ public class DamageBehavior implements Behavior{
 	}
 	@Override
 	public void onInit(Projectile p) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void onHit(Projectile p, Obstacle obstacle) {
 		// TODO Auto-generated method stub
 		
 	}

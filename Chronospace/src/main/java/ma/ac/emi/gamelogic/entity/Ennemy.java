@@ -147,8 +147,6 @@ public abstract class Ennemy extends LivingEntity {
 
 			if (aiBehavior.shouldAttack(this, targetPos)) {
 				attack(targetPos, step);
-			} else {
-				stopAttacking();
 			}
 
 			pointAt(targetPos);
@@ -218,13 +216,6 @@ public abstract class Ennemy extends LivingEntity {
 	public void attack(Vector3D target, double step) {
 		if (this.weapon != null) {
 			this.weapon.attack(target, step);
-		}
-	}
-
-	@Override
-	public void stopAttacking() {
-		if (this.weapon != null) {
-			this.weapon.stopAttacking();
 		}
 	}
 

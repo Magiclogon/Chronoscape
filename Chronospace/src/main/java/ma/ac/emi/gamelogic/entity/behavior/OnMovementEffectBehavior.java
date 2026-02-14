@@ -4,15 +4,18 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.math.Vector3D;
 
 public class OnMovementEffectBehavior implements EntityBehavior{
 	private String particleId;
 	private ParticleEmitter emitter;
 	private double emitterRadius;
+	private Vector3D offset;
 	
-	public OnMovementEffectBehavior(String particleId, double emitterRadius) {
+	public OnMovementEffectBehavior(String particleId, double emitterRadius, double offsetX, double offsetY) {
 		this.particleId = particleId;
 		this.emitterRadius = emitterRadius;
+		offset = new Vector3D(offsetX, offsetY);
 	}
 	
 	@Override
@@ -29,7 +32,7 @@ public class OnMovementEffectBehavior implements EntityBehavior{
 			else emitter.setShouldEmit(false);
 		else emitter.setShouldEmit(false);
 		
-		emitter.setPos(entity.getPos());
+		emitter.setPos(entity.getPos().add(offset));
 		emitter.setDir(entity.getVelocity());
 	}
 

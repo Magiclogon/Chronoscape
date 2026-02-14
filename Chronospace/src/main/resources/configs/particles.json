@@ -372,7 +372,7 @@
     {
       "id": "muzzle_flash",
       "lifetime": 0.3,
-      "spawnRate": 2,
+      "spawnRate": 8,
       "animationDetails": {
       	"spritePath": "particles/muzzle_flash-Sheet.png",
       	"spriteWidth": 24,
@@ -499,6 +499,40 @@
             "b": 1.0
           }
         }
+      }
+    },
+    {
+      "id": "on_enemy_hit",
+      "lifetime": 1,
+      "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "animationDetails": {
+        "spritePath": "particles/on_enemy_hit_particle-Sheet.png",
+        "spriteWidth": 24,
+        "spriteHeight": 24,
+        "initLength": 4,
+        "loopLength": 1,
+        "finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": 0,
+          "saturation": 1,
+          "value": 2,
+          "brightness": 0
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+          }
+        }
+       
       }
     }
     

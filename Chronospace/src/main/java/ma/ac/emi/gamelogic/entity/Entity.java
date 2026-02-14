@@ -42,6 +42,7 @@ public abstract class Entity extends GameObject{
 		baseColorCorrection = new SpriteColorCorrection();
 		
 		shadow = new ShadowComponent();
+		shadow.setEntity(this);
 
 		this.knockback = new Vector3D(0, 0);
 
@@ -114,8 +115,6 @@ public abstract class Entity extends GameObject{
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		
-		if(shadow != null) shadow.drawGL(gl, glGraphics, this);
-
 	    Sprite sprite = stateMachine.getCurrentAnimationState() != null
 	            ? stateMachine.getCurrentAnimationState().getCurrentFrameSprite()
 	            : AssetsLoader.getSprite("default_sprite.png");

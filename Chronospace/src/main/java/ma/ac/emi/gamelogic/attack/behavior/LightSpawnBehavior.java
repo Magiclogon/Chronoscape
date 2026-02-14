@@ -7,6 +7,7 @@ import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 
 public class LightSpawnBehavior implements Behavior{
 	private double lightRadius;
@@ -53,6 +54,12 @@ public class LightSpawnBehavior implements Behavior{
 			l.setPos(l.getPos().add(p.getPos()));
 			l.setEnabled(true);
 		});
+	}
+
+	@Override
+	public void onHit(Projectile p, Obstacle obstacle) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

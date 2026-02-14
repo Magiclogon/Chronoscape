@@ -88,10 +88,19 @@ public class ItemLoader {
 
         	                // Create ColorCorrection from config
         	                SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(postProcessing);
+        	                System.out.println();
         	                weaponDef.setColorCorrection(colorCorrection);
 
         	                // Create LightingStrategy from config
         	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(postProcessing);
+        	                weaponDef.setLightingStrategy(lightingStrategy);
+        	            }else {
+        	            	// Create Basic ColorCorrection
+        	            	SpriteColorCorrection colorCorrection = PostProcessingFactory.createColorCorrection(null);
+        	                weaponDef.setColorCorrection(colorCorrection);
+
+        	                // Create Basic LightingStrategy
+        	                LightingStrategy lightingStrategy = PostProcessingFactory.createLightingStrategy(null);
         	                weaponDef.setLightingStrategy(lightingStrategy);
         	            }
                         

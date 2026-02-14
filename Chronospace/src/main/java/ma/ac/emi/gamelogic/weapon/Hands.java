@@ -27,13 +27,19 @@ public class Hands extends Entity{
 		setupAnimations();
 		
 		GameController.getInstance().removeDrawable(this);
+		if(shadow != null) {
+			GameController.getInstance().removeDrawable(shadow);
+			shadow = null;
+		}
 	}
 	
 	public void update(double step) {
 		super.update(step);
+		
+		setPos(weapon.getPos());
+		
 		stateMachine.setCurrentAnimationState(weapon.getStateMachine().getCurrentAnimationState().getTitle());
 		stateMachine.getCurrentAnimationState().setCurrentFrameIndex(weapon.getStateMachine().getCurrentAnimationState().getCurrentFrameIndex());
-		setPos(weapon.getPos());
 		
 		stateMachine.update(step);
 	}
@@ -59,14 +65,14 @@ public class Hands extends Entity{
         float[] model = new float[16];
         Matrix4.identity(model);
 
-        float px = (float) weapon.getBearer().getPos().getX();
-        float py = (float) (weapon.getBearer().getPos().getY() + weapon.getBearer().getWeaponYOffset());
+        float px = (float) weapon.getPos().getX();
+        float py = (float) (weapon.getPos().getY() - weapon.getPos().getZ());
         Matrix4.translate(model, px, py, 0f);
 
         double theta = weapon.getDir() != null ? Math.atan2(weapon.getDir().getY(), weapon.getDir().getX()) : 0;
         Matrix4.rotateZ(model, (float) theta);
 
-        float wx = (float) weapon.getBearer().getWeaponXOffset() - sprite.getWidth() / 2f;
+        float wx = (float) - sprite.getWidth() / 2f;
         float wy = -sprite.getHeight() / 2f;
         Matrix4.translate(model, wx, wy, 0f);
 

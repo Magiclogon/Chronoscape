@@ -12,6 +12,7 @@ import java.util.Random;
 import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
+import lombok.Setter;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
@@ -23,6 +24,7 @@ import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 
 @Getter
+@Setter
 public class TileManager implements GameDrawable{
 
     private final MapTheme theme;
@@ -32,7 +34,7 @@ public class TileManager implements GameDrawable{
     private TileMap currentMap;
 
     private Sprite mapCache;
-    public static SpriteColorCorrection colorCorrection;
+    private SpriteColorCorrection colorCorrection;
 
     public TileManager(MapTheme theme) {
         this.theme = theme;

@@ -176,6 +176,9 @@ public class Player extends LivingEntity {
 	}
 	
 	public void initWeapons() {
+		for(Weapon weapon: equippedWeapons) {
+			if(weapon != null) GameController.getInstance().removeDrawable(weapon);
+		}
 		for(int i = 0; i < Inventory.MAX_EQU; i++) {
 			if(inventory.getEquippedWeapons()[i] == null) {
 				equippedWeapons[i] = null;
@@ -195,6 +198,11 @@ public class Player extends LivingEntity {
 			equippedWeapons[i] = weapon;
 		}
 		setActiveWeapon(equippedWeapons[weaponIndex]);
+	}
+	
+	public void setActiveWeapon(Weapon weapon) {
+		this.activeWeapon = weapon;
+		if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 	}
 
 	public double applyLuckToValue(double baseValue) {
@@ -249,8 +257,6 @@ public class Player extends LivingEntity {
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
 			switching = true;
-			
-
 		}
 		if(activeWeapon != null) {
 			activeWeapon.update(step);
@@ -267,8 +273,9 @@ public class Player extends LivingEntity {
 		stateMachine.update(step);
 		
 		getLight().setPosition(getPos());
+
 		super.update(step);
-		
+
 	}
 	
 	@Override
@@ -282,9 +289,8 @@ public class Player extends LivingEntity {
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		super.drawGL(gl, glGraphics);
-		if(activeWeapon != null && hp > 0)
-			activeWeapon.drawGL(gl, glGraphics);
-		
+//		if(activeWeapon != null && hp > 0)
+//			activeWeapon.drawGL(gl, glGraphics);
 	}
 
 	public void setWeapon(Weapon weapon) {
@@ -301,10 +307,7 @@ public class Player extends LivingEntity {
 		if(activeWeapon != null) this.activeWeapon.attack(target, step);
 	}
 	
-	@Override
-	public void stopAttacking() {
-		if(activeWeapon != null) this.activeWeapon.stopAttacking();
-	}
+
 	
 	@Override
 	public void consumeAmmo() {
@@ -331,7 +334,10 @@ public class Player extends LivingEntity {
 			if(activeWeapon.isCurrentAnimationDone()) {
 				activeWeapon.resetCurrentAnimation();
 				weaponIndex = Math.floorMod(weaponIndex+1, 3);
+				
+				GameController.getInstance().removeDrawable(activeWeapon);
 				activeWeapon = equippedWeapons[weaponIndex];
+				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 				
 				switching = false;
 				if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
@@ -339,7 +345,9 @@ public class Player extends LivingEntity {
 			}
 		}else {
 			weaponIndex = Math.floorMod(weaponIndex+1, 3);
+			
 			activeWeapon = equippedWeapons[weaponIndex];
+			if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 			
 			switching = false;
 			if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
@@ -347,7 +355,13 @@ public class Player extends LivingEntity {
 		}
 	}
 	
-	
+	@Override
+	public void addInvincibilityFlashingEffect(double duration, double flashingFrequency) {
+		super.addInvincibilityFlashingEffect(duration, flashingFrequency);
+		if(activeWeapon != null) {
+			activeWeapon.addInvincibilityFlashingEffect(duration, flashingFrequency);
+		}
+	}
 	
 
 }

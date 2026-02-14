@@ -171,6 +171,44 @@ public class ParticleSystem {
         
         gl.glBindTexture(GL3.GL_TEXTURE_2D, 0);
     }
+    public void renderGlowingBatchedAtZ(GL3 gl, GLGraphics glGraphics, float zLayer) {
+    	Map<Float, List<Particle>> snapshot = zLayersSnapshot;
+    	List<Particle> particles = snapshot.get(zLayer);
+    	
+    	if (particles == null || particles.isEmpty()) return;
+    	
+    	// Clear batch cache (reuse lists to avoid allocation)
+    	for (List<Particle> list : batchCache.values()) {
+    		list.clear();
+    	}
+    	
+    	// Group by texture
+    	for (Particle p : particles) {
+    		Texture texture = p.getAnimation().getTexture(p.getPhase(), p.getFrameIndex());
+    		if (texture == null) continue;
+    		
+    		batchCache.computeIfAbsent(texture, k -> new ArrayList<>(INITIAL_BATCH_SIZE)).add(p);
+    	}
+    	
+    	// Render each batch
+    	for (Map.Entry<Texture, List<Particle>> entry : batchCache.entrySet()) {
+    		Texture texture = entry.getKey();
+    		List<Particle> batch = entry.getValue();
+    		
+    		if (batch.isEmpty()) continue;
+    		
+    		// Bind texture once for entire batch
+    		gl.glBindTexture(GL3.GL_TEXTURE_2D, texture.id);
+    		
+    		// Draw all particles with this texture
+    		for (Particle p : batch) {
+    			if(p.getLightingStrategy() == null) continue;
+    			if(p.getLightingStrategy().shouldBloom()) p.drawGLBatched(gl, glGraphics, texture);
+    		}
+    	}
+    	
+    	gl.glBindTexture(GL3.GL_TEXTURE_2D, 0);
+    }
   
     public void addAllLights(LightingSystem lightingSystem) {
         Map<Float, List<Particle>> snapshot = zLayersSnapshot;

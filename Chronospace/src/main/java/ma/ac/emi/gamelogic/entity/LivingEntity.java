@@ -20,6 +20,7 @@ import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -142,7 +143,6 @@ public abstract class LivingEntity extends Entity {
 	}
 	
 	public abstract void attack(Vector3D target, double step);
-	public abstract void stopAttacking();
 	
 	protected boolean isIdle() {
 		return isInState("Idle");
@@ -240,6 +240,10 @@ public abstract class LivingEntity extends Entity {
 	public abstract void consumeAmmo();
 
 	public abstract void switchWeapons();
+	
+	public void addInvincibilityFlashingEffect(double duration, double flashingFrequency) {
+		addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
+	}
 	
 //	@Override
 //	public void drawGL(GL3 gl, GLGraphics glGraphics) {

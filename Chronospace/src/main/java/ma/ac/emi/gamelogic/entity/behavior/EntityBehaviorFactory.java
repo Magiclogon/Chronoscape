@@ -29,7 +29,9 @@ public class EntityBehaviorFactory {
 	        case "onMovement":
 	        	return new OnMovementEffectBehaviorDefinition(
 	                    json.get("particleId").getAsString(),
-	                    json.get("emitterRadius").getAsDouble()
+	                    json.get("emitterRadius").getAsDouble(),
+	                    json.get("offsetX").getAsDouble(),
+	                    json.get("offsetY").getAsDouble()
 	            );
 	        	
 	        case "onHitFlash":

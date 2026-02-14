@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.attack.behavior;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 
 public class LobbingBehavior implements Behavior{
 	private double g;
@@ -44,6 +45,12 @@ public class LobbingBehavior implements Behavior{
 
 	@Override
 	public void onDesactivate(Projectile p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onHit(Projectile p, Obstacle obstacle) {
 		// TODO Auto-generated method stub
 		
 	}

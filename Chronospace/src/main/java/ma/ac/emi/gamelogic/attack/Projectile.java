@@ -25,8 +25,12 @@ import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.lighting.NoLightingStrategy;
+import ma.ac.emi.glgraphics.lighting.ShadowComponent;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 import ma.ac.emi.world.World;
 
 @Getter
@@ -39,7 +43,11 @@ public class Projectile extends AttackObject{
     
     private Vector3D target;
     
-    public Projectile() {}
+    public Projectile() {
+    	if(shadow != null) {
+    		GameController.getInstance().removeDrawable(shadow);
+    	}
+    }
     
     public void reset(Vector3D pos, Vector3D dir, double speed, 
     		double boundWidth, double boundHeight, Weapon weapon, Vector3D target) {
@@ -51,7 +59,18 @@ public class Projectile extends AttackObject{
 		setVelocity(dir.mult(speed));
 		setHitbox(new AABB(pos, new Vector3D(boundWidth, boundHeight)));
 		
+		setBaseColorCorrection(SpriteColorCorrection.NORMAL);
+		setColorCorrection(SpriteColorCorrection.NORMAL);
+		setLightingStrategy(new NoLightingStrategy());
+		
 		behaviors.clear();
+		
+		if(shadow == null) {
+			shadow = new ShadowComponent();
+			shadow.setEntity(this);
+		}
+			
+		GameController.getInstance().addDrawable(shadow);
     }
     
     public void init() {
@@ -95,7 +114,7 @@ public class Projectile extends AttackObject{
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		if(sprite != null) {
-			if(shadow != null) shadow.drawGL(gl, glGraphics, this);
+			if(shadow != null) shadow.drawGL(gl, glGraphics);
 			
 			Texture texture = sprite.getTexture(gl);
 			
@@ -134,7 +153,15 @@ public class Projectile extends AttackObject{
 
 	@Override
 	public void applyEffect(LivingEntity entity) {
-		System.out.println("applying effect");
+		onHit(entity);
+	}
+	
+	public void onHit(Obstacle obstacle) {
+		behaviors.forEach(b -> b.onHit(this, obstacle));
+		desactivate();
+	}
+	
+	public void onHit(LivingEntity entity) {
 		behaviors.forEach(b -> b.onHit(this, entity));
 		desactivate();
 	}
