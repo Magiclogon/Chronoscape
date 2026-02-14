@@ -39,10 +39,7 @@ public abstract class AttackObject extends Entity{
     
     public abstract void applyEffect(LivingEntity entity);
     
-    public void onDesactivate() {
-		GameController.getInstance().getGamePanel().removeDrawable(this);
-
-    }
+    public abstract void onDesactivate();
     
 	public void desactivate() {
 		getPos().setZ(0);

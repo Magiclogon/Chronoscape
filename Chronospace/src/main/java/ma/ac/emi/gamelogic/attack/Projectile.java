@@ -27,6 +27,7 @@ import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.lighting.NoLightingStrategy;
+import ma.ac.emi.glgraphics.lighting.ShadowComponent;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
@@ -42,7 +43,11 @@ public class Projectile extends AttackObject{
     
     private Vector3D target;
     
-    public Projectile() {setShouldGlow(true);}
+    public Projectile() {
+    	if(shadow != null) {
+    		GameController.getInstance().removeDrawable(shadow);
+    	}
+    }
     
     public void reset(Vector3D pos, Vector3D dir, double speed, 
     		double boundWidth, double boundHeight, Weapon weapon, Vector3D target) {
@@ -59,6 +64,13 @@ public class Projectile extends AttackObject{
 		setLightingStrategy(new NoLightingStrategy());
 		
 		behaviors.clear();
+		
+		if(shadow == null) {
+			shadow = new ShadowComponent();
+			shadow.setEntity(this);
+		}
+			
+		GameController.getInstance().addDrawable(shadow);
     }
     
     public void init() {
@@ -102,7 +114,7 @@ public class Projectile extends AttackObject{
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		if(sprite != null) {
-			if(shadow != null) shadow.drawGL(gl, glGraphics, this);
+			if(shadow != null) shadow.drawGL(gl, glGraphics);
 			
 			Texture texture = sprite.getTexture(gl);
 			

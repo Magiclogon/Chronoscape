@@ -27,6 +27,10 @@ public class Hands extends Entity{
 		setupAnimations();
 		
 		GameController.getInstance().removeDrawable(this);
+		if(shadow != null) {
+			GameController.getInstance().removeDrawable(shadow);
+			shadow = null;
+		}
 	}
 	
 	public void update(double step) {

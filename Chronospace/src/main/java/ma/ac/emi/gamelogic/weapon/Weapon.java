@@ -16,6 +16,7 @@ import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
@@ -90,6 +91,11 @@ public class Weapon extends Entity{
         setupAnimations();
 
         behaviors = new ArrayList<>();
+        
+        if(shadow != null) {
+        	GameController.getInstance().removeDrawable(shadow);
+        	shadow = null;
+        }
     }
     
     public void init() {

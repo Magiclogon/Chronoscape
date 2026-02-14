@@ -84,15 +84,4 @@ public abstract class GameObject implements GameDrawable{
 		return 
 				(int)Math.signum(getZOrder() - gameObject.getZOrder());
 	}
-	
-	// In GameObject class, add:
-	private boolean shouldGlow = false;
-
-	public void setShouldGlow(boolean glow) {
-	    this.shouldGlow = glow;
-	}
-
-	public boolean shouldGlow() {
-	    return shouldGlow;
-	}
 }

@@ -105,7 +105,8 @@ public class Wave extends WaveNotifier {
         enemies.forEach(enemy -> {
             if(enemy.getHp() <= 0 && enemy.deathAnimationDone()) {
                 GameController.getInstance().removeDrawable(enemy);
-                GameController.getInstance().removeDrawable(enemy.getWeapon());
+                if(enemy.getWeapon() != null) GameController.getInstance().removeDrawable(enemy.getWeapon());
+                if(enemy.getShadow() != null) GameController.getInstance().removeDrawable(enemy.getShadow());
             }
         });
 

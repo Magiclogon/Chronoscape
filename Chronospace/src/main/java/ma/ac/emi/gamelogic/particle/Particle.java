@@ -31,7 +31,6 @@ public class Particle extends GameObject {
     
     public Particle() {
         GameController.getInstance().removeDrawable(this);
-        setShouldGlow(true);
     }
     
     public void init(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {

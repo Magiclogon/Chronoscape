@@ -62,6 +62,11 @@ public class AttackObjectManager {
         	if(!(object.isActive())) {
         		object.onDesactivate();
         		GameController.getInstance().removeDrawable(object);
+            	if(object.getShadow() != null) {
+            		System.out.println("removing shadow");
+            		GameController.getInstance().removeDrawable(object.getShadow());
+            	}
+
         		
         		@SuppressWarnings("unchecked")
 				ObjectPool<AttackObject> pool =

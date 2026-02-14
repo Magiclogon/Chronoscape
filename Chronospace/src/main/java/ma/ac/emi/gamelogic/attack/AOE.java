@@ -10,6 +10,7 @@ import com.jogamp.opengl.GL3;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.physics.AABB;
@@ -38,6 +39,10 @@ public class AOE extends AttackObject{
         this.frameTimer = 0;
         this.pos.setZ(-0.01);
 
+        if(this.shadow != null) {
+        	GameController.getInstance().removeDrawable(shadow);
+        	shadow = null;
+        }
     }
     
     public void reset(AOEDefinition def, Vector3D pos, Weapon weapon) {
@@ -153,5 +158,8 @@ public class AOE extends AttackObject{
 		}
 		
 	}
+
+	@Override
+	public void onDesactivate() {}
 
 }

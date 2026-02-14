@@ -575,7 +575,7 @@
       "recoilForce": 250,
       "attackSpeed": 1,
       "projectileId": "cannon_ball",
-      "projectileSpeed": 200,
+      "projectileSpeed": 80,
       "reloadingTime": 2,
       "magazineSize": 50,
       "relativeProjectilePosX": 17,
@@ -601,7 +601,7 @@
       
       "attackStrategy": {
       	"type": "lobbed",
-      	"projectileCount": 30,
+      	"projectileCount": 8,
       	"radius": 200,
       	"gravity": 8,
       	"scale": 50

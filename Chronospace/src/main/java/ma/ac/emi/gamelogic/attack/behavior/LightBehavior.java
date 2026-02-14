@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.attack.behavior;
 
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.glgraphics.lighting.LightObject;
@@ -22,7 +23,12 @@ public class LightBehavior implements Behavior{
 	public void onInit(Projectile p) {
 		light = new LightObject(p.getPos(), 999999, (float) lightRadius, (float)intensity);
 		light.setColor((float)r, (float)g, (float)b);
-		p.setShadow(null);
+		
+		if(p.getShadow() != null) {
+			GameController.getInstance().removeDrawable(p.getShadow());
+			p.setShadow(null);
+
+		}
 	}
 
 	@Override
