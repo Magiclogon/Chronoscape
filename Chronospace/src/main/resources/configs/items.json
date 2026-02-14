@@ -12,7 +12,7 @@
       "range": 500,
       "attackSpeed": 8,
       "projectileId": "bullet",
-      "projectileSpeed": 150,
+      "projectileSpeed": 800,
       "reloadingTime": 2.5,
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
@@ -44,7 +44,7 @@
       	{
           "type": "onAttackEffect",
           "particleId": "muzzle_flash",
-          "offsetX": 30,
+          "offsetX": 25,
           "offsetY": 0,
           "count": 1,
           "radius": 50,
@@ -355,7 +355,23 @@
       	"type": "range",
       	"projectileCount": 1,
       	"spread": 0
-      }
+      },
+      
+      "behaviors": [
+        {
+          "type": "onAttackEffect",
+          "particleId": "muzzle_flash",
+          "offsetX": 40,
+          "offsetY": -1,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 3,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
+      
     },
     {
       "type": "weapon",
@@ -395,7 +411,34 @@
       	"type": "range",
       	"projectileCount": 5,
       	"spread": 0.8
-      }
+      },
+      
+      "behaviors": [
+        {
+          "type": "onAttackEffect",
+          "particleId": "muzzle_flash",
+          "offsetX": 30,
+          "offsetY": 0,
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 3,
+          "isOneTime": true,
+          "aligned": true
+        },
+        {
+          "type": "onAttackEffect",
+          "particleId": "smoke2",
+          "offsetX": 30,
+          "offsetY": 0,
+          "count": 3,
+          "radius": 0,
+          "emitterRadius": 5,
+          "ageMax": 3,
+          "isOneTime": true,
+          "aligned": true
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -531,7 +574,7 @@
       "range": 500,
       "recoilForce": 250,
       "attackSpeed": 1,
-      "projectileId": "bullet",
+      "projectileId": "cannon_ball",
       "projectileSpeed": 200,
       "reloadingTime": 2,
       "magazineSize": 50,

@@ -9,6 +9,7 @@ import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.AgeStrategy;
 import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.world.Obstacle;
 
 public class ParticleSpawnBehavior implements Behavior{
 	protected String particleId;
@@ -65,6 +66,13 @@ public class ParticleSpawnBehavior implements Behavior{
 	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
+	}
+
+
+	@Override
+	public void onHit(Projectile p, Obstacle obstacle) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

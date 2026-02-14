@@ -188,6 +188,7 @@ public class World extends GameObject{
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		if (context.getTileManager() != null) {
+			context.getTileManager().setColorCorrection(getColorCorrection());
 			context.getTileManager().drawGL(gl, glGraphics);
 		}
 	}

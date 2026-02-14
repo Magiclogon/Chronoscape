@@ -42,7 +42,7 @@ public class WorldManager {
 		init();
 	}
 	
-	public void init() {
+	private void init() {
 		// Get difficulty from GameController
 		this.player = Player.getInstance();
 
@@ -83,7 +83,7 @@ public class WorldManager {
 		configs = configLoader.loadWorldsFromFile(filepath);
 		
 		for (WorldConfig worldConfig : configs) {
-			// Get specie factory
+
 			EnnemySpecieFactory specieFactory = EndlessWorldGenerator.SPECIES.get(worldConfig.getSpecieType());
 			
 			TileManager tileManager = new TileManager(MapTheme.ROBOTS);
@@ -92,7 +92,6 @@ public class WorldManager {
 				tileManager.addMap(tileMap);
 			});
 			
-			// Create world with context pattern
 			World world = new World(
 				worldConfig.getWorldWidth(),
 				worldConfig.getWorldHeight(),
@@ -102,7 +101,6 @@ public class WorldManager {
 			
 
 			
-			// Load waves for this world
 			for (WaveConfig config : worldConfig.getWaves()) {
 				Wave wave = waveFactory.createWave(
 					config,
@@ -111,13 +109,10 @@ public class WorldManager {
 					worldConfig.getWorldHeight()
 				);
 				
-				// Set attack object manager for wave
 				wave.setAttackObjectManager(world.getAttackObjectManager());
 				
-				// Add wave to world
 				world.getWaveManager().addWave(wave);
 				
-				// Subscribe pickable manager to wave events
 				world.getPickableManager().subscribe(wave);
 			}
 			
@@ -154,10 +149,8 @@ public class WorldManager {
 		System.out.println("Switched to world with species: " + 
 			currentWorld.getSpecieFactory().getClass().getName());
 		
-		// Setup player for new world
 		setupPlayerForWorld();
 		
-		// Reinitialize player weapons (if needed)
 		player.initWeapons();
 	}
 }

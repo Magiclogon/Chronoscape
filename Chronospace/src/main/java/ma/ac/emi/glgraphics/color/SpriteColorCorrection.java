@@ -31,6 +31,7 @@ public class SpriteColorCorrection {
     public static final SpriteColorCorrection POISON = new SpriteColorCorrection().setHueShift(0.3f).setSaturation(1.5f);
     public static final SpriteColorCorrection FROZEN = new SpriteColorCorrection().setTint(0.7f, 0.9f, 1.2f).setSaturation(0.6f);
     public static final SpriteColorCorrection INVERTED = new SpriteColorCorrection().setContrast(-1.0f);
+	public static final SpriteColorCorrection BLACK = new SpriteColorCorrection().setBrightness(-1);
     
     public SpriteColorCorrection() {}
     

@@ -61,4 +61,8 @@ public class FullscreenQuad {
         gl.glDeleteVertexArrays(1, new int[]{vao}, 0);
         gl.glDeleteBuffers(1, new int[]{vbo}, 0);
     }
+
+	public int getVAO() {
+		return this.vao;
+	}
 }

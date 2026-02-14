@@ -31,7 +31,7 @@ public class Particle extends GameObject {
     
     public Particle() {
         GameController.getInstance().removeDrawable(this);
-
+        setShouldGlow(true);
     }
     
     public void init(ParticleDefinition def, Vector3D pos, Vector3D dir, GameObject source) {
@@ -119,6 +119,8 @@ public class Particle extends GameObject {
     
     @Override
     public double getDrawnHeight() {
+    	if(this.animation == null) return 0;
+    	
         Sprite sprite = animation.getSprite(phase, frameIndex);
         return sprite != null ? sprite.getSprite().getHeight() : 0;
     }
@@ -126,7 +128,7 @@ public class Particle extends GameObject {
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
         // Get pre-cached texture directly
-    	
+    	if(this.animation == null) return;
     	
         Texture texture = animation.getTexture(phase, frameIndex);
         Sprite sprite = getCurrentSprite();

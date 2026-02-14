@@ -11,6 +11,8 @@ public class PostProcessor {
     private Framebuffer sceneFBO;
     private Framebuffer fboA, fboB;
     private Framebuffer bloomFboA, bloomFboB;
+    private Framebuffer glowFBO;
+    private Framebuffer snapshotFBO;
     private final FullscreenQuad quad;
     private final List<PostEffect> effects = new ArrayList<>();
     private int currentWidth, currentHeight;
@@ -26,12 +28,16 @@ public class PostProcessor {
         this.fboB = new Framebuffer();
         this.bloomFboA = new Framebuffer();
         this.bloomFboB = new Framebuffer();
+        this.glowFBO = new Framebuffer();
+        this.snapshotFBO = new Framebuffer();
         
         this.sceneFBO.init(gl, width, height, true);
         this.fboA.init(gl, width, height, true);
         this.fboB.init(gl, width, height, true);
         bloomFboA.init(gl, width / bloomDownscale, height / bloomDownscale, false);
         bloomFboB.init(gl, width / bloomDownscale, height / bloomDownscale, false);
+        this.glowFBO.init(gl, width, height, true);
+        this.snapshotFBO.init(gl, width, height, true);
         
         this.quad = new FullscreenQuad(gl);
         
@@ -60,22 +66,22 @@ public class PostProcessor {
         Framebuffer source = fboA;
         Framebuffer destination = fboB;
         
-        boolean inBloomSection = false;
+        boolean inDownscaledSection = false;
         int renderWidth = currentWidth;
         int renderHeight = currentHeight;
         
         for (int i = 0; i < effects.size() - 1; i++) {
             PostEffect effect = effects.get(i);
             
-            // Detect bloom section (between extract and combine)
-            if (effect instanceof BloomExtractEffect) {
-                inBloomSection = true;
+            // Detect downscaled section (bloom or glow - between extract and combine)
+            if (effect instanceof BloomExtractEffect || effect instanceof GlowExtractEffect) {
+                inDownscaledSection = true;
                 source = bloomFboA;
                 destination = bloomFboB;
                 renderWidth = currentWidth / bloomDownscale;
                 renderHeight = currentHeight / bloomDownscale;
-            } else if (effect instanceof BloomCombineEffect) {
-                inBloomSection = false;
+            } else if (effect instanceof BloomCombineEffect || effect instanceof GlowCombineEffect) {
+                inDownscaledSection = false;
                 source = fboA;
                 destination = fboB;
                 renderWidth = currentWidth;
@@ -107,14 +113,27 @@ public class PostProcessor {
     }
     
     public void saveSnapshot(GL3 gl, int currentTextureId) {
-        sceneFBO.bind(gl);
+        // Save current framebuffer binding
+        int[] currentFBO = new int[1];
+        gl.glGetIntegerv(GL3.GL_FRAMEBUFFER_BINDING, currentFBO, 0);
+        
+        // Get current viewport
+        int[] viewport = new int[4];
+        gl.glGetIntegerv(GL3.GL_VIEWPORT, viewport, 0);
+        
+        // Render to snapshot FBO
+        snapshotFBO.bind(gl);
+        gl.glViewport(0, 0, currentWidth, currentHeight);
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
         quad.draw(gl, currentTextureId); 
-        sceneFBO.unbind(gl);
+        
+        // Restore the previous state
+        gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, currentFBO[0]);
+        gl.glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     }
     
     public int getSnapshotTextureId() {
-        return sceneFBO.getTextureId();
+        return snapshotFBO.getTextureId();
     }
     
     public void resize(GL3 gl, int width, int height) {
@@ -126,6 +145,9 @@ public class PostProcessor {
         this.fboB.init(gl, width, height, true);
         bloomFboA.init(gl, width / bloomDownscale, height / bloomDownscale, false);
         bloomFboB.init(gl, width / bloomDownscale, height / bloomDownscale, false);
+        this.glowFBO.init(gl, width, height, true);
+        this.snapshotFBO.init(gl, width, height, true);
+
     }
     
     public void dispose(GL3 gl) {
@@ -134,12 +156,29 @@ public class PostProcessor {
         fboB.dispose(gl);
         bloomFboA.dispose(gl);
         bloomFboB.dispose(gl);
+        glowFBO.dispose(gl);
+        snapshotFBO.dispose(gl);
         quad.dispose(gl);
+        
         for (PostEffect e : effects) e.dispose(gl);
     }
     
     public void clearEffects(GL3 gl) {
     	for (PostEffect e: effects) e.dispose(gl);
     	effects.clear();
+    }
+    
+    public void captureGlow(GL3 gl) {
+        glowFBO.bind(gl);
+        gl.glClearColor(0, 0, 0, 0);
+        gl.glClear(GL3.GL_COLOR_BUFFER_BIT);
+    }
+
+    public void releaseGlow(GL3 gl) {
+        glowFBO.unbind(gl);
+    }
+
+    public int getGlowTextureId() {
+        return glowFBO.getTextureId();
     }
 }

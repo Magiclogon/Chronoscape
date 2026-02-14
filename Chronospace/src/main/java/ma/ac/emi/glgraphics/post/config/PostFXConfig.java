@@ -4,6 +4,7 @@ public class PostFXConfig {
 
     public ColorCorrection colorCorrection;
     public Bloom bloom;
+    public Glow glow;
 
     public static class ColorCorrection {
         public boolean enabled;
@@ -17,6 +18,15 @@ public class PostFXConfig {
         public int downscale;
         public float threshold;
         public float blurRadius;
+        public float intensity;
     }
+    
+    public static class Glow {
+        public boolean enabled = true;
+        public int downscale = 2;
+        public float blurRadius = 5.0f;
+        public float intensity = 1.0f;
+    }
+
 }
 

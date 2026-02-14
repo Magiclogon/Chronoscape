@@ -4,6 +4,7 @@ import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
+import ma.ac.emi.world.Obstacle;
 
 public class ParticleTrailBehavior implements Behavior{
 	private String particleId;
@@ -34,6 +35,12 @@ public class ParticleTrailBehavior implements Behavior{
 	@Override
 	public void onDesactivate(Projectile p) {
 		this.emitter.setActive(false);
+	}
+
+	@Override
+	public void onHit(Projectile p, Obstacle obstacle) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

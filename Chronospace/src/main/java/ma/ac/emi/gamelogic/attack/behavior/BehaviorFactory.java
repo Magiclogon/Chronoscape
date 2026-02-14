@@ -37,6 +37,12 @@ public class BehaviorFactory {
                         json.get("ageMax").getAsDouble(),
                         json.get("isOneTime").getAsBoolean()
                 );
+            case "onHit_particle":
+            	return new onHitParticleBehaviorDefinition(
+            			json.get("enemyParticleId").getAsString(),
+            			json.get("obstacleParticleId").getAsString(),
+            			json.get("emitterRadius").getAsDouble()
+            			);
             case "light_spawn":
             	return new LightSpawnBehaviorDefinition(
             			json.get("count").getAsInt(),
@@ -48,6 +54,9 @@ public class BehaviorFactory {
             case "light":
             	return new LightBehaviorDefinition(
             			json.get("lightRadius").getAsDouble(),
+            			json.get("r").getAsDouble(),
+            			json.get("g").getAsDouble(),
+            			json.get("b").getAsDouble(),
             			json.get("intensity").getAsDouble()
             			);
             case "lobbing":
