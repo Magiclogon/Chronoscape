@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.entity.behavior;
 
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
 
@@ -37,6 +38,12 @@ public class OnHitInvincibilityBehavior implements EntityBehavior{
 
 	@Override
 	public void onDeath(LivingEntity entity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSpawn(LivingEntity entity) {
 		// TODO Auto-generated method stub
 		
 	}

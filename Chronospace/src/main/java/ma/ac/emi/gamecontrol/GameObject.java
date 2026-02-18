@@ -36,8 +36,6 @@ public abstract class GameObject implements GameDrawable{
 	public GameObject() {
 		pos = new Vector3D();
 		hitbox = new AABB();
-		GameController.getInstance().getGamePanel().addDrawable(this);
-		GameController.getInstance().addDrawable(this);
 	}
 
     public void setColorCorrection(SpriteColorCorrection color) {

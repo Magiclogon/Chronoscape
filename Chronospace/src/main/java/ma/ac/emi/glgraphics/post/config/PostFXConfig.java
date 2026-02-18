@@ -26,6 +26,7 @@ public class PostFXConfig {
         public int downscale = 2;
         public float blurRadius = 5.0f;
         public float intensity = 1.0f;
+        public float saturationBoost = 1.5f;
     }
 
 }

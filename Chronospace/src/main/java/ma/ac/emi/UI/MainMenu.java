@@ -16,7 +16,7 @@ import ma.ac.emi.gamecontrol.GameController;
 
 public class MainMenu extends JPanel implements Soundable{
 	private static final long serialVersionUID = 1L;
-	private JButton startButton, quitButton;
+	private JButton startButton, quitButton, settingsButton;
 	private Image backgroundImage;
 
 	// Variables to hold the button images
@@ -82,6 +82,9 @@ public class MainMenu extends JPanel implements Soundable{
 		} else {
 			quitButton.setText("Quit");
 		}
+		
+		settingsButton = new JButton("Settings");
+		
 
 		configureButtonSounds(startButton, "hover_menu", "select_menu");
 		configureButtonSounds(quitButton, "hover_menu", "select_menu");
@@ -93,16 +96,23 @@ public class MainMenu extends JPanel implements Soundable{
 		quitButton.addActionListener(e -> {
 			System.exit(0);
 		});
+		
+		settingsButton.addActionListener(e -> {
+			GameController.getInstance().showSettings();
+		});
 
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		this.add(new Box.Filler(new Dimension(0, 100), new Dimension(0, 200), new Dimension(0, 300)));
 		this.add(startButton);
 		this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
 		this.add(quitButton);
+		this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
+		this.add(settingsButton);
 	}
 
 	@Override

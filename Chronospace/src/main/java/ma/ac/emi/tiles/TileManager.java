@@ -68,7 +68,7 @@ public class TileManager implements GameDrawable{
     private void loadTileSprites() {
         String p = theme.getPath();
         
-        SpriteSheet sheet = new SpriteSheet(AssetsLoader.getSprite(p + "/Tileset.png"), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+        SpriteSheet sheet = new SpriteSheet(AssetsLoader.getSprite(p + "/tileset-Sheet.png"), GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
         tileSprites.put(TileType.TOP_LEFT_OUT, sheet.getSprite(7, 2));
         tileSprites.put(TileType.TOP_EDGE_OUT, sheet.getSprite(1, 0));
         tileSprites.put(TileType.TOP_RIGHT_OUT, sheet.getSprite(5, 2));

@@ -26,7 +26,7 @@ import ma.ac.emi.math.Vector3D;
 @Setter
 @Getter
 public abstract class LivingEntity extends Entity {
-	private static final String[] ACTIONS = {"Idle", "Running", "Backing", "Dying"};
+	private static final String[] ACTIONS = {"Idle", "Running", "Backing", "Dying", "Spawning"};
 	private static final String[] DIRECTIONS = {"Left", "Right"};
 	
 	// Movement state constants
@@ -75,10 +75,18 @@ public abstract class LivingEntity extends Entity {
 	@Override
 	public void update(double step) {
 		super.update(step);
+		
+		if(isSpawning()) {
+			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+				stateMachine.getCurrentAnimationState().reset();
+				stateMachine.trigger(TRIGGER_STOP);
+			}
+		}
+		
 		invincible = false;
 		
-		hitbox.center = getPos();
-		bound.center = getPos().add(new Vector3D(0, GamePanel.TILE_SIZE/2));
+		if(hitbox != null) hitbox.center = getPos();
+		if(bound != null) bound.center = getPos().add(new Vector3D(0, GamePanel.TILE_SIZE/2));
 		
 		behaviors.forEach(b -> b.onUpdate(this, step));
 		
@@ -105,7 +113,7 @@ public abstract class LivingEntity extends Entity {
 			for (String direction : DIRECTIONS) {
 				String stateName = action + "_" + direction;
 				AnimationState state = new AnimationState(stateName);
-				if(action.equals("Dying")) state.setDoesLoop(false);
+				if(action.equals("Dying") || action.equals("Spawning")) state.setDoesLoop(false);
 				stateMachine.addAnimationState(state);
 			}
 		}
@@ -114,12 +122,13 @@ public abstract class LivingEntity extends Entity {
 		addMovementTransitions(TRIGGER_STOP, "Running", "Idle");
 		addMovementTransitions(TRIGGER_DIE, "Idle", "Dying");
 		addMovementTransitions(TRIGGER_STOP, "Dying", "Idle");
+		addMovementTransitions(TRIGGER_STOP, "Spawning", "Idle");
 		
 		addBackingTransitions();
 		
 		addLookTransitions();
 		
-		stateMachine.setDefaultState("Idle_Right");
+		stateMachine.setDefaultState("Spawning_Right");
 	}
 	
 	private void addMovementTransitions(String trigger, String fromAction, String toAction) {
@@ -158,6 +167,10 @@ public abstract class LivingEntity extends Entity {
 	
 	protected boolean isDying() {
 		return isInState("Dying");
+	}
+	
+	protected boolean isSpawning() {
+		return isInState("Spawning");
 	}
 	
 	private boolean isInState(String action) {

@@ -18,11 +18,18 @@ public class PlayerConfig {
     public double baseLuck;
 
     public String startingWeaponId;
+    public AnimationDetails animationDetails;
     
     public SpriteColorCorrection colorCorrection;
     public LightingStrategy lightingStrategy;
     
     public List<EntityBehaviorDefinition> behaviorDefinitions;
     
-    
+    public static class AnimationDetails{
+		public String spriteSheetPath;
+		public int spriteWidth, spriteHeight;
+		public int idleLength, runningLength, backingLength, dyingLength;
+		public int spawningLength;
+		
+	}
 }

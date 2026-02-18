@@ -6,6 +6,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.swing.*;
 
+import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 
@@ -25,6 +26,8 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.glgraphics.lighting.LightObject;
+import ma.ac.emi.glgraphics.post.config.PostFXConfig;
+import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
 import ma.ac.emi.input.KeyHandler;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
@@ -56,6 +59,8 @@ public class GameController implements Runnable {
     private GamePanel gamePanel;
     private GameGLPanel gameGLPanel;
     private GameUIPanel gameUIPanel;
+    private GraphicsSettingsPanel settings;
+
     private Camera camera;
     private Thread gameThread;
     private GameState state = GameState.MENU;
@@ -68,6 +73,8 @@ public class GameController implements Runnable {
     private DifficultyStrategy difficulty;
     private List<DifficultyObserver> difficultyObservers;
     
+    private PostFXConfig postFXConfig;
+    
     private GameController() {
         window = new Window();
 
@@ -79,6 +86,7 @@ public class GameController implements Runnable {
 		ItemLoader.getInstance().loadItems("src/main/resources/configs/items.json");		
 		ProjectileLoader.getInstance().load("src/main/resources/configs/projectiles.json");
 		AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
+		postFXConfig = PostFXConfigLoader.load();
 
 		difficultyObservers = new ArrayList<>();
 
@@ -90,7 +98,19 @@ public class GameController implements Runnable {
         gameUIPanel = new GameUIPanel();
         
         gameGLPanel = new GameGLPanel();
+
+        GraphicsSettingsCallback callback = (updatedConfig) -> {
+            gameGLPanel.invoke(false, (glDrawable) -> {
+                gameGLPanel.getRenderer().reloadPostProcessing(
+                    glDrawable.getGL().getGL3(), 
+                    updatedConfig
+                );
+                return true;
+            });
+        };
+        settings =  new GraphicsSettingsPanel(postFXConfig, callback, window::goBack);
         
+        window.addSettings(settings);
         window.showGame(gameGLPanel, gameUIPanel);
         showMainMenu();
     }
@@ -113,14 +133,14 @@ public class GameController implements Runnable {
     public void showLoadingScreen() {
         state = GameState.LOADING;
         SwingUtilities.invokeLater(() -> {
-        	window.showScreen("LOADING");
+        	window.navigateTo("LOADING");
         });
     }
 
     public void showMainMenu() {
         state = GameState.MENU;
         SwingUtilities.invokeLater(() -> {
-        	window.showScreen("MENU");
+        	window.navigateTo("MENU");
     	});
         //soundManager.loop("main_menu_music");
     }
@@ -128,20 +148,27 @@ public class GameController implements Runnable {
     public void showDifficultyMenu() {
         state = GameState.DIFFICULTY_SELECT;
         SwingUtilities.invokeLater(() -> {
-        	window.showScreen("DIFFICULTY");
+        	window.navigateTo("DIFFICULTY");
     	});
     }
 
     public void showLevelSelection() {
         state = GameState.LEVEL_SELECT;
         SwingUtilities.invokeLater(() -> {
-        	window.showScreen("LEVEL_SELECT");
+        	window.navigateTo("LEVEL_SELECT");
+    	});
+    }
+    
+    public void showSettings() {
+    	state = GameState.SETTINGS;
+    	SwingUtilities.invokeLater(() -> {
+    		window.navigateTo("SETTINGS");
     	});
     }
     
     public void showGame() {
     	SwingUtilities.invokeLater(() -> {
-            window.showScreen("GAME");
+            window.navigateTo("GAME");
     	});
     }
     
@@ -154,7 +181,7 @@ public class GameController implements Runnable {
         	System.out.println("showing shop..");
 
         	window.refreshShop();
-        	window.showScreen("SHOP");
+        	window.navigateTo("SHOP");
     	});
 
     }
@@ -162,7 +189,7 @@ public class GameController implements Runnable {
     public void showGameOver() {
     	state = GameState.GAME_OVER;
     	SwingUtilities.invokeLater(() -> {
-        	window.showScreen("GAMEOVER");
+        	window.navigateTo("GAMEOVER");
     	});
         soundManager.stopAll();
         soundManager.play("game_over_music");
@@ -183,9 +210,9 @@ public class GameController implements Runnable {
 
     public void pauseGame() {
         state = GameState.PAUSED;
-        SwingUtilities.invokeLater(() -> window.showScreen("PAUSE"));
+        SwingUtilities.invokeLater(() -> window.navigateTo("PAUSE"));
         soundManager.stopAll();
-        soundManager.play("pause_menu_music");
+//        soundManager.play("pause_menu_music");
     }
 
     public void resumeGame() {
@@ -193,7 +220,7 @@ public class GameController implements Runnable {
         latestTime = System.nanoTime();
         
         KeyHandler.getInstance().reset();
-        SwingUtilities.invokeLater(() -> window.showScreen("GAME"));
+        SwingUtilities.invokeLater(() -> window.navigateTo("GAME"));
         soundManager.stopAll();
     }
     

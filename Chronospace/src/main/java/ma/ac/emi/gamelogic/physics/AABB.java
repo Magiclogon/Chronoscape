@@ -18,14 +18,16 @@ public class AABB {
 	}
 
 	public boolean intersects(AABB other) {
+		if(other == null) return false;
         return Math.abs(center.getX() - other.center.getX()) < (half.getX() + other.half.getX())
             && Math.abs(center.getY() - other.center.getY()) < (half.getY() + other.half.getY());
     }
 	
 	public boolean intersectsZ(AABB other) {
+		if(other == null) return false;
 		return intersects(other)
-				&& center.getZ() - z_tolerance <= other.center.getZ() + z_tolerance 
-				&& center.getZ() + z_tolerance >= other.center.getZ() - z_tolerance;
+				&& center.getZ() - z_tolerance <= other.center.getZ() + other.z_tolerance 
+				&& center.getZ() + z_tolerance >= other.center.getZ() - other.z_tolerance;
 	}
 }
 

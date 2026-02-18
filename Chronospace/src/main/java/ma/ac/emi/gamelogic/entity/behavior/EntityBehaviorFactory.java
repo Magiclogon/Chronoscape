@@ -26,6 +26,15 @@ public class EntityBehaviorFactory {
 	        			json.get("ageMax").getAsDouble(),
 	        			json.get("isOneTime").getAsBoolean()
 	        			);
+	        case "onSpawn":
+	        	return new OnSpawnEffectBehaviorDefinition(
+	        			json.get("particleId").getAsString(),
+	        			json.get("count").getAsInt(),
+	        			json.get("radius").getAsDouble(),
+	        			json.get("emitterRadius").getAsDouble(),
+	        			json.get("ageMax").getAsDouble(),
+	        			json.get("isOneTime").getAsBoolean()
+	        			);
 	        case "onMovement":
 	        	return new OnMovementEffectBehaviorDefinition(
 	                    json.get("particleId").getAsString(),
