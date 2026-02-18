@@ -56,29 +56,9 @@ public class GameRenderer implements GLEventListener {
         Collections.sort(drawables);
         
     }
-
-    @Override
-    public void init(GLAutoDrawable drawable) {
-        System.out.println("Initializing Renderer..");
-
-        GL3 gl = drawable.getGL().getGL3();
-        
-        camera.setRenderScale(renderScale);
-        
-        width = drawable.getSurfaceWidth();
-        height = drawable.getSurfaceHeight();
-
-        computeInternalResolution();
-
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-
-        glGraphics = new GLGraphics(gl);
-        ParticleAnimationCache.initializeAllTextures(gl);
-        
-        PostFXConfig config = PostFXConfigLoader.load();
-
-        // --- Lighting (LOW RES) ---
+    
+    public void initPostProcessor(GL3 gl, PostFXConfig config) {
+    	// --- Lighting (LOW RES) ---
         lightingSystem = new LightingSystem(gl, internalWidth, internalHeight);
         lightingSystem.setAmbientLight(0.2f, 0.2f, 0.6f);
 
@@ -101,6 +81,9 @@ public class GameRenderer implements GLEventListener {
             );
         }
         
+        postProcessor.addEffect(new LightCompositeEffect(gl, lightingSystem.getLightTextureId()));
+
+        
         if (config.glow != null && config.glow.enabled) {
             postProcessor.setBloomDownscale(config.glow.downscale);
             
@@ -109,7 +92,7 @@ public class GameRenderer implements GLEventListener {
             postProcessor.addEffect(
                 new GlowExtractEffect(postProcessor.getGlowTextureId())
             );
-            
+                        
             postProcessor.addEffect(
                 new BlurEffect(gl, true, config.glow.blurRadius)
             );
@@ -127,7 +110,6 @@ public class GameRenderer implements GLEventListener {
         }
         
 
-        postProcessor.addEffect(new LightCompositeEffect(gl, lightingSystem.getLightTextureId()));
                 
         //Bloom
         if (config.bloom != null && config.bloom.enabled) {
@@ -154,6 +136,30 @@ public class GameRenderer implements GLEventListener {
         
         postProcessor.addEffect(new ToneMappingEffect(gl));
         postProcessor.addEffect(new GammaEffect(gl));
+    }
+
+    @Override
+    public void init(GLAutoDrawable drawable) {
+        System.out.println("Initializing Renderer..");
+
+        GL3 gl = drawable.getGL().getGL3();
+        
+        camera.setRenderScale(renderScale);
+        
+        width = drawable.getSurfaceWidth();
+        height = drawable.getSurfaceHeight();
+
+        computeInternalResolution();
+
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+
+        glGraphics = new GLGraphics(gl);
+        ParticleAnimationCache.initializeAllTextures(gl);
+        
+        PostFXConfig config = GameController.getInstance().getPostFXConfig();
+        
+        initPostProcessor(gl, config);
 
         bg = GameController.getInstance()
                 .getWorldManager()
@@ -390,5 +396,10 @@ public class GameRenderer implements GLEventListener {
 
 	public double getRenderScale() {
 		return this.renderScale;
+	}
+
+	public void reloadPostProcessing(GL3 gl, PostFXConfig updatedConfig) {
+		postProcessor.clearEffects(gl);
+		initPostProcessor(gl, updatedConfig);
 	}
 }

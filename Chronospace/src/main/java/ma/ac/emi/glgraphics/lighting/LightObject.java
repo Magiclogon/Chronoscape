@@ -28,6 +28,8 @@ public class LightObject extends GameObject{
     	this.ageMax = ageMax;
     	GameController.getInstance().addLightObject(this);
     	
+    	GameController.getInstance().addDrawable(this);
+    	
     }
     
     public LightObject(Vector3D pos, double ageMax, float radius) {

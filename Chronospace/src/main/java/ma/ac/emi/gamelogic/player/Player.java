@@ -47,6 +47,7 @@ public class Player extends LivingEntity {
 	private boolean switching;
 	
 	private static Player instance;
+	private PlayerConfig config;
 	
 	private Player() {
 		inventory = new Inventory();
@@ -61,50 +62,60 @@ public class Player extends LivingEntity {
 	@Override
 	public void setupAnimations() {
 		stateMachine.clearAllStates();
-		spriteSheet = new SpriteSheet(AssetsLoader.getSprite("player/main_character-Sheet.png"), 
-				GamePanel.TILE_SIZE, 
-				GamePanel.TILE_SIZE);
+		spriteSheet = new SpriteSheet(AssetsLoader.getSprite(config.animationDetails.spriteSheetPath), 
+				config.animationDetails.spriteWidth, 
+				config.animationDetails.spriteHeight);
 		
 		AnimationState idle_right = stateMachine.getAnimationStateByTitle("Idle_Right");
 		AnimationState run_right = stateMachine.getAnimationStateByTitle("Running_Right");
 		AnimationState back_right = stateMachine.getAnimationStateByTitle("Backing_Right");
 		AnimationState die_right = stateMachine.getAnimationStateByTitle("Dying_Right");
+		AnimationState spawn_right = stateMachine.getAnimationStateByTitle("Spawning_Right");
 		
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState run_left = stateMachine.getAnimationStateByTitle("Running_Left");
 		AnimationState back_left = stateMachine.getAnimationStateByTitle("Backing_Left");
 		AnimationState die_left = stateMachine.getAnimationStateByTitle("Dying_Left");
+		AnimationState spawn_left = stateMachine.getAnimationStateByTitle("Spawning_Left");
 
-		for(Sprite sprite : spriteSheet.getAnimationRow(0, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(0, config.animationDetails.idleLength)) {
 			idle_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(1, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(1, config.animationDetails.runningLength)) {
 			run_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(2, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(2, config.animationDetails.backingLength)) {
 			back_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(3, 14)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(3, config.animationDetails.idleLength)) {
 			idle_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(4, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(4, config.animationDetails.runningLength)) {
 			run_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(5, 12)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(5, config.animationDetails.backingLength)) {
 			back_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, 49)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, config.animationDetails.dyingLength)) {
 			die_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, 49)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, config.animationDetails.dyingLength)) {
 			die_right.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(6, config.animationDetails.spawningLength)) {
+			spawn_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(7, config.animationDetails.spawningLength)) {
+			spawn_right.addFrame(sprite);
 		}
 	}
 	
@@ -127,7 +138,7 @@ public class Player extends LivingEntity {
 		weaponXOffset = 9;
 		weaponYOffset = 5;
 		
-		PlayerConfig config = PlayerConfigLoader.load("/configs/player_config.json");
+		config = PlayerConfigLoader.load("/configs/player_config.json");
 		applyBaseStats(config);
 		
 		setBaseColorCorrection(config.colorCorrection);
@@ -214,7 +225,18 @@ public class Player extends LivingEntity {
 	@Override
 	public void update(double step) {
 		
-		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
+		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
+		
+		if(isSpawning()) {
+			stateMachine.update(step);
+
+			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
+			}
+			super.update(step);
+			return;
+		}
+
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
 			if(deathAnimationDone()) {
@@ -225,6 +247,7 @@ public class Player extends LivingEntity {
 			stateMachine.update(step);
 			return;
 		}
+				
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
 		}

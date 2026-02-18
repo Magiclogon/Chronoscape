@@ -476,7 +476,6 @@ public class Weapon extends Entity{
 		
 		behaviors.forEach(b -> {
 			b.onSwitchOut(this);
-			System.out.println(b);
 		});
 	}
 	

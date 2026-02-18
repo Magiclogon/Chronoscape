@@ -119,12 +119,12 @@ public class Wave extends WaveNotifier {
 
     private void spawnEnemy() {
         Ennemy enemy = spawnFromComposition();
-
-        enemy.setAttackObjectManager(getAttackObjectManager());
-        enemy.initWeapon();
-
+        
         if (enemy != null) {
+            enemy.setAttackObjectManager(getAttackObjectManager());
+            enemy.initWeapon();
             setRandomSpawnPosition(enemy);
+            enemy.onSpawn();
             enemies.add(enemy);
 
             GameController.getInstance().addDrawable(enemy);

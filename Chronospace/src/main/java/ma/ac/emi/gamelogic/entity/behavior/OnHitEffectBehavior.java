@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.entity.behavior;
 import java.util.ArrayList;
 import java.util.List;
 
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.AgeStrategy;
@@ -65,5 +66,11 @@ public class OnHitEffectBehavior implements EntityBehavior{
 	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
+	}
+
+	@Override
+	public void onSpawn(LivingEntity entity) {
+		// TODO Auto-generated method stub
+		
 	}
 }

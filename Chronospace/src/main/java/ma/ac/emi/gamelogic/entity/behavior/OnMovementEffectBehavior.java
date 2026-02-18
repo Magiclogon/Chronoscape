@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.entity.behavior;
 
+import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
@@ -42,6 +43,12 @@ public class OnMovementEffectBehavior implements EntityBehavior{
 	@Override
 	public void onDeath(LivingEntity entity) {
 		this.emitter.setActive(false);
+	}
+
+	@Override
+	public void onSpawn(LivingEntity entity) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

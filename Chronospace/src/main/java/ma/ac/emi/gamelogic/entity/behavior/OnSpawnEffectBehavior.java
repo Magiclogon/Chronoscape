@@ -10,7 +10,7 @@ import ma.ac.emi.gamelogic.particle.lifecycle.AgeStrategy;
 import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
 import ma.ac.emi.math.Vector3D;
 
-public class OnDeathEffectBehavior implements EntityBehavior{
+public class OnSpawnEffectBehavior implements EntityBehavior{
 	protected String particleId;
 	protected int count;
 	protected double radius;
@@ -19,7 +19,7 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 	protected boolean isOneTime;
 	protected List<ParticleEmitter> emitters = new ArrayList<>();
 
-	public OnDeathEffectBehavior(String particleId, int count, double radius, double emitterRadius, double ageMax, boolean isOneTime) {
+	public OnSpawnEffectBehavior(String particleId, int count, double radius, double emitterRadius, double ageMax, boolean isOneTime) {
 		this.particleId = particleId;
 		this.count = count;
 		this.radius = radius;
@@ -30,6 +30,8 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 	
 
 	public void onInit(LivingEntity entity) {
+		emitters.clear();
+
 		for(int i = 0; i < count; i++) {
 			Vector3D offset = count == 1? new Vector3D() : Vector3D.randomUnit2().mult(Math.random() * radius);
 			Vector3D dir = Vector3D.randomUnit2();
@@ -38,6 +40,7 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 			else emitter.setStrategy(new AgeStrategy());
 			emitters.add(emitter);
 		}
+
 	}
 
 	@Override
@@ -47,18 +50,10 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 	}
 	
 	@Override
-	public void onHit(LivingEntity entity) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onHit(LivingEntity entity) {}
 
 	@Override
 	public void onDeath(LivingEntity entity) {
-		//Spawn particles
-		emitters.forEach(e -> {
-			e.setPos(e.getPos().add(entity.getPos()));
-			e.setShouldEmit(true);
-		});
 		
 	}
 	
@@ -66,9 +61,12 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}
 
+
 	@Override
 	public void onSpawn(LivingEntity entity) {
-		// TODO Auto-generated method stub
-		
+		emitters.forEach(e -> {
+			e.setPos(e.getPos().add(entity.getPos()));
+			e.setShouldEmit(true);
+		});
 	}
 }

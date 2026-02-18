@@ -22,7 +22,7 @@
   
   "glow": {
     "enabled": true,
-    "downscale": 2,
+    "downscale": 1,
     "blurRadius": 0.05,
     "intensity": 0.5,
     "saturationBoot": 1.5

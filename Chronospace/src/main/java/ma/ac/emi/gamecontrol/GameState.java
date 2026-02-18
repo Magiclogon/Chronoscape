@@ -3,6 +3,7 @@ package ma.ac.emi.gamecontrol;
 public enum GameState {
     LOADING,
     MENU,
+    SETTINGS,
     PLAYING,
     PAUSED,
     SHOP,
