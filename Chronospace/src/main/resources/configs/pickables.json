@@ -1,0 +1,24 @@
+[
+  {
+    "type": "HEALTH",
+    "value": 20.0,
+    "dropProbability": 0.1,
+    "spritePath": "assets/pickables/health_sheet.png",
+    "isAnimated": true,
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frameCount": 5,
+    "frameSpeed": 0.2
+  },
+  {
+    "type": "MONEY",
+    "value": 50.0,
+    "dropProbability": 0.2,
+    "spritePath": "assets/pickables/coin_sheet.png",
+    "isAnimated": true,
+    "frameWidth": 16,
+    "frameHeight": 16,
+    "frameCount": 4,
+    "frameSpeed": 0.2
+  }
+]
