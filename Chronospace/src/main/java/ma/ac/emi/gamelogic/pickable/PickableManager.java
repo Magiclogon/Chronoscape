@@ -44,15 +44,11 @@ public class PickableManager implements WaveListener, DifficultyObserver {
     }
 
     private void initializePickableTypes() {
-        // Base prototypes
-        Pickable hpType = new HpPickable(20, 0.7);
-        hpType.setDrawn(false);
+        this.pickablePrototypes = PickableLoader.loadPickables("/configs/pickables.json");
 
-        Pickable moneyType = new MoneyPickable(50, 0.3);
-        moneyType.setDrawn(false);
-
-        pickablePrototypes.add(hpType);
-        pickablePrototypes.add(moneyType);
+        if (this.pickablePrototypes.isEmpty()) {
+            System.err.println("Nothing was loaded: PICKABLES.");
+        }
     }
 
     public void addPickable(Pickable pickable) {
@@ -99,9 +95,12 @@ public class PickableManager implements WaveListener, DifficultyObserver {
     private Pickable createRandomPickable(Vector3D position) {
         if (pickablePrototypes.isEmpty()) return null;
 
-        // Relative weight selection
         double totalWeight = pickablePrototypes.stream().mapToDouble(Pickable::getDropProbability).sum();
-        double roll = random.nextDouble() * totalWeight;
+
+
+        double maxRoll = Math.max(totalWeight, 1.0);
+        double roll = random.nextDouble() * maxRoll;
+
         double cumulative = 0.0;
 
         for (Pickable prototype : pickablePrototypes) {
@@ -126,6 +125,7 @@ public class PickableManager implements WaveListener, DifficultyObserver {
                 return instance;
             }
         }
+
         return null;
     }
 
