@@ -43,6 +43,7 @@ public class CollisionManager{
 		
 		for(AttackObject attackObject : context.getAttackObjectManager().getPlayerObjects()) {
 			 for(Ennemy enemy : context.getWaveManager().getCurrentEnemies()){
+				if(enemy.getHitbox() == null) continue;
 				if(enemy.getHitbox().intersectsZ( attackObject.getHitbox()) && attackObject.isActive()) {
 					attackObject.applyEffect(enemy);
 				}

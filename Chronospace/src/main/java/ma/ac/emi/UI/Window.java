@@ -11,6 +11,7 @@ import ma.ac.emi.gamecontrol.*;
 public class Window extends JFrame {
     private final CardLayout layout;
     private final JPanel mainPanel;
+    private final NavigationManager navigationManager;
 
     // Screens
     private final LoadingScreen loadingScreen;
@@ -29,6 +30,7 @@ public class Window extends JFrame {
     public Window() {
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
+        navigationManager = new NavigationManager();
 
         transitionPane = new JLayeredPane();
         transitionPane.setLayout(new OverlayLayout(transitionPane));
@@ -65,25 +67,104 @@ public class Window extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
 
-
         mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         fadeOverlay.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         
         transitionPane.setSize(getWidth(), getHeight());
+        
+        // Optional: Add debug navigation listener
+        navigationManager.addNavigationListener((from, to) -> {
+            System.out.println("Navigation: " + from + " -> " + to);
+        });
     }
 
-    
-    public void refreshShop() {
-    	shopUI.refresh();
-    }
-
-    public void showScreen(String name) {
+    /**
+     * Navigate to a screen (adds to navigation history)
+     */
+    public void navigateTo(String name) {
+        navigationManager.navigateTo(name);
         layout.show(mainPanel, name);
         revalidate();
         repaint();
-
     }
     
+   
+    public void jumpTo(String name) {
+        navigationManager.jumpTo(name);
+        layout.show(mainPanel, name);
+        revalidate();
+        repaint();
+    }
+    
+ 
+    public boolean goBack() {
+        String previous = navigationManager.goBack();
+        if (previous != null) {
+            layout.show(mainPanel, previous);
+            revalidate();
+            repaint();
+            return true;
+        }
+        return false;
+    }
+    
+ 
+    public boolean goForward() {
+        String next = navigationManager.goForward();
+        if (next != null) {
+            layout.show(mainPanel, next);
+            revalidate();
+            repaint();
+            return true;
+        }
+        return false;
+    }
+    
+
+    public void backToMainMenu() {
+        navigationManager.backToRoot("MENU");
+        layout.show(mainPanel, "MENU");
+        revalidate();
+        repaint();
+    }
+    
+
+    public boolean canGoBack() {
+        return navigationManager.canGoBack();
+    }
+    
+
+    public boolean canGoForward() {
+        return navigationManager.canGoForward();
+    }
+    
+
+    public String getCurrentScreen() {
+        return navigationManager.getCurrentScreen();
+    }
+    
+   
+    public NavigationManager getNavigationManager() {
+        return navigationManager;
+    }
+    
+    /**
+     * Legacy method - now uses navigateTo
+     * @deprecated Use navigateTo() instead
+     */
+    @Deprecated
+    public void showScreen(String name) {
+        navigateTo(name);
+    }
+    
+    public void refreshShop() {
+        shopUI.refresh();
+    }
+    
+    public void addSettings(GraphicsSettingsPanel settings) {
+        JScrollPane scrollPane = new JScrollPane(settings);
+        mainPanel.add(scrollPane, "SETTINGS");
+    }
 
     public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
         gamePane.removeAll();
@@ -103,9 +184,7 @@ public class Window extends JFrame {
         gamePane.repaint();
     }
 
-    
     public void transition(Runnable midAction) {
-
         Timer timer = new Timer(16, null);
         final float[] alpha = {0f};
         final boolean[] fadingOut = {true};
@@ -130,5 +209,4 @@ public class Window extends JFrame {
 
         timer.start();
     }
-
 }

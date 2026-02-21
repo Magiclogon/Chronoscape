@@ -43,8 +43,8 @@ public abstract class Ennemy extends LivingEntity {
 		
 		double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
 		double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
-		hitbox = new AABB(new Vector3D(), new Vector3D(width, height).mult(0.5));
 		bound = new AABB(new Vector3D(), new Vector3D(width, height/4).mult(0.5));
+		hitbox = null;
 		
 		weaponXOffset = definition.getWeaponXOffset();
 		weaponYOffset = definition.getWeaponYOffset();
@@ -78,9 +78,11 @@ public abstract class Ennemy extends LivingEntity {
 		if(getWeapon() == null) return;
 		getWeapon().setAttackObjectManager(getAttackObjectManager());
 		getWeapon().snapTo(this);
+		
+		GameController.getInstance().removeDrawable(getWeapon());
 	}
-	
-	public void setupAnimations() {
+    
+    public void setupAnimations() {
         setSpriteSheet(new SpriteSheet(AssetsLoader.getSprite(definition.getAnimationDetails().spriteSheetPath),
         		definition.getAnimationDetails().spriteWidth, 
         		definition.getAnimationDetails().spriteHeight));
@@ -89,11 +91,13 @@ public abstract class Ennemy extends LivingEntity {
 		AnimationState run_right = stateMachine.getAnimationStateByTitle("Running_Right");
 		AnimationState back_right = stateMachine.getAnimationStateByTitle("Backing_Right");
 		AnimationState die_right = stateMachine.getAnimationStateByTitle("Dying_Right");
+		AnimationState spawn_right = stateMachine.getAnimationStateByTitle("Spawning_Right");
 		
 		AnimationState idle_left = stateMachine.getAnimationStateByTitle("Idle_Left");
 		AnimationState run_left = stateMachine.getAnimationStateByTitle("Running_Left");
 		AnimationState back_left = stateMachine.getAnimationStateByTitle("Backing_Left");
 		AnimationState die_left = stateMachine.getAnimationStateByTitle("Dying_Left");
+		AnimationState spawn_left = stateMachine.getAnimationStateByTitle("Spawning_Left");
 		
 		
 		for(Sprite sprite : spriteSheet.getAnimationRow(3, definition.getAnimationDetails().idleLength)) {
@@ -126,13 +130,34 @@ public abstract class Ennemy extends LivingEntity {
 		for(Sprite sprite : spriteSheet.getAnimationRow(6, definition.getAnimationDetails().dyingLength)) {
 			die_right.addFrame(sprite);
 		}
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, definition.getAnimationDetails().spawningLength)) {
+			spawn_left.addFrame(sprite);
+		}
+		
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, definition.getAnimationDetails().spawningLength)) {
+			spawn_right.addFrame(sprite);
+		}
     }
 
 	public void update(double step, Vector3D targetPos) {
 		velocity.init();
 
-		// State Machine Logic
-		if(!isIdle() && !isDying()) stateMachine.trigger("Stop");
+		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
+		
+		if(isSpawning()) {
+			stateMachine.update(step);
+
+			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+				if(weapon != null) GameController.getInstance().addDrawable(weapon);
+				
+				double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
+				double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
+				hitbox = new AABB(new Vector3D(), new Vector3D(width, height).mult(0.5));
+
+			}
+			super.update(step);
+			return;
+		}
 
 		if(getHp() <= 0) {
 			if(!isDying()) stateMachine.trigger("Die");
@@ -140,6 +165,7 @@ public abstract class Ennemy extends LivingEntity {
 			super.update(step);
 			return;
 		}
+		
 
 		// AI Logic
 		if (aiBehavior != null) {
@@ -225,5 +251,9 @@ public abstract class Ennemy extends LivingEntity {
 	
 	@Override
 	public void switchWeapons() {}
+
+	public void onSpawn() {
+		behaviors.forEach(b -> b.onSpawn(this));
+	}
 
 }

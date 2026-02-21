@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL3;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -35,17 +36,14 @@ public class Obstacle extends GameObject {
                 GamePanel.TILE_SIZE
         ));
 
-        // Create the hitbox relative to the position
         AABB rawBox = createHitbox(type);
         if (rawBox != null) {
-            // Ensure the hitbox center is absolute world coordinates
-            // createHitbox usually returns local offsets, so we add pos if needed.
-            // Based on your code, createHitbox() seems to return absolute coordinates already ("center = pos.add(...)").
-            this.hitbox = rawBox;
+           this.hitbox = rawBox;
         }
 
         baseColorCorrection = new SpriteColorCorrection();
-        baseColorCorrection.setValue(0.5f);
+        
+        GameController.getInstance().addDrawable(this);
     }
 
     /* ============================

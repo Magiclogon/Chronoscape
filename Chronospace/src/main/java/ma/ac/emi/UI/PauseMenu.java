@@ -22,7 +22,7 @@ public class PauseMenu extends JPanel implements Soundable{
     private static final long serialVersionUID = 1L;
 
     private Image backgroundImage;
-    private JButton btnResume, btnMainMenu, btnQuit;
+    private JButton btnResume, btnMainMenu, btnSettings, btnQuit;
 
     public PauseMenu() {
         try {
@@ -38,10 +38,12 @@ public class PauseMenu extends JPanel implements Soundable{
 
         btnResume = createImageButton("Resume1.png", "Resume5.png");
         btnMainMenu = createImageButton("Main Menu1.png", "Main Menu5.png");
+        btnSettings = new JButton("Settings");
         btnQuit = createImageButton("Quit1.png", "Quit5.png");
 
         configureButtonSounds(btnResume, "hover_menu", "select_menu");
         configureButtonSounds(btnMainMenu, "hover_menu", "select_menu");
+        configureButtonSounds(btnSettings, "hover_menu", "select_menu");
         configureButtonSounds(btnQuit, "hover_menu", "select_menu");
 
         btnResume.addActionListener(e -> GameController.getInstance().resumeGame());
@@ -49,6 +51,10 @@ public class PauseMenu extends JPanel implements Soundable{
         btnMainMenu.addActionListener(e -> {
             GameController.getInstance().resumeGame();
             GameController.getInstance().showLevelSelection();
+        });
+        
+        btnSettings.addActionListener(e -> {
+        	GameController.getInstance().showSettings();
         });
 
         btnQuit.addActionListener(e -> System.exit(0));
@@ -63,8 +69,12 @@ public class PauseMenu extends JPanel implements Soundable{
         gbc.gridy = 1;
         gbc.insets = new Insets(10, 0, 10, 0);
         add(btnMainMenu, gbc);
-
+        
         gbc.gridy = 2;
+        gbc.insets = new Insets(10, 0, 10, 0);
+        add(btnSettings, gbc);
+
+        gbc.gridy = 3;
         gbc.insets = new Insets(10, 0, 10, 0);
         add(btnQuit, gbc);
     }

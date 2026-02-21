@@ -38,6 +38,7 @@ public abstract class EnemyDefinition {
 		public String spriteSheetPath;
 		public int spriteWidth, spriteHeight;
 		public int idleLength, runningLength, backingLength, dyingLength;
+		public int spawningLength;
 		
 	}
 

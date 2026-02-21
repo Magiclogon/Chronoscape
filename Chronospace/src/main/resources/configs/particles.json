@@ -89,19 +89,8 @@
             "g": 0.9,
             "b": 0.7
           },
-          "saturation": 1.4,
-          "brightness": 0.05
-        },
-        "lighting": {
-          "type": "pulsating_glow",
-          "baseIntensity": 0.8,
-          "pulseSpeed": 3.0,
-          "pulseAmount": 0.4,
-          "color": {
-            "r": 1.0,
-            "g": 0.5,
-            "b": 0.1
-          }
+          "saturation": 1.6,
+          "brightness": 0.3
         }
       }
     },
@@ -126,15 +115,6 @@
           "saturation": 1.5,
           "value": 1.2,
           "brightness": 0.1
-        },
-        "lighting": {
-          "type": "glow",
-          "intensity": 1.2,
-          "color": {
-            "r": 1.0,
-            "g": 0.4,
-            "b": 0.0
-          }
         }
       }
     },
@@ -523,6 +503,123 @@
           "value": 2,
           "brightness": 0
         },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+          }
+        }
+       
+      }
+    },
+    {
+      "id": "spawning_marker",
+      "lifetime": 1,
+      "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "animationDetails": {
+        "spritePath": "particles/spawning_marker-Sheet.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "initLength": 25,
+        "loopLength": 1,
+        "finishLength": 1
+      },
+      "postProcessingDetails": {
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+          }
+        }
+       
+      }
+    },
+    {
+      "id": "spawning_effect_small",
+      "lifetime": 0.8,
+      "spawnRate": 3,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "animationDetails": {
+      	"spritePath": "particles/spawning_effect_small-Sheet.png",
+      	"spriteWidth": 32,
+      	"spriteHeight": 48,
+      	"initLength": 44,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
+      "id": "spawning_marker_medium",
+      "lifetime": 1,
+      "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "animationDetails": {
+        "spritePath": "particles/spawning_marker_medium-Sheet.png",
+        "spriteWidth": 48,
+        "spriteHeight": 48,
+        "initLength": 25,
+        "loopLength": 1,
+        "finishLength": 1
+      },
+      "postProcessingDetails": {
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 1.0,
+            "g": 1.0,
+            "b": 1.0
+          }
+        }
+       
+      }
+    },
+    {
+      "id": "spawning_marker_boss",
+      "lifetime": 1,
+      "spawnRate": 1,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "animationDetails": {
+        "spritePath": "particles/spawning_marker_boss-Sheet.png",
+        "spriteWidth": 128,
+        "spriteHeight": 128,
+        "initLength": 25,
+        "loopLength": 1,
+        "finishLength": 1
+      },
+      "postProcessingDetails": {
         "lighting": {
           "type": "glow",
           "intensity": 1.2,

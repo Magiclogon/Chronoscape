@@ -7,4 +7,5 @@ public interface EntityBehavior {
 	void onUpdate(LivingEntity entity, double step);
 	void onHit(LivingEntity entity);
 	void onDeath(LivingEntity entity);
+	void onSpawn(LivingEntity entity);
 }
