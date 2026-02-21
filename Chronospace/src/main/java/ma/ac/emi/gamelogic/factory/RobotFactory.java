@@ -1,6 +1,7 @@
 package ma.ac.emi.gamelogic.factory;
 
 import ma.ac.emi.gamelogic.entity.*;
+import ma.ac.emi.gamelogic.wave.WaveManager;
 import ma.ac.emi.math.Vector3D;
 
 public class RobotFactory extends EnnemySpecieFactory{
@@ -15,57 +16,72 @@ public class RobotFactory extends EnnemySpecieFactory{
 	}
 
     @Override
-    public Ennemy createCommon() {
+    public Ennemy createCommon(WaveManager manager) {
     	CommonEnemyDefinition def = (CommonEnemyDefinition) definitions.get("common");
-        CommonEnnemy enemy = new CommonEnnemy(def);
+        CommonEnnemy enemy = manager.getPool(CommonEnnemy.class).obtain();
+        
+        enemy.reset(def);
         def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
         enemy.init();
         applyDifficultyStats(enemy);
-
+        enemy.setActive(true);
+        
         return enemy;
     }
 
     @Override
-    public Ennemy createSpeedster() {
+    public Ennemy createSpeedster(WaveManager manager) {
     	SpeedsterEnemyDefinition def = (SpeedsterEnemyDefinition) definitions.get("speedster");
-        SpeedsterEnnemy enemy = new SpeedsterEnnemy(def);
+        SpeedsterEnnemy enemy = manager.getPool(SpeedsterEnnemy.class).obtain();
+        
+        enemy.reset(def);
         def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
         enemy.init();
-        
         applyDifficultyStats(enemy);
+        enemy.setActive(true);
+        
         return enemy;
     }
 
     @Override
-    public Ennemy createTank() {
+    public Ennemy createTank(WaveManager manager) {
     	TankEnemyDefinition def = (TankEnemyDefinition) definitions.get("tank");
-        TankEnnemy enemy = new TankEnnemy(def);
+        TankEnnemy enemy = manager.getPool(TankEnnemy.class).obtain();
+
+        enemy.reset(def);
         def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
         enemy.init();
-        
         applyDifficultyStats(enemy);
+        enemy.setActive(true);
+        
         return enemy;
     }
 
     @Override
-    public Ennemy createRanged() {
+    public Ennemy createRanged(WaveManager manager) {
     	RangedEnemyDefinition def = (RangedEnemyDefinition) definitions.get("ranged");
-        RangedEnnemy enemy = new RangedEnnemy(def);
+        RangedEnnemy enemy = manager.getPool(RangedEnnemy.class).obtain();
+
+        enemy.reset(def);
         def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
         enemy.init();
-        
         applyDifficultyStats(enemy);
+        enemy.setActive(true);
+        
         return enemy;
     }
 
     @Override
-    public Ennemy createBoss() {
+    public Ennemy createBoss(WaveManager manager) {
     	BossEnemyDefinition def = (BossEnemyDefinition) definitions.get("boss");
-        BossEnnemy enemy = new BossEnnemy(def);
+        BossEnnemy enemy = manager.getPool(BossEnnemy.class).obtain();
+
+        enemy.reset(def);
         def.behaviorDefinitions.forEach(b -> enemy.getBehaviors().add(b.create()));
         enemy.init();
-        
         applyDifficultyStats(enemy);
+        enemy.setActive(true);
+        
         return enemy;
     }
 }

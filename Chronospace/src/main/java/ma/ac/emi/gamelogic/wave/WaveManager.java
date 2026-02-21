@@ -3,15 +3,26 @@ package ma.ac.emi.gamelogic.wave;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.ObjectPool;
+import ma.ac.emi.gamelogic.attack.AOE;
+import ma.ac.emi.gamelogic.attack.AttackObject;
+import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.entity.BossEnnemy;
+import ma.ac.emi.gamelogic.entity.CommonEnnemy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.entity.RangedEnnemy;
+import ma.ac.emi.gamelogic.entity.SpeedsterEnnemy;
+import ma.ac.emi.gamelogic.entity.TankEnnemy;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.WorldContext;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -28,6 +39,8 @@ public class WaveManager implements DifficultyObserver {
 
     private AttackObjectManager attackObjectManager;
     private DifficultyStrategy currentDifficulty;
+    
+	Map<Class<? extends Ennemy>, ObjectPool<?>> pools;
 
     public WaveManager(WorldContext context) {
         this.worldWidth = context.getWorldWidth();
@@ -47,6 +60,39 @@ public class WaveManager implements DifficultyObserver {
         this.currentDifficulty = GameController.getInstance().getDifficulty();
 
         this.context.refreshCurrentMap();
+        
+        pools = new HashMap<>();
+        initPools();
+    }
+    
+    public void initPools() {
+    	ObjectPool<CommonEnnemy> commonPool = new ObjectPool<CommonEnnemy>(
+                () -> new CommonEnnemy(),
+                100
+            );
+    	ObjectPool<RangedEnnemy> rangedPool = new ObjectPool<RangedEnnemy>(
+    			() -> new RangedEnnemy(),
+    			30
+    		);
+    	ObjectPool<SpeedsterEnnemy> speedsterPool = new ObjectPool<SpeedsterEnnemy>(
+    			() -> new SpeedsterEnnemy(),
+    			30
+    		);
+    	ObjectPool<TankEnnemy> tankPool = new ObjectPool<TankEnnemy>(
+    			() -> new TankEnnemy(),
+    			20
+    		);
+    	ObjectPool<BossEnnemy> bossPool = new ObjectPool<BossEnnemy>(
+    			() -> new BossEnnemy(),
+    			10
+    		);
+    
+    	
+    	pools.put(CommonEnnemy.class, commonPool);
+    	pools.put(RangedEnnemy.class, rangedPool);
+    	pools.put(SpeedsterEnnemy.class, speedsterPool);
+    	pools.put(TankEnnemy.class, tankPool);
+    	pools.put(BossEnnemy.class, bossPool);
     }
 
     @Override
@@ -211,4 +257,9 @@ public class WaveManager implements DifficultyObserver {
             this.timeUntilNextWave = timeUntilNextWave;
         }
     }
+    
+	@SuppressWarnings("unchecked")
+	public <T extends Ennemy> ObjectPool<T> getPool(Class<T> type) {
+	    return (ObjectPool<T>) pools.get(type);
+	}
 }

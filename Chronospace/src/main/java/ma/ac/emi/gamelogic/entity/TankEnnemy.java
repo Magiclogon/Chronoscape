@@ -9,10 +9,5 @@ import ma.ac.emi.gamelogic.factory.EnemyDefinition;
 
 
 public class TankEnnemy extends Ennemy{
- 
-    
-    public TankEnnemy(EnemyDefinition definition) {
-		super(definition);
-		// TODO Auto-generated constructor stub
-	}
+
 }

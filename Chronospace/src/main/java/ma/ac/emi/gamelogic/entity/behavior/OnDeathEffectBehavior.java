@@ -57,10 +57,7 @@ public class OnDeathEffectBehavior implements EntityBehavior{
 	}
 
 	@Override
-	public void onUpdate(LivingEntity entity, double step) {		
-		if(entity.getDir() == null) return;
-		
-		
+	public void onUpdate(LivingEntity entity, double step) {
 		for(int i = 0; i < emitters.size(); i++) {
 			ParticleEmitter emitter = emitters.get(i);
 			Vector3D randomOffset = randomOffsets.get(i);

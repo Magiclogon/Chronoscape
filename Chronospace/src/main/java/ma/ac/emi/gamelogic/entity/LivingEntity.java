@@ -36,7 +36,7 @@ public abstract class LivingEntity extends Entity {
 	private static final String TRIGGER_DIE = "Die";
 	
 	protected Vector3D dir;
-	protected boolean active = false;
+	protected boolean dead = false;
 	protected boolean invincible = false;
 	
 	protected double hp;
@@ -60,7 +60,6 @@ public abstract class LivingEntity extends Entity {
 	
 	public LivingEntity() {
 		bound = new AABB();
-		active = true;
 	}
 	
 	public void init() {
@@ -91,8 +90,8 @@ public abstract class LivingEntity extends Entity {
 		behaviors.forEach(b -> b.onUpdate(this, step));
 		
 		if(hp <= 0) {
-			if(active) {
-				active = false;
+			if(!dead) {
+				dead = true;
 				behaviors.forEach(b -> b.onDeath(this));
 			}
 		}

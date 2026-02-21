@@ -32,14 +32,17 @@ public abstract class Ennemy extends LivingEntity {
 	protected Weapon weapon;
 	protected AIBehavior aiBehavior;
 	protected EnemyDefinition definition;
+	protected boolean active;
+	protected boolean animationsInitialized;
 
-	public Ennemy(EnemyDefinition definition) {
-		super();
-
+	public Ennemy() {
+	}
+	
+	public void reset(EnemyDefinition definition) {
 		this.definition = definition;
-
+		
+		if(!animationsInitialized) setupAnimations();
 		initStats();
-		setupAnimations();
 		
 		double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
 		double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
@@ -49,9 +52,10 @@ public abstract class Ennemy extends LivingEntity {
 		weaponXOffset = definition.getWeaponXOffset();
 		weaponYOffset = definition.getWeaponYOffset();
 		
-		GameController.getInstance().removeDrawable(this);
+		stateMachine.setCurrentAnimationState(stateMachine.getDefaultStateTitle());
+		setDead(false);
 	}
-
+	
 	protected void initStats() {
 		this.speed = definition.getSpeed();
 		this.hpMax = definition.getHpMax();
@@ -137,6 +141,8 @@ public abstract class Ennemy extends LivingEntity {
 		for(Sprite sprite : spriteSheet.getAnimationRow(9, definition.getAnimationDetails().spawningLength)) {
 			spawn_right.addFrame(sprite);
 		}
+		
+		animationsInitialized = true;
     }
 
 	public void update(double step, Vector3D targetPos) {
@@ -148,6 +154,7 @@ public abstract class Ennemy extends LivingEntity {
 			stateMachine.update(step);
 
 			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
+				
 				if(weapon != null) GameController.getInstance().addDrawable(weapon);
 				
 				double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
@@ -164,6 +171,11 @@ public abstract class Ennemy extends LivingEntity {
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
 			super.update(step);
+			
+			if(this.deathAnimationDone()) {
+				stateMachine.getCurrentAnimationState().reset();
+				active = false;
+			}
 			return;
 		}
 		

@@ -63,7 +63,6 @@ public class AttackObjectManager {
         		object.onDesactivate();
         		GameController.getInstance().removeDrawable(object);
             	if(object.getShadow() != null) {
-            		System.out.println("removing shadow");
             		GameController.getInstance().removeDrawable(object.getShadow());
             	}
 
