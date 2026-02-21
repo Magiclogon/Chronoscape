@@ -191,8 +191,11 @@ public class RobotBossAIBehavior implements AIBehavior {
         newWeapon.init();
         
         newWeapon.setAttackObjectManager(boss.getAttackObjectManager());
+        if(newWeapon != null) GameController.getInstance().addDrawable(newWeapon);
+
         boss.setWeapon(newWeapon);
         newWeapon.snapTo(boss);
+        
         
         updateAttackRange(boss);
     }

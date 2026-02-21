@@ -12,14 +12,14 @@
     "value": 0.5
   },
   "bloom": {
-    "enabled": false,
+    "enabled": true,
     "downscale": 2,
     "threshold": 0.049999997,
     "blurRadius": 1.0,
     "intensity": 0.049999997
   },
   "glow": {
-    "enabled": false,
+    "enabled": true,
     "downscale": 2,
     "blurRadius": 0.049999997,
     "intensity": 0.5,
