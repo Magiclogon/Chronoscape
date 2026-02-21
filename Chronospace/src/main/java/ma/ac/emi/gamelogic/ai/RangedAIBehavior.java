@@ -27,6 +27,7 @@ public class RangedAIBehavior implements AIBehavior {
     private static final double TOLERANCE = 16.0;
 
     private Vector3D vitesseActuelle = new Vector3D(0, 0);
+    private int circlingDirection = (Math.random() < 0.5) ? 1 : -1;
 
     public RangedAIBehavior(PathFinder pathfinder, double rangeOptimal, double rangeAttaque) {
         this.pathfinder = pathfinder;
@@ -74,7 +75,7 @@ public class RangedAIBehavior implements AIBehavior {
         // keep distance
         else {
             Vector3D toPlayer = posJoueur.sub(ennemy.getPos());
-            directionVoulu = new Vector3D(-toPlayer.getY(), toPlayer.getX());
+            directionVoulu = new Vector3D(-toPlayer.getY() * circlingDirection, toPlayer.getX() * circlingDirection);
             chemin.clear();
         }
 

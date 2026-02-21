@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.ai;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.math.Vector3D;
 
@@ -152,17 +154,20 @@ public class AlienBossAIBehavior implements AIBehavior {
     private void completeSummoning() {
         isSpawningNow = true;
 
+        DifficultyStrategy difficulty = GameController.getInstance().getDifficulty();
+        double rateMultiplier = difficulty != null ? difficulty.getBossSpawnRateMultiplier() : 1.0;
+
         switch (currentPhase) {
             case ZONER:
-                spawnCooldown = 6.0;
+                spawnCooldown = 6.0 / rateMultiplier;
                 spawnQuantity = 2;
                 break;
             case ASSASSIN:
-                spawnCooldown = 4.0;
+                spawnCooldown = 4.0 / rateMultiplier;
                 spawnQuantity = 4;
                 break;
             case BERSERK:
-                spawnCooldown = 2.0;
+                spawnCooldown = 2.0 / rateMultiplier;
                 spawnQuantity = 6;
                 break;
         }
@@ -238,6 +243,16 @@ public class AlienBossAIBehavior implements AIBehavior {
 
         Vector3D offset = new Vector3D(Math.cos(angle), Math.sin(angle)).mult(distance);
         Vector3D newPos = playerPos.add(offset);
+
+        // Clamp to world borders
+        ma.ac.emi.world.World world = GameController.getInstance().getWorldManager().getCurrentWorld();
+        if (world != null) {
+            double margin = TILE_SIZE;
+            double maxX = world.getWidth() * TILE_SIZE - margin;
+            double maxY = world.getHeight() * TILE_SIZE - margin;
+            newPos.setX(Math.max(margin, Math.min(maxX, newPos.getX())));
+            newPos.setY(Math.max(margin, Math.min(maxY, newPos.getY())));
+        }
 
         enemy.setPos(newPos);
     }

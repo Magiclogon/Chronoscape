@@ -15,4 +15,9 @@ public abstract class AbstractDifficultyStrategy implements DifficultyStrategy {
     public double getPickableDropRate() { return 0.5; }
     @Override
     public double getPickableValueMultiplier() { return 1.0; }
+
+    @Override
+    public double getBossSpawnCountMultiplier() { return 1.0; }
+    @Override
+    public double getBossSpawnRateMultiplier() { return 1.0; }
 }

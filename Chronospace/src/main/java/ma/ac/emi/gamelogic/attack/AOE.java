@@ -153,6 +153,13 @@ public class AOE extends AttackObject{
 	    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
 			if(!entity.isInvincible()) {
 				entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+
+				double knockbackForce = definition.getKnockbackForce();
+				if(knockbackForce != 0) {
+					Vector3D kbDir = entity.getPos().sub(this.getPos()).normalize();
+					entity.applyKnockback(kbDir.mult(knockbackForce));
+				}
+
 				entity.onHit();
 			}
 		}

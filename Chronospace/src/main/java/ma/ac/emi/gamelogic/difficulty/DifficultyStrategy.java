@@ -12,4 +12,8 @@ public interface DifficultyStrategy {
     // loot pickables adjustements
     double getPickableDropRate();
     double getPickableValueMultiplier();
+
+    // boss spawn adjustments
+    double getBossSpawnCountMultiplier();
+    double getBossSpawnRateMultiplier();
 }

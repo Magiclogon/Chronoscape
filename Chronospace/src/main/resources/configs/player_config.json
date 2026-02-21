@@ -9,18 +9,7 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "robot_boss_spear",
-	  	
-	"animationDetails": {
-		"spriteSheetPath": "player/main_character-Sheet.png",
-		"spriteWidth": 32,
-		"spriteHeight": 32,
-		"idleLength": 14,
-		"runningLength": 12,
-		"backingLength": 12,
-		"dyingLength": 49,
-		"spawningLength": 49
-	},
+  "startingWeaponId": "ak47",
   
   "postProcessingDetails": {
   	"colorCorrection": {
