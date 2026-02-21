@@ -231,6 +231,7 @@
       "hasFixedDir": true,
       "dirX": 1,
       "dirY": 0,
+      "shouldFollowSource": true,
       "animationDetails": {
       	"spritePath": "particles/lightning_small-Sheet.png",
       	"spriteWidth": 32,
@@ -264,6 +265,7 @@
       "hasFixedDir": true,
       "dirX": 1,
       "dirY": 0,
+      "shouldFollowSource": true,
       "animationDetails": {
       	"spritePath": "particles/lightning_medium-Sheet.png",
       	"spriteWidth": 48,
@@ -297,6 +299,7 @@
       "hasFixedDir": true,
       "dirX": 1,
       "dirY": 0,
+      "shouldFollowSource": true,
       "animationDetails": {
       	"spritePath": "particles/lightning_big-Sheet.png",
       	"spriteWidth": 96,
@@ -330,6 +333,7 @@
       "hasFixedDir": true,
       "dirX": 1,
       "dirY": 0,
+      "shouldFollowSource": true,
       "animationDetails": {
       	"spritePath": "particles/boss_death_smoke-Sheet.png",
       	"spriteWidth": 96,

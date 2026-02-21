@@ -238,6 +238,7 @@ public class Player extends LivingEntity {
 		}
 
 		if(getHp() <= 0) {
+			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);
 			if(!isDying()) stateMachine.trigger("Die");
 			if(deathAnimationDone()) {
 				stateMachine.getCurrentAnimationState().reset();
