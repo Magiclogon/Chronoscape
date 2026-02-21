@@ -2,9 +2,14 @@ package ma.ac.emi.gamelogic.ai;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
+import ma.ac.emi.gamelogic.shop.WeaponItem;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.math.Vector3D;
 
 import java.util.List;
@@ -23,50 +28,60 @@ public class RobotBossAIBehavior implements AIBehavior {
     }
 
     private enum BossState {
-        IDLE, CHASSE, STRAFE, CIRCLE, CHARGE_WINDUP, CHARGING, RETRAITE, SPECIAL_ATTACK
+        IDLE, CHASSE, SUMMONING
     }
 
     private BossState currentState;
     private Phase currentPhase;
 
     private double attackRange;
-    private double chargeRange;
-    private double retreatRange;
 
     private Vector3D currentVelocityNormal;
     private double smoothingFactor = 0.15;
 
     private Vector3D currentTarget;
-    private Vector3D chargeDirection;
-    private double circleAngle;
 
     private double stateTimer;
-    private double specialAttackCooldown;
-    private double chargeTimer;
+    private double weaponSwitchTimer = 10.0;
+    private double spawnTimer = 7.0;
+    private boolean isSpawningNow = false;
+    private int spawnQuantity = 3;
+    
+    private static final List<String> BOSS_WEAPONS = List.of("robot_boss_machinegun", "robot_boss_spear", "robot_boss_cannon");
 
     private double chaseSpeed = 1.0;
-    private double strafeSpeed = 0.7;
-    private double chargeSpeed = 3.5;
-    private double retreatSpeed = 0.9;
 
     public RobotBossAIBehavior(PathFinder pathfinder, double attackRange) {
         this.pathfinder = pathfinder;
         this.attackRange = attackRange;
-        this.chargeRange = 450.0;
-        this.retreatRange = 150.0;
         this.random = new Random();
         this.currentState = BossState.IDLE;
         this.currentPhase = Phase.PHASE_1;
         this.stateTimer = 0;
+        this.weaponSwitchTimer = 5.0 + random.nextDouble() * 3;
+        this.spawnTimer = 7.0;
         this.currentVelocityNormal = new Vector3D(0, 0);
     }
 
     @Override
     public Vector3D calculateMovement(Ennemy enemy, Vector3D playerPos, double step) {
         updatePhase(enemy);
+        updateAttackRange(enemy);
 
         stateTimer += step;
-        specialAttackCooldown = Math.max(0, specialAttackCooldown - step);
+        weaponSwitchTimer -= step;
+        spawnTimer -= step;
+
+        isSpawningNow = false;
+
+        if (weaponSwitchTimer <= 0) {
+            switchRandomWeapon(enemy);
+            weaponSwitchTimer = 5 + random.nextDouble() * 3;
+        }
+
+        if (spawnTimer <= 0 && currentState != BossState.SUMMONING) {
+            changeState(BossState.SUMMONING);
+        }
 
         double distance = enemy.getPos().distance(playerPos);
         Vector3D desiredDirection = new Vector3D(0, 0);
@@ -74,19 +89,53 @@ public class RobotBossAIBehavior implements AIBehavior {
         switch (currentState) {
             case IDLE: desiredDirection = handleIdleState(enemy, playerPos, distance); break;
             case CHASSE: desiredDirection = handleChasingState(enemy, playerPos, distance); break;
-            case STRAFE: desiredDirection = handleStrafeState(enemy, playerPos, distance); break;
-            case CIRCLE: desiredDirection = handleCirclingState(enemy, playerPos, distance, step); break;
-            case CHARGE_WINDUP:
-                if (stateTimer > 0.8) changeState(BossState.CHARGING);
-                desiredDirection = new Vector3D(0, 0);
-                break;
-            case CHARGING: desiredDirection = handleChargingState(enemy, playerPos, distance, step); break;
-            case RETRAITE: desiredDirection = handleRetreatingState(enemy, playerPos, distance); break;
-            case SPECIAL_ATTACK: desiredDirection = handleSpecialAttackState(enemy, playerPos, distance); break;
+            case SUMMONING: desiredDirection = handleSummoningState(enemy, playerPos, distance); break;
             default: changeState(BossState.CHASSE); break;
         }
 
         return smoothSteer(desiredDirection);
+    }
+
+    private Vector3D handleSummoningState(Ennemy enemy, Vector3D playerPos, double distance) {
+        if (stateTimer > 1.2) {
+            isSpawningNow = true;
+
+            DifficultyStrategy difficulty = GameController.getInstance().getDifficulty();
+            double rateMultiplier = difficulty != null ? difficulty.getBossSpawnRateMultiplier() : 1.0;
+
+            double baseInterval = switch (currentPhase) {
+                case PHASE_1 -> 7.0;
+                case PHASE_2 -> 5.0;
+                case PHASE_3 -> 3.0;
+            };
+            spawnTimer = baseInterval / rateMultiplier;
+
+            int baseQuantity = switch (currentPhase) {
+                case PHASE_1 -> 3;
+                case PHASE_2 -> 4;
+                case PHASE_3 -> 5;
+            };
+            spawnQuantity = baseQuantity;
+
+            changeState(BossState.IDLE);
+        }
+        return calculateChasingDirection(enemy, playerPos, distance);
+    }
+
+    private Vector3D calculateChasingDirection(Ennemy enemy, Vector3D playerPos, double distance) {
+        double stopDist = (currentPhase == Phase.PHASE_3) ? attackRange * 0.4 : attackRange * 0.8;
+        if (distance < stopDist) {
+            return new Vector3D(0, 0);
+        }
+        if (distance > 300) {
+            if (currentTarget == null || currentTarget.distance(enemy.getPos()) < 20) {
+                List<Vector3D> path = pathfinder.findPath(enemy.getPos(), playerPos);
+                if (!path.isEmpty()) currentTarget = path.get(0);
+                else currentTarget = playerPos;
+            }
+            return currentTarget.sub(enemy.getPos()).normalize().mult(chaseSpeed);
+        }
+        return playerPos.sub(enemy.getPos()).normalize().mult(chaseSpeed);
     }
 
     private Vector3D smoothSteer(Vector3D desired) {
@@ -112,110 +161,67 @@ public class RobotBossAIBehavior implements AIBehavior {
     }
 
     private void onPhaseChange(Ennemy boss) {
-        changeState(BossState.SPECIAL_ATTACK);
-        specialAttackCooldown = 0;
-        String newWeaponId = "ak47";
+        // Stats increase
+        boss.setDamage(boss.getDamage() * 1.7);
+        boss.setSpeed(boss.getSpeed() * 1.3);
+        
+        // AI speed multipliers increase
+        chaseSpeed *= 1.2;
+        
+        switchRandomWeapon(boss);
+
         switch (currentPhase) {
-            case PHASE_1: newWeaponId = "ak47"; smoothingFactor = 0.15; break;
-            case PHASE_2: newWeaponId = "rpg7"; smoothingFactor = 0.05; break;
-            case PHASE_3: newWeaponId = "hammer"; smoothingFactor = 0.3; break;
+            case PHASE_1: smoothingFactor = 0.15; break;
+            case PHASE_2: smoothingFactor = 0.10; break;
+            case PHASE_3: smoothingFactor = 0.25; break;
         }
-        Weapon newWeapon = new Weapon(WeaponItemFactory.getInstance().createWeaponItem(newWeaponId), boss);
+    }
+
+    private void switchRandomWeapon(Ennemy boss) {
+        if (boss.getWeapon() != null) {
+            GameController.getInstance().removeDrawable(boss.getWeapon());
+        }
+
+        String newWeaponId = BOSS_WEAPONS.get(random.nextInt(BOSS_WEAPONS.size()));
+        WeaponItem item = WeaponItemFactory.getInstance().createWeaponItem(newWeaponId);
+        Weapon newWeapon = new Weapon(item, boss);
+        
+        List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
+        behaviors.forEach(b -> newWeapon.getBehaviors().add(b.create()));
+        newWeapon.init();
+        
         newWeapon.setAttackObjectManager(boss.getAttackObjectManager());
         boss.setWeapon(newWeapon);
-        boss.initWeapon();
+        newWeapon.snapTo(boss);
+        
+        updateAttackRange(boss);
+    }
+    
+    private void updateAttackRange(Ennemy boss) {
+        if (boss.getWeapon() != null && boss.getWeapon().getWeaponItem() != null) {
+            WeaponItemDefinition def = (WeaponItemDefinition) boss.getWeapon().getWeaponItem().getItemDefinition();
+            this.attackRange = def.getRange();
+        }
     }
 
     private Vector3D handleIdleState(Ennemy enemy, Vector3D playerPos, double distance) {
         if (stateTimer > 0.5) {
-            if (currentPhase == Phase.PHASE_1) {
-                if (distance < attackRange) changeState(BossState.STRAFE);
-                else changeState(BossState.CHASSE);
-            } else if (currentPhase == Phase.PHASE_3) {
-                if (random.nextDouble() < 0.4 && distance > 200) changeState(BossState.CHARGE_WINDUP);
-                else changeState(BossState.CHASSE);
-            } else {
-                changeState(BossState.CIRCLE);
-            }
+            changeState(BossState.CHASSE);
         }
         return new Vector3D(0, 0);
-    }
-
-    private Vector3D handleStrafeState(Ennemy enemy, Vector3D playerPos, double distance) {
-        if (stateTimer > 2.0 || distance > attackRange * 1.2) {
-            changeState(BossState.IDLE);
-            return new Vector3D(0, 0);
-        }
-        Vector3D toPlayer = playerPos.sub(enemy.getPos()).normalize();
-        Vector3D strafeDir = new Vector3D(-toPlayer.getY(), toPlayer.getX());
-        if (random.nextBoolean()) strafeDir = strafeDir.mult(-1);
-        return strafeDir.mult(strafeSpeed);
     }
 
     private Vector3D handleChasingState(Ennemy enemy, Vector3D playerPos, double distance) {
-        double stopDist = (currentPhase == Phase.PHASE_3) ? 40 : attackRange * 0.8;
-        if (distance < stopDist) {
-            changeState(BossState.IDLE);
-            return new Vector3D(0, 0);
-        }
-        if (distance > 300) {
-            if (currentTarget == null || currentTarget.distance(enemy.getPos()) < 20) {
-                List<Vector3D> path = pathfinder.findPath(enemy.getPos(), playerPos);
-                if (!path.isEmpty()) currentTarget = path.get(0);
-                else currentTarget = playerPos;
-            }
-            return currentTarget.sub(enemy.getPos()).normalize().mult(chaseSpeed);
-        }
-        return playerPos.sub(enemy.getPos()).normalize().mult(chaseSpeed);
-    }
-
-    private Vector3D handleCirclingState(Ennemy enemy, Vector3D playerPos, double distance, double step) {
-        if (stateTimer > 3.0) {
-            changeState(BossState.IDLE);
-            return new Vector3D(0, 0);
-        }
-        Vector3D toPlayer = playerPos.sub(enemy.getPos());
-        double currentDist = toPlayer.norm();
-        double targetRadius = 250.0;
-        Vector3D tangent = new Vector3D(-toPlayer.getY(), toPlayer.getX()).normalize();
-        Vector3D radial = toPlayer.normalize().mult(currentDist - targetRadius).mult(0.5);
-        return tangent.add(radial).normalize().mult(1.2);
-    }
-
-    private Vector3D handleChargingState(Ennemy enemy, Vector3D playerPos, double distance, double step) {
-        if (chargeDirection == null) {
-            chargeDirection = playerPos.sub(enemy.getPos()).normalize();
-            chargeTimer = 0;
-        }
-        chargeTimer += step;
-        if (chargeTimer > 1.0 || distance < 30) {
-            chargeDirection = null;
-            changeState(BossState.IDLE);
-            return new Vector3D(0, 0);
-        }
-        return chargeDirection.mult(chargeSpeed);
-    }
-
-    private Vector3D handleRetreatingState(Ennemy enemy, Vector3D playerPos, double distance) {
-        if (stateTimer > 1.5 || distance > retreatRange * 2) {
-            changeState(BossState.IDLE);
-            return new Vector3D(0, 0);
-        }
-        return enemy.getPos().sub(playerPos).normalize().mult(retreatSpeed);
-    }
-
-    private Vector3D handleSpecialAttackState(Ennemy enemy, Vector3D playerPos, double distance) {
-        if (stateTimer > 1.5) {
-            specialAttackCooldown = getSpecialAttackCooldown();
+        Vector3D dir = calculateChasingDirection(enemy, playerPos, distance);
+        if (dir.norm() == 0) {
             changeState(BossState.IDLE);
         }
-        return new Vector3D(0, 0);
+        return dir;
     }
 
     private void changeState(BossState newState) {
         currentState = newState;
         stateTimer = 0;
-        if (newState == BossState.CHARGING) chargeDirection = null;
         if (newState == BossState.CHASSE) currentTarget = null;
     }
 
@@ -223,45 +229,10 @@ public class RobotBossAIBehavior implements AIBehavior {
     public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
         double distance = enemy.getPos().distance(playerPos);
 
-        // 1. Priority: Special Attack
-        if (specialAttackCooldown <= 0 && shouldTriggerSpecialAttack()) {
-            changeState(BossState.SPECIAL_ATTACK);
+        // Standard Attack (No manual cooldown, weapon handles fire rate)
+        if (distance < attackRange && currentState != BossState.SUMMONING) {
             return true;
         }
-
-        // 2. Standard Attack (No manual cooldown, weapon handles fire rate)
-        if (currentPhase == Phase.PHASE_1) {
-            if (distance < attackRange && currentState != BossState.RETRAITE) {
-                return true;
-            }
-        }
-        else if (currentPhase == Phase.PHASE_2) {
-            if ((currentState == BossState.CIRCLE || currentState == BossState.IDLE) && distance < attackRange * 1.5) {
-                return true;
-            }
-        }
-        else if (currentPhase == Phase.PHASE_3) {
-            if (distance < 80) {
-                return true;
-            }
-        }
         return false;
-    }
-
-    private boolean shouldTriggerSpecialAttack() {
-        double chance = switch (currentPhase) {
-            case PHASE_1 -> 0.05;
-            case PHASE_2 -> 0.10;
-            case PHASE_3 -> 0.20;
-        };
-        return random.nextDouble() < chance;
-    }
-
-    private double getSpecialAttackCooldown() {
-        return switch (currentPhase) {
-            case PHASE_1 -> 10.0;
-            case PHASE_2 -> 8.0;
-            case PHASE_3 -> 5.0;
-        };
     }
 }

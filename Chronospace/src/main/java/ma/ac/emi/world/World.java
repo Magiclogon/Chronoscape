@@ -13,8 +13,10 @@ import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.*;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
+import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.*;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
+import ma.ac.emi.gamelogic.factory.RobotFactory;
 import ma.ac.emi.gamelogic.pickable.PickableManager;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
@@ -94,7 +96,13 @@ public class World extends GameObject{
 				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		} else if (enemy instanceof BossEnnemy) {
-			enemy.setAiBehavior(new AlienBossAIBehavior(pathfinder));
+			if (context.getSpecieFactory() instanceof RobotFactory) {
+				enemy.setAiBehavior(new RobotBossAIBehavior(pathfinder, 
+					((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+				));
+			} else {
+				enemy.setAiBehavior(new AlienBossAIBehavior(pathfinder));
+			}
 		}else {
 			enemy.setAiBehavior(new MeleeAIBehavior(
 				pathfinder, 
@@ -144,7 +152,11 @@ public class World extends GameObject{
 
 			if (enemy.getAiBehavior() instanceof AlienBossAIBehavior bossAI) {
 				if (bossAI.isSpawningNow()) {
-					spawnBossMinions(enemy.getPos());
+					spawnBossMinions(enemy.getPos(), bossAI.getSpawnQuantity());
+				}
+			} else if (enemy.getAiBehavior() instanceof RobotBossAIBehavior robotBossAI) {
+				if (robotBossAI.isSpawningNow()) {
+					spawnRobotBossMinions(enemy.getPos(), robotBossAI.getSpawnQuantity());
 				}
 			}
 		}
@@ -156,8 +168,10 @@ public class World extends GameObject{
 		collisionManager.handleCollisions(step);
 	}
 
-	private void spawnBossMinions(Vector3D bossPos) {
-		int minionCount = 3;
+	private void spawnBossMinions(Vector3D bossPos, int baseCount) {
+		DifficultyStrategy difficulty = GameController.getInstance().getDifficulty();
+		double multiplier = difficulty != null ? difficulty.getBossSpawnCountMultiplier() : 1.0;
+		int minionCount = (int) (baseCount * multiplier);
 
 		for (int i = 0; i < minionCount; i++) {
 
@@ -167,7 +181,7 @@ public class World extends GameObject{
 
 			double offsetX = (Math.random() - 0.5) * 100;
 			double offsetY = (Math.random() - 0.5) * 100;
-			minion.setPos(bossPos.add(new Vector3D(offsetX, offsetY)));
+			minion.setPos(clampToWorld(bossPos.add(new Vector3D(offsetX, offsetY))));
 
 			setupEnemyAI(minion);
 
@@ -177,7 +191,50 @@ public class World extends GameObject{
 
 		System.out.println("Boss spawned " + minionCount + " minions!");
 	}
+
+	private void spawnRobotBossMinions(Vector3D bossPos, int baseCount) {
+		DifficultyStrategy difficulty = GameController.getInstance().getDifficulty();
+		double multiplier = difficulty != null ? difficulty.getBossSpawnCountMultiplier() : 1.0;
+		int minionCount = (int) (baseCount * multiplier);
+
+		for (int i = 0; i < minionCount; i++) {
+			Ennemy minion;
+			double rand = Math.random();
+			if (rand < 0.2) {
+				minion = context.getSpecieFactory().createTank();
+			} else if (rand < 0.5) {
+				minion = context.getSpecieFactory().createSpeedster();
+			} else {
+				minion = context.getSpecieFactory().createCommon();
+			}
+
+			minion.setAttackObjectManager(context.getAttackObjectManager());
+			minion.initWeapon();
+
+			double offsetX = (Math.random() - 0.5) * 150;
+			double offsetY = (Math.random() - 0.5) * 150;
+			minion.setPos(clampToWorld(bossPos.add(new Vector3D(offsetX, offsetY))));
+
+			setupEnemyAI(minion);
+
+			GameController.getInstance().addDrawable(minion);
+			context.getWaveManager().addEnemyToCurrentWave(minion);
+		}
+
+		System.out.println("Robot Boss spawned " + minionCount + " minions!");
+	}
 	
+
+	private Vector3D clampToWorld(Vector3D pos) {
+		double margin = GamePanel.TILE_SIZE;
+		double maxX = context.getWorldWidth() * GamePanel.TILE_SIZE - margin;
+		double maxY = context.getWorldHeight() * GamePanel.TILE_SIZE - margin;
+
+		double x = Math.max(margin, Math.min(maxX, pos.getX()));
+		double y = Math.max(margin, Math.min(maxY, pos.getY()));
+
+		return new Vector3D(x, y, pos.getZ());
+	}
 
 	public void draw(Graphics g) {
 		if (context.getTileManager() != null) {

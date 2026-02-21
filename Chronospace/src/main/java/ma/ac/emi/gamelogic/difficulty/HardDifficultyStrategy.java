@@ -12,4 +12,9 @@ public class HardDifficultyStrategy extends AbstractDifficultyStrategy {
 
     @Override
     public double getEnemyCountMultiplier() { return 1.5; }
+
+    @Override
+    public double getBossSpawnCountMultiplier() { return 1.5; }
+    @Override
+    public double getBossSpawnRateMultiplier() { return 1.5; }
 }

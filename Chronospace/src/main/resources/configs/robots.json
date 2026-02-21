@@ -190,7 +190,7 @@
 	  	"speed": 50,
 	  	"hpMax": 1000,
 	  	
-	  	"weaponId": "ak47",
+	  	"weaponId": "robot_boss_machinegun",
 	  	"projectileSpeedMultiplier": 0.3,
 	  	
 	  	"animationDetails": {

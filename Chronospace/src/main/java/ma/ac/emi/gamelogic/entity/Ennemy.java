@@ -56,6 +56,7 @@ public abstract class Ennemy extends LivingEntity {
 		this.speed = definition.getSpeed();
 		this.hpMax = definition.getHpMax();
 		this.projectileSpeedMultiplier = definition.getProjectileSpeedMultiplier();
+		this.damage = 1.0;
 		
 		this.hp = hpMax;
 	}

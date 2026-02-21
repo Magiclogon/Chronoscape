@@ -9,7 +9,7 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "shotgun",
+  "startingWeaponId": "ak47",
   
   "postProcessingDetails": {
   	"colorCorrection": {

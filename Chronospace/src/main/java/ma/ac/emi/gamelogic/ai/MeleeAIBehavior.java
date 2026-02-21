@@ -14,6 +14,8 @@ public class MeleeAIBehavior implements AIBehavior {
 
     private PathFinder pathfinder;
     private double rangeAttaque;
+    private double rangeOptimal;
+    private double rangeMin;
 
     private List<Vector3D> chemin = new ArrayList<>();
     private int idx = 0;
@@ -25,37 +27,50 @@ public class MeleeAIBehavior implements AIBehavior {
     private static final double TOLERANCE = 16.0;
 
     private Vector3D vitesseActuelle = new Vector3D(0, 0);
+    private int circlingDirection = Math.random() < 0.5 ? 1 : -1;
 
     public MeleeAIBehavior(PathFinder pathfinder, double rangeAttaque) {
         this.pathfinder = pathfinder;
         this.rangeAttaque = rangeAttaque;
+        this.rangeOptimal = rangeAttaque * 0.9;
+        this.rangeMin = rangeAttaque * 0.4;
     }
 
     @Override
     public Vector3D calculateMovement(Ennemy ennemy, Vector3D posJoueur, double step) {
-        long now = System.currentTimeMillis();
+        double dist = ennemy.getPos().distance(posJoueur);
+        Vector3D directionVoulu;
 
-        boolean check = chemin.isEmpty() || (now - lastTime > DELAI_CALCUL);
+        if (dist < rangeMin) {
+            directionVoulu = ennemy.getPos().sub(posJoueur);
+            chemin.clear();
+        } else if (dist > rangeOptimal) {
+            long now = System.currentTimeMillis();
+            boolean check = chemin.isEmpty() || (now - lastTime > DELAI_CALCUL);
 
-        if (check) {
-            calculerChemin(ennemy.getPos(), posJoueur);
-            lastTime = now;
-        }
-
-        Vector3D cible = posJoueur;
-
-        if (!chemin.isEmpty()) {
-            while (idx < chemin.size() &&
-                    ennemy.getPos().distance(chemin.get(idx)) < TOLERANCE) {
-                idx++;
+            if (check) {
+                calculerChemin(ennemy.getPos(), posJoueur);
+                lastTime = now;
             }
 
-            if (idx < chemin.size()) {
-                cible = chemin.get(idx);
-            }
-        }
+            Vector3D cible = posJoueur;
 
-        Vector3D directionVoulu = cible.sub(ennemy.getPos());
+            if (!chemin.isEmpty()) {
+                while (idx < chemin.size() &&
+                        ennemy.getPos().distance(chemin.get(idx)) < TOLERANCE) {
+                    idx++;
+                }
+
+                if (idx < chemin.size()) {
+                    cible = chemin.get(idx);
+                }
+            }
+            directionVoulu = cible.sub(ennemy.getPos());
+        } else {
+            Vector3D toPlayer = posJoueur.sub(ennemy.getPos());
+            directionVoulu = new Vector3D(-toPlayer.getY() * circlingDirection, toPlayer.getX() * circlingDirection);
+            chemin.clear();
+        }
 
         if (directionVoulu.getX() != 0 || directionVoulu.getY() != 0) {
             directionVoulu = directionVoulu.normalize();
