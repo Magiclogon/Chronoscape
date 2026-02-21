@@ -9,7 +9,7 @@
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "ak47",
+  "startingWeaponId": "robot_boss_machinegun",
   "animationDetails": {
     "spriteSheetPath": "player/main_character-Sheet.png",
     "spriteWidth": 32,
