@@ -2,8 +2,8 @@
   	"pseudoname": "player",
   	"money": 10000.0,
 
-  	"baseHP": 1000000.0,
-  	"baseHPMax": 1000000.0,
+  	"baseHP": 10000,
+  	"baseHPMax": 10000,
   	"baseSpeed": 200,
   	"baseStrength": 10.0,
   	"regenerationSpeed": 0.8,

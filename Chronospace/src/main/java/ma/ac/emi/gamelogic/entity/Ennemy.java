@@ -160,6 +160,7 @@ public abstract class Ennemy extends LivingEntity {
 		}
 
 		if(getHp() <= 0) {
+			if(weapon != null) GameController.getInstance().removeDrawable(weapon);
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
 			super.update(step);
