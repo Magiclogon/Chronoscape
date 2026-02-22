@@ -245,6 +245,9 @@
 	  	
 	  	},
 	  	
+	  	"weaponXOffset": 24,
+	  	"weaponYOffset": -1,
+	  	
 	  	"behaviors": [
 		  	{
 	          "type": "onMovement",

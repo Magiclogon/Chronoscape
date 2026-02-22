@@ -5,6 +5,7 @@ public class PostFXConfig {
     public ColorCorrection colorCorrection;
     public Bloom bloom;
     public Glow glow;
+	public float renderScale = 0.4f;
 
     public static class ColorCorrection {
         public boolean enabled;

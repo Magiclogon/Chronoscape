@@ -106,7 +106,8 @@ public class WorldManager {
 					config,
 					specieFactory,
 					worldConfig.getWorldWidth(),
-					worldConfig.getWorldHeight()
+					worldConfig.getWorldHeight(),
+					world.getWaveManager()
 				);
 				
 				wave.setAttackObjectManager(world.getAttackObjectManager());

@@ -28,7 +28,7 @@ public class GameRenderer implements GLEventListener {
     private int width, height;
     private int internalWidth, internalHeight;
 
-    private final float renderScale = 0.4f;
+    private float renderScale = 0.4f;
 
     private PostProcessor postProcessor;
     private LightingSystem lightingSystem;
@@ -58,6 +58,10 @@ public class GameRenderer implements GLEventListener {
     }
     
     public void initPostProcessor(GL3 gl, PostFXConfig config) {
+    	renderScale = config.renderScale;
+    	camera.setRenderScale(renderScale);
+    	computeInternalResolution();
+    	
     	// --- Lighting (LOW RES) ---
         lightingSystem = new LightingSystem(gl, internalWidth, internalHeight);
         lightingSystem.setAmbientLight(0.2f, 0.2f, 0.6f);

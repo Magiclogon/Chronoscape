@@ -57,6 +57,7 @@ public class Player extends LivingEntity {
 		equippedWeapons = new Weapon[Inventory.MAX_EQU];
 		
 		hasHands = true;
+		if(shadow != null) GameController.getInstance().addDrawable(shadow);
 	}
 	
 	@Override

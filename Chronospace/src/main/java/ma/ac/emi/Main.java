@@ -1,5 +1,7 @@
 package ma.ac.emi;
 
+import javax.swing.UIManager;
+
 import ma.ac.emi.gamecontrol.GameController;
 
 public class Main {

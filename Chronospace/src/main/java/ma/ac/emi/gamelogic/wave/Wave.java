@@ -3,6 +3,8 @@ package ma.ac.emi.gamelogic.wave;
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.gamecontrol.ObjectPool;
+import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
@@ -37,8 +39,9 @@ public class Wave extends WaveNotifier {
     private double enemyNumberMultiplier;
 
     private AttackObjectManager attackObjectManager;
+    private WaveManager waveManager;
 
-    public Wave(int number, int baseEnemiesNumber, EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight) {
+    public Wave(int number, int baseEnemiesNumber, EnnemySpecieFactory specieFactory, int worldWidth, int worldHeight, WaveManager waveManager) {
         this.number = number;
         this.baseEnemiesNumber = baseEnemiesNumber;
         this.enemiesNumber = baseEnemiesNumber;
@@ -55,6 +58,8 @@ public class Wave extends WaveNotifier {
         this.worldHeight = worldHeight;
 
         this.enemyNumberMultiplier = 1;
+        
+        this.waveManager = waveManager;
 
     }
 
@@ -103,14 +108,21 @@ public class Wave extends WaveNotifier {
         }
 
         enemies.forEach(enemy -> {
-            if(enemy.getHp() <= 0 && enemy.deathAnimationDone()) {
+            if(!enemy.isActive()) {
                 GameController.getInstance().removeDrawable(enemy);
-                if(enemy.getWeapon() != null) GameController.getInstance().removeDrawable(enemy.getWeapon());
                 if(enemy.getShadow() != null) GameController.getInstance().removeDrawable(enemy.getShadow());
+
+        		@SuppressWarnings("unchecked")
+				ObjectPool<Ennemy> pool =
+        		        (ObjectPool<Ennemy>) waveManager.pools.get(enemy.getClass());
+
+    		    if (pool != null) {
+    		        pool.free(enemy);
+    		    }
             }
         });
 
-        enemies.removeIf(enemy -> enemy.getHp() <= 0 && enemy.deathAnimationDone());
+        enemies.removeIf(enemy -> !enemy.isActive());
 
         for(Ennemy e: enemies) {
             e.update(deltaTime, playerPos);
@@ -177,7 +189,7 @@ public class Wave extends WaveNotifier {
 
     private Ennemy spawnFromComposition() {
         if (enemyComposition == null || enemyComposition.isEmpty()) {
-            return specieFactory.createCommon();
+            return specieFactory.createCommon(waveManager);
         }
 
         int totalCount = enemyComposition.values().stream().mapToInt(Integer::intValue).sum();
@@ -191,17 +203,17 @@ public class Wave extends WaveNotifier {
             }
         }
 
-        return specieFactory.createCommon();
+        return specieFactory.createCommon(waveManager);
     }
 
     private Ennemy createEnemyByType(String type) {
         return switch (type.toLowerCase()) {
-            case "boss" -> specieFactory.createBoss();
-            case "tank" -> specieFactory.createTank();
-            case "speedster" -> specieFactory.createSpeedster();
-            case "common" -> specieFactory.createCommon();
-            case "ranged" -> specieFactory.createRanged();
-            default -> specieFactory.createCommon();
+            case "boss" -> specieFactory.createBoss(waveManager);
+            case "tank" -> specieFactory.createTank(waveManager);
+            case "speedster" -> specieFactory.createSpeedster(waveManager);
+            case "common" -> specieFactory.createCommon(waveManager);
+            case "ranged" -> specieFactory.createRanged(waveManager);
+            default -> specieFactory.createCommon(waveManager);
         };
     }
 

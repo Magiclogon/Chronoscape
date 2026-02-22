@@ -20,6 +20,7 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorDefinition;
 import ma.ac.emi.gamelogic.entity.behavior.EntityBehaviorFactory;
+import ma.ac.emi.gamelogic.wave.WaveManager;
 
 public abstract class EnnemySpecieFactory implements DifficultyObserver {
 	protected DifficultyStrategy currentDifficulty;
@@ -105,9 +106,9 @@ public abstract class EnnemySpecieFactory implements DifficultyObserver {
 		enemy.setSpeed(enemy.getSpeed() * currentDifficulty.getEnemySpeedMultiplier());
 	}
 
-	public abstract Ennemy createCommon();
-	public abstract Ennemy createSpeedster();
-	public abstract Ennemy createTank();
-	public abstract Ennemy createRanged();
-	public abstract Ennemy createBoss();
+	public abstract Ennemy createCommon(WaveManager manager);
+	public abstract Ennemy createSpeedster(WaveManager manager);
+	public abstract Ennemy createTank(WaveManager manager);
+	public abstract Ennemy createRanged(WaveManager manager);
+	public abstract Ennemy createBoss(WaveManager manager);
 }

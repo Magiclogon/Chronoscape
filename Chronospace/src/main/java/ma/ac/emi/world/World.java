@@ -175,7 +175,7 @@ public class World extends GameObject{
 
 		for (int i = 0; i < minionCount; i++) {
 
-			Ennemy minion = context.getSpecieFactory().createCommon();
+			Ennemy minion = context.getSpecieFactory().createCommon(getWaveManager());
 			minion.setAttackObjectManager(context.getAttackObjectManager());
 			minion.initWeapon();
 
@@ -201,11 +201,11 @@ public class World extends GameObject{
 			Ennemy minion;
 			double rand = Math.random();
 			if (rand < 0.2) {
-				minion = context.getSpecieFactory().createTank();
+				minion = context.getSpecieFactory().createTank(getWaveManager());
 			} else if (rand < 0.5) {
-				minion = context.getSpecieFactory().createSpeedster();
+				minion = context.getSpecieFactory().createSpeedster(getWaveManager());
 			} else {
-				minion = context.getSpecieFactory().createCommon();
+				minion = context.getSpecieFactory().createCommon(getWaveManager());
 			}
 
 			minion.setAttackObjectManager(context.getAttackObjectManager());

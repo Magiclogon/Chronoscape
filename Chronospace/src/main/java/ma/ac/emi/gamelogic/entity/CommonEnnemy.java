@@ -4,8 +4,4 @@ import ma.ac.emi.gamelogic.factory.EnemyDefinition;
 
 public class CommonEnnemy extends Ennemy{
 
-    public CommonEnnemy(EnemyDefinition definition) {
-		super(definition);
-    }
-
 }

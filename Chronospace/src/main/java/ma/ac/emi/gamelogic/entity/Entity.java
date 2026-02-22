@@ -59,29 +59,31 @@ public abstract class Entity extends GameObject{
 		if(getVelocity() != null) {
 			setPos(getPos().add(getVelocity().mult(step)));
 		}
-
-		if (Math.abs(knockback.getX()) > 0.1 || Math.abs(knockback.getY()) > 0.1) {
-			Vector3D moveAmount = knockback.mult(step);
-
-			double nextX = getPos().getX() + moveAmount.getX();
-			double nextY = getPos().getY() + moveAmount.getY();
-
-			if (canMoveTo(new Vector3D(nextX, getPos().getY()))) {
-				getPos().setX(nextX);
+		
+		if(hitbox != null) {
+			if (Math.abs(knockback.getX()) > 0.1 || Math.abs(knockback.getY()) > 0.1) {
+				Vector3D moveAmount = knockback.mult(step);
+	
+				double nextX = getPos().getX() + moveAmount.getX();
+				double nextY = getPos().getY() + moveAmount.getY();
+	
+				if (canMoveTo(new Vector3D(nextX, getPos().getY()))) {
+					getPos().setX(nextX);
+				} else {
+					knockback.setX(0);
+				}
+	
+				// Check Y Axis
+				if (canMoveTo(new Vector3D(getPos().getX(), nextY))) {
+					getPos().setY(nextY);
+				} else {
+					knockback.setY(0);
+				}
+	
+				knockback = knockback.mult(friction);
 			} else {
-				knockback.setX(0);
+				knockback.init();
 			}
-
-			// Check Y Axis
-			if (canMoveTo(new Vector3D(getPos().getX(), nextY))) {
-				getPos().setY(nextY);
-			} else {
-				knockback.setY(0);
-			}
-
-			knockback = knockback.mult(friction);
-		} else {
-			knockback.init();
 		}
 	}
 
