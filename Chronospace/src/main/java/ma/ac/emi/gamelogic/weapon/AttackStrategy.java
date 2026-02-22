@@ -20,7 +20,16 @@ public abstract class AttackStrategy {
 		if (attackSound != null && !attackSound.isEmpty()) {
 			SoundManager soundManager = GameController.getInstance().getSoundManager();
 			if (soundManager != null) {
-				soundManager.play(attackSound);
+				double attackSpeed = definition.getAttackSpeed();
+				double timeBetweenAttacks = 1.0 / attackSpeed;
+				double soundDuration = soundManager.getDuration(attackSound);
+
+				float speedFactor = 1.0f;
+				if (soundDuration > timeBetweenAttacks && timeBetweenAttacks > 0) {
+					speedFactor = (float) (soundDuration / timeBetweenAttacks);
+				}
+
+				soundManager.play(attackSound, true, speedFactor);
 			}
 		}
 
