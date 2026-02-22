@@ -18,6 +18,7 @@
       "magazineSize": 20,
       "relativeProjectilePosX": 21,
       "relativeProjectilePosY": 0,
+      "attackSound": "ak47",
       "stackable": false,
       
       "animationDetails": {
@@ -72,6 +73,7 @@
       "projectileSpeed": 100,
       "relativeProjectilePosX": 20,
       "relativeProjectilePosY": 13,
+      "attackSound": "heavy_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -113,6 +115,7 @@
       "attackSpeed": 2.0,
       "projectileId": "none",
       "projectileSpeed": 800,
+      "attackSound": "melee_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -151,6 +154,7 @@
       "magazineSize": 100,
       "relativeProjectilePosX": 18,
       "relativeProjectilePosY": 3,
+      "attackSound": "heavy_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -194,6 +198,7 @@
       "projectileSpeed": 300,
       "reloadingTime": 1.2,
       "magazineSize": 1,
+      "attackSound": "ranged_weapon",
       "stackable": false,
       
       "animationDetails": {},
@@ -217,6 +222,7 @@
       "attackSpeed": 1.5,
       "projectileId": "none",
       "projectileSpeed": 800,
+      "attackSound": "light_weapon",
       "stackable": false,
       
       "animationDetails": {},
@@ -242,6 +248,7 @@
       "magazineSize": 4,
       "relativeProjectilePosX": 13,
       "relativeProjectilePosY": 2,
+      "attackSound": "ranged_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -278,6 +285,7 @@
       "attackSpeed": 1.4,
       "projectileId": "none",
       "projectileSpeed": 800,
+      "attackSound": "melee_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -337,6 +345,7 @@
       "magazineSize": 2,
       "relativeProjectilePosX": 37,
       "relativeProjectilePosY": -1,
+      "attackSound": "sniper",
       "stackable": false,
       
       "animationDetails": {
@@ -393,6 +402,7 @@
       "magazineSize": 2,
       "relativeProjectilePosX": 29,
       "relativeProjectilePosY": 0,
+      "attackSound": "heavy_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -460,6 +470,7 @@
       "magazineSize": 100,
       "relativeProjectilePosX": 25,
       "relativeProjectilePosY": 4,
+      "attackSound": "light_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -503,6 +514,7 @@
       "magazineSize": 100,
       "relativeProjectilePosX": 100,
       "relativeProjectilePosY": 6,
+      "attackSound": "ranged_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -585,6 +597,7 @@
       "magazineSize": 50,
       "relativeProjectilePosX": 17,
       "relativeProjectilePosY": -20,
+      "attackSound": "heavy_weapon",
       "stackable": false,
       
       "animationDetails": {
@@ -664,6 +677,7 @@
       "attackSpeed": 1.5,
       "projectileId": "none",
       "projectileSpeed": 900,
+      "attackSound": "melee_weapon",
       "stackable": false,
       
       "animationDetails": {
