@@ -29,10 +29,10 @@ public class GraphicsSettingsPanel extends JPanel {
     private static final Font FONT_SMALL  = new Font(FONT_NAME, Font.PLAIN, 16);
     
     public enum GraphicsPreset {
-        PERFORMANCE("PERFORMANCE", "Fast & Smooth", "Minimal effects for maximum FPS"),
+        FAST("FAST", "Fast & Smooth", "Minimal effects for maximum FPS"),
         BALANCED("BALANCED", "Balanced", "Good balance of visuals and performance"),
-        QUALITY("QUALITY", "Quality", "Enhanced visuals with moderate performance"),
-        ULTRA("ULTRA", "Ultra", "Maximum visual fidelity");
+        ULTRA("ULTRA", "Ultra", "Maximum visual fidelity"),
+        CUSTOM("CUSTOM", "Custom", "User-defined settings");
         
         public final String id;
         public final String displayName;
@@ -49,6 +49,7 @@ public class GraphicsSettingsPanel extends JPanel {
     private GraphicsSettingsCallback callback;
     private Runnable goBackAction;
     private boolean hasUnsavedChanges = false;
+    private boolean ignoreSliderChanges = false;
     
     private GraphicsPreset currentPreset = GraphicsPreset.BALANCED;
     private ButtonGroup presetButtonGroup;
@@ -101,8 +102,10 @@ public class GraphicsSettingsPanel extends JPanel {
         JScrollBar customVerticalBar = new RetroScrollBar(JScrollBar.VERTICAL);
         customVerticalBar.setPreferredSize(new Dimension(14, 0));
         customVerticalBar.setUnitIncrement(40);
+        customVerticalBar.setBlockIncrement(80);
 
         scrollPane.setVerticalScrollBar(customVerticalBar);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(createFooter(), BorderLayout.SOUTH);
@@ -120,6 +123,24 @@ public class GraphicsSettingsPanel extends JPanel {
         add(wrapperPanel, BorderLayout.CENTER);
         
         detectCurrentPreset();
+        updateUIForCurrentPreset();
+    }
+    
+    private void updateUIForCurrentPreset() {
+        for (java.util.Enumeration<AbstractButton> buttons = presetButtonGroup.getElements(); 
+             buttons.hasMoreElements();) {
+            PresetButton button = (PresetButton) buttons.nextElement();
+            if (button.preset == currentPreset) {
+                button.setSelected(true);
+                break;
+            }
+        }
+        
+        ignoreSliderChanges = true;
+        setSliderValue(renderScaleSlider, config.renderScale);
+        setSliderValue(bloomIntensitySlider, config.bloom != null ? config.bloom.intensity : 0.0f);
+        setSliderValue(glowIntensitySlider, config.glow != null ? config.glow.intensity : 0.0f);
+        ignoreSliderChanges = false;
     }
     
     private JPanel createHeader() {
@@ -183,26 +204,22 @@ public class GraphicsSettingsPanel extends JPanel {
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(PANEL_BG);
         
-
         content.add(Box.createVerticalStrut(20));
         
         renderScaleSlider = createSlider(0.25f, 1.0f, 0.4f, 0.05f);
-        content.add(createLabeledSlider("Render Scale", renderScaleSlider, 
-            ""));
+        content.add(createLabeledSlider("Render Scale", renderScaleSlider, ""));
         
         content.add(Box.createVerticalStrut(20));
         
         bloomIntensitySlider = createSlider(0.0f, 2.0f, 
             config.bloom != null ? config.bloom.intensity : 0.05f, 0.01f);
-        content.add(createLabeledSlider("Bloom Intensity", bloomIntensitySlider,
-            ""));
+        content.add(createLabeledSlider("Bloom Intensity", bloomIntensitySlider, ""));
         
         content.add(Box.createVerticalStrut(20));
 
         glowIntensitySlider = createSlider(0.0f, 2.0f, 
             config.glow != null ? config.glow.intensity : 0.5f, 0.01f);
-        content.add(createLabeledSlider("Glow Intensity", glowIntensitySlider,
-            ""));
+        content.add(createLabeledSlider("Glow Intensity", glowIntensitySlider, ""));
 
         content.add(Box.createVerticalStrut(40));
 
@@ -228,10 +245,6 @@ public class GraphicsSettingsPanel extends JPanel {
         applyButton.setPreferredSize(new Dimension(140, 40));
         applyButton.addActionListener(e -> applyChanges());
         
-        RetroButton saveButton = new RetroButton("SAVE", ACCENT_BLUE, Color.BLACK);
-        saveButton.setPreferredSize(new Dimension(140, 40));
-        saveButton.addActionListener(e -> saveToFile());
-        
         RetroButton resetButton = new RetroButton("RESET", ACCENT_RED, Color.WHITE);
         resetButton.setPreferredSize(new Dimension(140, 40));
         resetButton.addActionListener(e -> resetToDefaults());
@@ -241,7 +254,6 @@ public class GraphicsSettingsPanel extends JPanel {
         backButton.addActionListener(e -> closeWindow());
         
         footer.add(applyButton);
-        footer.add(saveButton);
         footer.add(resetButton);
         footer.add(backButton);
         
@@ -266,6 +278,7 @@ public class GraphicsSettingsPanel extends JPanel {
         okButton.addActionListener(e -> {
             advancedPanel.applyToConfig(config);
             hasUnsavedChanges = true;
+            switchToCustomPreset();
             advancedDialog.dispose();
         });
         
@@ -282,28 +295,36 @@ public class GraphicsSettingsPanel extends JPanel {
     }
     
     private void applyPreset(GraphicsPreset preset) {
+        if (preset == GraphicsPreset.CUSTOM) {
+            currentPreset = preset;
+            return;
+        }
+        
         currentPreset = preset;
         hasUnsavedChanges = true;
         
+        ignoreSliderChanges = true;
+        
         switch (preset) {
-            case PERFORMANCE:
-                applyPerformancePreset();
+            case FAST:
+                applyFastPreset();
                 break;
             case BALANCED:
                 applyBalancedPreset();
                 break;
-            case QUALITY:
-                applyQualityPreset();
-                break;
             case ULTRA:
                 applyUltraPreset();
                 break;
+            default:
+                break;
         }
+        
+        ignoreSliderChanges = false;
     }
     
-    private void applyPerformancePreset() {
+    private void applyFastPreset() {
         if (config.colorCorrection != null) {
-        	config.colorCorrection.enabled = true;
+            config.colorCorrection.enabled = true;
             config.colorCorrection.r = 1.0f;
             config.colorCorrection.g = 1.0f;
             config.colorCorrection.b = 1.2f;
@@ -320,7 +341,10 @@ public class GraphicsSettingsPanel extends JPanel {
         if (config.glow != null) {
             config.glow.enabled = false;
         }
+        config.renderScale = 0.25f;
         setSliderValue(renderScaleSlider, 0.25f);
+        setSliderValue(bloomIntensitySlider, 0.0f);
+        setSliderValue(glowIntensitySlider, 0.0f);
     }
     
     private void applyBalancedPreset() {
@@ -350,42 +374,15 @@ public class GraphicsSettingsPanel extends JPanel {
             config.glow.intensity = 0.5f;
             config.glow.saturationBoost = 1.5f;
         }
+        config.renderScale = 0.4f;
         setSliderValue(renderScaleSlider, 0.4f);
-    }
-    
-    private void applyQualityPreset() {
-        if (config.colorCorrection != null) {
-        	config.colorCorrection.enabled = true;
-            config.colorCorrection.r = 1.0f;
-            config.colorCorrection.g = 1.0f;
-            config.colorCorrection.b = 1.2f;
-            config.colorCorrection.a = 1.0f;
-            config.colorCorrection.brightness = 0.0f;
-            config.colorCorrection.contrast = 1.0f;
-            config.colorCorrection.hue = 0.0f;
-            config.colorCorrection.saturation = 1.2f;
-            config.colorCorrection.value = 0.5f;
-        }
-        if (config.bloom != null) {
-        	config.bloom.enabled = true;
-            config.bloom.downscale = 2;
-            config.bloom.intensity = 0.05f;
-            config.bloom.threshold = 0.05f;
-            config.bloom.blurRadius = 1;
-        }
-        if (config.glow != null) {
-        	config.glow.enabled = true;
-            config.glow.downscale = 2;
-            config.glow.blurRadius = 0.1f;
-            config.glow.intensity = 0.7f;
-            config.glow.saturationBoost = 1.5f;
-        }
-        setSliderValue(renderScaleSlider, 0.85f);
+        setSliderValue(bloomIntensitySlider, 0.05f);
+        setSliderValue(glowIntensitySlider, 0.5f);
     }
     
     private void applyUltraPreset() {
         if (config.colorCorrection != null) {
-        	config.colorCorrection.enabled = true;
+            config.colorCorrection.enabled = true;
             config.colorCorrection.r = 1.0f;
             config.colorCorrection.g = 1.0f;
             config.colorCorrection.b = 1.2f;
@@ -397,33 +394,69 @@ public class GraphicsSettingsPanel extends JPanel {
             config.colorCorrection.value = 0.5f;
         }
         if (config.bloom != null) {
-        	config.bloom.enabled = true;
+            config.bloom.enabled = true;
             config.bloom.downscale = 2;
             config.bloom.intensity = 0.05f;
             config.bloom.threshold = 0.05f;
             config.bloom.blurRadius = 1;
         }
         if (config.glow != null) {
-        	config.glow.enabled = true;
+            config.glow.enabled = true;
             config.glow.downscale = 2;
             config.glow.blurRadius = 0.1f;
             config.glow.intensity = 0.7f;
             config.glow.saturationBoost = 1.5f;
         }
+        config.renderScale = 1.0f;
         setSliderValue(renderScaleSlider, 1.0f);
+        setSliderValue(bloomIntensitySlider, 0.05f);
+        setSliderValue(glowIntensitySlider, 0.7f);
     }
     
-    private void detectCurrentPreset() {
-        // Try to detect which preset is currently applied
-        // This is a simple heuristic - could be improved
-        if (config.bloom != null && !config.bloom.enabled && 
-            config.glow != null && !config.glow.enabled) {
-            currentPreset = GraphicsPreset.PERFORMANCE;
-        } else {
-            currentPreset = GraphicsPreset.BALANCED; // Default
+    private void switchToCustomPreset() {
+        if (currentPreset != GraphicsPreset.CUSTOM) {
+            currentPreset = GraphicsPreset.CUSTOM;
+            
+            for (java.util.Enumeration<AbstractButton> buttons = presetButtonGroup.getElements(); 
+                 buttons.hasMoreElements();) {
+                PresetButton button = (PresetButton) buttons.nextElement();
+                if (button.preset == GraphicsPreset.CUSTOM) {
+                    button.setSelected(true);
+                    break;
+                }
+            }
         }
     }
     
+    private void detectCurrentPreset() {
+        float currentRenderScale = config.renderScale;
+        boolean bloomEnabled = config.bloom != null && config.bloom.enabled;
+        boolean glowEnabled = config.glow != null && config.glow.enabled;
+        
+        float bloomIntensity = config.bloom != null ? config.bloom.intensity : 0.0f;
+        float glowIntensity = config.glow != null ? config.glow.intensity : 0.0f;
+        
+        if (Math.abs(currentRenderScale - 0.25f) < 0.01f && !bloomEnabled && !glowEnabled) {
+            currentPreset = GraphicsPreset.FAST;
+            return;
+        }
+        
+        if (Math.abs(currentRenderScale - 0.4f) < 0.01f && 
+            bloomEnabled && Math.abs(bloomIntensity - 0.05f) < 0.01f &&
+            glowEnabled && Math.abs(glowIntensity - 0.5f) < 0.01f) {
+            currentPreset = GraphicsPreset.BALANCED;
+            return;
+        }
+        
+        if (Math.abs(currentRenderScale - 1.0f) < 0.01f && 
+            bloomEnabled && Math.abs(bloomIntensity - 0.05f) < 0.01f &&
+            glowEnabled && Math.abs(glowIntensity - 0.7f) < 0.01f) {
+            currentPreset = GraphicsPreset.ULTRA;
+            return;
+        }
+        
+        currentPreset = GraphicsPreset.CUSTOM;
+    }
     
     private JPanel createSectionPanel(String title) {
         JPanel p = new JPanel(new BorderLayout());
@@ -440,30 +473,6 @@ public class GraphicsSettingsPanel extends JPanel {
         return p;
     }
     
-    private JCheckBox createStyledCheckbox(String text, boolean selected) {
-        JCheckBox cb = new JCheckBox(text.toUpperCase(), selected);
-        cb.setFont(FONT_BODY);
-        cb.setForeground(TEXT_MAIN);
-        cb.setBackground(PANEL_BG);
-        cb.setFocusPainted(false);
-        cb.addActionListener(e -> hasUnsavedChanges = true);
-        return cb;
-    }
-    
-    private void styleSpinner(JSpinner spinner) {
-        spinner.setFont(FONT_BODY);
-        JComponent editor = spinner.getEditor();
-        if (editor instanceof JSpinner.DefaultEditor) {
-            JSpinner.DefaultEditor spinnerEditor = (JSpinner.DefaultEditor) editor;
-            spinnerEditor.getTextField().setFont(FONT_BODY);
-            spinnerEditor.getTextField().setForeground(TEXT_MAIN);
-            spinnerEditor.getTextField().setBackground(new Color(40, 40, 48));
-            spinnerEditor.getTextField().setCaretColor(TEXT_MAIN);
-            spinnerEditor.getTextField().setBorder(new LineBorder(BORDER_LIGHT, 1));
-        }
-        spinner.addChangeListener(e -> hasUnsavedChanges = true);
-    }
-    
     private JSlider createSlider(float min, float max, float value, float step) {
         int range = (int)((max - min) / step);
         int currentValue = (int)((value - min) / step);
@@ -475,6 +484,13 @@ public class GraphicsSettingsPanel extends JPanel {
         slider.putClientProperty("MIN_VALUE", min);
         slider.putClientProperty("MAX_VALUE", max);
         slider.putClientProperty("STEP", step);
+        
+        slider.addChangeListener(e -> {
+            if (!ignoreSliderChanges && !slider.getValueIsAdjusting()) {
+                switchToCustomPreset();
+            }
+            hasUnsavedChanges = true;
+        });
         
         return slider;
     }
@@ -499,42 +515,11 @@ public class GraphicsSettingsPanel extends JPanel {
         
         slider.addChangeListener(e -> {
             valueLabel.setText(getSliderValue(slider));
-            hasUnsavedChanges = true;
         });
         
         topRow.add(labelComponent, BorderLayout.WEST);
         topRow.add(slider, BorderLayout.CENTER);
         topRow.add(valueLabel, BorderLayout.EAST);
-        
-        panel.add(topRow);
-        
-        if (hint != null && !hint.isEmpty()) {
-            JLabel hintLabel = new JLabel(hint);
-            hintLabel.setFont(FONT_SMALL);
-            hintLabel.setForeground(new Color(120, 120, 130));
-            panel.add(hintLabel);
-        }
-        
-        return panel;
-    }
-    
-    private JPanel createLabeledComponent(String label, JComponent component, String hint) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(PANEL_BG);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
-        
-        JPanel topRow = new JPanel(new BorderLayout(10, 5));
-        topRow.setBackground(PANEL_BG);
-        
-        JLabel labelComponent = new JLabel(label.toUpperCase());
-        labelComponent.setFont(FONT_BODY);
-        labelComponent.setForeground(TEXT_GRAY);
-        
-        component.setPreferredSize(new Dimension(80, 25));
-        
-        topRow.add(labelComponent, BorderLayout.WEST);
-        topRow.add(component, BorderLayout.EAST);
         
         panel.add(topRow);
         
@@ -576,7 +561,7 @@ public class GraphicsSettingsPanel extends JPanel {
         int sliderValue = (int)((value - min) / step);
         slider.setValue(sliderValue);
     }
-        
+    
     private void closeWindow() {
         if (hasUnsavedChanges) {
             int result = JOptionPane.showConfirmDialog(
@@ -588,7 +573,7 @@ public class GraphicsSettingsPanel extends JPanel {
             );
             
             if (result == JOptionPane.YES_OPTION) {
-                saveToFile();
+                applyChanges(); // Apply will now also save
                 doGoBack();
             } else if (result == JOptionPane.NO_OPTION) {
                 doGoBack();
@@ -607,6 +592,14 @@ public class GraphicsSettingsPanel extends JPanel {
     private void applyChanges() {
         applyAdvancedSettingsToConfig();
         
+        // Save to file automatically
+        try {
+            PostFXConfigLoader.save(config);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        // Apply to renderer if callback available
         if (callback != null) {
             callback.onSettingsChanged(config);
         }
@@ -616,25 +609,7 @@ public class GraphicsSettingsPanel extends JPanel {
     
     private void resetToDefaults() {
         applyPreset(GraphicsPreset.BALANCED);
-        
-        for (java.util.Enumeration<AbstractButton> buttons = presetButtonGroup.getElements(); 
-             buttons.hasMoreElements();) {
-            PresetButton button = (PresetButton) buttons.nextElement();
-            if (button.preset == GraphicsPreset.BALANCED) {
-                button.setSelected(true);
-                break;
-            }
-        }
-    }
-    
-    private void saveToFile() {
-        try {
-            applyAdvancedSettingsToConfig();
-            PostFXConfigLoader.save(config);
-            hasUnsavedChanges = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        updateUIForCurrentPreset();
     }
     
     private void applyAdvancedSettingsToConfig() {
@@ -647,6 +622,7 @@ public class GraphicsSettingsPanel extends JPanel {
         config.renderScale = getSliderFloatValue(renderScaleSlider);
     }
     
+    // ===== CUSTOM COMPONENTS =====
     
     private class PresetButton extends JRadioButton {
         private GraphicsPreset preset;
@@ -764,11 +740,21 @@ public class GraphicsSettingsPanel extends JPanel {
         }
     }
     
-    private class RetroScrollBarUI extends BasicScrollBarUI {
+    private static class RetroScrollBarUI extends BasicScrollBarUI {
+        
+        private static final Color SCROLL_THUMB_COLOR = new Color(255, 215, 0);
+        private static final Color SCROLL_TRACK_COLOR = new Color(10, 10, 15);
+        private static final Color SCROLL_BORDER_COLOR = new Color(180, 180, 190);
+        private static final Color SCROLL_BG_COLOR = new Color(18, 18, 24);
+        
+        public RetroScrollBarUI() {
+            super();
+        }
+        
         @Override
         protected void configureScrollBarColors() {
-            this.thumbColor = ACCENT_GOLD;
-            this.trackColor = BG_DARK;
+            this.thumbColor = SCROLL_THUMB_COLOR;
+            this.trackColor = SCROLL_TRACK_COLOR;
         }
 
         @Override
@@ -779,6 +765,8 @@ public class GraphicsSettingsPanel extends JPanel {
         private JButton createZeroButton() {
             JButton button = new JButton();
             button.setPreferredSize(new Dimension(0, 0));
+            button.setMinimumSize(new Dimension(0, 0));
+            button.setMaximumSize(new Dimension(0, 0));
             return button;
         }
 
@@ -789,10 +777,10 @@ public class GraphicsSettingsPanel extends JPanel {
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             
-            g2.setColor(ACCENT_GOLD);
+            g2.setColor(SCROLL_THUMB_COLOR);
             g2.fillRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4);
             
-            g2.setColor(BORDER_LIGHT);
+            g2.setColor(SCROLL_BORDER_COLOR);
             g2.drawRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4);
             
             g2.dispose();
@@ -801,10 +789,10 @@ public class GraphicsSettingsPanel extends JPanel {
         @Override
         protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
             Graphics2D g2 = (Graphics2D) g.create();
-            g2.setColor(new Color(10, 10, 15)); 
+            g2.setColor(SCROLL_TRACK_COLOR); 
             g2.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
             
-            g2.setColor(PANEL_BG);
+            g2.setColor(new Color(30, 30, 38));
             g2.drawLine(trackBounds.x, trackBounds.y, trackBounds.x, trackBounds.y + trackBounds.height);
             g2.dispose();
         }
@@ -812,8 +800,14 @@ public class GraphicsSettingsPanel extends JPanel {
         @Override
         protected void installDefaults() {
             super.installDefaults();
-            scrollbar.setBorder(null);
             scrollbar.setOpaque(true);
+            scrollbar.setFocusable(false);
+            scrollbar.setBackground(SCROLL_BG_COLOR);
+        }
+        
+        @Override
+        public void uninstallUI(JComponent c) {
+            // Keep our UI installed
         }
         
         @Override
@@ -824,15 +818,21 @@ public class GraphicsSettingsPanel extends JPanel {
     }
     
     private class RetroScrollBar extends JScrollBar {
-
         public RetroScrollBar(int orientation) {
             super(orientation);
             setUI(new RetroScrollBarUI());
+            putClientProperty("Nimbus.Overrides", new javax.swing.UIDefaults());
+            putClientProperty("Nimbus.Overrides.InheritDefaults", Boolean.FALSE);
         }
 
         @Override
         public void updateUI() {
             setUI(new RetroScrollBarUI());
+        }
+        
+        @Override
+        public void setUI(javax.swing.plaf.ScrollBarUI ui) {
+            super.setUI(new RetroScrollBarUI());
         }
     }
 }

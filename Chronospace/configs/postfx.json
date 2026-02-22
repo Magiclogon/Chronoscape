@@ -3,25 +3,25 @@
     "enabled": true,
     "r": 1.0,
     "g": 1.0,
-    "b": 1.1999999,
+    "b": 1.2,
     "a": 1.0,
     "brightness": 0.0,
     "contrast": 1.0,
     "hue": 0.0,
-    "saturation": 1.1999999,
+    "saturation": 1.2,
     "value": 0.5
   },
   "bloom": {
     "enabled": true,
     "downscale": 2,
-    "threshold": 0.049999997,
+    "threshold": 0.05,
     "blurRadius": 1.0,
     "intensity": 0.049999997
   },
   "glow": {
     "enabled": true,
     "downscale": 2,
-    "blurRadius": 0.049999997,
+    "blurRadius": 0.05,
     "intensity": 0.5,
     "saturationBoost": 1.5
   },

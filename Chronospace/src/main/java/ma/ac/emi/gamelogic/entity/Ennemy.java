@@ -36,6 +36,7 @@ public abstract class Ennemy extends LivingEntity {
 	protected boolean animationsInitialized;
 
 	public Ennemy() {
+		
 	}
 	
 	public void reset(EnemyDefinition definition) {
@@ -54,6 +55,10 @@ public abstract class Ennemy extends LivingEntity {
 		
 		stateMachine.setCurrentAnimationState(stateMachine.getDefaultStateTitle());
 		setDead(false);
+		
+		if(shadow != null) {
+    		GameController.getInstance().addDrawable(shadow);
+    	}
 	}
 	
 	protected void initStats() {
