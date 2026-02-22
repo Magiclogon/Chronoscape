@@ -181,6 +181,8 @@ public class GameUIPanel extends JPanel {
 			if (currentWorld == null) return;
 
 			TileManager tileManager = currentWorld.getTileManager();
+			if (tileManager == null || tileManager.getMapCache() == null) return;
+
 			BufferedImage mapImage = tileManager.getMapCache().getSprite();
 			if (mapImage == null) return;
 
@@ -195,23 +197,66 @@ public class GameUIPanel extends JPanel {
 			int miniX = w - minimapW - MINIMAP_PADDING;
 			int miniY = MINIMAP_PADDING;
 
-			g2.setColor(new Color(10, 10, 15));
+			// Background with transparency
+			g2.setColor(new Color(10, 10, 15, 180));
 			g2.fillRect(miniX, miniY, minimapW, minimapH);
 
 			g2.drawImage(mapImage, miniX, miniY, minimapW, minimapH, null);
 
+			// Border
 			g2.setStroke(new BasicStroke(3));
 			g2.setColor(UI_BORDER_LIGHT);
 			g2.drawRect(miniX, miniY, minimapW, minimapH);
 
+			// Save original stroke
+			Stroke originalStroke = g2.getStroke();
+
+			// Draw enemies
+			if (currentWorld.getWaveManager() != null) {
+				List<Ennemy> enemies = currentWorld.getWaveManager().getCurrentEnemies();
+				if (enemies != null) {
+					for (Ennemy enemy : enemies) {
+						if (enemy == null || enemy.getHp() <= 0) continue;
+
+						Vector3D ePos = enemy.getPos();
+						int eMiniX = miniX + (int) (ePos.getX() * scale);
+						int eMiniY = miniY + (int) (ePos.getY() * scale);
+
+						if (enemy instanceof BossEnnemy) {
+							// Boss: larger, pink/purple
+							g2.setColor(new Color(255, 50, 150));
+							g2.fillOval(eMiniX - 4, eMiniY - 4, 9, 9);
+							g2.setColor(Color.WHITE);
+							g2.setStroke(new BasicStroke(1));
+							g2.drawOval(eMiniX - 4, eMiniY - 4, 9, 9);
+						} else {
+							// Common enemies: smaller, red
+							g2.setColor(new Color(220, 20, 20));
+							g2.fillOval(eMiniX - 2, eMiniY - 2, 5, 5);
+							g2.setColor(new Color(100, 0, 0));
+							g2.setStroke(new BasicStroke(1));
+							g2.drawOval(eMiniX - 2, eMiniY - 2, 5, 5);
+						}
+					}
+				}
+			}
+
+			// Draw player
 			Vector3D playerPos = player.getPos();
 			int pMiniX = miniX + (int) (playerPos.getX() * scale);
 			int pMiniY = miniY + (int) (playerPos.getY() * scale);
 
 			g2.setColor(Color.GREEN);
-			g2.fillRect(pMiniX - 2, pMiniY - 2, 5, 5);
+			g2.fillOval(pMiniX - 3, pMiniY - 3, 7, 7);
+			g2.setColor(Color.WHITE);
+			g2.setStroke(new BasicStroke(1));
+			g2.drawOval(pMiniX - 3, pMiniY - 3, 7, 7);
+
+			// Restore original stroke
+			g2.setStroke(originalStroke);
 
 		} catch (Exception e) {
+			// Silently ignore
 		}
 	}
 
