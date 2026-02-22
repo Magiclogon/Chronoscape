@@ -129,6 +129,10 @@ public class GameController implements Runnable {
         soundManager.load("melee_weapon", "/sounds/scratch_001.wav");
         soundManager.load("ak47", "/sounds/ak47.wav");
         soundManager.load("sniper", "/sounds/sniper.wav");
+        soundManager.load("machine_gun", "/sounds/machine_gun.wav");
+        soundManager.load("gun", "/sounds/gun.wav");
+        soundManager.load("spear", "/sounds/spear.wav");
+        soundManager.load("explosion", "/sounds/explosion.wav");
     }
     
     public void nextWorld() {

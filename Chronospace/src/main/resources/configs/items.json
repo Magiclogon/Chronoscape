@@ -11,7 +11,7 @@
       "recoilForce": 35,
       "knockbackForce": 10,
       "range": 500,
-      "attackSpeed": 8,
+      "attackSpeed": 12,
       "projectileId": "bullet",
       "projectileSpeed": 800,
       "reloadingTime": 2.5,
@@ -248,7 +248,7 @@
       "magazineSize": 4,
       "relativeProjectilePosX": 13,
       "relativeProjectilePosY": 2,
-      "attackSound": "ranged_weapon",
+      "attackSound": "gun",
       "stackable": false,
       
       "animationDetails": {
@@ -514,7 +514,7 @@
       "magazineSize": 100,
       "relativeProjectilePosX": 100,
       "relativeProjectilePosY": 6,
-      "attackSound": "ranged_weapon",
+      "attackSound": "machine_gun",
       "stackable": false,
       
       "animationDetails": {
@@ -597,7 +597,7 @@
       "magazineSize": 50,
       "relativeProjectilePosX": 17,
       "relativeProjectilePosY": -20,
-      "attackSound": "heavy_weapon",
+      "attackSound": "explosion",
       "stackable": false,
       
       "animationDetails": {
@@ -677,7 +677,7 @@
       "attackSpeed": 1.5,
       "projectileId": "none",
       "projectileSpeed": 900,
-      "attackSound": "melee_weapon",
+      "attackSound": "spear",
       "stackable": false,
       
       "animationDetails": {
