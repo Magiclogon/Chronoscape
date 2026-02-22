@@ -1,4 +1,5 @@
 {
+  "renderScale": 0.4,
   "colorCorrection": {
     "enabled": true,
     "r": 1.0,

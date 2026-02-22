@@ -24,5 +24,6 @@
     "blurRadius": 0.049999997,
     "intensity": 0.5,
     "saturationBoost": 1.5
-  }
+  },
+  "renderScale": 0.4
 }

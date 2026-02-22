@@ -2,6 +2,8 @@ package ma.ac.emi.UI;
 
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+
 import java.awt.*;
 import java.util.Hashtable;
 
@@ -10,7 +12,6 @@ import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
 
 public class GraphicsSettingsPanel extends JPanel {
     
-    // --- ROGUELIKE PALETTE (matching ShopUI) ---
     private static final Color BG_DARK      = new Color(18, 18, 24);
     private static final Color PANEL_BG     = new Color(30, 30, 38);
     private static final Color BORDER_LIGHT = new Color(180, 180, 190);
@@ -20,28 +21,41 @@ public class GraphicsSettingsPanel extends JPanel {
     private static final Color ACCENT_RED   = new Color(220, 60, 60);
     private static final Color ACCENT_GREEN = new Color(80, 200, 100);
     private static final Color ACCENT_BLUE  = new Color(100, 150, 255);
+    private static final Color ACCENT_PURPLE = new Color(180, 100, 255);
 
-    // --- FONTS ---
     private static final String FONT_NAME = "ByteBounce";
-    private static final Font FONT_HEADER = new Font(FONT_NAME, Font.PLAIN, 28);
-    private static final Font FONT_BODY   = new Font(FONT_NAME, Font.PLAIN, 18);
-    private static final Font FONT_SMALL  = new Font(FONT_NAME, Font.PLAIN, 14);
+    private static final Font FONT_HEADER = new Font(FONT_NAME, Font.PLAIN, 32);
+    private static final Font FONT_BODY   = new Font(FONT_NAME, Font.PLAIN, 20);
+    private static final Font FONT_SMALL  = new Font(FONT_NAME, Font.PLAIN, 16);
+    
+    public enum GraphicsPreset {
+        PERFORMANCE("PERFORMANCE", "Fast & Smooth", "Minimal effects for maximum FPS"),
+        BALANCED("BALANCED", "Balanced", "Good balance of visuals and performance"),
+        QUALITY("QUALITY", "Quality", "Enhanced visuals with moderate performance"),
+        ULTRA("ULTRA", "Ultra", "Maximum visual fidelity");
+        
+        public final String id;
+        public final String displayName;
+        public final String description;
+        
+        GraphicsPreset(String id, String displayName, String description) {
+            this.id = id;
+            this.displayName = displayName;
+            this.description = description;
+        }
+    }
     
     private PostFXConfig config;
     private GraphicsSettingsCallback callback;
     private Runnable goBackAction;
     private boolean hasUnsavedChanges = false;
     
-    // Controls
-    private JSlider rSlider, gSlider, bSlider, aSlider;
-    private JSlider brightnessSlider, contrastSlider, saturationSlider, hueSlider, valueSlider;
-    private JCheckBox colorCorrectionEnabled;
-    private JCheckBox bloomEnabled;
-    private JSlider bloomThresholdSlider, bloomBlurRadiusSlider, bloomIntensitySlider;
-    private JSpinner bloomDownscaleSpinner;
-    private JCheckBox glowEnabled;
-    private JSlider glowBlurRadiusSlider, glowIntensitySlider, glowSaturationBoostSlider;
-    private JSpinner glowDownscaleSpinner;
+    private GraphicsPreset currentPreset = GraphicsPreset.BALANCED;
+    private ButtonGroup presetButtonGroup;
+    
+    private JSlider renderScaleSlider;
+    private JSlider bloomIntensitySlider;
+    private JSlider glowIntensitySlider;
     
     public GraphicsSettingsPanel(PostFXConfig config) {
         this(config, null, null);
@@ -59,27 +73,53 @@ public class GraphicsSettingsPanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(BG_DARK);
         
-        add(createHeader(), BorderLayout.NORTH);
+        JPanel wrapperPanel = new JPanel(new GridBagLayout());
+        wrapperPanel.setBackground(BG_DARK);
+        
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(BG_DARK);
+        mainPanel.setMaximumSize(new Dimension(400, Integer.MAX_VALUE));
+        
+        mainPanel.add(createHeader(), BorderLayout.NORTH);
         
         JPanel contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
         contentPanel.setBackground(BG_DARK);
         contentPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
         
-        contentPanel.add(createColorCorrectionPanel());
+        contentPanel.add(createPresetsPanel());
         contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(createBloomPanel());
+        
+        contentPanel.add(createAdvancedPanel());
         contentPanel.add(Box.createVerticalStrut(15));
-        contentPanel.add(createGlowPanel());
         
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setBackground(BG_DARK);
         scrollPane.getViewport().setBackground(BG_DARK);
         scrollPane.setBorder(null);
-        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
+        JScrollBar customVerticalBar = new RetroScrollBar(JScrollBar.VERTICAL);
+        customVerticalBar.setPreferredSize(new Dimension(14, 0));
+        customVerticalBar.setUnitIncrement(40);
+
+        scrollPane.setVerticalScrollBar(customVerticalBar);
+
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(createFooter(), BorderLayout.SOUTH);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        gbc.anchor = GridBagConstraints.CENTER;
+        gbc.ipadx = 400;
         
-        add(scrollPane, BorderLayout.CENTER);
-        add(createFooter(), BorderLayout.SOUTH);
+        wrapperPanel.add(mainPanel, gbc);
+        add(wrapperPanel, BorderLayout.CENTER);
+        
+        detectCurrentPreset();
     }
     
     private JPanel createHeader() {
@@ -101,6 +141,79 @@ public class GraphicsSettingsPanel extends JPanel {
         header.add(separator, BorderLayout.SOUTH);
         
         return header;
+    }
+    
+    private JPanel createPresetsPanel() {
+        JPanel panel = createSectionPanel("QUALITY PRESETS");
+        
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBackground(PANEL_BG);
+        
+        JLabel helpText = new JLabel("Choose a preset that matches your hardware:");
+        helpText.setFont(FONT_SMALL);
+        helpText.setForeground(TEXT_GRAY);
+        helpText.setAlignmentX(Component.CENTER_ALIGNMENT);
+        content.add(helpText);
+        content.add(Box.createVerticalStrut(15));
+        
+        presetButtonGroup = new ButtonGroup();
+        
+        for (GraphicsPreset preset : GraphicsPreset.values()) {
+            PresetButton button = new PresetButton(preset);
+            button.setAlignmentX(Component.CENTER_ALIGNMENT); 
+            
+            presetButtonGroup.add(button);
+            content.add(button);
+            content.add(Box.createVerticalStrut(10));
+            
+            if (preset == currentPreset) {
+                button.setSelected(true);
+            }
+        }
+        
+        panel.add(content, BorderLayout.CENTER);
+        return panel;
+    }
+    
+    private JPanel createAdvancedPanel() {
+        JPanel panel = createSectionPanel("ADVANCED SETTINGS");
+        
+        JPanel content = new JPanel();
+        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        content.setBackground(PANEL_BG);
+        
+
+        content.add(Box.createVerticalStrut(20));
+        
+        renderScaleSlider = createSlider(0.25f, 1.0f, 0.4f, 0.05f);
+        content.add(createLabeledSlider("Render Scale", renderScaleSlider, 
+            ""));
+        
+        content.add(Box.createVerticalStrut(20));
+        
+        bloomIntensitySlider = createSlider(0.0f, 2.0f, 
+            config.bloom != null ? config.bloom.intensity : 0.05f, 0.01f);
+        content.add(createLabeledSlider("Bloom Intensity", bloomIntensitySlider,
+            ""));
+        
+        content.add(Box.createVerticalStrut(20));
+
+        glowIntensitySlider = createSlider(0.0f, 2.0f, 
+            config.glow != null ? config.glow.intensity : 0.5f, 0.01f);
+        content.add(createLabeledSlider("Glow Intensity", glowIntensitySlider,
+            ""));
+
+        content.add(Box.createVerticalStrut(40));
+
+        RetroButton moreAdvancedButton = new RetroButton("MORE OPTIONS >", ACCENT_PURPLE, Color.WHITE);
+        moreAdvancedButton.setPreferredSize(new Dimension(200, 35));
+        moreAdvancedButton.setMaximumSize(new Dimension(200, 35));
+        moreAdvancedButton.addActionListener(e -> showFullAdvancedSettings());
+        content.add(moreAdvancedButton);
+        
+        panel.add(content, BorderLayout.CENTER);
+        return panel;
     }
     
     private JPanel createFooter() {
@@ -135,112 +248,187 @@ public class GraphicsSettingsPanel extends JPanel {
         return footer;
     }
     
-    private JPanel createColorCorrectionPanel() {
-        JPanel panel = createSectionPanel("COLOR CORRECTION");
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBackground(PANEL_BG);
+    private void showFullAdvancedSettings() {
+        JDialog advancedDialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), 
+            "Advanced Graphics Settings", true);
+        advancedDialog.setLayout(new BorderLayout());
         
-        colorCorrectionEnabled = createStyledCheckbox("Enabled", 
-            config.colorCorrection != null && config.colorCorrection.enabled);
-        content.add(colorCorrectionEnabled);
-        content.add(Box.createVerticalStrut(10));
+        AdvancedSettingsPanel advancedPanel = new AdvancedSettingsPanel(config);
         
+        JScrollPane scroll = new JScrollPane(advancedPanel);
+        scroll.setPreferredSize(new Dimension(700, 600));
+        advancedDialog.add(scroll, BorderLayout.CENTER);
+        
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttons.setBackground(BG_DARK);
+        
+        RetroButton okButton = new RetroButton("OK", ACCENT_GREEN, Color.BLACK);
+        okButton.addActionListener(e -> {
+            advancedPanel.applyToConfig(config);
+            hasUnsavedChanges = true;
+            advancedDialog.dispose();
+        });
+        
+        RetroButton cancelButton = new RetroButton("CANCEL", ACCENT_RED, Color.WHITE);
+        cancelButton.addActionListener(e -> advancedDialog.dispose());
+        
+        buttons.add(okButton);
+        buttons.add(cancelButton);
+        advancedDialog.add(buttons, BorderLayout.SOUTH);
+        
+        advancedDialog.pack();
+        advancedDialog.setLocationRelativeTo(this);
+        advancedDialog.setVisible(true);
+    }
+    
+    private void applyPreset(GraphicsPreset preset) {
+        currentPreset = preset;
+        hasUnsavedChanges = true;
+        
+        switch (preset) {
+            case PERFORMANCE:
+                applyPerformancePreset();
+                break;
+            case BALANCED:
+                applyBalancedPreset();
+                break;
+            case QUALITY:
+                applyQualityPreset();
+                break;
+            case ULTRA:
+                applyUltraPreset();
+                break;
+        }
+    }
+    
+    private void applyPerformancePreset() {
         if (config.colorCorrection != null) {
-            rSlider = createSlider(0.0f, 2.0f, config.colorCorrection.r, 0.01f);
-            gSlider = createSlider(0.0f, 2.0f, config.colorCorrection.g, 0.01f);
-            bSlider = createSlider(0.0f, 2.0f, config.colorCorrection.b, 0.01f);
-            aSlider = createSlider(0.0f, 2.0f, config.colorCorrection.a, 0.01f);
-            brightnessSlider = createSlider(-1.0f, 1.0f, config.colorCorrection.brightness, 0.01f);
-            contrastSlider = createSlider(0.0f, 3.0f, config.colorCorrection.contrast, 0.01f);
-            saturationSlider = createSlider(0.0f, 3.0f, config.colorCorrection.saturation, 0.01f);
-            hueSlider = createSlider(-180f, 180f, config.colorCorrection.hue, 1f);
-            valueSlider = createSlider(-1.0f, 1.0f, config.colorCorrection.value, 0.01f);
-            
-            content.add(createLabeledSlider("Red", rSlider));
-            content.add(createLabeledSlider("Green", gSlider));
-            content.add(createLabeledSlider("Blue", bSlider));
-            content.add(createLabeledSlider("Alpha", aSlider));
-            content.add(createLabeledSlider("Brightness", brightnessSlider));
-            content.add(createLabeledSlider("Contrast", contrastSlider));
-            content.add(createLabeledSlider("Saturation", saturationSlider));
-            content.add(createLabeledSlider("Hue Shift", hueSlider));
-            content.add(createLabeledSlider("Value", valueSlider));
+        	config.colorCorrection.enabled = true;
+            config.colorCorrection.r = 1.0f;
+            config.colorCorrection.g = 1.0f;
+            config.colorCorrection.b = 1.2f;
+            config.colorCorrection.a = 1.0f;
+            config.colorCorrection.brightness = 0.0f;
+            config.colorCorrection.contrast = 1.0f;
+            config.colorCorrection.hue = 0.0f;
+            config.colorCorrection.saturation = 1.2f;
+            config.colorCorrection.value = 0.5f;
         }
-        
-        panel.add(content, BorderLayout.CENTER);
-        return panel;
-    }
-    
-    private JPanel createBloomPanel() {
-        JPanel panel = createSectionPanel("BLOOM");
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBackground(PANEL_BG);
-        
-        bloomEnabled = createStyledCheckbox("Enabled", 
-            config.bloom != null && config.bloom.enabled);
-        content.add(bloomEnabled);
-        content.add(Box.createVerticalStrut(10));
-        
         if (config.bloom != null) {
-            SpinnerNumberModel downscaleModel = new SpinnerNumberModel(
-                config.bloom.downscale, 1, 8, 1
-            );
-            bloomDownscaleSpinner = new JSpinner(downscaleModel);
-            styleSpinner(bloomDownscaleSpinner);
-            content.add(createLabeledComponent("Downscale", bloomDownscaleSpinner));
-            
-            bloomThresholdSlider = createSlider(0.0f, 1.0f, config.bloom.threshold, 0.01f);
-            bloomBlurRadiusSlider = createSlider(0.0f, 10.0f, config.bloom.blurRadius, 0.1f);
-            bloomIntensitySlider = createSlider(0.0f, 2.0f, config.bloom.intensity, 0.01f);
-            
-            content.add(createLabeledSlider("Threshold", bloomThresholdSlider));
-            content.add(createLabeledSlider("Blur Radius", bloomBlurRadiusSlider));
-            content.add(createLabeledSlider("Intensity", bloomIntensitySlider));
+            config.bloom.enabled = false;
         }
-        
-        panel.add(content, BorderLayout.CENTER);
-        return panel;
+        if (config.glow != null) {
+            config.glow.enabled = false;
+        }
+        setSliderValue(renderScaleSlider, 0.25f);
     }
     
-    private JPanel createGlowPanel() {
-        JPanel panel = createSectionPanel("GLOW");
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
-        content.setBackground(PANEL_BG);
-        
-        glowEnabled = createStyledCheckbox("Enabled", 
-            config.glow != null && config.glow.enabled);
-        content.add(glowEnabled);
-        content.add(Box.createVerticalStrut(10));
-        
-        if (config.glow != null) {
-            SpinnerNumberModel downscaleModel = new SpinnerNumberModel(
-                config.glow.downscale, 1, 8, 1
-            );
-            glowDownscaleSpinner = new JSpinner(downscaleModel);
-            styleSpinner(glowDownscaleSpinner);
-            content.add(createLabeledComponent("Downscale", glowDownscaleSpinner));
-            
-            glowBlurRadiusSlider = createSlider(0.0f, 10.0f, config.glow.blurRadius, 0.01f);
-            glowIntensitySlider = createSlider(0.0f, 2.0f, config.glow.intensity, 0.01f);
-            glowSaturationBoostSlider = createSlider(1.0f, 3.0f, 
-                config.glow.saturationBoost != 0 ? config.glow.saturationBoost : 1.5f, 0.1f);
-            
-            content.add(createLabeledSlider("Blur Radius", glowBlurRadiusSlider));
-            content.add(createLabeledSlider("Intensity", glowIntensitySlider));
-            content.add(createLabeledSlider("Saturation", glowSaturationBoostSlider));
+    private void applyBalancedPreset() {
+        if (config.colorCorrection != null) {
+            config.colorCorrection.enabled = true;
+            config.colorCorrection.r = 1.0f;
+            config.colorCorrection.g = 1.0f;
+            config.colorCorrection.b = 1.2f;
+            config.colorCorrection.a = 1.0f;
+            config.colorCorrection.brightness = 0.0f;
+            config.colorCorrection.contrast = 1.0f;
+            config.colorCorrection.hue = 0.0f;
+            config.colorCorrection.saturation = 1.2f;
+            config.colorCorrection.value = 0.5f;
         }
-        
-        panel.add(content, BorderLayout.CENTER);
-        return panel;
+        if (config.bloom != null) {
+            config.bloom.enabled = true;
+            config.bloom.downscale = 2;
+            config.bloom.intensity = 0.05f;
+            config.bloom.threshold = 0.05f;
+            config.bloom.blurRadius = 1;
+        }
+        if (config.glow != null) {
+            config.glow.enabled = true;
+            config.glow.downscale = 2;
+            config.glow.blurRadius = 0.05f;
+            config.glow.intensity = 0.5f;
+            config.glow.saturationBoost = 1.5f;
+        }
+        setSliderValue(renderScaleSlider, 0.4f);
     }
+    
+    private void applyQualityPreset() {
+        if (config.colorCorrection != null) {
+        	config.colorCorrection.enabled = true;
+            config.colorCorrection.r = 1.0f;
+            config.colorCorrection.g = 1.0f;
+            config.colorCorrection.b = 1.2f;
+            config.colorCorrection.a = 1.0f;
+            config.colorCorrection.brightness = 0.0f;
+            config.colorCorrection.contrast = 1.0f;
+            config.colorCorrection.hue = 0.0f;
+            config.colorCorrection.saturation = 1.2f;
+            config.colorCorrection.value = 0.5f;
+        }
+        if (config.bloom != null) {
+        	config.bloom.enabled = true;
+            config.bloom.downscale = 2;
+            config.bloom.intensity = 0.05f;
+            config.bloom.threshold = 0.05f;
+            config.bloom.blurRadius = 1;
+        }
+        if (config.glow != null) {
+        	config.glow.enabled = true;
+            config.glow.downscale = 2;
+            config.glow.blurRadius = 0.1f;
+            config.glow.intensity = 0.7f;
+            config.glow.saturationBoost = 1.5f;
+        }
+        setSliderValue(renderScaleSlider, 0.85f);
+    }
+    
+    private void applyUltraPreset() {
+        if (config.colorCorrection != null) {
+        	config.colorCorrection.enabled = true;
+            config.colorCorrection.r = 1.0f;
+            config.colorCorrection.g = 1.0f;
+            config.colorCorrection.b = 1.2f;
+            config.colorCorrection.a = 1.0f;
+            config.colorCorrection.brightness = 0.0f;
+            config.colorCorrection.contrast = 1.0f;
+            config.colorCorrection.hue = 0.0f;
+            config.colorCorrection.saturation = 1.2f;
+            config.colorCorrection.value = 0.5f;
+        }
+        if (config.bloom != null) {
+        	config.bloom.enabled = true;
+            config.bloom.downscale = 2;
+            config.bloom.intensity = 0.05f;
+            config.bloom.threshold = 0.05f;
+            config.bloom.blurRadius = 1;
+        }
+        if (config.glow != null) {
+        	config.glow.enabled = true;
+            config.glow.downscale = 2;
+            config.glow.blurRadius = 0.1f;
+            config.glow.intensity = 0.7f;
+            config.glow.saturationBoost = 1.5f;
+        }
+        setSliderValue(renderScaleSlider, 1.0f);
+    }
+    
+    private void detectCurrentPreset() {
+        // Try to detect which preset is currently applied
+        // This is a simple heuristic - could be improved
+        if (config.bloom != null && !config.bloom.enabled && 
+            config.glow != null && !config.glow.enabled) {
+            currentPreset = GraphicsPreset.PERFORMANCE;
+        } else {
+            currentPreset = GraphicsPreset.BALANCED; // Default
+        }
+    }
+    
     
     private JPanel createSectionPanel(String title) {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(PANEL_BG);
-        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 600));
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 800));
         
         Border line = new LineBorder(BORDER_LIGHT, 2);
         Border titled = BorderFactory.createTitledBorder(line, " " + title + " ",
@@ -284,7 +472,6 @@ public class GraphicsSettingsPanel extends JPanel {
         slider.setBackground(PANEL_BG);
         slider.setForeground(ACCENT_GOLD);
         
-        // Store min/max as client properties for later retrieval
         slider.putClientProperty("MIN_VALUE", min);
         slider.putClientProperty("MAX_VALUE", max);
         slider.putClientProperty("STEP", step);
@@ -292,20 +479,22 @@ public class GraphicsSettingsPanel extends JPanel {
         return slider;
     }
     
-    private JPanel createLabeledSlider(String label, JSlider slider) {
-        JPanel panel = new JPanel(new BorderLayout(10, 5));
+    private JPanel createLabeledSlider(String label, JSlider slider, String hint) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(PANEL_BG);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        
+        JPanel topRow = new JPanel(new BorderLayout(10, 5));
+        topRow.setBackground(PANEL_BG);
         
         JLabel labelComponent = new JLabel(label.toUpperCase());
         labelComponent.setFont(FONT_BODY);
         labelComponent.setForeground(TEXT_GRAY);
-        labelComponent.setPreferredSize(new Dimension(130, 25));
         
         JLabel valueLabel = new JLabel(getSliderValue(slider));
         valueLabel.setFont(FONT_BODY);
         valueLabel.setForeground(ACCENT_GOLD);
-        valueLabel.setPreferredSize(new Dimension(70, 25));
         valueLabel.setHorizontalAlignment(SwingConstants.RIGHT);
         
         slider.addChangeListener(e -> {
@@ -313,47 +502,48 @@ public class GraphicsSettingsPanel extends JPanel {
             hasUnsavedChanges = true;
         });
         
-        // Dots separator
-        JLabel dots = new JLabel(" . . . . . . . . ");
-        dots.setFont(FONT_SMALL);
-        dots.setForeground(new Color(60, 60, 70));
-        dots.setHorizontalAlignment(SwingConstants.CENTER);
+        topRow.add(labelComponent, BorderLayout.WEST);
+        topRow.add(slider, BorderLayout.CENTER);
+        topRow.add(valueLabel, BorderLayout.EAST);
         
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBackground(PANEL_BG);
-        leftPanel.add(labelComponent, BorderLayout.WEST);
-        leftPanel.add(dots, BorderLayout.CENTER);
+        panel.add(topRow);
         
-        panel.add(leftPanel, BorderLayout.WEST);
-        panel.add(slider, BorderLayout.CENTER);
-        panel.add(valueLabel, BorderLayout.EAST);
+        if (hint != null && !hint.isEmpty()) {
+            JLabel hintLabel = new JLabel(hint);
+            hintLabel.setFont(FONT_SMALL);
+            hintLabel.setForeground(new Color(120, 120, 130));
+            panel.add(hintLabel);
+        }
         
         return panel;
     }
     
-    private JPanel createLabeledComponent(String label, JComponent component) {
-        JPanel panel = new JPanel(new BorderLayout(10, 5));
+    private JPanel createLabeledComponent(String label, JComponent component, String hint) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(PANEL_BG);
-        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 35));
+        panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        
+        JPanel topRow = new JPanel(new BorderLayout(10, 5));
+        topRow.setBackground(PANEL_BG);
         
         JLabel labelComponent = new JLabel(label.toUpperCase());
         labelComponent.setFont(FONT_BODY);
         labelComponent.setForeground(TEXT_GRAY);
-        labelComponent.setPreferredSize(new Dimension(130, 25));
-        
-        JLabel dots = new JLabel(" . . . . . . . . ");
-        dots.setFont(FONT_SMALL);
-        dots.setForeground(new Color(60, 60, 70));
-        
-        JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setBackground(PANEL_BG);
-        leftPanel.add(labelComponent, BorderLayout.WEST);
-        leftPanel.add(dots, BorderLayout.CENTER);
         
         component.setPreferredSize(new Dimension(80, 25));
         
-        panel.add(leftPanel, BorderLayout.WEST);
-        panel.add(component, BorderLayout.EAST);
+        topRow.add(labelComponent, BorderLayout.WEST);
+        topRow.add(component, BorderLayout.EAST);
+        
+        panel.add(topRow);
+        
+        if (hint != null && !hint.isEmpty()) {
+            JLabel hintLabel = new JLabel(hint);
+            hintLabel.setFont(FONT_SMALL);
+            hintLabel.setForeground(new Color(120, 120, 130));
+            panel.add(hintLabel);
+        }
         
         return panel;
     }
@@ -386,7 +576,7 @@ public class GraphicsSettingsPanel extends JPanel {
         int sliderValue = (int)((value - min) / step);
         slider.setValue(sliderValue);
     }
-    
+        
     private void closeWindow() {
         if (hasUnsavedChanges) {
             int result = JOptionPane.showConfirmDialog(
@@ -415,7 +605,7 @@ public class GraphicsSettingsPanel extends JPanel {
     }
     
     private void applyChanges() {
-        applyChangesToConfig();
+        applyAdvancedSettingsToConfig();
         
         if (callback != null) {
             callback.onSettingsChanged(config);
@@ -425,70 +615,21 @@ public class GraphicsSettingsPanel extends JPanel {
     }
     
     private void resetToDefaults() {
-        if (config.colorCorrection != null) {
-            config.colorCorrection.r = 1.0f;
-            config.colorCorrection.g = 1.0f;
-            config.colorCorrection.b = 1.2f;
-            config.colorCorrection.a = 1.0f;
-            config.colorCorrection.brightness = 0.0f;
-            config.colorCorrection.contrast = 1.0f;
-            config.colorCorrection.saturation = 1.2f;
-            config.colorCorrection.hue = 0.0f;
-            config.colorCorrection.value = 0.5f;
-        }
+        applyPreset(GraphicsPreset.BALANCED);
         
-        if (config.bloom != null) {
-            config.bloom.downscale = 2;
-            config.bloom.threshold = 0.05f;
-            config.bloom.blurRadius = 1.0f;
-            config.bloom.intensity = 0.05f;
-        }
-        
-        if (config.glow != null) {
-            config.glow.downscale = 2;
-            config.glow.blurRadius = 0.05f;
-            config.glow.intensity = 0.5f;
-            config.glow.saturationBoost = 1.5f;
-        }
-        
-        updateUIFromConfig();
-        hasUnsavedChanges = true;
-    }
-    
-    private void updateUIFromConfig() {
-        if (config.colorCorrection != null) {
-            colorCorrectionEnabled.setSelected(config.colorCorrection.enabled);
-            setSliderValue(rSlider, config.colorCorrection.r);
-            setSliderValue(gSlider, config.colorCorrection.g);
-            setSliderValue(bSlider, config.colorCorrection.b);
-            setSliderValue(aSlider, config.colorCorrection.a);
-            setSliderValue(brightnessSlider, config.colorCorrection.brightness);
-            setSliderValue(contrastSlider, config.colorCorrection.contrast);
-            setSliderValue(saturationSlider, config.colorCorrection.saturation);
-            setSliderValue(hueSlider, config.colorCorrection.hue);
-            setSliderValue(valueSlider, config.colorCorrection.value);
-        }
-        
-        if (config.bloom != null) {
-            bloomEnabled.setSelected(config.bloom.enabled);
-            bloomDownscaleSpinner.setValue(config.bloom.downscale);
-            setSliderValue(bloomThresholdSlider, config.bloom.threshold);
-            setSliderValue(bloomBlurRadiusSlider, config.bloom.blurRadius);
-            setSliderValue(bloomIntensitySlider, config.bloom.intensity);
-        }
-        
-        if (config.glow != null) {
-            glowEnabled.setSelected(config.glow.enabled);
-            glowDownscaleSpinner.setValue(config.glow.downscale);
-            setSliderValue(glowBlurRadiusSlider, config.glow.blurRadius);
-            setSliderValue(glowIntensitySlider, config.glow.intensity);
-            setSliderValue(glowSaturationBoostSlider, config.glow.saturationBoost);
+        for (java.util.Enumeration<AbstractButton> buttons = presetButtonGroup.getElements(); 
+             buttons.hasMoreElements();) {
+            PresetButton button = (PresetButton) buttons.nextElement();
+            if (button.preset == GraphicsPreset.BALANCED) {
+                button.setSelected(true);
+                break;
+            }
         }
     }
     
     private void saveToFile() {
         try {
-            applyChangesToConfig();
+            applyAdvancedSettingsToConfig();
             PostFXConfigLoader.save(config);
             hasUnsavedChanges = false;
         } catch (Exception e) {
@@ -496,34 +637,93 @@ public class GraphicsSettingsPanel extends JPanel {
         }
     }
     
-    private void applyChangesToConfig() {
-        if (config.colorCorrection != null) {
-            config.colorCorrection.enabled = colorCorrectionEnabled.isSelected();
-            config.colorCorrection.r = getSliderFloatValue(rSlider);
-            config.colorCorrection.g = getSliderFloatValue(gSlider);
-            config.colorCorrection.b = getSliderFloatValue(bSlider);
-            config.colorCorrection.a = getSliderFloatValue(aSlider);
-            config.colorCorrection.brightness = getSliderFloatValue(brightnessSlider);
-            config.colorCorrection.contrast = getSliderFloatValue(contrastSlider);
-            config.colorCorrection.saturation = getSliderFloatValue(saturationSlider);
-            config.colorCorrection.hue = getSliderFloatValue(hueSlider);
-            config.colorCorrection.value = getSliderFloatValue(valueSlider);
-        }
-        
+    private void applyAdvancedSettingsToConfig() {
         if (config.bloom != null) {
-            config.bloom.enabled = bloomEnabled.isSelected();
-            config.bloom.downscale = (Integer) bloomDownscaleSpinner.getValue();
-            config.bloom.threshold = getSliderFloatValue(bloomThresholdSlider);
-            config.bloom.blurRadius = getSliderFloatValue(bloomBlurRadiusSlider);
             config.bloom.intensity = getSliderFloatValue(bloomIntensitySlider);
         }
-        
         if (config.glow != null) {
-            config.glow.enabled = glowEnabled.isSelected();
-            config.glow.downscale = (Integer) glowDownscaleSpinner.getValue();
-            config.glow.blurRadius = getSliderFloatValue(glowBlurRadiusSlider);
             config.glow.intensity = getSliderFloatValue(glowIntensitySlider);
-            config.glow.saturationBoost = getSliderFloatValue(glowSaturationBoostSlider);
+        }
+        config.renderScale = getSliderFloatValue(renderScaleSlider);
+    }
+    
+    
+    private class PresetButton extends JRadioButton {
+        private GraphicsPreset preset;
+        private boolean isHovered = false;
+
+        public PresetButton(GraphicsPreset preset) {
+            super();
+            this.preset = preset;
+
+            setLayout(new BorderLayout(15, 5));
+            setOpaque(false);
+            setFocusPainted(false);
+            setBorderPainted(false);
+            setContentAreaFilled(false);
+            setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+            Dimension size = new Dimension(500, 70);
+            setPreferredSize(size);
+            setMaximumSize(size);
+            setMinimumSize(size);
+
+            JPanel textPanel = new JPanel();
+            textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.Y_AXIS));
+            textPanel.setOpaque(false);
+
+            JLabel nameLabel = new JLabel(preset.displayName.toUpperCase());
+            nameLabel.setFont(FONT_BODY);
+            nameLabel.setForeground(ACCENT_GOLD);
+
+            JLabel descLabel = new JLabel(preset.description);
+            descLabel.setFont(FONT_SMALL);
+            descLabel.setForeground(TEXT_GRAY);
+
+            textPanel.add(nameLabel);
+            textPanel.add(descLabel);
+
+            add(textPanel, BorderLayout.CENTER);
+
+            addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent e) { isHovered = true; repaint(); }
+                public void mouseExited(java.awt.event.MouseEvent e) { isHovered = false; repaint(); }
+            });
+
+            addActionListener(e -> {
+                if (isSelected()) {
+                    applyPreset(preset);
+                }
+            });
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+
+            if (isSelected()) {
+                g2.setColor(new Color(45, 45, 55)); 
+            } else if (isHovered) {
+                g2.setColor(new Color(35, 35, 43)); 
+            } else {
+                g2.setColor(PANEL_BG);
+            }
+            g2.fillRect(0, 0, getWidth(), getHeight());
+
+            if (isSelected()) {
+                g2.setColor(ACCENT_GOLD);
+                g2.setStroke(new BasicStroke(3));
+            } else if (isHovered) {
+                g2.setColor(Color.WHITE);
+                g2.setStroke(new BasicStroke(2));
+            } else {
+                g2.setColor(BORDER_LIGHT);
+                g2.setStroke(new BasicStroke(2));
+            }
+            g2.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+
+            g2.dispose();
         }
     }
     
@@ -561,6 +761,78 @@ public class GraphicsSettingsPanel extends JPanel {
             g2.drawRect(1, 1, getWidth()-3, getHeight()-3);
 
             super.paintComponent(g);
+        }
+    }
+    
+    private class RetroScrollBarUI extends BasicScrollBarUI {
+        @Override
+        protected void configureScrollBarColors() {
+            this.thumbColor = ACCENT_GOLD;
+            this.trackColor = BG_DARK;
+        }
+
+        @Override
+        protected JButton createDecreaseButton(int orientation) { return createZeroButton(); }
+        @Override
+        protected JButton createIncreaseButton(int orientation) { return createZeroButton(); }
+
+        private JButton createZeroButton() {
+            JButton button = new JButton();
+            button.setPreferredSize(new Dimension(0, 0));
+            return button;
+        }
+
+        @Override
+        protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+            if (thumbBounds.isEmpty() || !c.isEnabled()) return;
+
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            
+            g2.setColor(ACCENT_GOLD);
+            g2.fillRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4);
+            
+            g2.setColor(BORDER_LIGHT);
+            g2.drawRect(thumbBounds.x + 2, thumbBounds.y + 2, thumbBounds.width - 4, thumbBounds.height - 4);
+            
+            g2.dispose();
+        }
+
+        @Override
+        protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+            Graphics2D g2 = (Graphics2D) g.create();
+            g2.setColor(new Color(10, 10, 15)); 
+            g2.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
+            
+            g2.setColor(PANEL_BG);
+            g2.drawLine(trackBounds.x, trackBounds.y, trackBounds.x, trackBounds.y + trackBounds.height);
+            g2.dispose();
+        }
+        
+        @Override
+        protected void installDefaults() {
+            super.installDefaults();
+            scrollbar.setBorder(null);
+            scrollbar.setOpaque(true);
+        }
+        
+        @Override
+        protected void paintDecreaseHighlight(Graphics g) {}
+
+        @Override
+        protected void paintIncreaseHighlight(Graphics g) {}
+    }
+    
+    private class RetroScrollBar extends JScrollBar {
+
+        public RetroScrollBar(int orientation) {
+            super(orientation);
+            setUI(new RetroScrollBarUI());
+        }
+
+        @Override
+        public void updateUI() {
+            setUI(new RetroScrollBarUI());
         }
     }
 }
