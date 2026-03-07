@@ -29,7 +29,7 @@ import ma.ac.emi.math.Vector3D;
 public abstract class Ennemy extends LivingEntity {
 
 	protected double damage;
-	protected Weapon weapon;
+	protected Weapon activeWeapon;
 	protected AIBehavior aiBehavior;
 	protected EnemyDefinition definition;
 	protected boolean active;
@@ -82,13 +82,13 @@ public abstract class Ennemy extends LivingEntity {
 		behaviors.forEach(b -> weapon.getBehaviors().add(b.create()));
 		weapon.init();
 		
-		setWeapon(weapon);
+		setActiveWeapon(weapon);
 		
-		if(getWeapon() == null) return;
-		getWeapon().setAttackObjectManager(getAttackObjectManager());
-		getWeapon().snapTo(this);
+		if(getActiveWeapon() == null) return;
+		getActiveWeapon().setAttackObjectManager(getAttackObjectManager());
+		getActiveWeapon().snapTo(this);
 		
-		GameController.getInstance().removeDrawable(getWeapon());
+		GameController.getInstance().removeDrawable(getActiveWeapon());
 	}
     
     public void setupAnimations() {
@@ -160,7 +160,7 @@ public abstract class Ennemy extends LivingEntity {
 
 			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
 				
-				if(weapon != null) GameController.getInstance().addDrawable(weapon);
+				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 				
 				double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
 				double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
@@ -172,7 +172,7 @@ public abstract class Ennemy extends LivingEntity {
 		}
 
 		if(getHp() <= 0) {
-			if(weapon != null) GameController.getInstance().removeDrawable(weapon);
+			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);
 			if(!isDying()) stateMachine.trigger("Die");
 			stateMachine.update(step);
 			super.update(step);
@@ -204,8 +204,8 @@ public abstract class Ennemy extends LivingEntity {
 			setVelocity(direction.mult(getSpeed()));
 		}
 
-		if(getWeapon() != null) {
-			getWeapon().update(step);
+		if(getActiveWeapon() != null) {
+			getActiveWeapon().update(step);
 		}
 
 		changeStateDirection();
@@ -259,8 +259,8 @@ public abstract class Ennemy extends LivingEntity {
 
 	@Override
 	public void attack(Vector3D target, double step) {
-		if (this.weapon != null) {
-			this.weapon.attack(target, step);
+		if (this.activeWeapon != null) {
+			this.activeWeapon.attack(target, step);
 		}
 	}
 

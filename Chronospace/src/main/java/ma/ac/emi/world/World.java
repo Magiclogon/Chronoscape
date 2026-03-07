@@ -88,17 +88,17 @@ public class World extends GameObject{
 			enemy.setAiBehavior(new RangedAIBehavior(
 				pathfinder, 
 				150, 
-				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		} else if (enemy instanceof SpeedsterEnnemy) {
 			enemy.setAiBehavior(new MeleeAIBehavior(
 				pathfinder, 
-				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		} else if (enemy instanceof BossEnnemy) {
 			if (context.getSpecieFactory() instanceof RobotFactory) {
 				enemy.setAiBehavior(new RobotBossAIBehavior(pathfinder, 
-					((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+					((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 				));
 			} else {
 				enemy.setAiBehavior(new AlienBossAIBehavior(pathfinder));
@@ -106,7 +106,7 @@ public class World extends GameObject{
 		}else {
 			enemy.setAiBehavior(new MeleeAIBehavior(
 				pathfinder, 
-				((WeaponItemDefinition) enemy.getWeapon().getWeaponItem().getItemDefinition()).getRange()
+				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		}
 	}
