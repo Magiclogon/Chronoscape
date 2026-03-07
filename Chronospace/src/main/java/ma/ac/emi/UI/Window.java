@@ -21,6 +21,7 @@ public class Window extends JFrame {
     private final LevelSelection levelSelection;
     private ShopUI shopUI;
     private GameOverPanel gameOverPanel;
+    private final Settings settings;
     
     private final JLayeredPane gamePane;
     
@@ -44,6 +45,7 @@ public class Window extends JFrame {
         levelSelection = new LevelSelection();
         shopUI = new ShopUI();
         gameOverPanel = new GameOverPanel();
+        settings = new Settings();
 
         gamePane = new JLayeredPane();
         gamePane.setLayout(new OverlayLayout(gamePane));
@@ -56,6 +58,8 @@ public class Window extends JFrame {
         mainPanel.add(gamePane, "GAME");
         mainPanel.add(shopUI, "SHOP");
         mainPanel.add(gameOverPanel, "GAMEOVER");
+        mainPanel.add(settings, "SETTINGS");
+
 
         transitionPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
         transitionPane.add(fadeOverlay, JLayeredPane.PALETTE_LAYER);
@@ -163,7 +167,7 @@ public class Window extends JFrame {
     
     public void addSettings(GraphicsSettingsPanel settings) {
         JScrollPane scrollPane = new JScrollPane(settings);
-        mainPanel.add(scrollPane, "SETTINGS");
+        this.settings.addTab("Graphics", scrollPane);
     }
 
     public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {

@@ -67,9 +67,10 @@ public class ShopUI extends JPanel {
         add(createHeader(), BorderLayout.NORTH);
 
         // 2. MAIN CONTENT (3 Columns)
-        JPanel contentGrid = new JPanel(new GridLayout(1, 3, 10, 0)); // 3 Cols, 10px gap
+        JPanel contentGrid = new JPanel(new GridBagLayout());
         contentGrid.setBackground(BG_DARK);
         contentGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
+
 
         // --- LEFT: HERO STATS & EQUIPPED ---
         heroPanel = createSectionPanel("HERO STATUS");
@@ -77,13 +78,12 @@ public class ShopUI extends JPanel {
         statsContainer.setLayout(new BoxLayout(statsContainer, BoxLayout.Y_AXIS));
         statsContainer.setBackground(PANEL_BG);
         heroPanel.add(statsContainer, BorderLayout.CENTER);
-        contentGrid.add(heroPanel);
 
         // --- CENTER: SHOP ---
         shopPanel = createSectionPanel("MERCHANT");
 
         // Shop Grid
-        availableItemsGrid = new JPanel(new GridLayout(3, 2, 8, 8)); // 3x2 Grid for items
+        availableItemsGrid = new JPanel(new GridLayout(2, 2, 8, 8));
         availableItemsGrid.setBackground(PANEL_BG);
         shopPanel.add(availableItemsGrid, BorderLayout.CENTER);
 
@@ -101,7 +101,6 @@ public class ShopUI extends JPanel {
         rerollContainer.add(rerollButton);
         shopPanel.add(rerollContainer, BorderLayout.SOUTH);
 
-        contentGrid.add(shopPanel);
 
         // --- RIGHT: INVENTORY & DETAILS ---
         bagPanel = createSectionPanel("INVENTORY & INSPECT");
@@ -132,9 +131,25 @@ public class ShopUI extends JPanel {
         rightSplit.add(detailsScroll);
 
         bagPanel.add(rightSplit, BorderLayout.CENTER);
-        contentGrid.add(bagPanel);
+       
+        heroPanel.setMinimumSize(new Dimension(0, 0));
+        heroPanel.setPreferredSize(new Dimension(1, 1)); // let GBL control width entirely
+        shopPanel.setMinimumSize(new Dimension(0, 0));
+        shopPanel.setPreferredSize(new Dimension(1, 1));
+        bagPanel.setMinimumSize(new Dimension(0, 0));
+        bagPanel.setPreferredSize(new Dimension(1, 1));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 5, 0, 5);
+
+        gbc.gridx = 0; gbc.weightx = 0.2; contentGrid.add(heroPanel,  gbc);
+        gbc.gridx = 1; gbc.weightx = 0.5; contentGrid.add(shopPanel,  gbc); // center gets ~2x space
+        gbc.gridx = 2; gbc.weightx = 0.3; contentGrid.add(bagPanel,   gbc);
 
         add(contentGrid, BorderLayout.CENTER);
+        
     }
 
     private JPanel createHeader() {
@@ -165,6 +180,7 @@ public class ShopUI extends JPanel {
         separator.setBackground(BORDER_LIGHT);
         header.add(separator, BorderLayout.SOUTH);
 
+        
         return header;
     }
 
@@ -221,8 +237,11 @@ public class ShopUI extends JPanel {
 
         // 3. Shop Items (Center Panel)
         availableItemsGrid.removeAll();
+        int i = 0;
         for (ShopItem item : shop.getAvailableItems()) {
+        	if(i > 3) break;
             availableItemsGrid.add(new ShopItemButton(this, item));
+            i++;
         }
 
         // 4. Inventory (Right Panel)

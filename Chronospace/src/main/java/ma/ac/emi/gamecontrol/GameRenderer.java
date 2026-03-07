@@ -147,6 +147,7 @@ public class GameRenderer implements GLEventListener {
         System.out.println("Initializing Renderer..");
 
         GL3 gl = drawable.getGL().getGL3();
+        gl.setSwapInterval(0); // disable vsync
         
         camera.setRenderScale(renderScale);
         
