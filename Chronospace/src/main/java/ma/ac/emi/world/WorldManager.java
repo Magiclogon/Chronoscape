@@ -150,6 +150,7 @@ public class WorldManager {
 		System.out.println("Switched to world with species: " + 
 			currentWorld.getSpecieFactory().getClass().getName());
 		
+		currentWorld.getPickableManager().init();
 		setupPlayerForWorld();
 		
 		player.initWeapons();

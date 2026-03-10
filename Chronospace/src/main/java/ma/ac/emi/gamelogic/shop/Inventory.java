@@ -45,27 +45,52 @@ public class Inventory {
     }
 
     public void equipWeapon(WeaponItem item, int index) {
-        if(!getPurchasedItems().contains(item)) {
+        if (index < 0 || index >= MAX_EQU) return;
+
+        // If item is already equipped in the target slot, do nothing
+        if (equippedWeapons[index] == item) return;
+
+        // If item is already equipped in a DIFFERENT slot, just move it
+        int currentSlot = getEquippedSlot(item);
+        if (currentSlot != -1) {
+            // Swap: put whatever is in target slot into item's old slot
+            WeaponItem displaced = equippedWeapons[index];
+            equippedWeapons[currentSlot] = displaced;
+            equippedWeapons[index] = item;
+            if (displaced != null) applyWeaponUpgradesToItem(displaced);
+            applyWeaponUpgradesToItem(item);
             return;
         }
-        unequipWeapon(getEquippedWeapons()[index]);
-        this.equippedWeapons[index] = item;
-        getPurchasedItems().remove(item);
 
+        // Item is in backpack — displace whatever is currently in target slot
+        WeaponItem displaced = equippedWeapons[index];
+        if (displaced != null) {
+            // Send displaced weapon back to backpack
+            if (!purchasedItems.contains(displaced)) purchasedItems.add(displaced);
+        }
+
+        equippedWeapons[index] = item;
+        purchasedItems.remove(item);
         applyWeaponUpgradesToItem(item);
     }
 
-    public void unequipWeapon(WeaponItem weaponItem) {
-        for(int i = 0; i < Inventory.MAX_EQU; i++) {
-            if(getEquippedWeapons()[i] == null) continue;
-            if(getEquippedWeapons()[i].equals(weaponItem)) {
-                getEquippedWeapons()[i] = null;
-                if(!getPurchasedItems().contains(weaponItem)) {
-                    getPurchasedItems().add(weaponItem);
-                }
-                return;
-            }
+    public void unequipWeapon(WeaponItem item) {
+        if (item == null) return;
+        int slot = getEquippedSlot(item);
+        if (slot == -1) return; // not equipped, nothing to do
+        equippedWeapons[slot] = null;
+        if (!purchasedItems.contains(item)) purchasedItems.add(item);
+    }
+
+    /**
+     * Returns the slot index (0-2) where the weapon is equipped, or -1 if not equipped.
+     */
+    public int getEquippedSlot(WeaponItem item) {
+        if (item == null) return -1;
+        for (int i = 0; i < MAX_EQU; i++) {
+            if (equippedWeapons[i] == item) return i;
         }
+        return -1;
     }
 
     public List<ShopItem> getWeaponItems(){

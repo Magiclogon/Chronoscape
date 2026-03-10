@@ -110,7 +110,8 @@ public class GameController implements Runnable {
         };
         settings =  new GraphicsSettingsPanel(postFXConfig, callback, window::goBack);
         
-        window.addSettings(settings);
+        window.addSettings(settings, "Graphics");
+        window.addSettings(new SoundSettingsPanel(), "Sound");
         window.showGame(gameGLPanel, gameUIPanel);
         showMainMenu();
     }
@@ -264,7 +265,7 @@ public class GameController implements Runnable {
         soundManager.stopAll();
         
         World world = worldManager.getCurrentWorld();
-        world.getPickableManager().init();
+        //world.getPickableManager().init();
 
         camera = new Camera(new Vector3D(), 640, 480, gameGLPanel, world.getPlayer());
         camera.snapTo(world.getPlayer());

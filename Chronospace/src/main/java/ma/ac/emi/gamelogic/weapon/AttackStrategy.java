@@ -29,7 +29,7 @@ public abstract class AttackStrategy {
 					speedFactor = (float) (soundDuration / timeBetweenAttacks);
 				}
 
-				soundManager.play(attackSound, true, speedFactor);
+				//soundManager.play(attackSound, true, speedFactor);
 			}
 		}
 

@@ -56,9 +56,6 @@ public abstract class Ennemy extends LivingEntity {
 		stateMachine.setCurrentAnimationState(stateMachine.getDefaultStateTitle());
 		setDead(false);
 		
-		if(shadow != null) {
-    		GameController.getInstance().addDrawable(shadow);
-    	}
 	}
 	
 	protected void initStats() {
@@ -165,8 +162,10 @@ public abstract class Ennemy extends LivingEntity {
 				double width = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileWidth();
 				double height = spriteSheet == null ? GamePanel.TILE_SIZE : spriteSheet.getTileHeight();
 				hitbox = new AABB(new Vector3D(), new Vector3D(width, height).mult(0.5));
-
+				
+				if(shadow != null) GameController.getInstance().addDrawable(shadow);
 			}
+			
 			super.update(step);
 			return;
 		}

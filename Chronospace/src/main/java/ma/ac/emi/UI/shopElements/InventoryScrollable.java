@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 
@@ -28,26 +29,24 @@ public class InventoryScrollable extends JScrollPane {
 
 		// Initialize the internal grid
 		gridPanel = new JPanel(new GridLayout(0, 1, 10, 10));
-		gridPanel.setBackground(new Color(60, 60, 60));
 
-		setBackground(new Color(60, 60, 60));
-		setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createLineBorder(Color.GRAY),
-				title,
-				TitledBorder.LEADING,
-				TitledBorder.TOP,
-				new Font("Arial", Font.BOLD, 14),
-				Color.WHITE
-		));
+		gridPanel.setBackground(new Color(30, 30, 38));
+		setBackground(new Color(30, 30, 38));
+		getViewport().setBackground(new Color(30, 30, 38));
+		setBorder(BorderFactory.createEmptyBorder());
 
 		// Scroll settings
 		setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		getVerticalScrollBar().setUnitIncrement(16); // Smoother scrolling
+
+		JScrollBar vBar = new ma.ac.emi.UI.component.RetroScrollBar(JScrollBar.VERTICAL);
+		vBar.setPreferredSize(new Dimension(12, 0));
+		vBar.setUnitIncrement(16);
+		setVerticalScrollBar(vBar);
 
 		// Outer panel to keep items aligned to top-left rather than centered if few items exist
 		JPanel outerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		outerPanel.setBackground(new Color(60, 60, 60));
+		outerPanel.setBackground(new Color(30, 30, 38));
 		outerPanel.add(gridPanel);
 
 		setViewportView(outerPanel);

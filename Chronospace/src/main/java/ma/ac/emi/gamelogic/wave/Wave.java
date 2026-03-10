@@ -99,7 +99,7 @@ public class Wave extends WaveNotifier {
         // dead enemies positions
         List<Vector3D> deadEnemyPositions = new ArrayList<>();
         enemies.forEach(e -> {
-            if(e.getHp() <= 0 && e.deathAnimationDone()) deadEnemyPositions.add(e.getPos());
+            if(!e.isActive()) deadEnemyPositions.add(e.getPos());
         });
 
         // Notify Pickable manager

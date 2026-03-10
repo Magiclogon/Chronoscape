@@ -165,9 +165,9 @@ public class Window extends JFrame {
         shopUI.refresh();
     }
     
-    public void addSettings(GraphicsSettingsPanel settings) {
-        JScrollPane scrollPane = new JScrollPane(settings);
-        this.settings.addTab("Graphics", scrollPane);
+    public void addSettings(JPanel settings, String title) {
+        //JScrollPane scrollPane = new JScrollPane(settings);
+        this.settings.addTab(title, settings);
     }
 
     public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
