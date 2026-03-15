@@ -12,15 +12,16 @@ public class Window extends JFrame {
     // Screens
     private final LoadingScreen loadingScreen;
     private final PauseMenu pauseMenu;
-    private final MenuHost menuHost;          // replaces MainMenu + DifficultyMenu + LevelSelection
+    private final MenuHost menuHost;
     private ShopUI shopUI;
     private GameOverPanel gameOverPanel;
     private final Settings settings;
 
     private final JLayeredPane gamePane;
 
-    private final JLayeredPane transitionPane;
-    private final FadeOverlay fadeOverlay;
+    private final JLayeredPane    transitionPane;
+    private final FadeOverlay     fadeOverlay;
+    private final TransitionManager transitionManager;
 
     public Window() {
         layout = new CardLayout();
@@ -34,10 +35,12 @@ public class Window extends JFrame {
 
         loadingScreen  = new LoadingScreen();
         pauseMenu      = new PauseMenu();
-        menuHost       = new MenuHost();       // single persistent menu panel
+        menuHost       = new MenuHost();
         shopUI         = new ShopUI();
         gameOverPanel  = new GameOverPanel();
         settings       = new Settings(this::goBack);
+
+        transitionManager = new TransitionManager(this, loadingScreen, fadeOverlay);
 
         gamePane = new JLayeredPane();
         gamePane.setLayout(new OverlayLayout(gamePane));
@@ -155,9 +158,21 @@ public class Window extends JFrame {
         gamePane.repaint();
     }
 
+    public TransitionManager getTransitionManager() { return transitionManager; }
+    public LoadingScreen     getLoadingScreen()      { return loadingScreen; }
+
+    private boolean isTransitioning = false;
+
+    /**
+     * Fades out, runs midAction at peak opacity, then fades back in.
+     * Ignores calls made while a transition is already in progress.
+     */
     public void transition(Runnable midAction) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
         Timer timer = new Timer(16, null);
-        final float[] alpha    = {0f};
+        final float[]   alpha     = {0f};
         final boolean[] fadingOut = {true};
 
         timer.addActionListener(e -> {
@@ -172,6 +187,7 @@ public class Window extends JFrame {
                 alpha[0] -= 0.02f;
                 if (alpha[0] <= 0f) {
                     alpha[0] = 0f;
+                    isTransitioning = false;
                     timer.stop();
                 }
             }

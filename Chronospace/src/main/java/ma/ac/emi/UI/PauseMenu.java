@@ -9,7 +9,6 @@ import ma.ac.emi.gamecontrol.GameController;
 public class PauseMenu extends JPanel implements Soundable {
 
     private static final long serialVersionUID = 1L;
-    private static final Color ACCENT_GREEN = new Color(80, 200, 100);
 
     private Image backgroundImage;
 
@@ -23,37 +22,17 @@ public class PauseMenu extends JPanel implements Soundable {
         setOpaque(false);
         setLayout(new BorderLayout());
 
-        // ── Right column with gradient overlay — mirrors menu sidebar ──────
-        JPanel overlay = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setPaint(new GradientPaint(
-                        0, 0, new Color(0, 0, 0, 0),
-                        getWidth(), 0, new Color(0, 0, 0, 160)));
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-            }
-        };
-        overlay.setOpaque(false);
-        overlay.setLayout(new BoxLayout(overlay, BoxLayout.Y_AXIS));
+        JPanel overlay = (JPanel) MenuStyle.makeSidebarOverlay();
 
-        RetroButton resumeBtn   = new RetroButton("RESUME",    RetroButton.Style.MENU, ACCENT_GREEN);
-        RetroButton settingsBtn = new RetroButton("SETTINGS",  RetroButton.Style.MENU, ACCENT_GREEN);
-        RetroButton mainMenuBtn = new RetroButton("MAIN MENU", RetroButton.Style.MENU, ACCENT_GREEN);
-        RetroButton quitBtn     = new RetroButton("QUIT",      RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton resumeBtn   = new RetroButton("RESUME",    RetroButton.Style.MENU, MenuStyle.ACCENT);
+        RetroButton settingsBtn = new RetroButton("SETTINGS",  RetroButton.Style.MENU, MenuStyle.ACCENT);
+        RetroButton mainMenuBtn = new RetroButton("MAIN MENU", RetroButton.Style.MENU, MenuStyle.ACCENT_DIM);
+        RetroButton quitBtn     = new RetroButton("QUIT",      RetroButton.Style.MENU, MenuStyle.ACCENT_RED);
 
-        Dimension rowSize = new Dimension(Integer.MAX_VALUE, 64);
-        resumeBtn.setMaximumSize(rowSize);   resumeBtn.setPreferredSize(new Dimension(0, 64));
-        settingsBtn.setMaximumSize(rowSize); settingsBtn.setPreferredSize(new Dimension(0, 64));
-        mainMenuBtn.setMaximumSize(rowSize); mainMenuBtn.setPreferredSize(new Dimension(0, 64));
-        quitBtn.setMaximumSize(rowSize);     quitBtn.setPreferredSize(new Dimension(0, 64));
-
-        resumeBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        settingsBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        mainMenuBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        quitBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        MenuStyle.sizeButton(resumeBtn);
+        MenuStyle.sizeButton(settingsBtn);
+        MenuStyle.sizeButton(mainMenuBtn);
+        MenuStyle.sizeButton(quitBtn);
 
         configureButtonSounds(resumeBtn,   "hover_menu", "select_menu");
         configureButtonSounds(settingsBtn, "hover_menu", "select_menu");
@@ -70,9 +49,8 @@ public class PauseMenu extends JPanel implements Soundable {
         overlay.add(settingsBtn);
         overlay.add(mainMenuBtn);
         overlay.add(quitBtn);
-        overlay.add(Box.createVerticalStrut(80));
+        overlay.add(Box.createVerticalStrut(MenuStyle.BOTTOM_STRUT));
 
-        // Same 3-column split as MenuHost — buttons in rightmost third
         JPanel split = new JPanel(new GridLayout(1, 3, 0, 0));
         split.setOpaque(false);
         split.add(new JPanel() {{ setOpaque(false); }});

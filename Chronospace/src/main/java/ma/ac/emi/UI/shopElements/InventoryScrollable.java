@@ -1,6 +1,7 @@
 package ma.ac.emi.UI.shopElements;
 
 import java.awt.Color;
+import ma.ac.emi.UI.MenuStyle;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -30,9 +31,9 @@ public class InventoryScrollable extends JScrollPane {
 		// Initialize the internal grid
 		gridPanel = new JPanel(new GridLayout(0, 1, 10, 10));
 
-		gridPanel.setBackground(new Color(30, 30, 38));
-		setBackground(new Color(30, 30, 38));
-		getViewport().setBackground(new Color(30, 30, 38));
+		gridPanel.setBackground(MenuStyle.BG_PANEL);
+		setBackground(MenuStyle.BG_PANEL);
+		getViewport().setBackground(MenuStyle.BG_PANEL);
 		setBorder(BorderFactory.createEmptyBorder());
 
 		// Scroll settings
@@ -46,7 +47,7 @@ public class InventoryScrollable extends JScrollPane {
 
 		// Outer panel to keep items aligned to top-left rather than centered if few items exist
 		JPanel outerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
-		outerPanel.setBackground(new Color(30, 30, 38));
+		outerPanel.setBackground(MenuStyle.BG_PANEL);
 		outerPanel.add(gridPanel);
 
 		setViewportView(outerPanel);

@@ -139,6 +139,8 @@ public class Player extends LivingEntity {
 		weaponXOffset = 9;
 		weaponYOffset = 5;
 		
+		knockback.init();
+		
 		config = PlayerConfigLoader.load("/configs/player_config.json");
 		applyBaseStats(config);
 		

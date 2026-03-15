@@ -77,9 +77,21 @@ public class GameController implements Runnable {
 
     private GameController() {
         window = new Window();
-
         showLoadingScreen();
 
+        // Yield to the EDT so the loading screen renders its first frame,
+        // then do all heavy startup work on a background thread.
+        SwingUtilities.invokeLater(() ->
+            new Thread(this::startupLoad, "GameController-StartupLoader").start()
+        );
+    }
+
+    /**
+     * All heavy initialisation that was previously blocking the EDT.
+     * Runs on a background thread — must not touch Swing components directly.
+     * Swing setup at the end is marshalled back onto the EDT via invokeLater.
+     */
+    private void startupLoad() {
         AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
         particleSystem.loadFromJson("src/main/resources/configs/particles.json");
@@ -93,24 +105,37 @@ public class GameController implements Runnable {
         soundManager = new SoundManager();
         loadSounds();
 
-        gamePanel   = new GamePanel();
-        gameUIPanel = new GameUIPanel();
-        gameGLPanel = new GameGLPanel();
+        // All loading done — kick off the fade on the EDT.
+        // Heavy Swing setup runs inside switchAction (at peak black) so the
+        // fade plays smoothly before any EDT work blocks it.
+        SwingUtilities.invokeLater(() ->
+            window.getTransitionManager().fadeTo(
+                () -> {
+                    // At peak black: create Swing components — freeze is invisible
+                    gamePanel   = new GamePanel();
+                    gameUIPanel = new GameUIPanel();
+                    gameGLPanel = new GameGLPanel();
 
-        GraphicsSettingsCallback callback = (updatedConfig) -> {
-            gameGLPanel.invoke(false, (glDrawable) -> {
-                gameGLPanel.getRenderer().reloadPostProcessing(
-                        glDrawable.getGL().getGL3(),
-                        updatedConfig);
-                return true;
-            });
-        };
-        settings = new GraphicsSettingsPanel(postFXConfig, callback);
+                    GraphicsSettingsCallback callback = (updatedConfig) -> {
+                        gameGLPanel.invoke(false, (glDrawable) -> {
+                            gameGLPanel.getRenderer().reloadPostProcessing(
+                                    glDrawable.getGL().getGL3(),
+                                    updatedConfig);
+                            return true;
+                        });
+                    };
+                    settings = new GraphicsSettingsPanel(postFXConfig, callback);
 
-        window.addSettings(settings, "Graphics");
-        window.addSettings(new SoundSettingsPanel(), "Sound");
-        window.showGame(gameGLPanel, gameUIPanel);
-        showMainMenu();
+                    window.addSettings(settings, "Graphics");
+                    window.addSettings(new SoundSettingsPanel(), "Sound");
+                    window.showGame(gameGLPanel, gameUIPanel);
+
+                    // Switch card to main menu while still black
+                    window.showMenuMain();
+                },
+                null  // fade back in reveals the main menu
+            )
+        );
     }
 
     private void loadSounds() {
@@ -141,7 +166,10 @@ public class GameController implements Runnable {
 
     public void showLoadingScreen() {
         state = GameState.LOADING;
-        SwingUtilities.invokeLater(() -> window.navigateTo("LOADING"));
+        SwingUtilities.invokeLater(() -> {
+            window.navigateTo("LOADING");
+            window.getLoadingScreen().startAnimation();
+        });
     }
 
     /** Shows the main menu — navigates to MENU_HOST and shows the main button set. */
@@ -223,10 +251,19 @@ public class GameController implements Runnable {
     // ── Game start ────────────────────────────────────────────────────────
 
     public void restartGameWithTransition() {
-        window.transition(this::restartGame);
+        // loadingWork runs off the EDT — safe for heavy setup
+        // onComplete runs on the EDT after the second fade-in begins
+        window.getTransitionManager().startWithLoading(
+                this::loadGame,   // background thread: world/player init
+                this::startGame   // EDT: camera setup + show game card
+        );
     }
 
-    public void restartGame() {
+    /**
+     * Heavy initialisation — runs on a background thread inside TransitionManager.
+     * Must NOT touch Swing components directly.
+     */
+    private void loadGame() {
         removeAllDrawables();
         particleSystem.init();
 
@@ -235,8 +272,10 @@ public class GameController implements Runnable {
         shopManager  = new ShopManager(Player.getInstance());
         worldManager = new WorldManager(difficulty);
         shopManager.init();
-        startGame();
     }
+
+    /** @deprecated kept so external call-sites compile; use restartGameWithTransition() */
+    public void restartGame() { restartGameWithTransition(); }
 
     public void startGame() {
         state = GameState.PLAYING;

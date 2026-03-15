@@ -9,7 +9,6 @@ import ma.ac.emi.gamecontrol.GameController;
 public class GameOverPanel extends JPanel implements Soundable {
 
     private static final long serialVersionUID = 1L;
-    private static final Color ACCENT_GREEN = new Color(80, 200, 100);
 
     private Image backgroundImage;
 
@@ -23,30 +22,13 @@ public class GameOverPanel extends JPanel implements Soundable {
         setOpaque(false);
         setLayout(new BorderLayout());
 
-        JPanel overlay = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setPaint(new GradientPaint(
-                        0, 0, new Color(0, 0, 0, 0),
-                        getWidth(), 0, new Color(0, 0, 0, 160)));
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.dispose();
-            }
-        };
-        overlay.setOpaque(false);
-        overlay.setLayout(new BoxLayout(overlay, BoxLayout.Y_AXIS));
+        JPanel overlay = (JPanel) MenuStyle.makeSidebarOverlay();
 
-        RetroButton tryAgainBtn  = new RetroButton("TRY AGAIN",  RetroButton.Style.MENU, ACCENT_GREEN);
-        RetroButton mainMenuBtn  = new RetroButton("MAIN MENU",  RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton tryAgainBtn = new RetroButton("TRY AGAIN",  RetroButton.Style.MENU, MenuStyle.ACCENT);
+        RetroButton mainMenuBtn = new RetroButton("MAIN MENU",  RetroButton.Style.MENU, MenuStyle.ACCENT_DIM);
 
-        Dimension rowSize = new Dimension(Integer.MAX_VALUE, 64);
-        tryAgainBtn.setMaximumSize(rowSize);  tryAgainBtn.setPreferredSize(new Dimension(0, 64));
-        mainMenuBtn.setMaximumSize(rowSize);  mainMenuBtn.setPreferredSize(new Dimension(0, 64));
-
-        tryAgainBtn.setHorizontalAlignment(SwingConstants.LEFT);
-        mainMenuBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        MenuStyle.sizeButton(tryAgainBtn);
+        MenuStyle.sizeButton(mainMenuBtn);
 
         configureButtonSounds(tryAgainBtn, "hover_menu", "select_menu");
         configureButtonSounds(mainMenuBtn, "hover_menu", "select_menu");
@@ -57,7 +39,7 @@ public class GameOverPanel extends JPanel implements Soundable {
         overlay.add(Box.createVerticalGlue());
         overlay.add(tryAgainBtn);
         overlay.add(mainMenuBtn);
-        overlay.add(Box.createVerticalStrut(80));
+        overlay.add(Box.createVerticalStrut(MenuStyle.BOTTOM_STRUT));
 
         JPanel split = new JPanel(new GridLayout(1, 3, 0, 0));
         split.setOpaque(false);

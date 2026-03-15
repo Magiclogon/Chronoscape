@@ -1,6 +1,7 @@
 package ma.ac.emi.gamelogic.shop;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import lombok.Getter;
@@ -30,6 +31,13 @@ public class Inventory {
     }
 
     public void removeItem(ShopItem item) {
+    	for(int i = 0; i < getEquippedWeapons().length; i++) {
+    		if(getEquippedWeapons()[i] != null) {
+    			if(getEquippedWeapons()[i].getItemDefinition().getId().equals(item.getItemDefinition().getId())) {
+    				getEquippedWeapons()[i] = null;
+    			}
+    		}
+    	}
         purchasedItems.remove(item);
         playerUpgrades.remove(item);
         weaponUpgrades.remove(item);
@@ -412,4 +420,10 @@ public class Inventory {
         this.defenseMultiplier = 1.0;
         this.healthRegenRate = 0.0;
     }
+
+	public boolean canSellItem(ShopItem item) {
+		return
+				hasItem(item.getItemDefinition().getId()) ||
+				Arrays.stream(equippedWeapons).anyMatch(i -> i.getItemDefinition().getId().equals(item.getItemDefinition().getId()));
+	}
 }
