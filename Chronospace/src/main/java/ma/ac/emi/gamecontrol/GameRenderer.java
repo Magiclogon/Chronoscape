@@ -108,7 +108,8 @@ public class GameRenderer implements GLEventListener {
                 new GlowCombineEffect(
                     gl,
                     postProcessor.getSnapshotTextureId(),
-                    config.glow.intensity
+                    config.glow.intensity,
+                    config.glow.saturationBoost
                 )
             );
         }

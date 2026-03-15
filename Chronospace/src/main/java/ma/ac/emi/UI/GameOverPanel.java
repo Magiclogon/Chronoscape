@@ -1,90 +1,77 @@
 package ma.ac.emi.UI;
 
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
+import javax.swing.*;
+import java.awt.*;
+import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.gamecontrol.GameController;
 
-public class GameOverPanel extends JPanel implements Soundable{
+public class GameOverPanel extends JPanel implements Soundable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static final Color ACCENT_GREEN = new Color(80, 200, 100);
 
-	private Image backgroundImage;
-	private JButton tryAgain;
-	private JButton backToLevels;
+    private Image backgroundImage;
 
-	private static final int btnWidth = 224;
-	private static final int btnHeight = 56;
+    public GameOverPanel() {
+        try {
+            backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/game_over_image.png"));
+        } catch (Exception e) {
+            System.err.println("Error loading game over background: " + e.getMessage());
+        }
 
-	public GameOverPanel() {
-		try {
-			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/game_over_image.png"));
-		} catch (IOException | NullPointerException e) {
-			System.err.println("Error loading background image: " + e.getMessage());
-		}
+        setOpaque(false);
+        setLayout(new BorderLayout());
 
-		setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
+        JPanel overlay = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(0, 0, 0, 0),
+                        getWidth(), 0, new Color(0, 0, 0, 160)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        overlay.setOpaque(false);
+        overlay.setLayout(new BoxLayout(overlay, BoxLayout.Y_AXIS));
 
-		tryAgain = createImageButton("tryagain1.png", "tryagain5.png");
-		backToLevels = createImageButton("worlds1.png", "worlds5.png");
+        RetroButton tryAgainBtn  = new RetroButton("TRY AGAIN",  RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton mainMenuBtn  = new RetroButton("MAIN MENU",  RetroButton.Style.MENU, ACCENT_GREEN);
 
-		configureButtonSounds(tryAgain, "hover_menu", "select_menu");
-		configureButtonSounds(backToLevels, "hover_menu", "select_menu");
+        Dimension rowSize = new Dimension(Integer.MAX_VALUE, 64);
+        tryAgainBtn.setMaximumSize(rowSize);  tryAgainBtn.setPreferredSize(new Dimension(0, 64));
+        mainMenuBtn.setMaximumSize(rowSize);  mainMenuBtn.setPreferredSize(new Dimension(0, 64));
 
-		tryAgain.addActionListener((e) -> GameController.getInstance().restartGame());
-		backToLevels.addActionListener((e) -> GameController.getInstance().showLevelSelection());
+        tryAgainBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        mainMenuBtn.setHorizontalAlignment(SwingConstants.LEFT);
 
+        configureButtonSounds(tryAgainBtn, "hover_menu", "select_menu");
+        configureButtonSounds(mainMenuBtn, "hover_menu", "select_menu");
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(150, 20, 0, 20);
-		add(tryAgain, gbc);
+        tryAgainBtn.addActionListener(e -> GameController.getInstance().restartGameWithTransition());
+        mainMenuBtn.addActionListener(e -> GameController.getInstance().showMainMenu());
 
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.insets = new Insets(20, 20, 20, 20); // Gap between buttons
-		add(backToLevels, gbc);
-	}
+        overlay.add(Box.createVerticalGlue());
+        overlay.add(tryAgainBtn);
+        overlay.add(mainMenuBtn);
+        overlay.add(Box.createVerticalStrut(80));
 
-	private JButton createImageButton(String normalImage, String hoverImage) {
-		JButton btn = new JButton();
+        JPanel split = new JPanel(new GridLayout(1, 3, 0, 0));
+        split.setOpaque(false);
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(overlay);
 
-		try {
-			ImageIcon normalIcon = new ImageIcon(ImageIO.read(getClass().getResource("/assets/Menus/Buttons/" + normalImage)).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH));
-			ImageIcon hoverIcon = new ImageIcon(ImageIO.read(getClass().getResource("/assets/Menus/Buttons/" + hoverImage)).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH));
+        add(split, BorderLayout.CENTER);
+    }
 
-			btn.setIcon(normalIcon);
-			btn.setRolloverIcon(hoverIcon);
-
-			btn.setBorderPainted(false);
-			btn.setContentAreaFilled(false);
-			btn.setFocusPainted(false);
-			btn.setOpaque(false);
-
-		} catch (Exception e) {
-			btn.setText(normalImage.replace(".png", ""));
-			System.err.println("Could not load button image: " + normalImage);
-		}
-
-		return btn;
-	}
-
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-		}
-	}
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (backgroundImage != null)
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+    }
 }

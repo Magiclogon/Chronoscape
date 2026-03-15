@@ -1,10 +1,6 @@
 package ma.ac.emi.UI;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
 import javax.swing.*;
 import ma.ac.emi.gamecontrol.*;
 
@@ -16,15 +12,13 @@ public class Window extends JFrame {
     // Screens
     private final LoadingScreen loadingScreen;
     private final PauseMenu pauseMenu;
-    private final MainMenu mainMenu;
-    private final DifficultyMenu difficultyMenu;
-    private final LevelSelection levelSelection;
+    private final MenuHost menuHost;          // replaces MainMenu + DifficultyMenu + LevelSelection
     private ShopUI shopUI;
     private GameOverPanel gameOverPanel;
     private final Settings settings;
-    
+
     private final JLayeredPane gamePane;
-    
+
     private final JLayeredPane transitionPane;
     private final FadeOverlay fadeOverlay;
 
@@ -38,31 +32,26 @@ public class Window extends JFrame {
 
         fadeOverlay = new FadeOverlay();
 
-        loadingScreen = new LoadingScreen();
-        mainMenu = new MainMenu();
-        pauseMenu = new PauseMenu();
-        difficultyMenu = new DifficultyMenu();
-        levelSelection = new LevelSelection();
-        shopUI = new ShopUI();
-        gameOverPanel = new GameOverPanel();
-        settings = new Settings();
+        loadingScreen  = new LoadingScreen();
+        pauseMenu      = new PauseMenu();
+        menuHost       = new MenuHost();       // single persistent menu panel
+        shopUI         = new ShopUI();
+        gameOverPanel  = new GameOverPanel();
+        settings       = new Settings(this::goBack);
 
         gamePane = new JLayeredPane();
         gamePane.setLayout(new OverlayLayout(gamePane));
 
         mainPanel.add(loadingScreen, "LOADING");
-        mainPanel.add(mainMenu, "MENU");
-        mainPanel.add(pauseMenu, "PAUSE");
-        mainPanel.add(difficultyMenu, "DIFFICULTY");
-        mainPanel.add(levelSelection, "LEVEL_SELECT");
-        mainPanel.add(gamePane, "GAME");
-        mainPanel.add(shopUI, "SHOP");
+        mainPanel.add(menuHost,      "MENU_HOST"); // one card for all menu screens
+        mainPanel.add(pauseMenu,     "PAUSE");
+        mainPanel.add(gamePane,      "GAME");
+        mainPanel.add(shopUI,        "SHOP");
         mainPanel.add(gameOverPanel, "GAMEOVER");
-        mainPanel.add(settings, "SETTINGS");
+        mainPanel.add(settings,      "SETTINGS");
 
-
-        transitionPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
-        transitionPane.add(fadeOverlay, JLayeredPane.PALETTE_LAYER);
+        transitionPane.add(mainPanel,    JLayeredPane.DEFAULT_LAYER);
+        transitionPane.add(fadeOverlay,  JLayeredPane.PALETTE_LAYER);
 
         add(transitionPane);
 
@@ -73,34 +62,40 @@ public class Window extends JFrame {
 
         mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         fadeOverlay.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        
         transitionPane.setSize(getWidth(), getHeight());
-        
-        // Optional: Add debug navigation listener
-        navigationManager.addNavigationListener((from, to) -> {
-            System.out.println("Navigation: " + from + " -> " + to);
-        });
+
+        navigationManager.addNavigationListener((from, to) ->
+                System.out.println("Navigation: " + from + " -> " + to));
     }
 
-    /**
-     * Navigate to a screen (adds to navigation history)
-     */
+    // ── MenuHost passthrough — lets GameController drive internal menu nav ─
+
+    public void showMenuMain() {
+        menuHost.showMainMenu();
+        navigateTo("MENU_HOST");
+    }
+
+    public void showMenuDifficulty() {
+        menuHost.showDifficultyMenu();
+        navigateTo("MENU_HOST");
+    }
+
+    // ── Standard navigation ───────────────────────────────────────────────
+
     public void navigateTo(String name) {
         navigationManager.navigateTo(name);
         layout.show(mainPanel, name);
         revalidate();
         repaint();
     }
-    
-   
+
     public void jumpTo(String name) {
         navigationManager.jumpTo(name);
         layout.show(mainPanel, name);
         revalidate();
         repaint();
     }
-    
- 
+
     public boolean goBack() {
         String previous = navigationManager.goBack();
         if (previous != null) {
@@ -111,8 +106,7 @@ public class Window extends JFrame {
         }
         return false;
     }
-    
- 
+
     public boolean goForward() {
         String next = navigationManager.goForward();
         if (next != null) {
@@ -123,56 +117,30 @@ public class Window extends JFrame {
         }
         return false;
     }
-    
 
     public void backToMainMenu() {
-        navigationManager.backToRoot("MENU");
-        layout.show(mainPanel, "MENU");
+        navigationManager.backToRoot("MENU_HOST");
+        menuHost.showMainMenu();
+        layout.show(mainPanel, "MENU_HOST");
         revalidate();
         repaint();
     }
-    
 
-    public boolean canGoBack() {
-        return navigationManager.canGoBack();
-    }
-    
+    public boolean canGoBack()        { return navigationManager.canGoBack(); }
+    public boolean canGoForward()     { return navigationManager.canGoForward(); }
+    public String  getCurrentScreen() { return navigationManager.getCurrentScreen(); }
+    public NavigationManager getNavigationManager() { return navigationManager; }
 
-    public boolean canGoForward() {
-        return navigationManager.canGoForward();
-    }
-    
-
-    public String getCurrentScreen() {
-        return navigationManager.getCurrentScreen();
-    }
-    
-   
-    public NavigationManager getNavigationManager() {
-        return navigationManager;
-    }
-    
-    /**
-     * Legacy method - now uses navigateTo
-     * @deprecated Use navigateTo() instead
-     */
+    /** @deprecated Use navigateTo() instead */
     @Deprecated
-    public void showScreen(String name) {
-        navigateTo(name);
-    }
-    
-    public void refreshShop() {
-        shopUI.refresh();
-    }
-    
-    public void addSettings(JPanel settings, String title) {
-        //JScrollPane scrollPane = new JScrollPane(settings);
-        this.settings.addTab(title, settings);
-    }
+    public void showScreen(String name) { navigateTo(name); }
+
+    public void refreshShop() { shopUI.refresh(); }
+
+    public void addSettings(JPanel s, String title) { settings.addTab(title, s); }
 
     public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
         gamePane.removeAll();
-
         Dimension max = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         gameGLPanel.setPreferredSize(new Dimension(1280, 720));
@@ -181,18 +149,17 @@ public class Window extends JFrame {
         uiPanel.setPreferredSize(new Dimension(1280, 720));
         uiPanel.setMaximumSize(max);
 
-        gamePane.add(gameGLPanel, Integer.valueOf(0)); 
-        gamePane.add(uiPanel, Integer.valueOf(1));
-        
+        gamePane.add(gameGLPanel, Integer.valueOf(0));
+        gamePane.add(uiPanel,     Integer.valueOf(1));
         gamePane.revalidate();
         gamePane.repaint();
     }
 
     public void transition(Runnable midAction) {
         Timer timer = new Timer(16, null);
-        final float[] alpha = {0f};
+        final float[] alpha    = {0f};
         final boolean[] fadingOut = {true};
-        
+
         timer.addActionListener(e -> {
             if (fadingOut[0]) {
                 alpha[0] += 0.02f;

@@ -1,108 +1,91 @@
 package ma.ac.emi.UI;
 
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.io.IOException;
-
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-
+import javax.swing.*;
+import java.awt.*;
+import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.gamecontrol.GameController;
 
-public class PauseMenu extends JPanel implements Soundable{
-
-    private static final int btnWidth = 224;
-    private static final int btnHeight = 56;
+public class PauseMenu extends JPanel implements Soundable {
 
     private static final long serialVersionUID = 1L;
+    private static final Color ACCENT_GREEN = new Color(80, 200, 100);
 
     private Image backgroundImage;
-    private JButton btnResume, btnMainMenu, btnSettings, btnQuit;
 
     public PauseMenu() {
         try {
             backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/pause_image.png"));
-        } catch (IOException | NullPointerException e) {
+        } catch (Exception e) {
             System.err.println("Error loading pause background: " + e.getMessage());
         }
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
         setOpaque(false);
+        setLayout(new BorderLayout());
 
-        btnResume = createImageButton("Resume1.png", "Resume5.png");
-        btnMainMenu = createImageButton("Main Menu1.png", "Main Menu5.png");
-        btnSettings = new JButton("Settings");
-        btnQuit = createImageButton("Quit1.png", "Quit5.png");
+        // ── Right column with gradient overlay — mirrors menu sidebar ──────
+        JPanel overlay = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(0, 0, 0, 0),
+                        getWidth(), 0, new Color(0, 0, 0, 160)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        overlay.setOpaque(false);
+        overlay.setLayout(new BoxLayout(overlay, BoxLayout.Y_AXIS));
 
-        configureButtonSounds(btnResume, "hover_menu", "select_menu");
-        configureButtonSounds(btnMainMenu, "hover_menu", "select_menu");
-        configureButtonSounds(btnSettings, "hover_menu", "select_menu");
-        configureButtonSounds(btnQuit, "hover_menu", "select_menu");
+        RetroButton resumeBtn   = new RetroButton("RESUME",    RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton settingsBtn = new RetroButton("SETTINGS",  RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton mainMenuBtn = new RetroButton("MAIN MENU", RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton quitBtn     = new RetroButton("QUIT",      RetroButton.Style.MENU, ACCENT_GREEN);
 
-        btnResume.addActionListener(e -> GameController.getInstance().resumeGame());
+        Dimension rowSize = new Dimension(Integer.MAX_VALUE, 64);
+        resumeBtn.setMaximumSize(rowSize);   resumeBtn.setPreferredSize(new Dimension(0, 64));
+        settingsBtn.setMaximumSize(rowSize); settingsBtn.setPreferredSize(new Dimension(0, 64));
+        mainMenuBtn.setMaximumSize(rowSize); mainMenuBtn.setPreferredSize(new Dimension(0, 64));
+        quitBtn.setMaximumSize(rowSize);     quitBtn.setPreferredSize(new Dimension(0, 64));
 
-        btnMainMenu.addActionListener(e -> {
-            GameController.getInstance().resumeGame();
-            GameController.getInstance().showLevelSelection();
-        });
-        
-        btnSettings.addActionListener(e -> {
-        	GameController.getInstance().showSettings();
-        });
+        resumeBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        settingsBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        mainMenuBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        quitBtn.setHorizontalAlignment(SwingConstants.LEFT);
 
-        btnQuit.addActionListener(e -> System.exit(0));
+        configureButtonSounds(resumeBtn,   "hover_menu", "select_menu");
+        configureButtonSounds(settingsBtn, "hover_menu", "select_menu");
+        configureButtonSounds(mainMenuBtn, "hover_menu", "select_menu");
+        configureButtonSounds(quitBtn,     "hover_menu", "select_menu");
 
+        resumeBtn.addActionListener(e   -> GameController.getInstance().resumeGame());
+        settingsBtn.addActionListener(e -> GameController.getInstance().showSettings());
+        mainMenuBtn.addActionListener(e -> GameController.getInstance().showMainMenu());
+        quitBtn.addActionListener(e     -> System.exit(0));
 
+        overlay.add(Box.createVerticalGlue());
+        overlay.add(resumeBtn);
+        overlay.add(settingsBtn);
+        overlay.add(mainMenuBtn);
+        overlay.add(quitBtn);
+        overlay.add(Box.createVerticalStrut(80));
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.insets = new Insets(150, 0, 10, 0);
-        add(btnResume, gbc);
+        // Same 3-column split as MenuHost — buttons in rightmost third
+        JPanel split = new JPanel(new GridLayout(1, 3, 0, 0));
+        split.setOpaque(false);
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(overlay);
 
-        gbc.gridy = 1;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        add(btnMainMenu, gbc);
-        
-        gbc.gridy = 2;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        add(btnSettings, gbc);
-
-        gbc.gridy = 3;
-        gbc.insets = new Insets(10, 0, 10, 0);
-        add(btnQuit, gbc);
-    }
-
-    private JButton createImageButton(String normalImage, String hoverImage) {
-        JButton btn = new JButton();
-        try {
-            ImageIcon normalIcon = new ImageIcon(ImageIO.read(getClass().getResource("/assets/Menus/Buttons/" + normalImage)).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH));
-            ImageIcon hoverIcon = new ImageIcon(ImageIO.read(getClass().getResource("/assets/Menus/Buttons/" + hoverImage)).getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH));
-
-            btn.setIcon(normalIcon);
-            btn.setRolloverIcon(hoverIcon);
-
-            btn.setBorderPainted(false);
-            btn.setContentAreaFilled(false);
-            btn.setFocusPainted(false);
-            btn.setOpaque(false);
-        } catch (Exception e) {
-            btn.setText(normalImage);
-        }
-        return btn;
+        add(split, BorderLayout.CENTER);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (backgroundImage != null) {
+        if (backgroundImage != null)
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        }
     }
 }

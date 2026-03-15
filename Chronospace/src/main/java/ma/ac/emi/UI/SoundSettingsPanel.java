@@ -5,8 +5,9 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 import ma.ac.emi.UI.component.RetroButton;
+import ma.ac.emi.UI.component.SettingsPanel;
 
-public class SoundSettingsPanel extends JPanel {
+public class SoundSettingsPanel extends JPanel implements SettingsPanel{
 
     private static final String FONT_NAME  = "ByteBounce";
     private static final Color  BG_DARK    = new Color(18, 18, 24);
@@ -121,4 +122,16 @@ public class SoundSettingsPanel extends JPanel {
         sep.setBackground(BG_DARK);
         return sep;
     }
+
+	@Override
+	public void applyChanges() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resetToDefaults() {
+		// TODO Auto-generated method stub
+		
+	}
 }

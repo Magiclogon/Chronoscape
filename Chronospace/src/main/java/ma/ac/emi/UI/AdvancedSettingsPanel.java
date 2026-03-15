@@ -5,6 +5,7 @@ import javax.swing.border.*;
 import java.awt.*;
 
 import ma.ac.emi.UI.component.RetroScrollBar;
+import ma.ac.emi.UI.component.RetroSpinner;
 import ma.ac.emi.glgraphics.post.config.PostFXConfig;
 
 public class AdvancedSettingsPanel extends JPanel {
@@ -14,7 +15,6 @@ public class AdvancedSettingsPanel extends JPanel {
     private static final Color BORDER_LIGHT = new Color(180, 180, 190);
     private static final Color TEXT_MAIN    = new Color(235, 235, 245);
     private static final Color TEXT_GRAY    = new Color(150, 150, 160);
-    private static final Color ACCENT_GOLD  = new Color(255, 215, 0);
     private static final Color ACCENT_RED   = new Color(220, 60, 60);
     private static final Color ACCENT_GREEN = new Color(80, 200, 100);
     private static final Color MUTED        = new Color(80, 80, 90);
@@ -29,15 +29,15 @@ public class AdvancedSettingsPanel extends JPanel {
     private JCheckBox colorCorrectionEnabled;
 
     private JCheckBox bloomEnabled;
-    private JSlider bloomThresholdSlider, bloomBlurRadiusSlider, bloomIntensitySlider;
-    private JSpinner bloomDownscaleSpinner;
+    private JSlider   bloomThresholdSlider, bloomBlurRadiusSlider, bloomIntensitySlider;
+    private RetroSpinner bloomDownscaleSpinner;
 
     private JCheckBox glowEnabled;
-    private JSlider glowBlurRadiusSlider, glowIntensitySlider, glowSaturationBoostSlider;
-    private JSpinner glowDownscaleSpinner;
+    private JSlider   glowBlurRadiusSlider, glowIntensitySlider, glowSaturationBoostSlider;
+    private RetroSpinner glowDownscaleSpinner;
 
     public AdvancedSettingsPanel(PostFXConfig config) {
-    	setLayout(new BorderLayout());
+        setLayout(new BorderLayout());
         setBackground(BG_DARK);
 
         JPanel card = new JPanel();
@@ -45,7 +45,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.setBackground(PANEL_BG);
         card.setBorder(new EmptyBorder(24, 30, 24, 30));
 
-        // Warning title
+        // ── Header ────────────────────────────────────────────────────────
         JLabel warning = new JLabel("EXPERT MODE", SwingConstants.CENTER);
         warning.setFont(FONT_HEADER);
         warning.setForeground(ACCENT_RED);
@@ -61,6 +61,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(makeSeparatorPanel());
         card.add(Box.createVerticalStrut(20));
 
+        // ── Color Correction ─────────────────────────────────────────────
         card.add(makeSectionLabel("COLOR CORRECTION"));
         card.add(Box.createVerticalStrut(10));
         card.add(makeCheckboxRow(colorCorrectionEnabled = makeCheckbox("Enabled",
@@ -68,15 +69,15 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
 
         if (config.colorCorrection != null) {
-            rSlider = createSlider(0f, 2f, config.colorCorrection.r, 0.01f);
-            gSlider = createSlider(0f, 2f, config.colorCorrection.g, 0.01f);
-            bSlider = createSlider(0f, 2f, config.colorCorrection.b, 0.01f);
-            aSlider = createSlider(0f, 2f, config.colorCorrection.a, 0.01f);
-            brightnessSlider  = createSlider(-1f, 1f,   config.colorCorrection.brightness,  0.01f);
-            contrastSlider    = createSlider(0f,  3f,   config.colorCorrection.contrast,    0.01f);
-            saturationSlider  = createSlider(0f,  3f,   config.colorCorrection.saturation,  0.01f);
-            hueSlider         = createSlider(-180f, 180f, config.colorCorrection.hue,       1f);
-            valueSlider       = createSlider(-1f, 1f,   config.colorCorrection.value,       0.01f);
+            rSlider           = createSlider(0f,    2f,   config.colorCorrection.r,          0.01f);
+            gSlider           = createSlider(0f,    2f,   config.colorCorrection.g,          0.01f);
+            bSlider           = createSlider(0f,    2f,   config.colorCorrection.b,          0.01f);
+            aSlider           = createSlider(0f,    2f,   config.colorCorrection.a,          0.01f);
+            brightnessSlider  = createSlider(-1f,   1f,   config.colorCorrection.brightness, 0.01f);
+            contrastSlider    = createSlider(0f,    3f,   config.colorCorrection.contrast,   0.01f);
+            saturationSlider  = createSlider(0f,    3f,   config.colorCorrection.saturation, 0.01f);
+            hueSlider         = createSlider(-180f, 180f, config.colorCorrection.hue,        1f);
+            valueSlider       = createSlider(-1f,   1f,   config.colorCorrection.value,      0.01f);
 
             card.add(makeSliderRow("RED",        rSlider));
             card.add(makeSliderRow("GREEN",      gSlider));
@@ -93,6 +94,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(makeSeparatorPanel());
         card.add(Box.createVerticalStrut(20));
 
+        // ── Bloom ─────────────────────────────────────────────────────────
         card.add(makeSectionLabel("BLOOM"));
         card.add(Box.createVerticalStrut(10));
         card.add(makeCheckboxRow(bloomEnabled = makeCheckbox("Enabled",
@@ -100,7 +102,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
 
         if (config.bloom != null) {
-            bloomDownscaleSpinner = makeSpinner(config.bloom.downscale);
+            bloomDownscaleSpinner = new RetroSpinner(1, config.bloom.downscale, 8, 1);
             bloomThresholdSlider  = createSlider(0f, 1f,  config.bloom.threshold,  0.01f);
             bloomBlurRadiusSlider = createSlider(0f, 10f, config.bloom.blurRadius, 0.1f);
             bloomIntensitySlider  = createSlider(0f, 2f,  config.bloom.intensity,  0.01f);
@@ -115,6 +117,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(makeSeparatorPanel());
         card.add(Box.createVerticalStrut(20));
 
+        // ── Glow ──────────────────────────────────────────────────────────
         card.add(makeSectionLabel("GLOW"));
         card.add(Box.createVerticalStrut(10));
         card.add(makeCheckboxRow(glowEnabled = makeCheckbox("Enabled",
@@ -122,7 +125,7 @@ public class AdvancedSettingsPanel extends JPanel {
         card.add(Box.createVerticalStrut(8));
 
         if (config.glow != null) {
-            glowDownscaleSpinner      = makeSpinner(config.glow.downscale);
+            glowDownscaleSpinner      = new RetroSpinner(1, config.glow.downscale, 8, 1);
             glowBlurRadiusSlider      = createSlider(0f, 10f, config.glow.blurRadius, 0.01f);
             glowIntensitySlider       = createSlider(0f, 2f,  config.glow.intensity,  0.01f);
             glowSaturationBoostSlider = createSlider(1f, 3f,
@@ -136,14 +139,14 @@ public class AdvancedSettingsPanel extends JPanel {
 
         card.add(Box.createVerticalStrut(24));
 
-        // Center card horizontally in a wrapper
+        // ── Scroll wrapper ────────────────────────────────────────────────
         JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setBackground(BG_DARK);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor  = GridBagConstraints.NORTH;
         gbc.weightx = 1.0;
-        gbc.weighty = 0.0; // don't stretch vertically — let card be natural height
-        gbc.fill    = GridBagConstraints.NONE;
+        gbc.weighty = 0.0;
+        gbc.fill    = GridBagConstraints.HORIZONTAL;
         wrapper.add(card, gbc);
 
         JScrollPane scroll = new JScrollPane(wrapper);
@@ -161,7 +164,7 @@ public class AdvancedSettingsPanel extends JPanel {
         add(scroll, BorderLayout.CENTER);
     }
 
-    // ── Apply ─────────────────────────────────────────────────────────────
+    // ── Apply to config ───────────────────────────────────────────────────
 
     public void applyToConfig(PostFXConfig config) {
         if (config.colorCorrection != null) {
@@ -178,14 +181,14 @@ public class AdvancedSettingsPanel extends JPanel {
         }
         if (config.bloom != null) {
             config.bloom.enabled    = bloomEnabled.isSelected();
-            config.bloom.downscale  = (Integer) bloomDownscaleSpinner.getValue();
+            config.bloom.downscale  = bloomDownscaleSpinner.getValue();
             config.bloom.threshold  = getSliderFloat(bloomThresholdSlider);
             config.bloom.blurRadius = getSliderFloat(bloomBlurRadiusSlider);
             config.bloom.intensity  = getSliderFloat(bloomIntensitySlider);
         }
         if (config.glow != null) {
             config.glow.enabled         = glowEnabled.isSelected();
-            config.glow.downscale       = (Integer) glowDownscaleSpinner.getValue();
+            config.glow.downscale       = glowDownscaleSpinner.getValue();
             config.glow.blurRadius      = getSliderFloat(glowBlurRadiusSlider);
             config.glow.intensity       = getSliderFloat(glowIntensitySlider);
             config.glow.saturationBoost = getSliderFloat(glowSaturationBoostSlider);
@@ -205,8 +208,8 @@ public class AdvancedSettingsPanel extends JPanel {
     private JPanel makeSeparatorPanel() {
         JPanel p = new JPanel();
         p.setBackground(new Color(60, 60, 70));
-        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 2));
-        p.setPreferredSize(new Dimension(0, 2));
+        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+        p.setPreferredSize(new Dimension(0, 1));
         p.setAlignmentX(Component.CENTER_ALIGNMENT);
         return p;
     }
@@ -257,7 +260,7 @@ public class AdvancedSettingsPanel extends JPanel {
         return row;
     }
 
-    private JPanel makeSpinnerRow(String label, JSpinner spinner) {
+    private JPanel makeSpinnerRow(String label, RetroSpinner spinner) {
         JPanel row = new JPanel(new BorderLayout(12, 0));
         row.setBackground(PANEL_BG);
         row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 38));
@@ -268,7 +271,8 @@ public class AdvancedSettingsPanel extends JPanel {
         lbl.setForeground(BORDER_LIGHT);
         lbl.setPreferredSize(new Dimension(160, 28));
 
-        spinner.setPreferredSize(new Dimension(80, 28));
+        spinner.setPreferredSize(new Dimension(120, 32));
+        spinner.setMaximumSize(new Dimension(120, 32));
 
         row.add(lbl,     BorderLayout.WEST);
         row.add(spinner, BorderLayout.EAST);
@@ -292,21 +296,6 @@ public class AdvancedSettingsPanel extends JPanel {
         return cb;
     }
 
-    private JSpinner makeSpinner(int value) {
-        JSpinner spinner = new JSpinner(new SpinnerNumberModel(value, 1, 8, 1));
-        spinner.setFont(FONT_BODY);
-        JComponent editor = spinner.getEditor();
-        if (editor instanceof JSpinner.DefaultEditor) {
-            JTextField tf = ((JSpinner.DefaultEditor) editor).getTextField();
-            tf.setFont(FONT_BODY);
-            tf.setForeground(TEXT_MAIN);
-            tf.setBackground(new Color(40, 40, 48));
-            tf.setCaretColor(TEXT_MAIN);
-            tf.setBorder(new LineBorder(BORDER_LIGHT, 1));
-        }
-        return spinner;
-    }
-
     private JSlider createSlider(float min, float max, float value, float step) {
         int range   = (int)((max - min) / step);
         int current = (int)((value - min) / step);
@@ -322,9 +311,9 @@ public class AdvancedSettingsPanel extends JPanel {
         float min  = (Float) slider.getClientProperty("MIN_VALUE");
         float step = (Float) slider.getClientProperty("STEP");
         float val  = min + slider.getValue() * step;
-        return step >= 1f ? String.format("%.0f", val)
+        return step >= 1f   ? String.format("%.0f", val)
              : step >= 0.1f ? String.format("%.1f", val)
-             : String.format("%.2f", val);
+             :                String.format("%.2f", val);
     }
 
     private float getSliderFloat(JSlider slider) {

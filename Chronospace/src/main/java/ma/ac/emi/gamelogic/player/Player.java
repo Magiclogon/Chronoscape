@@ -176,6 +176,8 @@ public class Player extends LivingEntity {
 	    
 	    // Initialize current stats from base stats
 	    resetBaseStats();
+	    
+	    this.hp = cfg.baseHPMax;
 	}
 
 

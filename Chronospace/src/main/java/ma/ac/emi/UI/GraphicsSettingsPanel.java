@@ -6,10 +6,11 @@ import java.awt.*;
 
 import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.UI.component.RetroScrollBar;
+import ma.ac.emi.UI.component.SettingsPanel;
 import ma.ac.emi.glgraphics.post.config.PostFXConfig;
 import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
 
-public class GraphicsSettingsPanel extends JPanel {
+public class GraphicsSettingsPanel extends JPanel implements SettingsPanel{
 
     private static final Color BG_DARK       = new Color(18, 18, 24);
     private static final Color PANEL_BG      = new Color(30, 30, 38);
@@ -46,11 +47,10 @@ public class GraphicsSettingsPanel extends JPanel {
     private ButtonGroup presetButtonGroup;
     private JSlider renderScaleSlider, bloomIntensitySlider, glowIntensitySlider;
 
-    public GraphicsSettingsPanel(PostFXConfig config) { this(config, null, null); }
-    public GraphicsSettingsPanel(PostFXConfig config, GraphicsSettingsCallback cb) { this(config, cb, null); }
+    public GraphicsSettingsPanel(PostFXConfig config) { this(config, null); }
 
-    public GraphicsSettingsPanel(PostFXConfig config, GraphicsSettingsCallback callback, Runnable goBackAction) {
-        this.config = config; this.callback = callback; this.goBackAction = goBackAction;
+    public GraphicsSettingsPanel(PostFXConfig config, GraphicsSettingsCallback callback) {
+        this.config = config; this.callback = callback; 
 
         setLayout(new BorderLayout());
         setBackground(PANEL_BG);
@@ -114,12 +114,12 @@ public class GraphicsSettingsPanel extends JPanel {
         applyBtn.setPreferredSize(new Dimension(140, 38));
         resetBtn.setPreferredSize(new Dimension(140, 38));
         backBtn.setPreferredSize(new Dimension(140, 38));
-        applyBtn.addActionListener(e -> applyChanges());
+        applyBtn.addActionListener(e -> applyChangesInternal());
         resetBtn.addActionListener(e -> resetToDefaults());
         backBtn.addActionListener(e -> closeWindow());
 
-        footerBtns.add(applyBtn); footerBtns.add(resetBtn); footerBtns.add(backBtn);
-        contentPanel.add(footerBtns);
+//        footerBtns.add(applyBtn); footerBtns.add(resetBtn); footerBtns.add(backBtn);
+//        contentPanel.add(footerBtns);
         contentPanel.add(Box.createVerticalStrut(16));
 
         JScrollPane scroll = new JScrollPane(contentPanel);
@@ -319,7 +319,7 @@ public class GraphicsSettingsPanel extends JPanel {
         dialog.pack(); dialog.setLocationRelativeTo(this); dialog.setVisible(true);
     }
 
-    private void applyChanges() {
+    private void applyChangesInternal() {
         if (config.bloom != null) config.bloom.intensity = getSliderFloatValue(bloomIntensitySlider);
         if (config.glow  != null) config.glow.intensity  = getSliderFloatValue(glowIntensitySlider);
         config.renderScale = getSliderFloatValue(renderScaleSlider);
@@ -327,12 +327,16 @@ public class GraphicsSettingsPanel extends JPanel {
         if (callback != null) callback.onSettingsChanged(config);
         hasUnsavedChanges = false;
     }
-    private void resetToDefaults() { applyPreset(GraphicsPreset.BALANCED); updateUIForCurrentPreset(); }
+    
+    @Override public void applyChanges()    { applyChangesInternal(); }
+    @Override public void resetToDefaults() { applyPreset(GraphicsPreset.BALANCED); updateUIForCurrentPreset(); }
+    
+    
     private void closeWindow() {
         if (hasUnsavedChanges) {
             int r = JOptionPane.showConfirmDialog(this, "You have unsaved changes. Save before going back?",
                     "Unsaved Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
-            if (r == JOptionPane.YES_OPTION) { applyChanges(); if (goBackAction != null) goBackAction.run(); }
+            if (r == JOptionPane.YES_OPTION) { applyChangesInternal(); if (goBackAction != null) goBackAction.run(); }
             else if (r == JOptionPane.NO_OPTION) { if (goBackAction != null) goBackAction.run(); }
         } else { if (goBackAction != null) goBackAction.run(); }
     }

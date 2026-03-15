@@ -8,10 +8,12 @@ public class GlowCombineEffect implements PostEffect {
     private final Shader combineShader;
     private final int sceneTextureId;
     private float intensity;
+    private float saturationBoost;
     
-    public GlowCombineEffect(GL3 gl, int sceneTextureId, float intensity) {
+    public GlowCombineEffect(GL3 gl, int sceneTextureId, float intensity, float saturationBoost) {
         this.sceneTextureId = sceneTextureId;
         this.intensity = intensity;
+        this.saturationBoost = saturationBoost;
         this.combineShader = Shader.load(gl, "post.vert", "glow_combine.frag");
     }
     
@@ -28,6 +30,7 @@ public class GlowCombineEffect implements PostEffect {
         combineShader.setInt(gl, "sceneTexture", 1);
 
         combineShader.setFloat(gl, "intensity", intensity);
+        combineShader.setFloat(gl, "saturationBoost", saturationBoost);
 
         quad.draw(gl, glowTexture);
         
