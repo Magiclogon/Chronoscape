@@ -424,6 +424,6 @@ public class Inventory {
 	public boolean canSellItem(ShopItem item) {
 		return
 				hasItem(item.getItemDefinition().getId()) ||
-				Arrays.stream(equippedWeapons).anyMatch(i -> i.getItemDefinition().getId().equals(item.getItemDefinition().getId()));
+				Arrays.stream(equippedWeapons).filter(i -> i != null).anyMatch(i -> i.getItemDefinition().getId().equals(item.getItemDefinition().getId()));
 	}
 }
