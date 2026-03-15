@@ -139,6 +139,8 @@ public class Player extends LivingEntity {
 		weaponXOffset = 9;
 		weaponYOffset = 5;
 		
+		knockback.init();
+		
 		config = PlayerConfigLoader.load("/configs/player_config.json");
 		applyBaseStats(config);
 		
@@ -176,12 +178,13 @@ public class Player extends LivingEntity {
 	    
 	    // Initialize current stats from base stats
 	    resetBaseStats();
+	    
+	    this.hp = cfg.baseHPMax;
 	}
 
 
 	public void resetBaseStats() {
 		this.hpMax = baseHPMax;
-	    this.hp = baseHP;
 	    this.speed = baseSpeed;
 	    this.strength = baseStrength;
 		this.luck = baseLuck;
@@ -342,13 +345,8 @@ public class Player extends LivingEntity {
 	}
 
 	public Integer isWeaponEquipped(WeaponItem item) {
-		for(int i = 0; i < Inventory.MAX_EQU; i++) {
-			if(getInventory().getEquippedWeapons()[i] == null) continue;
-			if(getInventory().getEquippedWeapons()[i].equals(item)) {
-				return i;
-			}
-		}
-		return null;
+	    int slot = getInventory().getEquippedSlot(item);
+	    return slot == -1 ? null : slot;
 	}
 
 	@Override

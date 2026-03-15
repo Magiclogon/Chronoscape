@@ -1,78 +1,38 @@
 package ma.ac.emi.UI;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.swing.*;
+import java.awt.*;
+import ma.ac.emi.UI.MenuStyle;
 
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-
+/**
+ * Simple retro loading screen — black background, bouncing dot bar,
+ * "LOADING" text in the project font. No images required.
+ */
 public class LoadingScreen extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private Image backgroundImage;
-    private BufferedImage spinnerImage;
+    private static final int   DOT_COUNT    = 5;
+    private static final int   DOT_SIZE     = 14;
+    private static final int   DOT_SPACING  = 28;
+    private static final int   TIMER_DELAY  = 80;   // ms per frame
+    private static final float BOUNCE_AMP   = 18f;  // pixels of vertical travel
 
-    private Font titleFont;
-    private Font loadingFont;
-
-    private Timer animationTimer;
-    private double rotationAngle = 0;
-    private final int ROTATION_SPEED = 5;
+    private final Timer animationTimer;
+    private int frame = 0;  // increments each tick, drives the bounce wave
 
     public LoadingScreen() {
-        try {
-            try {
-                backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
-            } catch (Exception e) {
-                System.err.println("Background image not found, using solid color fallback.");
-            }
+        setBackground(Color.BLACK);
+        setOpaque(true);
 
-            spinnerImage = ImageIO.read(getClass().getResource("/assets/Menus/wheel.png"));
-
-            try {
-                InputStream is = getClass().getResourceAsStream("/assets/Fonts/ByteBounce.ttf");
-                if (is != null) {
-                    Font customFont = Font.createFont(Font.TRUETYPE_FONT, is);
-                    titleFont = customFont.deriveFont(60f);
-                    loadingFont = customFont.deriveFont(30f);
-                } else {
-                    titleFont = new Font("Monospaced", Font.BOLD, 60);
-                    loadingFont = new Font("Monospaced", Font.BOLD, 30);
-                }
-            } catch (FontFormatException | IOException e) {
-                titleFont = new Font("Monospaced", Font.BOLD, 60);
-                loadingFont = new Font("Monospaced", Font.BOLD, 30);
-                System.err.println("Error loading custom font, using default.");
-            }
-
-        } catch (Exception e) {
-            System.err.println("Error loading loading screen assets.");
-            e.printStackTrace();
-        }
-
-        animationTimer = new Timer(16, e -> {
-            rotationAngle += ROTATION_SPEED;
-            if (rotationAngle >= 360) {
-                rotationAngle = 0;
-            }
+        animationTimer = new Timer(TIMER_DELAY, e -> {
+            frame++;
             repaint();
         });
     }
 
     public void startAnimation() {
         if (!animationTimer.isRunning()) {
-            rotationAngle = 0;
+            frame = 0;
             animationTimer.start();
         }
     }
@@ -84,50 +44,61 @@ public class LoadingScreen extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-        int width = getWidth();
-        int height = getHeight();
-
-        if (backgroundImage != null) {
-            g2d.drawImage(backgroundImage, 0, 0, width, height, this);
-        } else {
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(0, 0, width, height);
-        }
-
-        g2d.setColor(Color.WHITE);
-        g2d.setFont(titleFont);
-
-        if (spinnerImage != null) {
-            int spinnerSize = 128;
-            int centerX = width / 2;
-            int centerY = height / 2;
-
-            AffineTransform oldTransform = g2d.getTransform();
-
-            g2d.translate(centerX, centerY);
-            g2d.rotate(Math.toRadians(rotationAngle));
-
-            g2d.drawImage(spinnerImage, -spinnerSize / 2, -spinnerSize / 2, spinnerSize, spinnerSize, this);
-
-            g2d.setTransform(oldTransform);
-        }
-
-        g2d.setColor(Color.LIGHT_GRAY);
-        g2d.setFont(loadingFont);
-        drawCenteredString(g2d, "Loading...", width, height * 3 / 4);
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) startAnimation();
+        else         stopAnimation();
     }
 
-    private void drawCenteredString(Graphics g, String text, int frameWidth, int yPos) {
-        FontMetrics metrics = g.getFontMetrics(g.getFont());
-        int x = (frameWidth - metrics.stringWidth(text)) / 2;
-        g.drawString(text, x, yPos);
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        int w = getWidth();
+        int h = getHeight();
+
+        // ── "LOADING" label ───────────────────────────────────────────────
+        g2.setFont(MenuStyle.FONT_HEADER);
+        g2.setColor(Color.WHITE);
+        FontMetrics fm = g2.getFontMetrics();
+        String label = "LOADING";
+        int textX = (w - fm.stringWidth(label)) / 2;
+        int textY = h / 2 - 48;
+        g2.drawString(label, textX, textY);
+
+        // ── Bouncing dot bar ──────────────────────────────────────────────
+        int totalWidth = DOT_COUNT * DOT_SIZE + (DOT_COUNT - 1) * (DOT_SPACING - DOT_SIZE);
+        int startX     = (w - totalWidth) / 2;
+        int baseY      = h / 2 + 10;
+
+        for (int i = 0; i < DOT_COUNT; i++) {
+            // Sine wave offset — each dot is phase-shifted so they ripple
+            double phase  = (frame * 0.25) - (i * 0.6);
+            int    bounceY = (int)(Math.sin(phase) * BOUNCE_AMP);
+
+            // Brighten the "peak" dot, dim the rest
+            float brightness = (float)(Math.sin(phase) * 0.5 + 0.5);
+            Color dotColor = blend(MenuStyle.ACCENT, Color.WHITE, brightness);
+
+            int x = startX + i * DOT_SPACING;
+            int y = baseY - DOT_SIZE / 2 + bounceY;
+
+            g2.setColor(dotColor);
+            g2.fillRect(x, y, DOT_SIZE, DOT_SIZE);
+        }
+
+        g2.dispose();
+    }
+
+    /** Linear interpolation between two colors by t in [0,1]. */
+    private Color blend(Color a, Color b, float t) {
+        t = Math.max(0f, Math.min(1f, t));
+        int r = (int)(a.getRed()   + t * (b.getRed()   - a.getRed()));
+        int gr = (int)(a.getGreen() + t * (b.getGreen() - a.getGreen()));
+        int bl = (int)(a.getBlue()  + t * (b.getBlue()  - a.getBlue()));
+        return new Color(r, gr, bl);
     }
 }

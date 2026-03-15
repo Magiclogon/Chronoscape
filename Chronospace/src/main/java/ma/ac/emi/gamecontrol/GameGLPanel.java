@@ -13,6 +13,8 @@ public class GameGLPanel extends GLJPanel {
 
     public GameGLPanel() {
         GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL3));
+        caps.setDoubleBuffered(true);
+        caps.setHardwareAccelerated(true);
         setRequestedGLCapabilities(caps);
         
         this.renderer = new GameRenderer();

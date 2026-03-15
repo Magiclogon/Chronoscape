@@ -71,22 +71,6 @@
           "enemyParticleId": "on_enemy_hit",
           "obstacleParticleId": "dust",
           "emitterRadius": 5
-        },
-        {
-          "type": "light",
-          "lightRadius": 5,
-          "r": 1,
-          "g": 0,
-          "b": 0,
-          "intensity": 3
-        },
-        {
-          "type": "light",
-          "lightRadius": 4,
-          "r": 1,
-          "g": 1,
-          "b": 1,
-          "intensity": 3
         }
       ],
       "postProcessingDetails": {

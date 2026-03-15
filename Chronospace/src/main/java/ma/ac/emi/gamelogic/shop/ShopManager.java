@@ -3,6 +3,7 @@ package ma.ac.emi.gamelogic.shop;
 import ma.ac.emi.gamelogic.player.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -13,6 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ShopManager {
+	public static final double SELLING_PERCENTAGE = 0.5;
 	private final int SLOTNUM = 6;
     private List<ShopItem> availableItems;
     private Player player;
@@ -119,8 +121,9 @@ public class ShopManager {
     }
 
 	public boolean sellItem(ShopItem item) {
-		if(!player.getInventory().hasItem(item.getItemDefinition().getId())) return false;
-		player.setMoney(player.getMoney() + item.getPrice() * 0.70);
+		if(!player.getInventory().canSellItem(item)) return false;
+
+		player.setMoney(player.getMoney() + item.getPrice() * SELLING_PERCENTAGE);
 		player.getInventory().removeItem(item);
 		player.getInventory().recalculateAllUpgrades(player);
 		return true;

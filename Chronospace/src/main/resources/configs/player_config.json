@@ -2,14 +2,14 @@
   	"pseudoname": "player",
   	"money": 10000.0,
 
-  	"baseHP": 10000,
-  	"baseHPMax": 10000,
+  	"baseHP": 1,
+  	"baseHPMax": 1,
   	"baseSpeed": 200,
   	"baseStrength": 10.0,
   	"regenerationSpeed": 0.8,
 	"baseLuck": 22222,
   
-  "startingWeaponId": "robot_boss_cannon",
+  "startingWeaponId": "ak47",
   "animationDetails": {
     "spriteSheetPath": "player/main_character-Sheet.png",
     "spriteWidth": 32,

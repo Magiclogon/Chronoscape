@@ -1,125 +1,88 @@
 package ma.ac.emi.UI;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
-
+import java.awt.*;
 import javax.imageio.ImageIO;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
+import javax.swing.*;
 
+import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.gamecontrol.GameController;
 
-public class MainMenu extends JPanel implements Soundable{
-	private static final long serialVersionUID = 1L;
-	private JButton startButton, quitButton, settingsButton;
-	private Image backgroundImage;
+public class MainMenu extends JPanel implements Soundable {
+    private static final long serialVersionUID = 1L;
 
-	// Variables to hold the button images
-	private ImageIcon startIcon;
-	private ImageIcon startHoverIcon;
+    private static final Color ACCENT_GREEN = new Color(80, 200, 100);
 
-	private ImageIcon quitIcon;
-	private ImageIcon quitHoverIcon;
+    private static final String FONT_NAME = "ByteBounce";
 
-	public MainMenu() {
-		try {
+    private Image backgroundImage;
 
-			// 1. Load Background
-			backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
+    public MainMenu() {
+        setLayout(new BorderLayout());
+        setBackground(Color.DARK_GRAY);
+        try {
+            backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/main_menu_image.png"));
+        } catch (Exception e) {
+            System.err.println("Error loading background image.");
+            e.printStackTrace();
+        }
 
-			Image startImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Start1.png"));
-			Image startHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Start5.png"));
-			Image quitImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Quit1.png"));
-			Image quitHoverImgRaw = ImageIO.read(getClass().getResource("/assets/Menus/Buttons/Quit5.png"));
+        // ── Right column: 1/3 of screen ───────────────────────────────────
+        JPanel rightCol = new JPanel() {
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Dark gradient overlay so buttons are readable over any bg
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(0, 0, 0, 0),
+                        getWidth(), 0, new Color(0, 0, 0, 160)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.dispose();
+            }
+        };
+        rightCol.setOpaque(false);
+        rightCol.setLayout(new BoxLayout(rightCol, BoxLayout.Y_AXIS));
 
-			int btnWidth = 224;
-			int btnHeight = 56;
+        RetroButton startBtn    = new RetroButton("START GAME", RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton settingsBtn = new RetroButton("SETTINGS",   RetroButton.Style.MENU, ACCENT_GREEN);
+        RetroButton quitBtn     = new RetroButton("QUIT",       RetroButton.Style.MENU, ACCENT_GREEN);
 
-			Image startImg = startImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
-			Image startHoverImg = startHoverImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
-			Image quitImg = quitImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
-			Image quitHoverImg = quitHoverImgRaw.getScaledInstance(btnWidth, btnHeight, Image.SCALE_SMOOTH);
+        // Fixed height, full width
+        Dimension rowSize = new Dimension(Integer.MAX_VALUE, 64);
+        startBtn.setMaximumSize(rowSize);    startBtn.setPreferredSize(new Dimension(0, 64));
+        settingsBtn.setMaximumSize(rowSize); settingsBtn.setPreferredSize(new Dimension(0, 64));
+        quitBtn.setMaximumSize(rowSize);     quitBtn.setPreferredSize(new Dimension(0, 64));
 
-			startIcon = new ImageIcon(startImg);
-			startHoverIcon = new ImageIcon(startHoverImg);
+        startBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        settingsBtn.setHorizontalAlignment(SwingConstants.LEFT);
+        quitBtn.setHorizontalAlignment(SwingConstants.LEFT);
 
-			quitIcon = new ImageIcon(quitImg);
-			quitHoverIcon = new ImageIcon(quitHoverImg);
+        configureButtonSounds(startBtn,    "hover_menu", "select_menu");
+        configureButtonSounds(settingsBtn, "hover_menu", "select_menu");
+        configureButtonSounds(quitBtn,     "hover_menu", "select_menu");
 
-		} catch (Exception e) {
-			System.err.println("Error loading menu images. Check file paths in MainMenu.java");
-			e.printStackTrace();
-		}
+        startBtn.addActionListener(e    -> GameController.getInstance().showDifficultyMenu());
+        settingsBtn.addActionListener(e -> GameController.getInstance().showSettings());
+        quitBtn.addActionListener(e     -> System.exit(0));
 
-		startButton = new JButton();
+        rightCol.add(Box.createVerticalGlue());
+        rightCol.add(startBtn);
+        rightCol.add(settingsBtn);
+        rightCol.add(quitBtn);
+        rightCol.add(Box.createVerticalStrut(80));
 
-		if (startIcon != null) {
-			startButton.setIcon(startIcon);
-			startButton.setRolloverIcon(startHoverIcon);
+        // Split: 2 invisible cells + 1 menu column = rightmost 1/3
+        JPanel split = new JPanel(new GridLayout(1, 3, 0, 0));
+        split.setOpaque(false);
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(new JPanel() {{ setOpaque(false); }});
+        split.add(rightCol);
+        add(split, BorderLayout.CENTER);
+    }
 
-			startButton.setBorderPainted(false);
-			startButton.setContentAreaFilled(false);
-			startButton.setFocusPainted(false);
-			startButton.setOpaque(false);
-		} else {
-			startButton.setText("Start");
-		}
-
-		quitButton = new JButton();
-
-		if (quitIcon != null) {
-			quitButton.setIcon(quitIcon);
-			quitButton.setRolloverIcon(quitHoverIcon);
-			quitButton.setBorderPainted(false);
-			quitButton.setContentAreaFilled(false);
-			quitButton.setFocusPainted(false);
-			quitButton.setOpaque(false);
-		} else {
-			quitButton.setText("Quit");
-		}
-		
-		settingsButton = new JButton("Settings");
-		
-
-		configureButtonSounds(startButton, "hover_menu", "select_menu");
-		configureButtonSounds(quitButton, "hover_menu", "select_menu");
-
-		startButton.addActionListener(e -> {
-			GameController.getInstance().showDifficultyMenu();
-		});
-
-		quitButton.addActionListener(e -> {
-			System.exit(0);
-		});
-		
-		settingsButton.addActionListener(e -> {
-			GameController.getInstance().showSettings();
-		});
-
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-		startButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		quitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		settingsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		this.add(new Box.Filler(new Dimension(0, 100), new Dimension(0, 200), new Dimension(0, 300)));
-		this.add(startButton);
-		this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
-		this.add(quitButton);
-		this.add(new Box.Filler(new Dimension(0, 5), new Dimension(0, 20), new Dimension(0, 20)));
-		this.add(settingsButton);
-	}
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		if (backgroundImage != null) {
-			g.drawImage(backgroundImage, 0, 0, this.getWidth(), this.getHeight(), this);
-		}
-	}
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+//        if (backgroundImage != null)
+//            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+    }
 }

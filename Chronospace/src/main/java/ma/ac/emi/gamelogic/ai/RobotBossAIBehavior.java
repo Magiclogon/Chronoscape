@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.entity.BossEnnemy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
@@ -47,7 +48,9 @@ public class RobotBossAIBehavior implements AIBehavior {
     private boolean isSpawningNow = false;
     private int spawnQuantity = 3;
     
-    private static final List<String> BOSS_WEAPONS = List.of("robot_boss_machinegun", "robot_boss_spear", "robot_boss_cannon");
+    private boolean shouldSwitchWeapon;
+    private double weaponPointer; // [0, 1[
+    //private static final List<String> BOSS_WEAPONS = List.of("robot_boss_machinegun", "robot_boss_spear", "robot_boss_cannon");
 
     private double chaseSpeed = 1.0;
 
@@ -75,7 +78,8 @@ public class RobotBossAIBehavior implements AIBehavior {
         isSpawningNow = false;
 
         if (weaponSwitchTimer <= 0) {
-            switchRandomWeapon(enemy);
+            //switchRandomWeapon(enemy);
+        	switchRandomWeapon();
             weaponSwitchTimer = 5 + random.nextDouble() * 3;
         }
 
@@ -168,7 +172,7 @@ public class RobotBossAIBehavior implements AIBehavior {
         // AI speed multipliers increase
         chaseSpeed *= 1.2;
         
-        switchRandomWeapon(boss);
+        switchRandomWeapon();
 
         switch (currentPhase) {
             case PHASE_1: smoothingFactor = 0.15; break;
@@ -176,33 +180,46 @@ public class RobotBossAIBehavior implements AIBehavior {
             case PHASE_3: smoothingFactor = 0.25; break;
         }
     }
-
-    private void switchRandomWeapon(Ennemy boss) {
-        if (boss.getWeapon() != null) {
-            GameController.getInstance().removeDrawable(boss.getWeapon());
-        }
-
-        String newWeaponId = BOSS_WEAPONS.get(random.nextInt(BOSS_WEAPONS.size()));
-        WeaponItem item = WeaponItemFactory.getInstance().createWeaponItem(newWeaponId);
-        Weapon newWeapon = new Weapon(item, boss);
-        
-        List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
-        behaviors.forEach(b -> newWeapon.getBehaviors().add(b.create()));
-        newWeapon.init();
-        
-        newWeapon.setAttackObjectManager(boss.getAttackObjectManager());
-        if(newWeapon != null) GameController.getInstance().addDrawable(newWeapon);
-
-        boss.setWeapon(newWeapon);
-        newWeapon.snapTo(boss);
-        
-        
-        updateAttackRange(boss);
+    
+    private void switchRandomWeapon() {
+    	shouldSwitchWeapon = true;
+    	weaponPointer = Math.random();
     }
     
+    public boolean consumeShouldSwitchWeapon() {
+    	if(shouldSwitchWeapon) {
+    		shouldSwitchWeapon = false;
+    		return true;
+    	}
+    	return false;
+    }
+
+//    private void switchRandomWeapon(Ennemy boss) {
+//        if (boss.getActiveWeapon() != null) {
+//            GameController.getInstance().removeDrawable(boss.getActiveWeapon());
+//        }
+//
+//        String newWeaponId = BOSS_WEAPONS.get(random.nextInt(BOSS_WEAPONS.size()));
+//        WeaponItem item = WeaponItemFactory.getInstance().createWeaponItem(newWeaponId);
+//        Weapon newWeapon = new Weapon(item, boss);
+//        
+//        List<WeaponBehaviorDefinition> behaviors = ((WeaponItemDefinition) item.getItemDefinition()).getBehaviorDefinitions();
+//        behaviors.forEach(b -> newWeapon.getBehaviors().add(b.create()));
+//        newWeapon.init();
+//        
+//        newWeapon.setAttackObjectManager(boss.getAttackObjectManager());
+//        if(newWeapon != null) GameController.getInstance().addDrawable(newWeapon);
+//
+//        boss.setActiveWeapon(newWeapon);
+//        newWeapon.snapTo(boss);
+//        
+//        
+//        updateAttackRange(boss);
+//    }
+    
     private void updateAttackRange(Ennemy boss) {
-        if (boss.getWeapon() != null && boss.getWeapon().getWeaponItem() != null) {
-            WeaponItemDefinition def = (WeaponItemDefinition) boss.getWeapon().getWeaponItem().getItemDefinition();
+        if (boss.getActiveWeapon() != null && boss.getActiveWeapon().getWeaponItem() != null) {
+            WeaponItemDefinition def = (WeaponItemDefinition) boss.getActiveWeapon().getWeaponItem().getItemDefinition();
             this.attackRange = def.getRange();
         }
     }
@@ -230,6 +247,7 @@ public class RobotBossAIBehavior implements AIBehavior {
 
     @Override
     public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
+    	if(((BossEnnemy)enemy).isSwitching()) return false;
         double distance = enemy.getPos().distance(playerPos);
 
         // Standard Attack (No manual cooldown, weapon handles fire rate)

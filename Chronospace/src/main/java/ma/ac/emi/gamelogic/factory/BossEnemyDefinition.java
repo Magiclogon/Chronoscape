@@ -1,11 +1,14 @@
 package ma.ac.emi.gamelogic.factory;
 
-public class BossEnemyDefinition extends EnemyDefinition {
+import java.util.ArrayList;
+import java.util.List;
 
-	public BossEnemyDefinition(double speed, double hpMax, String weaponId, double projectileSpeedMultiplier,
+public class BossEnemyDefinition extends EnemyDefinition {
+	public List<String> weaponIds = new ArrayList<>();
+	public BossEnemyDefinition(double speed, double hpMax, String weaponId, List<String> weaponIds, double projectileSpeedMultiplier,
 			AnimationDetails animationDetails, int weaponXOffset, int weaponYOffset) {
 		super(speed, hpMax, weaponId, projectileSpeedMultiplier, animationDetails, weaponXOffset, weaponYOffset);
-		// TODO Auto-generated constructor stub
+		this.weaponIds = weaponIds;
 	}
 }
 

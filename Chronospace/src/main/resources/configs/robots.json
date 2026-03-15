@@ -231,6 +231,11 @@
 	  	"hpMax": 1000,
 	  	
 	  	"weaponId": "robot_boss_machinegun",
+	  	"weaponIds": [
+	  		"robot_boss_machinegun",
+	  		"robot_boss_cannon",
+	  		"robot_boss_spear"
+	  	],
 	  	"projectileSpeedMultiplier": 0.3,
 	  	
 	  	"animationDetails": {

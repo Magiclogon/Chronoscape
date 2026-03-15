@@ -6,6 +6,7 @@ out vec4 FragColor;
 uniform sampler2D sceneTexture;
 uniform sampler2D glowTexture;
 uniform float intensity;
+uniform float saturationBoost; // New variable: 1.0 is default, >1.0 boosts
 
 vec3 rgb2hsv(vec3 c) {
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
@@ -27,13 +28,16 @@ void main() {
     vec3 scene = texture(sceneTexture, vUV).rgb;
     vec3 glow = texture(glowTexture, vUV).rgb;
     
-    // Increase saturation of the glow
+    // Convert to HSV to manipulate saturation
     vec3 glowHSV = rgb2hsv(glow);
-    glowHSV.y = min(glowHSV.y * 2, 1.0); // Increase saturation by 50%
+    
+    // Apply the variable boost
+    glowHSV.y = clamp(glowHSV.y * saturationBoost, 0.0, 1.0); 
+    
     vec3 saturatedGlow = hsv2rgb(glowHSV);
     
     // Additive blend with intensity control
-    vec3 result = scene + saturatedGlow * intensity;
+    vec3 result = scene + (saturatedGlow * intensity);
     
     FragColor = vec4(result, 1.0);
 }
