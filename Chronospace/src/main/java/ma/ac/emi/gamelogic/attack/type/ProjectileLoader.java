@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.type;
 
 import com.google.gson.*;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.BehaviorFactory;
 import ma.ac.emi.gamelogic.attack.behavior.definition.BehaviorDefinition;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;

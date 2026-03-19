@@ -11,7 +11,7 @@ import ma.ac.emi.world.Obstacle;
 
 @Getter
 @Setter
-public class AOESpawnBehavior implements Behavior{
+public class AOESpawnBehavior implements ProjectileBehavior{
 	private String aoeId;
 	private int count;
 	private double radius;

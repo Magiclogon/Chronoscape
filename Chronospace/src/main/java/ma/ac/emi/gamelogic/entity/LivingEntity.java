@@ -18,6 +18,7 @@ import ma.ac.emi.gamelogic.entity.behavior.OnHitFlashBehavior;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.gamelogic.physics.AABB;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
@@ -45,7 +46,7 @@ public abstract class LivingEntity extends Entity {
 	protected double baseHPMax;
 	protected double baseSpeed;
 	protected double strength;
-	protected double baseStrength;
+	protected double baseStrength = 1;
 	protected double regenerationSpeed;
 	protected double speed;
 	protected double projectileSpeedMultiplier = 1;
@@ -256,11 +257,34 @@ public abstract class LivingEntity extends Entity {
 	public void addInvincibilityFlashingEffect(double duration, double flashingFrequency) {
 		addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
 	}
+
+
+	public void takeDamage(double amount) {
+	    double finalDamage = amount;
+
+	    if (this instanceof Player player) {
+	        if (player.getInventory() != null)
+	            finalDamage = player.getInventory().getEffectContext().fireOnDamageTaken(player, amount);
+
+	        finalDamage *= player.getDamageMultiplier();
+	    }
+
+	    double actuallyDealt = Math.min(finalDamage, getHp());
+	    setHp(Math.max(0, getHp() - finalDamage));
+
+	    if (getBehaviors() != null)
+	        getBehaviors().forEach(b -> b.onHit(this));
+
+	    Player player = Player.getInstance();
+	    if (!(this instanceof Player) && player.getInventory() != null && actuallyDealt > 0) {
+	        player.getInventory().getEffectContext().fireOnDamageDealt(player, this, actuallyDealt);
+	    }
+	}
 	
-//	@Override
-//	public void drawGL(GL3 gl, GLGraphics glGraphics) {
-//		if(bound != null) glGraphics.drawQuad(gl, (float) (bound.center.getX()-bound.half.getX()), (float)(bound.center.getY()-bound.half.getY()), (float)bound.half.getX() * 2, (float)bound.half.getY() * 2);
-//		super.drawGL(gl, glGraphics);
-//	}
+
+	public void heal(double healAmount) {
+		setHp(Math.min(getHpMax(), getHp()+healAmount));
+
+	}
 
 }

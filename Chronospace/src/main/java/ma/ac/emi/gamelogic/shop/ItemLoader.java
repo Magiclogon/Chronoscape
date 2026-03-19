@@ -117,9 +117,7 @@ public class ItemLoader {
                         
                         def = weaponDef;
                         break;
-                    case "statModifier":
-                        def = gson.fromJson(obj, StatModifierItemDefinition.class);
-                        break;
+                        
                     case "upgrade":
                         def = gson.fromJson(obj, UpgradeItemDefinition.class);
                         break;

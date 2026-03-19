@@ -6,7 +6,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.world.Obstacle;
 
-public class LightBehavior implements Behavior{
+public class LightBehavior implements ProjectileBehavior{
 	private double lightRadius;
 	private double r, g, b;
 	private double intensity;

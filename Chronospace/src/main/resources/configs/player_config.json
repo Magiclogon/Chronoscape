@@ -2,12 +2,12 @@
   	"pseudoname": "player",
   	"money": 10000.0,
 
-  	"baseHP": 1,
-  	"baseHPMax": 1,
+  	"baseHP": 100,
+  	"baseHPMax": 100,
   	"baseSpeed": 200,
-  	"baseStrength": 10.0,
-  	"regenerationSpeed": 0.8,
-	"baseLuck": 22222,
+  	"baseStrength": 1.0,
+  	"regenerationSpeed": 0,
+	"baseLuck": 0,
   
   "startingWeaponId": "ak47",
   "animationDetails": {

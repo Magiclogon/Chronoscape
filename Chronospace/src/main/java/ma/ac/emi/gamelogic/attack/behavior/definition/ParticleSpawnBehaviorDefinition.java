@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
 import lombok.Getter;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.ParticleSpawnBehavior;
 
 @Getter
@@ -24,7 +24,7 @@ public class ParticleSpawnBehaviorDefinition extends BehaviorDefinition{
     }
 
     @Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new ParticleSpawnBehavior(particleId, count, radius, emitterRadius, ageMax, isOneTime);
     }
 

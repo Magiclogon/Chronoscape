@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.ParticleTrailBehavior;
 
 public class ParticleTrailBehaviorDefinition extends BehaviorDefinition {
@@ -14,7 +14,7 @@ public class ParticleTrailBehaviorDefinition extends BehaviorDefinition {
     }
 
     @Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new ParticleTrailBehavior(particleId, emitterRadius);
     }
 

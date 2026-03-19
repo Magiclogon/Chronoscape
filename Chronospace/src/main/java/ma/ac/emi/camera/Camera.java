@@ -1,7 +1,7 @@
 package ma.ac.emi.camera;
 
-import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +9,8 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameGLPanel;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.entity.Entity;
+import ma.ac.emi.math.Matrix4;
+import ma.ac.emi.glgraphics.Mat4;
 import ma.ac.emi.math.Vector3D;
 
 @Setter
@@ -90,6 +92,28 @@ public class Camera {
 	
 	public AffineTransform getCamTransform() {
 		return camTransform;
+	}
+	
+	public Vector3D worldToScreen(Vector3D worldPos) {
+	    float width  = GameController.getInstance().getGameGLPanel().getWidth();
+	    float height = GameController.getInstance().getGameGLPanel().getHeight();
+	 
+	    float[] projection = Mat4.ortho(-width / 2, width / 2, height / 2, -height / 2);
+	    float[] view       = getViewMatrix();
+	    float[] viewProj   = Matrix4.multiply(projection, view);
+	 
+	    AffineTransform transform = Mat4.toAffineTransform(viewProj);
+	 
+	    // Forward transform: world → clip space
+	    Point2D.Double worldPoint  = new Point2D.Double(worldPos.getX(), worldPos.getY());
+	    Point2D.Double clipPoint   = new Point2D.Double();
+	    transform.transform(worldPoint, clipPoint);
+	 
+	    // clip → screen  (inverse of the clip→NDC step in calculateMouseWorldPos)
+	    double screenX = (clipPoint.x + 0.5) * width;
+	    double screenY = (0.5 - clipPoint.y) * height;
+	 
+	    return new Vector3D(screenX, screenY);
 	}
 	
 	public float[] getViewMatrix() {

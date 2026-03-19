@@ -11,7 +11,7 @@ import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
-public class onHitParticleBehavior implements Behavior{
+public class onHitParticleBehavior implements ProjectileBehavior{
 	protected String enemyParticleId;
 	protected String obstacleParticleId;
 	protected double emitterRadius;

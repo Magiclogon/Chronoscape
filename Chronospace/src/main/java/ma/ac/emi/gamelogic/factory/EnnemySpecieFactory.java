@@ -102,7 +102,7 @@ public abstract class EnnemySpecieFactory implements DifficultyObserver {
 
 		enemy.setHpMax(enemy.getHpMax() * currentDifficulty.getEnemyHpMultiplier());
 		enemy.setHp(enemy.getHpMax());
-		enemy.setDamage(enemy.getDamage() * currentDifficulty.getEnemyDamageMultiplier());
+		enemy.setStrength(enemy.getStrength() * currentDifficulty.getEnemyDamageMultiplier());
 		enemy.setSpeed(enemy.getSpeed() * currentDifficulty.getEnemySpeedMultiplier());
 	}
 

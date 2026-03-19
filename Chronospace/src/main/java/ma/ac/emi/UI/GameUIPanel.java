@@ -63,6 +63,10 @@ public class GameUIPanel extends JPanel {
 		g2.drawString(fps, panelWidth - 100, panelHeight - 8);
 
 		drawBossHud(g2, getWidth(), getHeight());
+
+		// Floating text (dodge, damage numbers, etc.)
+		if (GameController.getInstance().getCamera() != null)
+			FloatingTextRenderer.render(g2, GameController.getInstance().getCamera(), panelWidth, panelHeight);
 	}
 
 

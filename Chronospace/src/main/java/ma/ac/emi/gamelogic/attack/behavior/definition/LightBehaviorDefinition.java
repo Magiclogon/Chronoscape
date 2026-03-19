@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.LightBehavior;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 
@@ -19,7 +19,7 @@ public class LightBehaviorDefinition extends BehaviorDefinition{
 	
 	
 	@Override
-	public Behavior create() {
+	public ProjectileBehavior create() {
 		return new LightBehavior(lightRadius, r, g, b, intensity);
 	}
 

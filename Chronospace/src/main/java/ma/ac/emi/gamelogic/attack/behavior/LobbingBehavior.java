@@ -5,7 +5,7 @@ import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
-public class LobbingBehavior implements Behavior{
+public class LobbingBehavior implements ProjectileBehavior{
 	private double g;
 	private double scale;
 	private Vector3D v;

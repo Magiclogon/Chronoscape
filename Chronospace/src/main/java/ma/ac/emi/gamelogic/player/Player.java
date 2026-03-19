@@ -12,6 +12,7 @@ import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
@@ -39,6 +40,9 @@ public class Player extends LivingEntity {
 	private double money;
 	private double baseLuck;
 	private double luck;
+	private double defense;
+	private double dodge = 0.0;
+	
 	private Gender gender;
 	private Inventory inventory;
 	private Weapon[] equippedWeapons;
@@ -130,10 +134,12 @@ public class Player extends LivingEntity {
 		baseHP = 100;
 		baseHPMax = 100;
 		baseSpeed = 200;
+		defense = 1;
 
 		hp = 100;
 		money = 10000;
 		luck = baseLuck;
+		
 		weaponIndex = 0;
 		
 		weaponXOffset = 9;
@@ -188,6 +194,11 @@ public class Player extends LivingEntity {
 	    this.speed = baseSpeed;
 	    this.strength = baseStrength;
 		this.luck = baseLuck;
+		this.dodge = 1.0;
+	}
+	
+	public double getDamageMultiplier() {
+	    return 100.0 / (100.0 + this.defense);
 	}
 	
 	public void initWeapons() {
@@ -228,6 +239,7 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
+		applyRegen(step);
 		
 		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
 		
@@ -290,6 +302,10 @@ public class Player extends LivingEntity {
 			activeWeapon.update(step);
 		}
 		
+		if (getInventory() != null) {
+            getInventory().getEffectContext().fireOnTick(this, step);
+        }
+		
 		if(switching) {
 			switchWeapons();
 		}
@@ -301,6 +317,8 @@ public class Player extends LivingEntity {
 		stateMachine.update(step);
 		
 		getLight().setPosition(getPos());
+		
+		FloatingTextManager.getInstance().update(step);
 
 		super.update(step);
 
@@ -332,7 +350,14 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void attack(Vector3D target, double step) {
-		if(activeWeapon != null) this.activeWeapon.attack(target, step);
+		if(activeWeapon != null) {
+			this.activeWeapon.attack(target, step);
+			
+			// Hook: On Attack (Lifesteal, Multishot, Explosive rounds)
+            if (getInventory() != null) {
+                getInventory().getEffectContext().fireOnAttack(this, activeWeapon);
+            }
+		}
 	}
 	
 
@@ -386,5 +411,9 @@ public class Player extends LivingEntity {
 		}
 	}
 	
+	public void applyRegen(double step) {
+		heal(getRegenerationSpeed() * step);
+	}
+
 
 }
