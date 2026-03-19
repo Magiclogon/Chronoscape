@@ -5,7 +5,7 @@ import java.util.List;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.Projectile;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -18,7 +18,7 @@ public class ProjectileFactory {
 	}
 	
 	public static Projectile createProjectile(String id, Vector3D pos, Vector3D dir, double speed,
-			Weapon weapon, Vector3D target, List<Behavior> additionalBehaviors, AttackObjectManager manager) {
+			Weapon weapon, Vector3D target, List<ProjectileBehavior> additionalBehaviors, AttackObjectManager manager) {
 		ProjectileDefinition def = ProjectileLoader.getInstance().get(id);
 		if (def == null) {
 			throw new IllegalArgumentException("Unknown projectile id: " + id);

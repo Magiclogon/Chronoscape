@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
 import ma.ac.emi.gamelogic.attack.behavior.AOESpawnBehavior;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 
 public class AOESpawnBehaviorDefinition extends BehaviorDefinition {
 
@@ -16,7 +16,7 @@ public class AOESpawnBehaviorDefinition extends BehaviorDefinition {
     }
 
     @Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new AOESpawnBehavior(aoeId, count, radius);
     }
 }

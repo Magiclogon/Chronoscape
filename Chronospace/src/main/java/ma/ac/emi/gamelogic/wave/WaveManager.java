@@ -136,6 +136,7 @@ public class WaveManager implements DifficultyObserver {
             Wave wave = waves.get(currentWaveNumber);
 
             // apply difficulty
+            wave.onStart();
             wave.applyDifficulty(currentDifficulty);
             wave.spawn();
 
@@ -153,6 +154,10 @@ public class WaveManager implements DifficultyObserver {
 
     private void onWaveCompleted() {
         System.out.println("Wave " + currentWaveNumber + " completed");
+        
+        Wave currentWave = getCurrentWave();
+        currentWave.onCompleted();
+        
         if (currentWaveNumber >= waves.size()) {
             state = WaveState.COMPLETED;
             GameController.getInstance().showShop();

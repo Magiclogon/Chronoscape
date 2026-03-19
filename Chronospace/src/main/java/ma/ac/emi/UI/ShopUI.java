@@ -12,6 +12,7 @@ import ma.ac.emi.UI.shopElements.InventoryScrollable;
 import ma.ac.emi.UI.shopElements.ShopItemButton;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.gamelogic.shop.ShopItem;
 import ma.ac.emi.gamelogic.shop.ShopManager;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
@@ -30,6 +31,7 @@ public class ShopUI extends JPanel {
     private JLabel moneyLabel;
     private JPanel heroPanel, shopPanel, bagPanel;
     private JPanel availableItemsGrid, statsContainer, detailsContainer;
+    private JPanel equippedFooter;
     private InventoryScrollable weaponPane, statItemsPane;
     private RetroButton nextWaveButton, rerollButton;
 
@@ -43,10 +45,29 @@ public class ShopUI extends JPanel {
         contentGrid.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         heroPanel = createSectionPanel("HERO STATUS");
+
+        // Scrollable stats area (player stats + weapon bonuses)
         statsContainer = new JPanel();
         statsContainer.setLayout(new BoxLayout(statsContainer, BoxLayout.Y_AXIS));
         statsContainer.setBackground(MenuStyle.BG_PANEL);
-        heroPanel.add(statsContainer, BorderLayout.CENTER);
+
+        JScrollPane statsScroll = new JScrollPane(statsContainer);
+        statsScroll.setBackground(MenuStyle.BG_PANEL);
+        statsScroll.getViewport().setBackground(MenuStyle.BG_PANEL);
+        statsScroll.setBorder(null);
+        statsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollBar statsVBar = new ma.ac.emi.UI.component.RetroScrollBar(JScrollBar.VERTICAL);
+        statsVBar.setPreferredSize(new Dimension(10, 0));
+        statsVBar.setUnitIncrement(20);
+        statsScroll.setVerticalScrollBar(statsVBar);
+
+        // Fixed equipped loadout footer — always visible at the bottom
+        equippedFooter = new JPanel(new BorderLayout());
+        equippedFooter.setBackground(MenuStyle.BG_PANEL);
+        equippedFooter.setBorder(new EmptyBorder(8, 0, 0, 0));
+
+        heroPanel.add(statsScroll,    BorderLayout.CENTER);
+        heroPanel.add(equippedFooter, BorderLayout.SOUTH);
 
         shopPanel = createSectionPanel("MERCHANT");
         availableItemsGrid = new JPanel(new GridLayout(2, 2, 8, 8));
@@ -84,6 +105,7 @@ public class ShopUI extends JPanel {
         JScrollPane detailsScroll = new JScrollPane(detailsContainer);
         detailsScroll.getViewport().setBackground(MenuStyle.BG_PANEL);
         detailsScroll.setBorder(new LineBorder(BORDER_DIM, 1));
+        detailsScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         JScrollBar dBar = new RetroScrollBar(JScrollBar.VERTICAL);
         dBar.setPreferredSize(new Dimension(12, 0));
         detailsScroll.setVerticalScrollBar(dBar);
@@ -98,8 +120,8 @@ public class ShopUI extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 5, 0, 5);
-        gbc.gridx = 0; gbc.weightx = 0.2; contentGrid.add(heroPanel, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.5; contentGrid.add(shopPanel, gbc);
+        gbc.gridx = 0; gbc.weightx = 0.22; contentGrid.add(heroPanel, gbc);
+        gbc.gridx = 1; gbc.weightx = 0.48; contentGrid.add(shopPanel, gbc);
         gbc.gridx = 2; gbc.weightx = 0.3; contentGrid.add(bagPanel,  gbc);
         add(contentGrid, BorderLayout.CENTER);
     }
@@ -123,10 +145,7 @@ public class ShopUI extends JPanel {
         header.add(moneyLabel,     BorderLayout.WEST);
         header.add(nextWaveButton, BorderLayout.EAST);
 
-        JPanel sep = new JPanel();
-        sep.setPreferredSize(new Dimension(0, 2));
-        sep.setBackground(BORDER_DIM);
-        header.add(sep, BorderLayout.SOUTH);
+        
         return header;
     }
 
@@ -138,26 +157,44 @@ public class ShopUI extends JPanel {
         rerollButton.setText("REROLL (" + shop.getRerollPrice() + "$)");
 
         statsContainer.removeAll();
-        // All stats use the same neutral color — no distracting rainbow
-        statsContainer.add(createStatRow("HP",    String.format("%.0f/%.0f", player.getHp(), player.getHpMax())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("SPEED", String.format("%.0f",     player.getSpeed())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("MIGHT", String.format("%.1f",     player.getStrength())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("REGEN", String.format("%.1f/s",   player.getRegenerationSpeed())));
+
+        statsContainer.add(createStatRow("HP",       String.format("%.0f/%.0f", player.getHp(), player.getHpMax())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("SPEED",    String.format("%.0f",      player.getSpeed())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("ARMOR",  String.format("%.0f",      player.getDefense())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("REGEN",    String.format("%.1f/s",    player.getRegenerationSpeed())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("DODGE",  String.format("%.1f",      player.getDodge())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("LUCK",     String.format("%.1f",      player.getLuck())));
 
         statsContainer.add(Box.createVerticalStrut(30));
+
+        // ── Weapon bonuses — always shown ─────────────────────────────────
+        Inventory.WeaponBonusSummary wb = player.getInventory().getWeaponBonusSummary();
+
+        statsContainer.add(createBonusRow("DAMAGE",    wb.damageMul,      wb.damageAdd,      false));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createBonusRow("ATK SPEED", wb.attackSpeedMul, wb.attackSpeedAdd, false));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createBonusRow("RANGE",     wb.rangeMul,       wb.rangeAdd,       false));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createBonusRow("MAGAZINE",  wb.magazineMul,    wb.magazineAdd,    false));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createBonusRow("RELOAD",    wb.reloadDiv,      0,                 true));
+
+        // ── Equipped loadout — fixed footer, always visible ────────────────
+        equippedFooter.removeAll();
+
         JLabel equipHeader = new JLabel("EQUIPPED LOADOUT");
         equipHeader.setFont(MenuStyle.FONT_BODY);
         equipHeader.setForeground(MenuStyle.TEXT_GRAY);
         equipHeader.setAlignmentX(Component.CENTER_ALIGNMENT);
-        statsContainer.add(equipHeader);
-        statsContainer.add(Box.createVerticalStrut(10));
 
         JPanel equippedGrid = new JPanel(new GridLayout(1, 3, 5, 0));
         equippedGrid.setBackground(MenuStyle.BG_PANEL);
-        equippedGrid.setMaximumSize(new Dimension(300, 80));
         WeaponItem[] weapons = player.getInventory().getEquippedWeapons();
         for (int i = 0; i < 3; i++) {
             if (i < weapons.length && weapons[i] != null) {
@@ -170,7 +207,15 @@ public class ShopUI extends JPanel {
                 equippedGrid.add(empty);
             }
         }
-        statsContainer.add(equippedGrid);
+
+        JPanel footerInner = new JPanel();
+        footerInner.setLayout(new BoxLayout(footerInner, BoxLayout.Y_AXIS));
+        footerInner.setBackground(MenuStyle.BG_PANEL);
+        footerInner.setBorder(new EmptyBorder(0, 0, 4, 0));
+        footerInner.add(equipHeader);
+        footerInner.add(Box.createVerticalStrut(6));
+        footerInner.add(equippedGrid);
+        equippedFooter.add(footerInner, BorderLayout.CENTER);
 
         availableItemsGrid.removeAll();
         int i = 0;
@@ -204,9 +249,15 @@ public class ShopUI extends JPanel {
     public void showItemDetails(ShopItem item) {
         detailsContainer.removeAll();
 
-        JLabel nameLbl = new JLabel(item.getItemDefinition().getName().toUpperCase());
+        JTextArea nameLbl = new JTextArea(item.getItemDefinition().getName().toUpperCase());
         nameLbl.setFont(MenuStyle.FONT_HEADER);
         nameLbl.setForeground(ACCENT_GOLD);
+        nameLbl.setBackground(MenuStyle.BG_PANEL);
+        nameLbl.setLineWrap(true);
+        nameLbl.setWrapStyleWord(true);
+        nameLbl.setEditable(false);
+        nameLbl.setFocusable(false);
+        nameLbl.setBorder(null);
         nameLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel rarityLbl = new JLabel(item.getItemDefinition().getRarity().toString());
@@ -289,6 +340,20 @@ public class ShopUI extends JPanel {
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
+    private JPanel createBonusRow(String label, double mul, double add, boolean isReload) {
+        String display;
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("x%.2f", mul));
+        if (add != 0) {
+            if (sb.length() > 0) sb.append("  ");
+            sb.append(add > 0 ? String.format("+%.0f", add) : String.format("%.0f", add));
+        }
+        display = sb.toString();
+          
+        return createStatRow(label, display);
+    }
+
     private JPanel createSectionPanel(String title) {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(MenuStyle.BG_PANEL);
@@ -309,25 +374,27 @@ public class ShopUI extends JPanel {
         return sep;
     }
 
-    /** Single neutral color for all stat values — no per-stat colors. */
     private JPanel createStatRow(String label, String value) {
-        JPanel row = new JPanel(new BorderLayout());
+        JPanel row = new JPanel(new BorderLayout(6, 0));
         row.setBackground(MenuStyle.BG_PANEL);
-        row.setMaximumSize(new Dimension(300, 30));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        row.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel l = new JLabel(label);
         l.setFont(MenuStyle.FONT_BODY);
         l.setForeground(MenuStyle.TEXT_GRAY);
+        l.setPreferredSize(new Dimension(90, 20));
 
         JLabel v = new JLabel(value);
         v.setFont(MenuStyle.FONT_BODY);
-        v.setForeground(MenuStyle.TEXT_MAIN);   // uniform neutral white
+        v.setForeground(MenuStyle.TEXT_MAIN);
+        v.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        JLabel dots = new JLabel(" . . . . . . . . . . . . . . . . . . . ");
+        JLabel dots = new JLabel();
         dots.setFont(MenuStyle.FONT_SMALL);
         dots.setForeground(new Color(60, 60, 70));
         dots.setHorizontalAlignment(SwingConstants.CENTER);
-
+        // Dots fill whatever space is left — label and value get priority
         row.add(l,    BorderLayout.WEST);
         row.add(dots, BorderLayout.CENTER);
         row.add(v,    BorderLayout.EAST);

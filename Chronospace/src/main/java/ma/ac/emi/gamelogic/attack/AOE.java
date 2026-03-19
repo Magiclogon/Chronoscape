@@ -9,11 +9,14 @@ import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.UI.FloatingText;
+import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.type.AOEDefinition;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.physics.AABB;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 import ma.ac.emi.glgraphics.GLGraphics;
@@ -21,8 +24,8 @@ import ma.ac.emi.math.Vector3D;
 
 @Getter
 @Setter
-public class AOE extends AttackObject{
-	private double age, lastAge;
+public class AOE extends AttackObject {
+    private double age, lastAge;
     private double frameTimer;
 
     private int frameIndex;
@@ -39,15 +42,15 @@ public class AOE extends AttackObject{
         this.frameTimer = 0;
         this.pos.setZ(-0.01);
 
-        if(this.shadow != null) {
-        	GameController.getInstance().removeDrawable(shadow);
-        	shadow = null;
+        if (this.shadow != null) {
+            GameController.getInstance().removeDrawable(shadow);
+            shadow = null;
         }
     }
-    
+
     public void reset(AOEDefinition def, Vector3D pos, Weapon weapon) {
-    	setPos(pos);
-    	setWeapon(weapon);
+        setPos(pos);
+        setWeapon(weapon);
         this.definition = def;
 
         this.animation = AOEAnimationCache.get(def);
@@ -56,19 +59,21 @@ public class AOE extends AttackObject{
         this.lastAge = 0;
         this.frameIndex = 0;
         this.frameTimer = 0;
-        
-        this.hitbox = new AABB(pos, new Vector3D(def.getAnimationDetails().spriteWidth/2, def.getAnimationDetails().spriteHeight/2));
+
+        this.hitbox = new AABB(pos, new Vector3D(
+                def.getAnimationDetails().spriteWidth  / 2,
+                def.getAnimationDetails().spriteHeight / 2));
         this.pos.setZ(-0.01);
     }
 
     public void update(double step) {
-    	super.update(step);
-    	hitbox.center = pos;
-		lastAge = age;
+        super.update(step);
+        hitbox.center = pos;
+        lastAge = age;
         age += step;
         frameTimer += step;
 
-        double frameTime = 1.0/24;
+        double frameTime = 1.0 / 24;
         if (frameTimer >= frameTime) {
             frameTimer = 0;
             frameIndex++;
@@ -90,12 +95,10 @@ public class AOE extends AttackObject{
                 }
             }
             case FINISH -> {
-                if (frameIndex >= animation.finishFrames.length) {
+                if (frameIndex >= animation.finishFrames.length)
                     this.setActive(false);
-                }
             }
         }
-
     }
 
     public void draw(Graphics g) {
@@ -103,70 +106,72 @@ public class AOE extends AttackObject{
         if (sprite == null) return;
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(
-            sprite.getSprite(),
-            (int) (pos.getX() - definition.getAnimationDetails().spriteWidth / 2),
-            (int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
-            definition.getAnimationDetails().spriteWidth,
-            definition.getAnimationDetails().spriteHeight,
-            null
-        );
+                sprite.getSprite(),
+                (int) (pos.getX() - definition.getAnimationDetails().spriteWidth  / 2),
+                (int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
+                definition.getAnimationDetails().spriteWidth,
+                definition.getAnimationDetails().spriteHeight,
+                null);
     }
-    
+
     @Override
     public void drawGL(GL3 gl, GLGraphics glGraphics) {
-    	Sprite sprite = getCurrentSprite();
-    	if (sprite == null) return;
-    	glGraphics.drawSprite(gl, sprite.getTexture(gl),
-    			(int) (pos.getX() - definition.getAnimationDetails().spriteWidth / 2),
-    			(int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
-    			definition.getAnimationDetails().spriteWidth,
-    			definition.getAnimationDetails().spriteHeight,
-    			getColorCorrection()
-    		);
+        Sprite sprite = getCurrentSprite();
+        if (sprite == null) return;
+        glGraphics.drawSprite(gl, sprite.getTexture(gl),
+                (int) (pos.getX() - definition.getAnimationDetails().spriteWidth  / 2),
+                (int) (pos.getY() - definition.getAnimationDetails().spriteHeight / 2 - pos.getZ()),
+                definition.getAnimationDetails().spriteWidth,
+                definition.getAnimationDetails().spriteHeight,
+                getColorCorrection());
     }
-    
+
     @Override
     public Sprite getCurrentSprite() {
-    	if(phase == null) return null;
-    	if(animation == null) return null;
-    	
+        if (phase == null || animation == null) return null;
         return switch (phase) {
-            case INIT -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
-            case LOOP -> animation.loopFrames[frameIndex % animation.loopFrames.length];
+            case INIT   -> animation.initFrames[Math.min(frameIndex, animation.initFrames.length - 1)];
+            case LOOP   -> animation.loopFrames[frameIndex % animation.loopFrames.length];
             case FINISH -> animation.finishFrames[Math.min(frameIndex, animation.finishFrames.length - 1)];
         };
     }
 
-	@Override
-	public double getDrawnHeight() {
-		if(getCurrentSprite() == null) return 0;
-		return getCurrentSprite().getSprite().getHeight();
-	}
-	
+    @Override
+    public double getDrawnHeight() {
+        if (getCurrentSprite() == null) return 0;
+        return getCurrentSprite().getSprite().getHeight();
+    }
 
-	@Override
-	public void applyEffect(LivingEntity entity) {
-		double coolDown = 1/getDefinition().getEffectRate();
-		double closestInfCoolDownMultiple = Math.floor(getAge()/coolDown) * coolDown;
-		
-		if(getLastAge() <= closestInfCoolDownMultiple && getAge() >= closestInfCoolDownMultiple) {
-	    	WeaponItemDefinition definition = (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
-			if(!entity.isInvincible()) {
-				entity.setHp(Math.max(0, entity.getHp() - definition.getDamage()));
+    @Override
+    public void applyEffect(LivingEntity entity) {
+        double coolDown = 1.0 / getDefinition().getEffectRate();
+        double closestInfCoolDownMultiple = Math.floor(getAge() / coolDown) * coolDown;
 
-				double knockbackForce = definition.getKnockbackForce();
-				if(knockbackForce != 0) {
-					Vector3D kbDir = entity.getPos().sub(this.getPos()).normalize();
-					entity.applyKnockback(kbDir.mult(knockbackForce));
-				}
+        if (getLastAge() > closestInfCoolDownMultiple || getAge() < closestInfCoolDownMultiple) return;
+        if (entity.isInvincible()) return;
 
-				entity.onHit();
-			}
-		}
-		
-	}
+        if (entity instanceof Player player) {
+            double dodge = Math.max(0, Math.min(1, player.getDodge()));
+            if (dodge > 0 && Math.random() < dodge) {
+                FloatingTextManager.getInstance().spawn(
+                        "DODGED!", FloatingText.Preset.DODGED, entity.getPos());
+                player.getInventory().getEffectContext().fireOnDodge(player);
+                return;
+            }
+        }
 
-	@Override
-	public void onDesactivate() {}
+        WeaponItemDefinition def =
+                (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
 
+        entity.takeDamage(def.getDamage());
+
+        double knockbackForce = def.getKnockbackForce();
+        if (knockbackForce != 0) {
+            Vector3D kbDir = entity.getPos().sub(this.getPos()).normalize();
+            entity.applyKnockback(kbDir.mult(knockbackForce));
+        }
+    }
+
+    @Override
+    public void onDesactivate() {}
 }

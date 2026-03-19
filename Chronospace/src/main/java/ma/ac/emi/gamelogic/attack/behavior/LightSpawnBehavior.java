@@ -9,7 +9,7 @@ import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
-public class LightSpawnBehavior implements Behavior{
+public class LightSpawnBehavior implements ProjectileBehavior{
 	private double lightRadius;
 	private double ageMax;
 	private int count;

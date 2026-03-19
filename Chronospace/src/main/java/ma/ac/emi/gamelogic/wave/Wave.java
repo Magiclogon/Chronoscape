@@ -9,6 +9,7 @@ import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
@@ -126,6 +127,24 @@ public class Wave extends WaveNotifier {
 
         for(Ennemy e: enemies) {
             e.update(deltaTime, playerPos);
+        }
+    }
+    
+    public void onStart() {
+        this.spawnState = WaveSpawnState.SPAWNING;
+
+        // Hook: On Wave Start
+        Player player = Player.getInstance();
+        if (player != null && player.getInventory() != null) {
+            player.getInventory().getEffectContext().fireOnWaveStart(player);
+        }
+        
+    }
+    
+    public void onCompleted() {
+    	Player player = Player.getInstance();
+        if (player != null && player.getInventory() != null) {
+            player.getInventory().getEffectContext().fireOnWaveEnd(player);
         }
     }
 

@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.LobbingBehavior;
 
 public class LobbingBehaviorDefinition extends BehaviorDefinition{
@@ -13,7 +13,7 @@ public class LobbingBehaviorDefinition extends BehaviorDefinition{
 	}
 	
 	@Override
-	public Behavior create() {
+	public ProjectileBehavior create() {
 		return new LobbingBehavior(g, scale);
 	}
 

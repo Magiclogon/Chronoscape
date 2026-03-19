@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
 import lombok.Getter;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.ParticleSpawnBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.onHitParticleBehavior;
 import ma.ac.emi.gamelogic.particle.ParticleEmitter;
@@ -21,7 +21,7 @@ public class onHitParticleBehaviorDefinition extends BehaviorDefinition{
 		
 
     @Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new onHitParticleBehavior(enemyParticleId, ObstacleParticleId, emitterRadius);
     }
 

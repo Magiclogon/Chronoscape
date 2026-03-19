@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
 import lombok.Getter;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.LightSpawnBehavior;
 
 @Getter
@@ -22,7 +22,7 @@ public class LightSpawnBehaviorDefinition extends BehaviorDefinition{
 	}
 	
 	@Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new LightSpawnBehavior(getCount(), getRadius(), getLightRadius(), getAgeMax(), getIntensity());
     }
 

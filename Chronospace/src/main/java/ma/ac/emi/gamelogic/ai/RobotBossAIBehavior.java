@@ -166,7 +166,7 @@ public class RobotBossAIBehavior implements AIBehavior {
 
     private void onPhaseChange(Ennemy boss) {
         // Stats increase
-        boss.setDamage(boss.getDamage() * 1.7);
+        boss.setStrength(boss.getStrength() * 1.7);
         boss.setSpeed(boss.getSpeed() * 1.3);
         
         // AI speed multipliers increase

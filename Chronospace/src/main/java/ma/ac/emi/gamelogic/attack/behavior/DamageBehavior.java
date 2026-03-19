@@ -1,60 +1,58 @@
 package ma.ac.emi.gamelogic.attack.behavior;
 
+import ma.ac.emi.UI.FloatingText;
+import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.gamelogic.attack.Projectile;
-import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
-public class DamageBehavior implements Behavior{
-	private boolean destroyOnHit;
-	
-	public DamageBehavior(boolean destroyOnHit) {
-		this.destroyOnHit = destroyOnHit;
-	}
-	@Override
-	public void onUpdate(Projectile p, double step) {
-		// TODO Auto-generated method stub
-		
-	}
+public class DamageBehavior implements ProjectileBehavior {
 
-	@Override
-	public void onHit(Projectile p, LivingEntity entity) {
-		if(entity == null) return;
-		WeaponItemDefinition definition = (WeaponItemDefinition) p.getWeapon().getWeaponItem().getItemDefinition();
-		if(!entity.isInvincible()) {
-			double damage = definition.getDamage();
-			if (p.getWeapon().getBearer() instanceof Ennemy) {
-				damage *= ((Ennemy) p.getWeapon().getBearer()).getDamage();
-			}
-			entity.setHp(Math.max(0, entity.getHp() - damage));
-			System.out.println("Target hit, damage: " + damage + ", remaining hp: " + entity.getHp());
+    private boolean destroyOnHit;
 
-			double knockback = definition.getKnockbackForce();
-			if(knockback != 0) {
-				Vector3D kbDir = p.getVelocity().normalize();
-				entity.applyKnockback(kbDir.mult(knockback));
-			}
+    public DamageBehavior(boolean destroyOnHit) {
+        this.destroyOnHit = destroyOnHit;
+    }
 
-			entity.onHit();
-		}
-	}
+    @Override
+    public void onHit(Projectile p, LivingEntity entity) {
+        if (entity == null) return;
+        if (entity.isInvincible()) return;
 
-	@Override
-	public void onDesactivate(Projectile p) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onInit(Projectile p) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void onHit(Projectile p, Obstacle obstacle) {
-		// TODO Auto-generated method stub
-		
-	}
+        if (entity instanceof Player player) {
+            if (rollDodge(player)) {
+                FloatingTextManager.getInstance().spawn(
+                        "DODGED!", FloatingText.Preset.DODGED, entity.getPos());
+                player.getInventory().getEffectContext().fireOnDodge(player);
+                return; 
+            }
+        }
 
+        WeaponItemDefinition definition =
+                (WeaponItemDefinition) p.getWeapon().getWeaponItem().getItemDefinition();
+
+        double damage = definition.getDamage();
+        damage *= p.getWeapon().getBearer().getStrength();
+        entity.takeDamage(damage);
+        System.out.println("Target hit, damage: " + damage + ", remaining hp: " + entity.getHp());
+
+        double knockback = definition.getKnockbackForce();
+        if (knockback != 0) {
+            Vector3D kbDir = p.getVelocity().normalize();
+            entity.applyKnockback(kbDir.mult(knockback));
+        }
+    }
+
+    private boolean rollDodge(Player player) {
+        double dodge = Math.max(0, Math.min(1, player.getDodge()));
+        return dodge > 0 && Math.random() < dodge;
+    }
+
+    @Override public void onUpdate(Projectile p, double step) {}
+    @Override public void onInit(Projectile p) {}
+    @Override public void onDesactivate(Projectile p) {}
+    @Override public void onHit(Projectile p, Obstacle obstacle) {}
 }

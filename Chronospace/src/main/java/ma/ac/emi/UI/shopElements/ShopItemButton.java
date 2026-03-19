@@ -130,11 +130,7 @@ public class ShopItemButton extends JButton {
         int maxStatW = w - PADDING * 2;
         for (String line : statLines) {
             if (line.isBlank()) continue;
-            String t = line.trim();
-            g2.setColor(t.startsWith("+") ? STAT_POSITIVE
-                      : t.startsWith("-") ? STAT_NEGATIVE
-                      : STAT_NEUTRAL);
-            statY += drawWrappedString(g2, t, PADDING, statY, maxStatW);
+            statY += drawColoredStatLine(g2, line.trim(), PADDING, statY, maxStatW);
         }
 
         // Price bar
@@ -166,6 +162,38 @@ public class ShopItemButton extends JButton {
         g2.drawRoundRect(1, 1, w - 3, h - 3, 12, 12);
 
         g2.dispose();
+    }
+    
+    private int drawColoredStatLine(Graphics2D g2, String text, int x, int y, int maxWidth) {
+        FontMetrics fm = g2.getFontMetrics();
+        int currentX = x;
+        
+        // Split by spaces to handle wrapping and individual word coloring
+        String[] words = text.split(" ");
+        
+        for (String word : words) {
+            int wordWidth = fm.stringWidth(word + " ");
+            
+            // Check for wrapping
+            if (currentX + wordWidth > x + maxWidth) {
+                currentX = x;
+                y += fm.getHeight();
+            }
+
+            // Check if word starts with a value indicator (+, -, or a digit)
+            if (word.matches("^[\\+\\-\\d].*")) {
+                g2.setColor(word.startsWith("+") ? STAT_POSITIVE 
+                          : word.startsWith("-") ? STAT_NEGATIVE 
+                          : Color.WHITE);
+            } else {
+                g2.setColor(STAT_NEUTRAL);
+            }
+
+            g2.drawString(word + " ", currentX, y);
+            currentX += wordWidth;
+        }
+        
+        return fm.getHeight(); // Return height of one line (assuming simple stats)
     }
 
     private int drawWrappedString(Graphics2D g2, String text, int x, int y, int maxWidth) {

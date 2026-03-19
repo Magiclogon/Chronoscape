@@ -4,7 +4,7 @@ import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.world.Obstacle;
 
-public interface Behavior {
+public interface ProjectileBehavior {
 	void onInit(Projectile p);
 	void onUpdate(Projectile p, double step);
 	void onHit(Projectile p, LivingEntity entity);

@@ -15,6 +15,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.ai.AIBehavior;
 import ma.ac.emi.gamelogic.factory.EnemyDefinition;
 import ma.ac.emi.gamelogic.physics.AABB;
+import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
@@ -28,7 +29,6 @@ import ma.ac.emi.math.Vector3D;
 @Getter
 public abstract class Ennemy extends LivingEntity {
 
-	protected double damage;
 	protected Weapon activeWeapon;
 	protected AIBehavior aiBehavior;
 	protected EnemyDefinition definition;
@@ -62,8 +62,7 @@ public abstract class Ennemy extends LivingEntity {
 		this.speed = definition.getSpeed();
 		this.hpMax = definition.getHpMax();
 		this.projectileSpeedMultiplier = definition.getProjectileSpeedMultiplier();
-		this.damage = 1.0;
-		
+		this.strength = baseStrength;
 		this.hp = hpMax;
 	}
 
@@ -169,6 +168,13 @@ public abstract class Ennemy extends LivingEntity {
 			super.update(step);
 			return;
 		}
+		
+		if (this.getHp() <= 0 && !this.isDying()) {
+            Player player = Player.getInstance();
+            if (player != null && player.getInventory() != null) {
+                player.getInventory().getEffectContext().fireOnKill(player, this);
+            }
+        }
 
 		if(getHp() <= 0) {
 			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);

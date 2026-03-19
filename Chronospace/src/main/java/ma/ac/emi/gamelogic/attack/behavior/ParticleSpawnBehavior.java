@@ -11,7 +11,7 @@ import ma.ac.emi.gamelogic.particle.lifecycle.OneTimeStrategy;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.world.Obstacle;
 
-public class ParticleSpawnBehavior implements Behavior{
+public class ParticleSpawnBehavior implements ProjectileBehavior{
 	protected String particleId;
 	protected int count;
 	protected double radius;

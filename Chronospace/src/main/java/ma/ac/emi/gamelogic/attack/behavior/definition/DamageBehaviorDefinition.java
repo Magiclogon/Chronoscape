@@ -1,6 +1,6 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.DamageBehavior;
 
 public class DamageBehaviorDefinition extends BehaviorDefinition {
@@ -12,7 +12,7 @@ public class DamageBehaviorDefinition extends BehaviorDefinition {
     }
 
     @Override
-    public Behavior create() {
+    public ProjectileBehavior create() {
         return new DamageBehavior(destroyOnHit);
     }
 }

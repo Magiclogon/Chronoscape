@@ -6,7 +6,7 @@ import ma.ac.emi.gamelogic.particle.ParticleEmitter;
 import ma.ac.emi.gamelogic.particle.lifecycle.UndeterminedStrategy;
 import ma.ac.emi.world.Obstacle;
 
-public class ParticleTrailBehavior implements Behavior{
+public class ParticleTrailBehavior implements ProjectileBehavior{
 	private String particleId;
 	private ParticleEmitter emitter;
 	private double emitterRadius;

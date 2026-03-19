@@ -15,7 +15,7 @@ import lombok.Setter;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.gamecontrol.GameController;
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.behavior.LobbingBehavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileDefinition;
 import ma.ac.emi.gamelogic.entity.Entity;
@@ -37,7 +37,7 @@ import ma.ac.emi.world.World;
 @Setter
 public class Projectile extends AttackObject{
 	private Vector3D startingPos;
-	private List<Behavior> behaviors = new ArrayList<>();
+	private List<ProjectileBehavior> behaviors = new ArrayList<>();
     private double radius = 2;
     private Sprite sprite;
     
@@ -171,11 +171,11 @@ public class Projectile extends AttackObject{
 		behaviors.forEach(b -> b.onDesactivate(this));
 	}
 	
-	public void addBehavior(Behavior behavior) {
+	public void addBehavior(ProjectileBehavior behavior) {
 		behaviors.add(behavior);
 	}
 	
-	public void removeBehavior(Behavior behavior) {
+	public void removeBehavior(ProjectileBehavior behavior) {
 		behaviors.remove(behavior);
 	}
 	

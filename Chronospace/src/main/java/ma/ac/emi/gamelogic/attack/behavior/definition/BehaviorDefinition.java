@@ -1,7 +1,7 @@
 package ma.ac.emi.gamelogic.attack.behavior.definition;
 
-import ma.ac.emi.gamelogic.attack.behavior.Behavior;
+import ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior;
 
 public abstract class BehaviorDefinition {
-	public abstract Behavior create();
+	public abstract ProjectileBehavior create();
 }
