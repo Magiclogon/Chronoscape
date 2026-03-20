@@ -10,6 +10,7 @@ import ma.ac.emi.gamelogic.weapon.LobbedStrategy;
 import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 import ma.ac.emi.gamelogic.weapon.RangeStrategy;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
+import ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.entitypost.config.PostProcessingDetails;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
@@ -45,13 +46,40 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     @Override
     public String getStatsDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Weapon Stats:\n");
-        sb.append("	Damage: ").append(String.format("%.1f", damage)).append("\n");
-        sb.append("	Range: ").append(String.format("%.1f", range)).append("\n");
-        sb.append("	Attack Speed: ").append(String.format("%.2f", attackSpeed)).append("/s\n");
-        sb.append("	Magazine Size: ").append(magazineSize).append("\n");
-        sb.append("	Reload Time: ").append(String.format("%.2f", reloadingTime)).append("s\n");
-        return sb.toString();
+
+        // Flavor description — separated from stats by sentinel
+        sb.append(getDescription()).append("\n---\n");
+
+        // Core stats
+        sb.append("DMG ").append(String.format("%.0f", damage));
+        sb.append("  SPD ").append(String.format("%.1f", attackSpeed)).append("/s");
+        sb.append("  RNG ").append(String.format("%.0f", range)).append("\n");
+        if (magazineSize > 0)
+            sb.append("MAG ").append(magazineSize)
+              .append("  RELOAD ").append(String.format("%.1f", reloadingTime)).append("s\n");
+
+        // Passive effects
+        boolean hasPassive = behaviorDefinitions.stream().anyMatch(
+                b -> b instanceof PassiveWeaponEffectDefinition
+                  || b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition);
+
+        if (hasPassive) {
+            sb.append("PASSIVE WHEN IN USE\n");
+            for (WeaponBehaviorDefinition def : behaviorDefinitions) {
+                String line = describePassive(def);
+                if (line != null) sb.append("INDENT:").append(line).append("\n");
+            }
+        }
+
+        return sb.toString().trim();
+    }
+
+    private String describePassive(WeaponBehaviorDefinition def) {
+        if (def instanceof PassiveWeaponEffectDefinition p)
+            return p.describe();
+        if (def instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition p)
+            return p.describe();
+        return null;
     }
 
     public WeaponItemDefinition(WeaponItemDefinition other) {

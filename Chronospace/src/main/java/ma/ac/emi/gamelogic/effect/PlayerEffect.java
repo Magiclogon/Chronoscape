@@ -31,11 +31,19 @@ public interface PlayerEffect {
   
     default void onKill(Player player, LivingEntity killed) {}
 
+    default double onDamageTaken(Player player, double damage, LivingEntity attacker) {
+        return onDamageTaken(player, damage);
+    }
+    
     default double onDamageTaken(Player player, double damage) { return damage; }
  
     default void onAttack(Player player, Weapon weapon) {}
 
     default void onDamageDealt(Player player, LivingEntity target, double damageDealt) {}
+
+    default void onDamageApplied(Player player) {}
+
+    default void onHeal(Player player, double requested, double gained) {}
     
     default void onDodge(Player player) {}
 

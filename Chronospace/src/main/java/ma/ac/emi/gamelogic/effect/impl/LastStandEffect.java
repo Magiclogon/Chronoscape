@@ -12,14 +12,14 @@ import ma.ac.emi.gamelogic.player.Player;
  */
 public class LastStandEffect implements PlayerEffect {
 
-    private static final double HP_THRESHOLD    = 0.5;  // 50% HP
-    private static final double DAMAGE_REDUCTION = 0.8; // 20% reduction
+    private double hpThreshhold    = 0.5;  // 50% HP
+    private double damageReduction = 0.8; // 20% reduction
 
     @Override
     public double onDamageTaken(Player player, double damage) {
         if (player.getHpMax() > 0 &&
-            player.getHp() / player.getHpMax() < HP_THRESHOLD) {
-            return damage * DAMAGE_REDUCTION;
+            player.getHp() / player.getHpMax() < hpThreshhold) {
+            return damage * damageReduction;
         }
         return damage;
     }

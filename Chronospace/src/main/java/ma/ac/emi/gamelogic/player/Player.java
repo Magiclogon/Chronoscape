@@ -134,7 +134,7 @@ public class Player extends LivingEntity {
 		baseHP = 100;
 		baseHPMax = 100;
 		baseSpeed = 200;
-		defense = 1;
+		defense = 0;
 
 		hp = 100;
 		money = 10000;
@@ -179,7 +179,7 @@ public class Player extends LivingEntity {
 	    this.baseHPMax = cfg.baseHPMax;
 	    this.baseSpeed = cfg.baseSpeed;
 	    this.baseStrength = cfg.baseStrength;
-	    this.regenerationSpeed = cfg.regenerationSpeed;
+	    this.baseRegenerationSpeed = cfg.baseRegenerationSpeed;
 		this.baseLuck = cfg.baseLuck;
 	    
 	    // Initialize current stats from base stats
@@ -193,8 +193,9 @@ public class Player extends LivingEntity {
 		this.hpMax = baseHPMax;
 	    this.speed = baseSpeed;
 	    this.strength = baseStrength;
+	    this.regenerationSpeed = baseRegenerationSpeed;
 		this.luck = baseLuck;
-		this.dodge = 1.0;
+		this.dodge = 0.0;
 	}
 	
 	public double getDamageMultiplier() {
@@ -239,7 +240,6 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
-		applyRegen(step);
 		
 		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
 		
@@ -264,6 +264,8 @@ public class Player extends LivingEntity {
 			stateMachine.update(step);
 			return;
 		}
+		
+		applyRegen(step);
 				
 		if(MouseHandler.getInstance().isMouseDown()) {
 			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
@@ -409,6 +411,16 @@ public class Player extends LivingEntity {
 		if(activeWeapon != null) {
 			activeWeapon.addInvincibilityFlashingEffect(duration, flashingFrequency);
 		}
+	}
+	
+	public void heal(double amount) {
+		if (amount <= 0) return;
+		double before  = getHp();
+		setHp(Math.min(getHpMax(), before + amount));
+		double gained  = getHp() - before;
+
+		if (getInventory() != null)
+			getInventory().getEffectContext().fireOnHeal(this, amount, gained);
 	}
 	
 	public void applyRegen(double step) {

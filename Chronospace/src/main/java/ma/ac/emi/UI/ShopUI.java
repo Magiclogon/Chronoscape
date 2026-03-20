@@ -120,8 +120,8 @@ public class ShopUI extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 5, 0, 5);
-        gbc.gridx = 0; gbc.weightx = 0.22; contentGrid.add(heroPanel, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.48; contentGrid.add(shopPanel, gbc);
+        gbc.gridx = 0; gbc.weightx = 0.2; contentGrid.add(heroPanel, gbc);
+        gbc.gridx = 1; gbc.weightx = 0.5; contentGrid.add(shopPanel, gbc);
         gbc.gridx = 2; gbc.weightx = 0.3; contentGrid.add(bagPanel,  gbc);
         add(contentGrid, BorderLayout.CENTER);
     }
@@ -159,21 +159,28 @@ public class ShopUI extends JPanel {
         statsContainer.removeAll();
 
         statsContainer.add(createStatRow("HP",       String.format("%.0f/%.0f", player.getHp(), player.getHpMax())));
-        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(Box.createVerticalStrut(10));
         statsContainer.add(createStatRow("SPEED",    String.format("%.0f",      player.getSpeed())));
-        statsContainer.add(Box.createVerticalStrut(6));
-        statsContainer.add(createStatRow("ARMOR",  String.format("%.0f",      player.getDefense())));
-        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(createStatRow("STRENGTH", String.format("%.1f",      player.getStrength())));
+        statsContainer.add(Box.createVerticalStrut(10));
         statsContainer.add(createStatRow("REGEN",    String.format("%.1f/s",    player.getRegenerationSpeed())));
-        statsContainer.add(Box.createVerticalStrut(6));
-        statsContainer.add(createStatRow("DODGE",  String.format("%.1f",      player.getDodge())));
-        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(createStatRow("DEFENSE",  String.format("%.0f",      player.getDefense())));
+        statsContainer.add(Box.createVerticalStrut(10));
         statsContainer.add(createStatRow("LUCK",     String.format("%.1f",      player.getLuck())));
 
         statsContainer.add(Box.createVerticalStrut(30));
 
         // ── Weapon bonuses — always shown ─────────────────────────────────
         Inventory.WeaponBonusSummary wb = player.getInventory().getWeaponBonusSummary();
+
+        JLabel weaponHeader = new JLabel("WEAPON BONUSES");
+        weaponHeader.setFont(MenuStyle.FONT_BODY);
+        weaponHeader.setForeground(MenuStyle.TEXT_GRAY);
+        weaponHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
+        statsContainer.add(weaponHeader);
+        statsContainer.add(Box.createVerticalStrut(8));
 
         statsContainer.add(createBonusRow("DAMAGE",    wb.damageMul,      wb.damageAdd,      false));
         statsContainer.add(Box.createVerticalStrut(6));
@@ -342,15 +349,22 @@ public class ShopUI extends JPanel {
 
     private JPanel createBonusRow(String label, double mul, double add, boolean isReload) {
         String display;
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("x%.2f", mul));
-        if (add != 0) {
-            if (sb.length() > 0) sb.append("  ");
-            sb.append(add > 0 ? String.format("+%.0f", add) : String.format("%.0f", add));
+        if (isReload) {
+            // reloadDiv is a bonus fraction: 0 = no bonus, 0.08 = 8% faster
+            display = mul == 0.0 ? "--" : String.format("+%.0f%% faster", mul * 100);
+        } else {
+            if (mul == 1.0 && add == 0) {
+                display = "--";
+            } else {
+                StringBuilder sb = new StringBuilder();
+                if (mul != 1.0) sb.append(String.format("x%.2f", mul));
+                if (add != 0) {
+                    if (sb.length() > 0) sb.append("  ");
+                    sb.append(add > 0 ? String.format("+%.0f", add) : String.format("%.0f", add));
+                }
+                display = sb.toString();
+            }
         }
-        display = sb.toString();
-          
         return createStatRow(label, display);
     }
 

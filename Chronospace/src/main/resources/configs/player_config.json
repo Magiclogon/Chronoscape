@@ -6,7 +6,7 @@
   	"baseHPMax": 100,
   	"baseSpeed": 200,
   	"baseStrength": 1.0,
-  	"regenerationSpeed": 0,
+  	"baseRegenerationSpeed": 2,
 	"baseLuck": 0,
   
   "startingWeaponId": "ak47",

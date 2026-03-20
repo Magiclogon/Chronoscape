@@ -21,7 +21,7 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable {
 
     public enum UpgradeType  { WEAPON, PLAYER }
     public enum WeaponStat   { DAMAGE, ATTACK_SPEED, RANGE, MAGAZINE_SIZE, RELOAD_TIME }
-    public enum PlayerStat   { MAX_HEALTH, MOVEMENT_SPEED, DEFENSE, HEALTH_REGEN, LUCK }
+    public enum PlayerStat   { MAX_HEALTH, MOVEMENT_SPEED, DEFENSE, HEALTH_REGEN, DODGE, LUCK }
     public enum OperationType { MULTIPLY, ADD, DIVIDE }
 
 
@@ -48,6 +48,7 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable {
     public UpgradeItemDefinition() {
         super();
         this.modifications = new ArrayList<>();
+        this.stackable = true;
     }
 
     public UpgradeItemDefinition(UpgradeItemDefinition other) {
@@ -57,6 +58,7 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable {
         this.setBasePrice(other.getBasePrice());
         this.setIconPath(other.getIconPath());
         this.setRarity(other.getRarity());
+        this.setStackable(other.isStackable());
         this.effectClass   = other.effectClass;
         this.effectParams  = other.effectParams;
         this.modifications = new ArrayList<>();

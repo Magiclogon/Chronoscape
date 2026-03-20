@@ -14,7 +14,7 @@ public class PlayerConfig {
     public double baseHPMax;
     public double baseSpeed;
     public double baseStrength;
-    public double regenerationSpeed;
+    public double baseRegenerationSpeed;
     public double baseLuck;
 
     public String startingWeaponId;

@@ -27,7 +27,7 @@ public class DamageBehavior implements ProjectileBehavior {
                 FloatingTextManager.getInstance().spawn(
                         "DODGED!", FloatingText.Preset.DODGED, entity.getPos());
                 player.getInventory().getEffectContext().fireOnDodge(player);
-                return; 
+                return;
             }
         }
 
@@ -36,7 +36,7 @@ public class DamageBehavior implements ProjectileBehavior {
 
         double damage = definition.getDamage();
         damage *= p.getWeapon().getBearer().getStrength();
-        entity.takeDamage(damage);
+        entity.takeDamage(damage, p.getWeapon().getBearer());
         System.out.println("Target hit, damage: " + damage + ", remaining hp: " + entity.getHp());
 
         double knockback = definition.getKnockbackForce();
@@ -46,6 +46,7 @@ public class DamageBehavior implements ProjectileBehavior {
         }
     }
 
+   
     private boolean rollDodge(Player player) {
         double dodge = Math.max(0, Math.min(1, player.getDodge()));
         return dodge > 0 && Math.random() < dodge;

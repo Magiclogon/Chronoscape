@@ -46,7 +46,11 @@ public class ShopItemButton extends JButton {
         this.itemType  = item.getItemDefinition().getRarity().name().substring(0, 1).toUpperCase()
                        + item.getItemDefinition().getRarity().name().substring(1).toLowerCase();
         this.itemPrice = String.valueOf(item.getPrice());
-        this.statLines = item.getItemDefinition().getStatsDescription().split("\n");
+        // getStatsDescription() uses "---" to separate flavor text from stat lines.
+        // We only want the stat lines here — the flavor text goes nowhere (name + rarity suffice).
+        String full = item.getItemDefinition().getStatsDescription();
+        String[] parts = full.split("---", 2);
+        this.statLines = (parts.length > 1 ? parts[1] : parts[0]).trim().split("\n");
 
         setFocusPainted(false);
         setContentAreaFilled(false);
@@ -163,37 +167,46 @@ public class ShopItemButton extends JButton {
 
         g2.dispose();
     }
-    
+
+    /**
+     * Renders a stat line word-by-word with per-word color based on sign,
+     * correctly tracking wrapped lines and returning total height consumed.
+     * Lines prefixed with "INDENT:" are rendered with a fixed pixel indent.
+     */
     private int drawColoredStatLine(Graphics2D g2, String text, int x, int y, int maxWidth) {
-        FontMetrics fm = g2.getFontMetrics();
-        int currentX = x;
-        
-        // Split by spaces to handle wrapping and individual word coloring
-        String[] words = text.split(" ");
-        
-        for (String word : words) {
-            int wordWidth = fm.stringWidth(word + " ");
-            
-            // Check for wrapping
-            if (currentX + wordWidth > x + maxWidth) {
-                currentX = x;
-                y += fm.getHeight();
-            }
+        FontMetrics fm     = g2.getFontMetrics();
+        int         startY = y;
 
-            // Check if word starts with a value indicator (+, -, or a digit)
-            if (word.matches("^[\\+\\-\\d].*")) {
-                g2.setColor(word.startsWith("+") ? STAT_POSITIVE 
-                          : word.startsWith("-") ? STAT_NEGATIVE 
-                          : Color.WHITE);
-            } else {
-                g2.setColor(STAT_NEUTRAL);
-            }
-
-            g2.drawString(word + " ", currentX, y);
-            currentX += wordWidth;
+        // INDENT: prefix — render with a fixed left indent, strip the prefix
+        boolean indented = text.startsWith("INDENT:");
+        if (indented) {
+            text = text.substring("INDENT:".length());
+            x       += fm.stringWidth("    "); // ~4 spaces worth of indent
+            maxWidth -= fm.stringWidth("    ");
         }
-        
-        return fm.getHeight(); // Return height of one line (assuming simple stats)
+
+        int curX = x;
+
+        // Section headers (e.g. "PASSIVE WHEN IN USE") — all-caps, no digits
+        if (text.equals(text.toUpperCase()) && !text.matches(".*\\d.*")) {
+            g2.setColor(MenuStyle.TEXT_GRAY);
+            g2.drawString(text, x, y);
+            return fm.getHeight();
+        }
+
+        for (String word : text.split(" ")) {
+            if (word.isBlank()) continue;
+            int ww = fm.stringWidth(word + " ");
+            if (curX + ww > x + maxWidth) { curX = x; y += fm.getHeight(); }
+
+            if (word.matches("^[+\\d].*"))  g2.setColor(STAT_POSITIVE);
+            else if (word.startsWith("-"))   g2.setColor(STAT_NEGATIVE);
+            else                             g2.setColor(STAT_NEUTRAL);
+
+            g2.drawString(word + " ", curX, y);
+            curX += ww;
+        }
+        return (y - startY) + fm.getHeight();
     }
 
     private int drawWrappedString(Graphics2D g2, String text, int x, int y, int maxWidth) {
