@@ -35,7 +35,12 @@ public class EffectContext {
         for (PlayerEffect e : effects) e.onKill(player, killed);
     }
 
-
+    public double fireOnDamageTaken(Player player, double damage, LivingEntity attacker) {
+        double d = damage;
+        for (PlayerEffect e : effects) d = e.onDamageTaken(player, d, attacker);
+        return d;
+    }
+    
     public double fireOnDamageTaken(Player player, double damage) {
         double d = damage;
         for (PlayerEffect e : effects) d = e.onDamageTaken(player, d);
@@ -48,6 +53,14 @@ public class EffectContext {
 
     public void fireOnDamageDealt(Player player, LivingEntity target, double damageDealt) {
         for (PlayerEffect e : effects) e.onDamageDealt(player, target, damageDealt);
+    }
+    
+    public void fireOnDamageApplied(Player player) {
+        for (PlayerEffect e : effects) e.onDamageApplied(player);
+    }
+    
+    public void fireOnHeal(Player player, double requested, double gained) {
+        for (PlayerEffect e : effects) e.onHeal(player, requested, gained);
     }
     
     public void fireOnDodge(Player player) {

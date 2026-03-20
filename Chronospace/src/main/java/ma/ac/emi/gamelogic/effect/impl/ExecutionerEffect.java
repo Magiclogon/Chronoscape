@@ -9,15 +9,15 @@ import ma.ac.emi.gamelogic.player.Player;
  */
 public class ExecutionerEffect implements PlayerEffect {
 
-    private static final int    KILLS_REQUIRED = 10;
-    private static final double HEAL_AMOUNT    = 20.0;
+    private int    killsRequired = 10;
+    private double healAmount    = 20.0;
 
     private int killCount = 0;
 
     @Override
     public void onKill(Player player, LivingEntity killed) {
-        if (++killCount % KILLS_REQUIRED == 0) {
-            player.setHp(Math.min(player.getHp() + HEAL_AMOUNT, player.getHpMax()));
+        if (++killCount % killsRequired == 0) {
+            player.setHp(Math.min(player.getHp() + healAmount, player.getHpMax()));
         }
     }
 }

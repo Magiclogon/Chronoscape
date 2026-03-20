@@ -163,8 +163,8 @@ public class AOE extends AttackObject {
         WeaponItemDefinition def =
                 (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
 
-        entity.takeDamage(def.getDamage());
-
+        entity.takeDamage(def.getDamage(), getWeapon().getBearer());
+        
         double knockbackForce = def.getKnockbackForce();
         if (knockbackForce != 0) {
             Vector3D kbDir = entity.getPos().sub(this.getPos()).normalize();

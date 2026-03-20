@@ -47,6 +47,7 @@ public abstract class LivingEntity extends Entity {
 	protected double baseSpeed;
 	protected double strength;
 	protected double baseStrength = 1;
+	protected double baseRegenerationSpeed;
 	protected double regenerationSpeed;
 	protected double speed;
 	protected double projectileSpeedMultiplier = 1;
@@ -260,26 +261,33 @@ public abstract class LivingEntity extends Entity {
 
 
 	public void takeDamage(double amount) {
-	    double finalDamage = amount;
-
-	    if (this instanceof Player player) {
-	        if (player.getInventory() != null)
-	            finalDamage = player.getInventory().getEffectContext().fireOnDamageTaken(player, amount);
-
-	        finalDamage *= player.getDamageMultiplier();
-	    }
-
-	    double actuallyDealt = Math.min(finalDamage, getHp());
-	    setHp(Math.max(0, getHp() - finalDamage));
-
-	    if (getBehaviors() != null)
-	        getBehaviors().forEach(b -> b.onHit(this));
-
-	    Player player = Player.getInstance();
-	    if (!(this instanceof Player) && player.getInventory() != null && actuallyDealt > 0) {
-	        player.getInventory().getEffectContext().fireOnDamageDealt(player, this, actuallyDealt);
-	    }
+		takeDamage(amount, null);
 	}
+ 
+	public void takeDamage(double amount, LivingEntity attacker) {
+        double finalDamage = amount;
+ 
+        if (this instanceof Player player) {
+            if (player.getInventory() != null)
+                finalDamage = player.getInventory().getEffectContext()
+                        .fireOnDamageTaken(player, amount, attacker);
+            finalDamage *= player.getDamageMultiplier();
+        }
+ 
+        setHp(Math.max(0, getHp() - finalDamage));
+ 
+        if (getBehaviors() != null)
+            getBehaviors().forEach(b -> b.onHit(this));
+ 
+        if (this instanceof Player player && player.getInventory() != null)
+            player.getInventory().getEffectContext().fireOnDamageApplied(player);
+ 
+        Player player = Player.getInstance();
+        if (!(this instanceof Player) && player.getInventory() != null && finalDamage > 0) {
+            player.getInventory().getEffectContext()
+                    .fireOnDamageDealt(player, this, Math.min(finalDamage, amount));
+        }
+    }
 	
 
 	public void heal(double healAmount) {

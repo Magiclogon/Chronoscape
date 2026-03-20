@@ -215,6 +215,12 @@
           "stat": "strength",
           "value": 1.15,
           "operation": "MULTIPLY"
+        },
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 0.65,
+          "operation": "MULTIPLY"
         }
       ]
     },
@@ -304,7 +310,7 @@
       "name": "BLASTER 404",
       "description": "Slow but moderately powerful close range weapon.",
       "iconPath": "icons/blaster404_icon.png",
-      "rarity": "COMMON",
+      "rarity": "RARE",
       "basePrice": 50,
       "damage": 10,
       "recoilForce": 25,
@@ -969,10 +975,13 @@
       ]
     },
     { "type": "upgrade", "id": "cactus_jacket", "name": "Cactus Jacket",
-      "description": "Reduces incoming damage by 8%. -5% attack speed.",
+      "description": "Reduces incoming damage by 8%. Reflects 25% of the damage taken to the attacker. -5% attack speed.",
       "rarity": "RARE", "basePrice": 480, "stackable": true,
       "effectClass": "ma.ac.emi.gamelogic.effect.impl.ThornsEffect",
-      "effectParams": { "reduction": 0.08 },
+      "effectParams": {
+	    "reduction": 0.08,
+	    "reflectRate": 0.25
+	  },
       "modifications": [
         { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.95, "operation": "MULTIPLY" }
       ]
@@ -1046,11 +1055,12 @@
         { "upgradeType": "PLAYER", "stat": "DODGE",   "value": -0.05, "operation": "ADD" }
       ]
     },
-    { "type": "upgrade", "id": "rabbit_foot", "name": "Rabbit's Foot",
-      "description": "+6% dodge chance.",
+    { "type": "upgrade", "id": "kitty_paws", "name": "Kitty Paws",
+      "description": "+6% dodge chance. Pillow hands: -4% weapon damage.",
       "rarity": "COMMON", "basePrice": 280, "stackable": true,
       "modifications": [
-        { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.06, "operation": "ADD" }
+        { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.06, "operation": "ADD" },
+        { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 0.96, "operation": "MULTIPLY" }
       ]
     },
     { "type": "upgrade", "id": "smoke_pellet", "name": "Smoke Pellet",
@@ -1223,7 +1233,7 @@
     "type": "upgrade",
     "id": "gamblers_chip",
     "name": "Gambler's Chip",
-    "description": "+1.5 luck. The house always loses. -10% armor, -5% max health.",
+    "description": "+1.5 luck. The house always loses. -10 armor, -5% max health.",
     "rarity": "EPIC",
     "basePrice": 750,
     "stackable": false,
@@ -1236,8 +1246,7 @@
       },
       {
         "upgradeType": "PLAYER",
-        "stat": "DEFENSE",
-        "value": -15,
+        "value": -10,
         "operation": "ADD"
       },
       {
@@ -1247,6 +1256,203 @@
         "operation": "MULTIPLY"
       }
     ]
-  }
-  ]
+  },
+  {
+    "type": "upgrade",
+    "id": "iron_will",
+    "name": "Iron Will",
+    "description": "+20% max health.",
+    "rarity": "COMMON",
+    "basePrice": 300,
+    "stackable": true,
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.2,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "meal_prep",
+    "name": "Meal Prep",
+    "description": "+15% max health, +1 HP/s regen. Consistency is key.",
+    "rarity": "COMMON",
+    "basePrice": 320,
+    "stackable": true,
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.15,
+        "operation": "MULTIPLY"
+      },
+      {
+        "upgradeType": "PLAYER",
+        "stat": "HEALTH_REGEN",
+        "value": 1,
+        "operation": "ADD"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "padded_coat",
+    "name": "Padded Coat",
+    "description": "+25% max health, +10 armor. Slow to put on: -6% attack speed.",
+    "rarity": "RARE",
+    "basePrice": 500,
+    "stackable": false,
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.25,
+        "operation": "MULTIPLY"
+      },
+      {
+        "upgradeType": "PLAYER",
+        "stat": "DEFENSE",
+        "value": 10,
+        "operation": "ADD"
+      },
+      {
+        "upgradeType": "WEAPON",
+        "stat": "ATTACK_SPEED",
+        "value": 0.94,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "blood_bag",
+    "name": "Blood Bag",
+    "description": "+35% max health. All that extra blood weighs something: -8% movement speed.",
+    "rarity": "RARE",
+    "basePrice": 580,
+    "stackable": false,
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.35,
+        "operation": "MULTIPLY"
+      },
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MOVEMENT_SPEED",
+        "value": 0.92,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "giants_belt",
+    "name": "Giant's Belt",
+    "description": "+60% max health, +20 armor. You move like a giant too: -15% movement speed, -10% attack speed.",
+    "rarity": "EPIC",
+    "basePrice": 900,
+    "stackable": false,
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.6,
+        "operation": "MULTIPLY"
+      },
+      {
+        "upgradeType": "PLAYER",
+        "stat": "DEFENSE",
+        "value": 20,
+        "operation": "ADD"
+      },
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MOVEMENT_SPEED",
+        "value": 0.85,
+        "operation": "MULTIPLY"
+      },
+      {
+        "upgradeType": "WEAPON",
+        "stat": "ATTACK_SPEED",
+        "value": 0.9,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "warranty_card",
+    "name": "Warranty Card",
+    "description": "+25% max health. On reaching 0 HP once per wave, survive with 1 HP instead.",
+    "rarity": "LEGENDARY",
+    "basePrice": 1400,
+    "stackable": false,
+    "effectClass": "ma.ac.emi.gamelogic.effect.impl.WarrantyCardEffect",
+    "effectParams": {
+      "shieldsPerWave": 1
+    },
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.25,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+    "type": "upgrade",
+    "id": "dumbbell",
+    "name": "Dumbbell",
+    "description": "For every 30 max HP, +2 weapon damage and +3 armor. Stacks with Barbell.",
+    "rarity": "EPIC",
+    "basePrice": 950,
+    "stackable": false,
+    "effectClass": "ma.ac.emi.gamelogic.effect.impl.DumbbellEffect",
+    "effectParams": {
+      "hpPerStep": 30,
+      "damagePerStep": 2,
+      "armorPerStep": 3
+    },
+    "modifications": []
+  },
+  {
+    "type": "upgrade",
+    "id": "life_insurance",
+    "name": "Life Insurance",
+    "description": "+30% max health. Heal 8% of max HP on wave end.",
+    "rarity": "RARE",
+    "basePrice": 620,
+    "stackable": false,
+    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifeInsuranceEffect",
+    "effectParams": {
+      "healPercent": 0.08
+    },
+    "modifications": [
+      {
+        "upgradeType": "PLAYER",
+        "stat": "MAX_HEALTH",
+        "value": 1.3,
+        "operation": "MULTIPLY"
+      }
+    ]
+  },
+  {
+	  "type": "upgrade",
+	  "id": "overflow_flask",
+	  "name": "Overflow Flask",
+	  "description": "Heals that exceed your max HP permanently increase it. Returns diminish the more HP you accumulate.",
+	  "rarity": "LEGENDARY",
+	  "basePrice": 1100,
+	  "stackable": false,
+	  "effectClass": "ma.ac.emi.gamelogic.effect.impl.OverhealEffect",
+	  "effectParams": { "conversionRate": 0.5 },
+	  "modifications": []
+	}
+ ]
 }

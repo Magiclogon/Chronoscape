@@ -54,9 +54,9 @@ public class PassiveWeaponEffectDefinition extends WeaponBehaviorDefinition {
             default             -> stat;
         };
         String valueStr = operation == PassiveWeaponEffect.Operation.ADD
-                ? (value >= 0 ? String.format("+%.0f", value) : String.format("%.0f", value))
-                : (value >= 1 ? String.format("+%.0f%%", (value - 1) * 100)
-                              : String.format("%.0f%%", (value - 1) * 100));
+                ? (value >= 0 ? String.format("+%.2f", value) : String.format("%.2f", value))
+                : (value >= 1 ? String.format("+%.2f%%", (value - 1) * 100)
+                              : String.format("%.2f%%", (value - 1) * 100));
         return statLabel + " " + valueStr + " while equipped";
     }
 }

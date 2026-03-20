@@ -15,6 +15,7 @@ public class UpgradeItem extends ShopItem {
     public UpgradeItem(UpgradeItemDefinition itemDefinition) {
         super(itemDefinition);
         this.effect = itemDefinition.createEffect();
+        
     }
 
     @Override

@@ -179,7 +179,7 @@ public class Player extends LivingEntity {
 	    this.baseHPMax = cfg.baseHPMax;
 	    this.baseSpeed = cfg.baseSpeed;
 	    this.baseStrength = cfg.baseStrength;
-	    this.regenerationSpeed = cfg.regenerationSpeed;
+	    this.baseRegenerationSpeed = cfg.baseRegenerationSpeed;
 		this.baseLuck = cfg.baseLuck;
 	    
 	    // Initialize current stats from base stats
@@ -193,6 +193,7 @@ public class Player extends LivingEntity {
 		this.hpMax = baseHPMax;
 	    this.speed = baseSpeed;
 	    this.strength = baseStrength;
+	    this.regenerationSpeed = baseRegenerationSpeed;
 		this.luck = baseLuck;
 		this.dodge = 0.0;
 	}
@@ -410,6 +411,16 @@ public class Player extends LivingEntity {
 		if(activeWeapon != null) {
 			activeWeapon.addInvincibilityFlashingEffect(duration, flashingFrequency);
 		}
+	}
+	
+	public void heal(double amount) {
+		if (amount <= 0) return;
+		double before  = getHp();
+		setHp(Math.min(getHpMax(), before + amount));
+		double gained  = getHp() - before;
+
+		if (getInventory() != null)
+			getInventory().getEffectContext().fireOnHeal(this, amount, gained);
 	}
 	
 	public void applyRegen(double step) {

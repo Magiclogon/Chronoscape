@@ -116,11 +116,11 @@ public class PickableManager implements WaveListener, DifficultyObserver {
                 }
 
                 // luck multiplier
-//                Player player = Player.getInstance();
-//                if (player != null) {
-//                    double boostedValue = player.applyLuckToValue(instance.getValue());
-//                    instance.setValue(boostedValue);
-//                }
+                Player player = Player.getInstance();
+                if (player != null) {
+                    double boostedValue = player.applyLuckToValue(instance.getValue());
+                    instance.setValue(boostedValue);
+                }
 
                 return instance;
             }
