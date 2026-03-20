@@ -357,7 +357,7 @@ public class ShopUI extends JPanel {
                 display = "--";
             } else {
                 StringBuilder sb = new StringBuilder();
-                if (mul != 1.0) sb.append(String.format("×%.2f", mul));
+                if (mul != 1.0) sb.append(String.format("x%.2f", mul));
                 if (add != 0) {
                     if (sb.length() > 0) sb.append("  ");
                     sb.append(add > 0 ? String.format("+%.0f", add) : String.format("%.0f", add));
