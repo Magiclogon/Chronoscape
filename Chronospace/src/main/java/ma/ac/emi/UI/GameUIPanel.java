@@ -7,6 +7,9 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.gamelogic.shop.WeaponItem;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
+import ma.ac.emi.fx.AssetsLoader;
+import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.TileManager;
 import ma.ac.emi.world.World;
@@ -38,6 +41,26 @@ public class GameUIPanel extends JPanel {
 		this.setOpaque(false);
 	}
 
+	// Icon cache — keyed by weapon id, loaded once and reused every frame
+	private final java.util.Map<String, java.awt.image.BufferedImage> iconCache = new java.util.HashMap<>();
+
+	private java.awt.image.BufferedImage getWeaponIcon(WeaponItemDefinition def) {
+		String id = def.getId();
+		if (iconCache.containsKey(id)) return iconCache.get(id);
+		String path = def.getIconPath();
+		if (path != null && !path.isBlank()) {
+			try {
+				Sprite sprite = AssetsLoader.getSprite(path);
+				if (sprite != null) {
+					iconCache.put(id, sprite.getSprite());
+					return sprite.getSprite();
+				}
+			} catch (Exception ignored) {}
+		}
+		iconCache.put(id, null); // cache null so we don't retry every frame
+		return null;
+	}
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -53,6 +76,7 @@ public class GameUIPanel extends JPanel {
 
 		drawHPBar(g2, player, panelWidth, panelHeight);
 		drawMoney(g2, player, panelWidth, panelHeight);
+		drawAmmo(g2, player, panelWidth, panelHeight);
 		drawWeaponSlots(g2, inventory, player.getWeaponIndex(), panelWidth, panelHeight);
 		drawMinimap(g2, player, panelWidth, panelHeight);
 
@@ -126,57 +150,257 @@ public class GameUIPanel extends JPanel {
 		g2.drawString(moneyText, x, y);
 	}
 
+	private void drawAmmo(Graphics2D g2, Player player, int w, int h) {
+		if (player.getActiveWeapon() == null) return;
+		var weapon = player.getActiveWeapon();
+		WeaponItemDefinition def = (WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition();
+		int mag = def.getMagazineSize();
+		if (mag <= 0) return;
+
+		int    ammo = weapon.getAmmo();
+		String text = ammo + " / " + mag;
+
+		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 28));
+		FontMetrics fm = g2.getFontMetrics();
+		int x = (int) (0.03 * w);
+		int y = (int) (0.05 * h) + 40 + 32 + fm.getAscent() + 4;
+
+		g2.setColor(Color.BLACK);
+		g2.drawString(text, x + 2, y + 2);
+
+		float ratio    = mag > 0 ? (float) ammo / mag : 0;
+		Color ammoColor = ratio > 0.5f ? new Color(100, 220, 100)
+		                : ratio > 0.2f ? new Color(220, 200, 60)
+		                :                new Color(220, 60, 60);
+		g2.setColor(ammoColor);
+		g2.drawString(text, x, y);
+	}
+
 	private void drawWeaponSlots(Graphics2D g2, Inventory inventory, int activeIndex, int w, int h) {
-		int slotSize = 64;
-		int spacing = 10;
-		int startX = (int) (0.03 * w);
-		int startY = h - slotSize - 40;
+		final int SLOT_SIZE  = 64;
+		final int SPACING    = 10;
+		final int BOTTOM_PAD = 16;
 
 		WeaponItem[] equipped = inventory.getEquippedWeapons();
+		Player       player   = Player.getInstance();
 
+		int totalSlotsW = Inventory.MAX_EQU * SLOT_SIZE + (Inventory.MAX_EQU - 1) * SPACING;
+		int startX      = (int) (0.03 * w);
+		int slotsY      = h - SLOT_SIZE - BOTTOM_PAD;
+
+		// ── Passive info strip above slots ────────────────────────────────
+		WeaponItem activeItem = (activeIndex >= 0 && activeIndex < Inventory.MAX_EQU)
+				? equipped[activeIndex] : null;
+		if (activeItem != null) {
+			WeaponItemDefinition def       = (WeaponItemDefinition) activeItem.getItemDefinition();
+			java.util.List<String> passiveLines = collectPassiveLines(def);
+			java.util.List<String> liveStats    = collectLiveStats(player, def);
+
+			if (!passiveLines.isEmpty() || !liveStats.isEmpty()) {
+				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
+				FontMetrics fm = g2.getFontMetrics();
+				int lineH      = fm.getHeight();
+
+				// PASSIVE header (1 line) + one line per passive + one line per live stat
+				int headerLines = passiveLines.isEmpty() ? 0 : 1;
+				int totalLines  = headerLines + passiveLines.size() + liveStats.size();
+				int stripH      = totalLines * lineH + 14;
+				int stripY      = slotsY - stripH - 6;
+
+				// Measure the widest line so the box always fits its content
+				int maxTextW = fm.stringWidth("PASSIVE");
+				for (String line : passiveLines)
+					maxTextW = Math.max(maxTextW, fm.stringWidth("  " + line));
+				for (String stat : liveStats)
+					maxTextW = Math.max(maxTextW, fm.stringWidth(stat));
+				int stripW = Math.max(totalSlotsW, maxTextW + 16); // 16 = left padding (8) + right margin (8)
+
+				g2.setColor(new Color(12, 12, 18, 210));
+				g2.fillRoundRect(startX - 4, stripY, stripW + 8, stripH, 8, 8);
+				g2.setColor(new Color(80, 80, 100, 100));
+				g2.setStroke(new BasicStroke(1f));
+				g2.drawRoundRect(startX - 4, stripY, stripW + 8, stripH, 8, 8);
+
+				int ty = stripY + 7 + fm.getAscent();
+
+				if (!passiveLines.isEmpty()) {
+					g2.setColor(new Color(160, 160, 180));
+					g2.drawString("PASSIVE", startX, ty);
+					ty += lineH;
+					for (String line : passiveLines) {
+						g2.setColor(new Color(200, 200, 210));
+						g2.drawString("  " + line, startX, ty);
+						ty += lineH;
+					}
+				}
+
+				for (String stat : liveStats) {
+					int colon = stat.indexOf(':');
+					if (colon != -1) {
+						String label  = stat.substring(0, colon + 1);
+						String value  = stat.substring(colon + 1).trim();
+						int    labelW = fm.stringWidth(label + " ");
+						g2.setColor(new Color(130, 130, 150));
+						g2.drawString(label + " ", startX, ty);
+						g2.setColor(new Color(120, 220, 120));
+						g2.drawString(value, startX + labelW, ty);
+					} else {
+						g2.setColor(new Color(120, 220, 120));
+						g2.drawString(stat, startX, ty);
+					}
+					ty += lineH;
+				}
+			}
+		}
+
+		// ── Weapon slots ──────────────────────────────────────────────────
 		for (int i = 0; i < Inventory.MAX_EQU; i++) {
-			int slotX = startX + i * (slotSize + spacing);
-			int slotY = startY;
-
+			int     slotX    = startX + i * (SLOT_SIZE + SPACING);
 			boolean isActive = (i == activeIndex && equipped[i] != null);
 
-			g2.setColor(new Color(30, 30, 40, 200));
-			g2.fillRect(slotX, slotY, slotSize, slotSize);
+			g2.setColor(new Color(22, 22, 30, 220));
+			g2.fillRoundRect(slotX, slotsY, SLOT_SIZE, SLOT_SIZE, 6, 6);
 
-			g2.setStroke(new BasicStroke(3));
-			if (isActive) {
-				g2.setColor(Color.WHITE);
-			} else {
-				g2.setColor(new Color(80, 80, 90));
-			}
-			g2.drawRect(slotX, slotY, slotSize, slotSize);
+			g2.setStroke(new BasicStroke(isActive ? 2.5f : 1.5f));
+			g2.setColor(isActive        ? Color.WHITE
+			          : equipped[i] != null ? rarityColor(equipped[i])
+			          : new Color(55, 55, 65));
+			g2.drawRoundRect(slotX, slotsY, SLOT_SIZE, SLOT_SIZE, 6, 6);
 
-			g2.setFont(new Font(FONT_NAME, Font.PLAIN, 18));
-			g2.setColor(Color.GRAY);
-			g2.drawString(String.valueOf(i + 1), slotX + 5, slotY + 15);
+			g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
+			g2.setColor(isActive ? Color.WHITE : new Color(90, 90, 100));
+			g2.drawString(String.valueOf(i + 1), slotX + 4, slotsY + 14);
 
 			if (equipped[i] != null) {
 				WeaponItemDefinition def = (WeaponItemDefinition) equipped[i].getItemDefinition();
 
-				g2.setColor(new Color(200, 100, 50));
-				g2.fillOval(slotX + 16, slotY + 16, 32, 32);
+				// Draw weapon icon, or fall back to a rarity-tinted oval if none
+				java.awt.image.BufferedImage icon = getWeaponIcon(def);
+				if (icon != null) {
+					int iconPad  = 10;
+					int iconSize = SLOT_SIZE - iconPad * 2;
+					double scale = Math.min((double) iconSize / icon.getWidth(),
+					                        (double) iconSize / icon.getHeight());
+					int drawW = (int)(icon.getWidth()  * scale);
+					int drawH = (int)(icon.getHeight() * scale);
+					int iconX = slotX + (SLOT_SIZE - drawW) / 2;
+					int iconY = slotsY + iconPad + (iconSize - drawH) / 2;
+					g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+					        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+					g2.drawImage(icon, iconX, iconY, drawW, drawH, null);
+				} else {
+					// Fallback — rarity-tinted oval
+					Color iconColor = rarityColor(equipped[i]);
+					g2.setColor(new Color(iconColor.getRed(), iconColor.getGreen(), iconColor.getBlue(), 60));
+					g2.fillOval(slotX + 12, slotsY + 12, SLOT_SIZE - 24, SLOT_SIZE - 24);
+					g2.setColor(iconColor.darker());
+					g2.setStroke(new BasicStroke(1f));
+					g2.drawOval(slotX + 12, slotsY + 12, SLOT_SIZE - 24, SLOT_SIZE - 24);
+				}
 
 				String name = def.getName();
-				// Truncate
-				if (name.length() > 8) name = name.substring(0, 8) + ".";
+				if (name.length() > 7) name = name.substring(0, 7) + ".";
+				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 13));
+				FontMetrics fm  = g2.getFontMetrics();
+				int         txtX = slotX + (SLOT_SIZE - fm.stringWidth(name)) / 2;
+				g2.setColor(isActive ? Color.WHITE : new Color(180, 180, 190));
+				g2.drawString(name, txtX, slotsY + SLOT_SIZE - 6);
 
-				g2.setColor(Color.WHITE);
-				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
-				FontMetrics fm = g2.getFontMetrics();
-				int txtX = slotX + (slotSize - fm.stringWidth(name)) / 2;
-				g2.drawString(name, txtX, slotY + slotSize - 5);
+				if (isActive && def.getMagazineSize() > 0)
+					drawAmmoPips(g2, slotX, slotsY, SLOT_SIZE, player, def);
+
 			} else {
-				// Empty text
-				g2.setColor(new Color(60, 60, 70));
-				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 16));
-				g2.drawString("EMPTY", slotX + 18, slotY + 38);
+				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
+				g2.setColor(new Color(55, 55, 65));
+				FontMetrics fm    = g2.getFontMetrics();
+				String      empty = "EMPTY";
+				g2.drawString(empty,
+						slotX + (SLOT_SIZE - fm.stringWidth(empty)) / 2,
+						slotsY + SLOT_SIZE / 2 + fm.getAscent() / 2);
 			}
 		}
+	}
+
+	private void drawAmmoPips(Graphics2D g2, int slotX, int slotY, int slotSize,
+	                           Player player, WeaponItemDefinition def) {
+		int mag  = def.getMagazineSize();
+		if (mag <= 0 || player.getActiveWeapon() == null) return;
+		int ammo = player.getActiveWeapon().getAmmo();
+
+		int maxPips   = Math.min(mag, 10);
+		int pipW      = Math.max(2, (slotSize - 8) / maxPips - 2);
+		int pipH      = 4;
+		int pipY      = slotY + slotSize - pipH - 3;
+		int totalW    = maxPips * (pipW + 2) - 2;
+		int pipStartX = slotX + (slotSize - totalW) / 2;
+
+		for (int p = 0; p < maxPips; p++) {
+			int     px     = pipStartX + p * (pipW + 2);
+			boolean filled = mag <= 10 ? (p < ammo)
+			               : (p < (int)((float) ammo / mag * maxPips));
+			g2.setColor(filled ? new Color(120, 220, 120) : new Color(50, 50, 60));
+			g2.fillRoundRect(px, pipY, pipW, pipH, 2, 2);
+		}
+	}
+
+	private java.util.List<String> collectPassiveLines(WeaponItemDefinition def) {
+		java.util.List<String> lines = new java.util.ArrayList<>();
+		for (WeaponBehaviorDefinition b : def.getBehaviorDefinitions()) {
+			String desc = null;
+			if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition p)
+				desc = p.describe();
+			else if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition p)
+				desc = p.describe();
+			if (desc != null) lines.add(desc);
+		}
+		return lines;
+	}
+
+	private java.util.List<String> collectLiveStats(Player player, WeaponItemDefinition def) {
+		boolean hasDodge = false, hasDefense = false,
+		        hasSpeed = false, hasStrength = false, hasRegen = false;
+
+		for (WeaponBehaviorDefinition b : def.getBehaviorDefinitions()) {
+			if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition p) {
+				// Simple passives — read the exact stat they modify
+				switch (p.getStat().toLowerCase()) {
+					case "dodge"        -> hasDodge    = true;
+					case "defense"      -> hasDefense  = true;
+					case "speed"        -> hasSpeed    = true;
+					case "strength"     -> hasStrength = true;
+					case "health_regen" -> hasRegen    = true;
+				}
+			} else if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition p) {
+				// Complex passives — use the precise stat set each one declares
+				for (String stat : p.getAffectedStats()) {
+					switch (stat) {
+						case "dodge"        -> hasDodge    = true;
+						case "defense"      -> hasDefense  = true;
+						case "speed"        -> hasSpeed    = true;
+						case "strength"     -> hasStrength = true;
+						case "health_regen" -> hasRegen    = true;
+					}
+				}
+			}
+		}
+
+		java.util.List<String> stats = new java.util.ArrayList<>();
+		if (hasDodge)    stats.add(String.format("DODGE: %.0f%%",  player.getDodge() * 100));
+		if (hasDefense)  stats.add(String.format("ARMOR: %.0f",    player.getDefense()));
+		if (hasSpeed)    stats.add(String.format("SPEED: %.0f",    player.getSpeed()));
+		if (hasStrength) stats.add(String.format("DMG:   %.1f",    player.getStrength()));
+		if (hasRegen)    stats.add(String.format("REGEN: %.1f/s",  player.getRegenerationSpeed()));
+		return stats;
+	}
+
+	private Color rarityColor(WeaponItem item) {
+		return switch (item.getItemDefinition().getRarity()) {
+			case LEGENDARY -> new Color(255, 215,   0);
+			case EPIC      -> new Color(160,  32, 240);
+			case RARE      -> new Color( 65, 105, 225);
+			case COMMON    -> new Color( 50, 205,  50);
+			default        -> new Color( 80,  80,  90);
+		};
 	}
 
 	private void drawMinimap(Graphics2D g2, Player player, int w, int h) {

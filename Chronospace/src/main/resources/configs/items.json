@@ -21,30 +21,27 @@
       "relativeProjectilePosY": 0,
       "attackSound": "ak47",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/ak47-Sheet.png",
-	      "handSpriteSheetPath": "hands/ak47_hands-Sheet.png",
-	      "spriteWidth": 72,
-	      "spriteHeight": 59,
-	      "idleLength": 1,
-	      "attackingInitLength": 1,
-	      "attackingLength": 4,
-	      "reloadInitLength": 12,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 12,
-	      "switchingInLength": 12,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/ak47-Sheet.png",
+        "handSpriteSheetPath": "hands/ak47_hands-Sheet.png",
+        "spriteWidth": 72,
+        "spriteHeight": 59,
+        "idleLength": 1,
+        "attackingInitLength": 1,
+        "attackingLength": 4,
+        "reloadInitLength": 12,
+        "reloadLength": 4,
+        "reloadFinishLength": 12,
+        "switchingInLength": 12,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0
+        "type": "range",
+        "projectileCount": 1,
+        "spread": 0
       },
-      
       "behaviors": [
-      	{
+        {
           "type": "onAttackEffect",
           "particleId": "muzzle_flash",
           "offsetX": 25,
@@ -55,6 +52,15 @@
           "ageMax": 3,
           "isOneTime": true,
           "aligned": true
+        },
+        {
+          "type": "passive_complex",
+          "effect": "MomentumPassive",
+          "params": {
+            "hitsPerStack": 8,
+            "bonusPerStack": 0.05,
+            "maxStacks": 5
+          }
         }
       ]
     },
@@ -77,36 +83,47 @@
       "relativeProjectilePosY": 13,
       "attackSound": "heavy_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/hammer-Sheet.png",
-	      "handSpriteSheetPath": "hands/hammer_hands-Sheet.png",
-	      "spriteWidth": 82,
-	      "spriteHeight": 76,
-	      "idleLength": 1,
-	      "attackingInitLength": 10,
-	      "attackingLength": 23,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 21,
-	      "switchingInLength": 21,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/hammer-Sheet.png",
+        "handSpriteSheetPath": "hands/hammer_hands-Sheet.png",
+        "spriteWidth": 82,
+        "spriteHeight": 76,
+        "idleLength": 1,
+        "attackingInitLength": 10,
+        "attackingLength": 23,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 21,
+        "switchingInLength": 21,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "melee",
-      	
-      	"cameraShake": {
-      		"intensity": 5,
-      		"damping": 0.9
-      	}
-      }
+        "type": "melee",
+        "cameraShake": {
+          "intensity": 5,
+          "damping": 0.9
+        }
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "defense",
+          "value": 30,
+          "operation": "ADD"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "ArmorCrunchPassive",
+          "params": {
+            "damagePerArmor": 0.06
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
       "id": "sword",
       "name": "Knight's Sword",
-      "spriteSheetPath": "weapons/sword-Sheet.png",
       "description": "Balanced melee weapon for close combat.",
       "iconPath": "icons/sword_icon.png",
       "rarity": "RARE",
@@ -115,30 +132,39 @@
       "recoilForce": 0,
       "knockbackForce": 30,
       "range": 40,
-      "attackSpeed": 2.0,
+      "attackSpeed": 2,
       "projectileId": "none",
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/sword-Sheet.png",
-	      "handSpriteSheetPath": "hands/sword_hands-Sheet.png",
-	      "spriteWidth": 82,
-	      "spriteHeight": 72,
-	      "idleLength": 1,
-	      "attackingInitLength": 8,
-	      "attackingLength": 17,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/sword-Sheet.png",
+        "handSpriteSheetPath": "hands/sword_hands-Sheet.png",
+        "spriteWidth": 82,
+        "spriteHeight": 72,
+        "idleLength": 1,
+        "attackingInitLength": 8,
+        "attackingLength": 17,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "melee"
-      }
+        "type": "melee"
+      },
+      "behaviors": [
+        {
+          "type": "passive_complex",
+          "effect": "MomentumPassive",
+          "params": {
+            "hitsPerStack": 5,
+            "bonusPerStack": 0.08,
+            "maxStacks": 6
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -160,32 +186,37 @@
       "relativeProjectilePosY": 3,
       "attackSound": "heavy_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/rpg7-Sheet.png",
-	      "handSpriteSheetPath": "hands/rpg7_hands-Sheet.png",
-	      "spriteWidth": 80,
-	      "spriteHeight": 64,
-	      "idleLength": 1,
-	      "attackingInitLength": 2,
-	      "attackingLength": 8,
-	      "reloadInitLength": 12,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 12,
-	      "switchingInLength": 12,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/rpg7-Sheet.png",
+        "handSpriteSheetPath": "hands/rpg7_hands-Sheet.png",
+        "spriteWidth": 80,
+        "spriteHeight": 64,
+        "idleLength": 1,
+        "attackingInitLength": 2,
+        "attackingLength": 8,
+        "reloadInitLength": 12,
+        "reloadLength": 4,
+        "reloadFinishLength": 12,
+        "switchingInLength": 12,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0,
-      	
-      	"cameraShake": {
-      		"intensity": 5,
-      		"damping": 0.9
-      	}
-      }
+        "type": "range",
+        "projectileCount": 1,
+        "spread": 0,
+        "cameraShake": {
+          "intensity": 5,
+          "damping": 0.9
+        }
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "strength",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -204,14 +235,27 @@
       "magazineSize": 1,
       "attackSound": "ranged_weapon",
       "stackable": false,
-      
       "animationDetails": {},
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0
-      }
+        "type": "range",
+        "projectileCount": 1,
+        "spread": 0
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "DodgeSynergyPassive",
+          "params": {
+            "speedPerDodgePct": 0.5
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -228,18 +272,37 @@
       "projectileSpeed": 800,
       "attackSound": "light_weapon",
       "stackable": false,
-      
       "animationDetails": {},
-      
       "attackStrategy": {
-      	"type": "melee"
-      }
+        "type": "melee"
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "dodge",
+          "value": 0.2,
+          "operation": "ADD"
+        },
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "BloodRushPassive",
+          "params": {
+            "maxBonus": 0.8
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
       "id": "blaster404",
       "name": "BLASTER 404",
-      "description": "Slow but moderately powerful close range weapon",
+      "description": "Slow but moderately powerful close range weapon.",
       "iconPath": "icons/blaster404_icon.png",
       "rarity": "COMMON",
       "basePrice": 50,
@@ -255,33 +318,39 @@
       "relativeProjectilePosY": 2,
       "attackSound": "gun",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/blaster404-Sheet.png",
-	      "handSpriteSheetPath": "hands/blaster404_hands-Sheet.png",
-	      "spriteWidth": 56,
-	      "spriteHeight": 44,
-	      "idleLength": 1,
-	      "attackingInitLength": 19,
-	      "attackingLength": 30,
-	      "reloadInitLength": 11,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/blaster404-Sheet.png",
+        "handSpriteSheetPath": "hands/blaster404_hands-Sheet.png",
+        "spriteWidth": 56,
+        "spriteHeight": 44,
+        "idleLength": 1,
+        "attackingInitLength": 19,
+        "attackingLength": 30,
+        "reloadInitLength": 11,
+        "reloadLength": 4,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0
-      }
+        "type": "range",
+        "projectileCount": 1,
+        "spread": 0
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "health_regen",
+          "value": 1.5,
+          "operation": "ADD"
+        }
+      ]
     },
     {
       "type": "weapon",
       "id": "lightsaber",
       "name": "LightSaber",
-      "description": "Lightsaber from s**ar wars. Very potent.. and hot..'",
+      "description": "Lightsaber from s**ar wars. Very potent.. and hot..",
       "iconPath": "icons/lightsaber_icon.png",
       "rarity": "RARE",
       "basePrice": 120,
@@ -293,37 +362,51 @@
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/lightsaber-Sheet.png",
-	      "handSpriteSheetPath": "hands/lightsaber_hands-Sheet.png",
-	      "spriteWidth": 84,
-	      "spriteHeight": 72,
-	      "idleLength": 1,
-	      "attackingInitLength": 8,
-	      "attackingLength": 17,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/lightsaber-Sheet.png",
+        "handSpriteSheetPath": "hands/lightsaber_hands-Sheet.png",
+        "spriteWidth": 84,
+        "spriteHeight": 72,
+        "idleLength": 1,
+        "attackingInitLength": 8,
+        "attackingLength": 17,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "melee"
+        "type": "melee"
       },
-      
       "postProcessingDetails": {
         "lighting": {
           "type": "glow",
           "intensity": 0.5,
           "color": {
-            "r": 1.0,
-            "g": 1.0,
-            "b": 1.0
+            "r": 1,
+            "g": 1,
+            "b": 1
           }
         }
-      }
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "dodge",
+          "value": 0.08,
+          "operation": "ADD"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "MomentumPassive",
+          "params": {
+            "hitsPerStack": 4,
+            "bonusPerStack": 0.06,
+            "maxStacks": 8
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
@@ -345,28 +428,25 @@
       "relativeProjectilePosY": -1,
       "attackSound": "sniper",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/snipnk-Sheet.png",
-	      "handSpriteSheetPath": "hands/snipnk_hands-Sheet.png",
-	      "spriteWidth": 136,
-	      "spriteHeight": 120,
-	      "idleLength": 1,
-	      "attackingInitLength": 3,
-	      "attackingLength": 13,
-	      "reloadInitLength": 11,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/snipnk-Sheet.png",
+        "handSpriteSheetPath": "hands/snipnk_hands-Sheet.png",
+        "spriteWidth": 136,
+        "spriteHeight": 120,
+        "idleLength": 1,
+        "attackingInitLength": 3,
+        "attackingLength": 13,
+        "reloadInitLength": 11,
+        "reloadLength": 4,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 1,
-      	"spread": 0
+        "type": "range",
+        "projectileCount": 1,
+        "spread": 0
       },
-      
       "behaviors": [
         {
           "type": "onAttackEffect",
@@ -379,9 +459,21 @@
           "ageMax": 3,
           "isOneTime": true,
           "aligned": true
+        },
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "DodgeSynergyPassive",
+          "params": {
+            "speedPerDodgePct": 0.8
+          }
         }
       ]
-      
     },
     {
       "type": "weapon",
@@ -403,28 +495,25 @@
       "relativeProjectilePosY": 0,
       "attackSound": "heavy_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/shotgun-Sheet.png",
-	      "handSpriteSheetPath": "hands/shotgun_hands-Sheet.png",
-	      "spriteWidth": 100,
-	      "spriteHeight": 88,
-	      "idleLength": 1,
-	      "attackingInitLength": 3,
-	      "attackingLength": 13,
-	      "reloadInitLength": 11,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/shotgun-Sheet.png",
+        "handSpriteSheetPath": "hands/shotgun_hands-Sheet.png",
+        "spriteWidth": 100,
+        "spriteHeight": 88,
+        "idleLength": 1,
+        "attackingInitLength": 3,
+        "attackingLength": 13,
+        "reloadInitLength": 11,
+        "reloadLength": 4,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 5,
-      	"spread": 0.8
+        "type": "range",
+        "projectileCount": 5,
+        "spread": 0.8
       },
-      
       "behaviors": [
         {
           "type": "onAttackEffect",
@@ -449,6 +538,19 @@
           "ageMax": 3,
           "isOneTime": true,
           "aligned": true
+        },
+        {
+          "type": "passive",
+          "stat": "defense",
+          "value": 20,
+          "operation": "ADD"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "ArmorCrunchPassive",
+          "params": {
+            "damagePerArmor": 0.04
+          }
         }
       ]
     },
@@ -456,7 +558,7 @@
       "type": "weapon",
       "id": "flamethrower",
       "name": "Flamethrower",
-      "description": "Throws fire",
+      "description": "Throws fire.",
       "iconPath": "icons/flamethrower_icon.png",
       "rarity": "LEGENDARY",
       "basePrice": 1000,
@@ -472,35 +574,50 @@
       "relativeProjectilePosY": 4,
       "attackSound": "light_weapon",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/flamethrower-Sheet.png",
-	      "handSpriteSheetPath": "hands/flamethrower_hands-Sheet.png",
-	      "spriteWidth": 104,
-	      "spriteHeight": 92,
-	      "idleLength": 1,
-	      "attackingInitLength": 1,
-	      "attackingLength": 1,
-	      "reloadInitLength": 11,
-	      "reloadLength": 4,
-	      "reloadFinishLength": 11,
-	      "switchingInLength": 11,
-	      "switchingOutLength": 1
+        "spriteSheetPath": "weapons/flamethrower-Sheet.png",
+        "handSpriteSheetPath": "hands/flamethrower_hands-Sheet.png",
+        "spriteWidth": 104,
+        "spriteHeight": 92,
+        "idleLength": 1,
+        "attackingInitLength": 1,
+        "attackingLength": 1,
+        "reloadInitLength": 11,
+        "reloadLength": 4,
+        "reloadFinishLength": 11,
+        "switchingInLength": 11,
+        "switchingOutLength": 1
       },
-      
       "attackStrategy": {
-      	"type": "lobbed",
-      	"projectileCount": 1,
-      	"radius": 0,
-      	"gravity": 8,
-      	"scale": 10
-      }
+        "type": "lobbed",
+        "projectileCount": 1,
+        "radius": 0,
+        "gravity": 8,
+        "scale": 10
+      },
+      "behaviors": [
+        {
+          "type": "passive",
+          "stat": "defense",
+          "value": 20,
+          "operation": "ADD"
+        },
+        {
+          "type": "passive_complex",
+          "effect": "RegenOnKillPassive",
+          "params": {
+            "regenPerKill": 2,
+            "regenDuration": 4,
+            "maxRegen": 10
+          }
+        }
+      ]
     },
     {
       "type": "weapon",
       "id": "robot_boss_machinegun",
       "name": "Robots Boss's machinegun",
-      "description": "The robots boss's personal machinegun'",
+      "description": "The robots boss's personal machinegun.",
       "iconPath": "icons/boss_machinegun_icon.png",
       "rarity": "LEGENDARY",
       "basePrice": 300,
@@ -517,32 +634,29 @@
       "relativeProjectilePosY": 6,
       "attackSound": "machine_gun",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/boss_machinegun-Sheet.png",
-	      "handSpriteSheetPath": "hands/boss_machinegun_hands_top-Sheet.png",
-	      "handBackSpriteSheetPath": "hands/boss_machinegun_hands_bottom-Sheet.png",
-	      "hasBackLayerHands": true,
-	      "spriteWidth": 242,
-	      "spriteHeight": 134,
-	      "idleLength": 1,
-	      "attackingInitLength": 2,
-	      "attackingLength": 6,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 1,
-	      "switchingInLength": 15,
-	      "switchingOutLength": 15
+        "spriteSheetPath": "weapons/boss_machinegun-Sheet.png",
+        "handSpriteSheetPath": "hands/boss_machinegun_hands_top-Sheet.png",
+        "handBackSpriteSheetPath": "hands/boss_machinegun_hands_bottom-Sheet.png",
+        "hasBackLayerHands": true,
+        "spriteWidth": 242,
+        "spriteHeight": 134,
+        "idleLength": 1,
+        "attackingInitLength": 2,
+        "attackingLength": 6,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 1,
+        "switchingInLength": 15,
+        "switchingOutLength": 15
       },
-      
       "attackStrategy": {
-      	"type": "range",
-      	"projectileCount": 3,
-      	"spread": 0.4
+        "type": "range",
+        "projectileCount": 3,
+        "spread": 0.4
       },
-      
       "behaviors": [
-      	{
+        {
           "type": "onAttackEffect",
           "particleId": "big_gun_flash",
           "offsetX": 130,
@@ -554,7 +668,7 @@
           "isOneTime": true,
           "aligned": true
         },
-      	{
+        {
           "type": "onSwitchInEffect",
           "particleId": "lightning_boss_switch_in",
           "offsetX": -10,
@@ -566,7 +680,7 @@
           "isOneTime": true,
           "aligned": true
         },
-      	{
+        {
           "type": "onSwitchOutEffect",
           "particleId": "lightning_boss_switch_out",
           "offsetX": -10,
@@ -584,7 +698,7 @@
       "type": "weapon",
       "id": "robot_boss_cannon",
       "name": "Robots Boss's cannon",
-      "description": "The robots boss's personal cannon'",
+      "description": "The robots boss's personal cannon.",
       "iconPath": "icons/boss_canon_icon.png",
       "rarity": "LEGENDARY",
       "basePrice": 300,
@@ -601,34 +715,31 @@
       "relativeProjectilePosY": -20,
       "attackSound": "explosion",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/boss_cannon-Sheet.png",
-	      "handSpriteSheetPath": "hands/boss_cannon_hands_top-Sheet.png",
-	      "handBackSpriteSheetPath": "hands/boss_cannon_hands_bottom-Sheet.png",
-	      "hasBackLayerHands": true,
-	      "spriteWidth": 164,
-	      "spriteHeight": 160,
-	      "idleLength": 1,
-	      "attackingInitLength": 17,
-	      "attackingLength": 22,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 1,
-	      "switchingInLength": 15,
-	      "switchingOutLength": 15
+        "spriteSheetPath": "weapons/boss_cannon-Sheet.png",
+        "handSpriteSheetPath": "hands/boss_cannon_hands_top-Sheet.png",
+        "handBackSpriteSheetPath": "hands/boss_cannon_hands_bottom-Sheet.png",
+        "hasBackLayerHands": true,
+        "spriteWidth": 164,
+        "spriteHeight": 160,
+        "idleLength": 1,
+        "attackingInitLength": 17,
+        "attackingLength": 22,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 1,
+        "switchingInLength": 15,
+        "switchingOutLength": 15
       },
-      
       "attackStrategy": {
-      	"type": "lobbed",
-      	"projectileCount": 8,
-      	"radius": 200,
-      	"gravity": 8,
-      	"scale": 50
+        "type": "lobbed",
+        "projectileCount": 8,
+        "radius": 200,
+        "gravity": 8,
+        "scale": 50
       },
-      
       "behaviors": [
-      	{
+        {
           "type": "onSwitchInEffect",
           "particleId": "lightning_boss_switch_in",
           "offsetX": -10,
@@ -640,7 +751,7 @@
           "isOneTime": true,
           "aligned": true
         },
-      	{
+        {
           "type": "onSwitchOutEffect",
           "particleId": "lightning_boss_switch_out",
           "offsetX": -10,
@@ -670,7 +781,7 @@
       "type": "weapon",
       "id": "robot_boss_spear",
       "name": "Robots Boss's spear",
-      "description": "The robots boss's personal spear'",
+      "description": "The robots boss's personal spear.",
       "iconPath": "icons/boss_spear_icon.png",
       "rarity": "LEGENDARY",
       "basePrice": 300,
@@ -682,30 +793,27 @@
       "projectileSpeed": 900,
       "attackSound": "spear",
       "stackable": false,
-      
       "animationDetails": {
-	      "spriteSheetPath": "weapons/boss_spear-Sheet.png",
-	      "handSpriteSheetPath": "hands/boss_spear_hands_top-Sheet.png",
-	      "handBackSpriteSheetPath": "hands/boss_spear_hands_bottom-Sheet.png",
-	      "hasBackLayerHands": true,
-	      "spriteWidth": 342,
-	      "spriteHeight": 230,
-	      "idleLength": 1,
-	      "attackingInitLength": 18,
-	      "attackingLength": 20,
-	      "reloadInitLength": 1,
-	      "reloadLength": 1,
-	      "reloadFinishLength": 1,
-	      "switchingInLength": 38,
-	      "switchingOutLength": 22
+        "spriteSheetPath": "weapons/boss_spear-Sheet.png",
+        "handSpriteSheetPath": "hands/boss_spear_hands_top-Sheet.png",
+        "handBackSpriteSheetPath": "hands/boss_spear_hands_bottom-Sheet.png",
+        "hasBackLayerHands": true,
+        "spriteWidth": 342,
+        "spriteHeight": 230,
+        "idleLength": 1,
+        "attackingInitLength": 18,
+        "attackingLength": 20,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 1,
+        "switchingInLength": 38,
+        "switchingOutLength": 22
       },
-      
       "attackStrategy": {
-      	"type": "melee"
+        "type": "melee"
       },
-      
       "behaviors": [
-      	{
+        {
           "type": "onSwitchInEffect",
           "particleId": "lightning_boss_switch_in",
           "offsetX": -10,
@@ -717,7 +825,7 @@
           "isOneTime": true,
           "aligned": true
         },
-      	{
+        {
           "type": "onSwitchOutEffect",
           "particleId": "lightning_boss_switch_out",
           "offsetX": -10,

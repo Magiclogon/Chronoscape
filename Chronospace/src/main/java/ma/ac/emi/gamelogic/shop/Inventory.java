@@ -180,6 +180,7 @@ public class Inventory {
         double spdMulBonus   = 0, spdAddBonus   = 0;
         double defAddBonus   = 0; // Defense usually stacks flatly
         double regenAddBonus = 0;
+        double dodgeAddBonus = 0;
         double luckMulBonus  = 0, luckAddBonus  = 0;
 
         for (UpgradeItem upgrade : playerUpgrades) {
@@ -201,6 +202,9 @@ public class Inventory {
                         case HEALTH_REGEN    -> { 
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) regenAddBonus += mod.getValue();
                         }
+                        case DODGE    -> { 
+                        	if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) dodgeAddBonus += mod.getValue();
+                        }
                         case LUCK            -> { 
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) luckMulBonus += mod.getValue() - 1.0;
                             else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  luckAddBonus += mod.getValue();
@@ -216,9 +220,8 @@ public class Inventory {
         player.setHpMax(player.getBaseHPMax() * (1.0 + hpMulBonus) + hpAddBonus);
         player.setSpeed(player.getBaseSpeed() * (1.0 + spdMulBonus) + spdAddBonus);
         player.setLuck(player.getBaseLuck() + luckAddBonus + player.getBaseLuck() * luckMulBonus);
-        
-        // Setting your new stats
         player.setDefense(Math.max(0, defAddBonus));
+        player.setDodge(Math.max( Math.min(dodgeAddBonus, 1), 0));
         player.setRegenerationSpeed(Math.max(0, regenAddBonus));
     }
 

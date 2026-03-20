@@ -21,7 +21,7 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable {
 
     public enum UpgradeType  { WEAPON, PLAYER }
     public enum WeaponStat   { DAMAGE, ATTACK_SPEED, RANGE, MAGAZINE_SIZE, RELOAD_TIME }
-    public enum PlayerStat   { MAX_HEALTH, MOVEMENT_SPEED, DEFENSE, HEALTH_REGEN, LUCK }
+    public enum PlayerStat   { MAX_HEALTH, MOVEMENT_SPEED, DEFENSE, HEALTH_REGEN, DODGE, LUCK }
     public enum OperationType { MULTIPLY, ADD, DIVIDE }
 
 
