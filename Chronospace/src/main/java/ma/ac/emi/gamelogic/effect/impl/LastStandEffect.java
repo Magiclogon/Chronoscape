@@ -2,25 +2,28 @@ package ma.ac.emi.gamelogic.effect.impl;
 
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.player.Player;
+import java.util.Map;
 
 /**
- * Last Stand — take 20% less damage when below 50% HP.
- * Demonstrates damage interception via onDamageTaken.
- *
- * JSON:
- *   { "type": "upgrade", "effectClass": "ma.ac.emi.gamelogic.effect.impl.LastStandEffect", ... }
+ * Last Stand — take less damage when below an HP threshold.
+ * Params: hpThreshold (default 0.5), damageReduction (default 0.20)
  */
 public class LastStandEffect implements PlayerEffect {
 
-    private double hpThreshhold    = 0.5;  // 50% HP
-    private double damageReduction = 0.8; // 20% reduction
+    private double hpThreshold     = 0.5;
+    private double damageReduction = 0.20;
+
+    @Override
+    public void configure(Map<String, Double> p) {
+        hpThreshold     = PlayerEffect.param(p, "hpThreshold",     0.5);
+        damageReduction = PlayerEffect.param(p, "damageReduction", 0.20);
+    }
 
     @Override
     public double onDamageTaken(Player player, double damage) {
         if (player.getHpMax() > 0 &&
-            player.getHp() / player.getHpMax() < hpThreshhold) {
-            return damage * damageReduction;
-        }
+                player.getHp() / player.getHpMax() < hpThreshold)
+            return damage * (1.0 - damageReduction);
         return damage;
     }
 }

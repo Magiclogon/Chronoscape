@@ -29,6 +29,7 @@ import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.gamelogic.player.PlayerConfig;
 
 @Getter
 @Setter
@@ -73,6 +74,7 @@ public class Weapon extends Entity{
         if(weaponItem != null) {
         	WeaponItemDefinition definition = (WeaponItemDefinition) weaponItem.getItemDefinition();
         	attackStrategy = definition.getAttackStrategyDefinition().create();
+            // Bearer may not be set yet — use raw mag here; reload completion will apply caps
             setAmmo(definition.getMagazineSize());
             
             if(definition.getColorCorrection() != null) setBaseColorCorrection(definition.getColorCorrection());
@@ -309,6 +311,13 @@ public class Weapon extends Entity{
     }
     
     
+    /** Returns config caps, falling back to defaults if bearer has no config. */
+    public PlayerConfig.StatCaps caps() {
+        if (bearer instanceof Player p && p.getConfig() != null)
+            return p.getConfig().getCaps();
+        return new PlayerConfig.StatCaps();
+    }
+
     public void update(double step) {
     	super.update(step);
    
@@ -335,7 +344,8 @@ public class Weapon extends Entity{
         }
         
     	
-    	double playSpeed = def.getAnimationDetails().attackingLength*def.getAttackSpeed()/24;
+    	double effectiveAttackSpeed = Math.max(caps().minAttackSpeed, Math.min(caps().maxAttackSpeed, def.getAttackSpeed()));
+    	double playSpeed = def.getAnimationDetails().attackingLength * effectiveAttackSpeed / 24;
     	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
     	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(playSpeed);
     	
@@ -379,7 +389,7 @@ public class Weapon extends Entity{
  
         setTsla(getTsla() + step);
         
-        if(getTsla() <= 1/def.getAttackSpeed()) setAttacking(false);
+        if(getTsla() <= 1.0 / Math.max(caps().minAttackSpeed, Math.min(caps().maxAttackSpeed, def.getAttackSpeed()))) setAttacking(false);
         
         if (getAmmo() <= 0 && def.getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
@@ -395,10 +405,12 @@ public class Weapon extends Entity{
             	stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Right")) setTssr(getTssr() + step);
         }
         
-        if (tssr >= ((WeaponItemDefinition)weaponItem.getItemDefinition()).getReloadingTime() && 
-        		((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() != 0) {
+        WeaponItemDefinition reloadDef = (WeaponItemDefinition)weaponItem.getItemDefinition();
+        double effectiveReload = Math.max(caps().minReloadTime, Math.min(caps().maxReloadTime, reloadDef.getReloadingTime()));
+        int effectiveMag = Math.max(caps().minMagazine, Math.min(caps().maxMagazine, reloadDef.getMagazineSize()));
+        if (tssr >= effectiveReload && reloadDef.getMagazineSize() != 0) {
         	stateMachine.trigger(TRIGGER_STOP);
-            setAmmo(((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize());
+            setAmmo(effectiveMag);
             setTssr(0);
         }
        
@@ -423,8 +435,9 @@ public class Weapon extends Entity{
     }
 
     public void reload() {
-        if (ammo == ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize() || tssr > 0) return;
-        System.out.println("Reloading weapon...");
+        int effectiveMag = Math.max(caps().minMagazine, Math.min(caps().maxMagazine,
+                ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize()));
+        if (ammo == effectiveMag || tssr > 0) return;
         tssr = 0;
     }
     

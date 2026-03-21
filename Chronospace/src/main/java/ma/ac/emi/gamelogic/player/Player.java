@@ -225,16 +225,21 @@ public class Player extends LivingEntity {
 			equippedWeapons[i] = weapon;
 		}
 		setActiveWeapon(equippedWeapons[weaponIndex]);
+		if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
 	}
 	
 	public void setActiveWeapon(Weapon weapon) {
 		this.activeWeapon = weapon;
-		if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
+		if(activeWeapon != null) {
+			GameController.getInstance().addDrawable(activeWeapon);
+		}
 	}
 
 	public double applyLuckToValue(double baseValue) {
-
-		return baseValue * (1.0 + (this.luck * 0.10));
+		double effectiveLuck = config != null
+				? Math.max(config.getCaps().minLuck, this.luck)
+				: Math.max(0, this.luck);
+		return baseValue * (1.0 + (effectiveLuck * 0.10));
 	}
 	
 
@@ -294,12 +299,13 @@ public class Player extends LivingEntity {
 			velocity.setX(1);
 		}
 		
-		velocity = velocity.normalize().mult(speed);
+		velocity = velocity.normalize().mult(Math.max(this.config.statCaps.minSpeed, Math.min(this.config.statCaps.maxSpeed, speed)));
 
 		
 		if(KeyHandler.getInstance().consumeSwitchWeapon()) {
 			switching = true;
 		}
+				
 		if(activeWeapon != null) {
 			activeWeapon.update(step);
 		}
@@ -424,7 +430,7 @@ public class Player extends LivingEntity {
 	}
 	
 	public void applyRegen(double step) {
-		heal(getRegenerationSpeed() * step);
+		heal(Math.max(this.config.statCaps.minRegen, Math.min(this.config.statCaps.maxRegen, getRegenerationSpeed())) * step);
 	}
 
 

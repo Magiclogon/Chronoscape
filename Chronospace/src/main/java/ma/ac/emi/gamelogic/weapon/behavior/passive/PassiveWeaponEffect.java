@@ -49,6 +49,7 @@ public class PassiveWeaponEffect extends WeaponBehavior {
         if (player == null) return;
         apply(player, true);
         active = true;
+        System.out.println("switching in");
     }
 
     @Override

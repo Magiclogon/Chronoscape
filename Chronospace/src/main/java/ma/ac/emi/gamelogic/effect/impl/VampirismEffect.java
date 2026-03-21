@@ -14,6 +14,6 @@ public class VampirismEffect implements PlayerEffect {
     }
 
     @Override public void onKill(Player player, LivingEntity killed) {
-        player.setHp(Math.min(player.getHp() + healAmount, player.getHpMax()));
+        player.heal(healAmount);
     }
 }

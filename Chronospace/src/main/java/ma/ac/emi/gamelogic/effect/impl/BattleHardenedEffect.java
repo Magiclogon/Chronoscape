@@ -2,22 +2,28 @@ package ma.ac.emi.gamelogic.effect.impl;
 
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.player.Player;
+import java.util.Map;
 
 /**
- * Battle Hardened — gain +5 armor permanently for every wave completed,
- * up to a maximum of +50.
+ * Battle Hardened — gain flat armor permanently for every wave completed, up to a cap.
+ * Params: armorPerWave (default 5.0), maxBonus (default 50.0)
  */
 public class BattleHardenedEffect implements PlayerEffect {
 
-    private static final double ARMOR_PER_WAVE = 5.0;
-    private static final double MAX_BONUS       = 50.0;
-
+    private double armorPerWave     = 5.0;
+    private double maxBonus         = 50.0;
     private double accumulatedArmor = 0;
 
     @Override
+    public void configure(Map<String, Double> p) {
+        armorPerWave = PlayerEffect.param(p, "armorPerWave", 5.0);
+        maxBonus     = PlayerEffect.param(p, "maxBonus",     50.0);
+    }
+
+    @Override
     public void onWaveEnd(Player player) {
-        if (accumulatedArmor >= MAX_BONUS) return;
-        double gain = Math.min(ARMOR_PER_WAVE, MAX_BONUS - accumulatedArmor);
+        if (accumulatedArmor >= maxBonus) return;
+        double gain = Math.min(armorPerWave, maxBonus - accumulatedArmor);
         accumulatedArmor += gain;
         player.setDefense(player.getDefense() + gain);
     }

@@ -22,12 +22,13 @@ public class DamageBehavior implements ProjectileBehavior {
         if (entity == null) return;
         if (entity.isInvincible()) return;
 
+        // ── Dodge check — only the player can dodge ───────────────────────
         if (entity instanceof Player player) {
             if (rollDodge(player)) {
                 FloatingTextManager.getInstance().spawn(
                         "DODGED!", FloatingText.Preset.DODGED, entity.getPos());
                 player.getInventory().getEffectContext().fireOnDodge(player);
-                return;
+                return; // attack does nothing
             }
         }
 
@@ -36,6 +37,8 @@ public class DamageBehavior implements ProjectileBehavior {
 
         double damage = definition.getDamage();
         damage *= p.getWeapon().getBearer().getStrength();
+        if (p.getWeapon().getBearer() instanceof Player player && player.getConfig() != null)
+            damage = Math.max(player.getConfig().getCaps().minDamage, damage);
         entity.takeDamage(damage, p.getWeapon().getBearer());
         System.out.println("Target hit, damage: " + damage + ", remaining hp: " + entity.getHp());
 
@@ -46,7 +49,11 @@ public class DamageBehavior implements ProjectileBehavior {
         }
     }
 
-   
+    /**
+     * Returns true if the player successfully dodges this hit.
+     * Dodge is a value in [0, 1] representing the probability of avoiding damage.
+     * e.g. dodge = 0.15 → 15% chance to dodge.
+     */
     private boolean rollDodge(Player player) {
         double dodge = Math.max(0, Math.min(1, player.getDodge()));
         return dodge > 0 && Math.random() < dodge;

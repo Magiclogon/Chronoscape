@@ -12,6 +12,7 @@ import ma.ac.emi.UI.shopElements.InventoryScrollable;
 import ma.ac.emi.UI.shopElements.ShopItemButton;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.player.PlayerConfig;
 import ma.ac.emi.gamelogic.shop.Inventory;
 import ma.ac.emi.gamelogic.shop.ShopItem;
 import ma.ac.emi.gamelogic.shop.ShopManager;
@@ -120,9 +121,9 @@ public class ShopUI extends JPanel {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 5, 0, 5);
-        gbc.gridx = 0; gbc.weightx = 0.2; contentGrid.add(heroPanel, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.5; contentGrid.add(shopPanel, gbc);
-        gbc.gridx = 2; gbc.weightx = 0.3; contentGrid.add(bagPanel,  gbc);
+        gbc.gridx = 0; gbc.weightx = 0.26; contentGrid.add(heroPanel, gbc);
+        gbc.gridx = 1; gbc.weightx = 0.49; contentGrid.add(shopPanel, gbc);
+        gbc.gridx = 2; gbc.weightx = 0.25; contentGrid.add(bagPanel,  gbc);
         add(contentGrid, BorderLayout.CENTER);
     }
 
@@ -159,16 +160,16 @@ public class ShopUI extends JPanel {
         statsContainer.removeAll();
 
         statsContainer.add(createStatRow("HP",       String.format("%.0f/%.0f", player.getHp(), player.getHpMax())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("SPEED",    String.format("%.0f",      player.getSpeed())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("STRENGTH", String.format("%.1f",      player.getStrength())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("REGEN",    String.format("%.1f/s",    player.getRegenerationSpeed())));
-        statsContainer.add(Box.createVerticalStrut(10));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("SPEED",    formatCapped(player.getSpeed(), player.getConfig() != null ? player.getConfig().getCaps().minSpeed : 50, player.getConfig() != null ? player.getConfig().getCaps().maxSpeed : 600, false)));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("REGEN",    formatCapped(player.getRegenerationSpeed(), player.getConfig() != null ? player.getConfig().getCaps().minRegen : 0, player.getConfig() != null ? player.getConfig().getCaps().maxRegen : 50, true)));
+        statsContainer.add(Box.createVerticalStrut(6));
         statsContainer.add(createStatRow("DEFENSE",  String.format("%.0f",      player.getDefense())));
-        statsContainer.add(Box.createVerticalStrut(10));
-        statsContainer.add(createStatRow("LUCK",     String.format("%.1f",      player.getLuck())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("DODGE",    formatDodge(player.getDodge())));
+        statsContainer.add(Box.createVerticalStrut(6));
+        statsContainer.add(createStatRow("LUCK",     formatLuck(player.getLuck(), player.getConfig() != null ? player.getConfig().getCaps().minLuck : 0)));
 
         statsContainer.add(Box.createVerticalStrut(30));
 
@@ -346,6 +347,44 @@ public class ShopUI extends JPanel {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
+
+    private String formatDodge(double raw) {
+        double clamped  = Math.max(0, Math.min(1, raw));
+        double overflow = raw - clamped;
+        String base = String.format("%.0f%%", clamped * 100);
+        if (Math.abs(overflow) < 0.001) return base;
+        String extra = overflow > 0
+                ? String.format(" (+%.0f%%)", overflow * 100)
+                : String.format(" (%.0f%%)",  overflow * 100);
+        return base + extra;
+    }
+
+    /**
+     * Shows the effective (clamped) value plus the raw value in parentheses
+     * when the raw differs from the effective. This way the player sees both
+     * what the game actually uses and what their raw stat is.
+     *
+     * Example: raw=-131, min=50 → "50 (raw: -131)"
+     * Example: raw=480, max=600 → "480"  (within range, no parenthetical)
+     */
+    private String formatCapped(double raw, double min, double max, boolean usePerSec) {
+        double effective = Math.max(min, Math.min(max, raw));
+        String suffix = usePerSec ? "/s" : "";
+        String fmt    = usePerSec ? "%.1f" : "%.0f";
+        String base   = String.format(fmt + suffix, effective);
+        if (Math.abs(raw - effective) < 0.01) return base;
+        // Show raw value so player can reason about item effects on the underlying stat
+        String rawStr = String.format(fmt + suffix, raw);
+        return base + " (" + rawStr + ")";
+    }
+
+    /**
+     * Formats luck — only has a minimum. Shows raw value if below min.
+     */
+    private String formatLuck(double raw, double min) {
+        if (raw >= min) return String.format("%.1f", raw);
+        return String.format("%.1f (%.1f)", min, raw);
+    }
 
     private JPanel createBonusRow(String label, double mul, double add, boolean isReload) {
         String display;

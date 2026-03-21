@@ -2,31 +2,39 @@ package ma.ac.emi.gamelogic.effect.impl;
 
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import java.util.Map;
 
-/**
- * Barbell — for every 50 max HP the player has, grant +5 flat weapon damage.
- * Recalculates every tick so it automatically responds to other HP-boosting items.
- */
 public class BarbellEffect implements PlayerEffect {
 
-    private static final double HP_PER_STEP     = 50.0;
-    private static final double DAMAGE_PER_STEP = 5.0;
+    private double hpPerStep     = 50.0;
+    private double damagePerStep = 3.0;
+    private double lastFlat      = 0;
 
-    private double lastAppliedBonus = 0;
+    @Override
+    public void configure(Map<String, Double> p) {
+        hpPerStep     = PlayerEffect.param(p, "hpPerStep",     50.0);
+        damagePerStep = PlayerEffect.param(p, "damagePerStep",  3.0);
+    }
 
     @Override
     public void onTick(Player player, double step) {
-        double bonus = Math.floor(player.getHpMax() / HP_PER_STEP) * DAMAGE_PER_STEP;
-        double delta = bonus - lastAppliedBonus;
-        if (Math.abs(delta) > 0.001) {
-            player.setStrength(player.getStrength() + delta);
-            lastAppliedBonus = bonus;
-        }
+        if (player.getActiveWeapon() == null) return;
+        double targetFlat = Math.floor(player.getHpMax() / hpPerStep) * damagePerStep;
+        if (Math.abs(targetFlat - lastFlat) < 0.001) return;
+
+        WeaponItemDefinition def = (WeaponItemDefinition)
+                player.getActiveWeapon().getWeaponItem().getItemDefinition();
+        def.setDamage(def.getDamage() - lastFlat + targetFlat);
+        lastFlat = targetFlat;
     }
 
     @Override
     public void onUnregister(Player player) {
-        player.setStrength(player.getStrength() - lastAppliedBonus);
-        lastAppliedBonus = 0;
+        if (player.getActiveWeapon() == null || lastFlat == 0) return;
+        WeaponItemDefinition def = (WeaponItemDefinition)
+                player.getActiveWeapon().getWeaponItem().getItemDefinition();
+        def.setDamage(def.getDamage() - lastFlat);
+        lastFlat = 0;
     }
 }

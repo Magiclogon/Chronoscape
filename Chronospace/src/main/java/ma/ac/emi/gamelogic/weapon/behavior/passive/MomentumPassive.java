@@ -1,18 +1,13 @@
 package ma.ac.emi.gamelogic.weapon.behavior.passive;
 
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
 /**
- * Momentum — damage increases with consecutive hits this wave.
- * Every N hits, gain +X% strength. Resets on wave start (switch-in resets too).
- *
- * Designed for: Sword, Fists, Lightsaber (melee that rewards staying in combat)
- *
- * Params:
- *   hitsPerStack    (default 5)    — hits needed per stack
- *   bonusPerStack   (default 0.08) — strength multiplier per stack
- *   maxStacks       (default 6)    — cap
+ * Momentum — consecutive hits stack a multiplicative damage bonus. Resets on switch.
+ * Uses delta tracking so it doesn't interfere with item upgrade bonuses.
+ * Params: hitsPerStack (default 5), bonusPerStack (default 0.08), maxStacks (default 6)
  */
 public class MomentumPassive extends WeaponPassive {
 
@@ -20,8 +15,9 @@ public class MomentumPassive extends WeaponPassive {
     private double bonusPerStack = 0.08;
     private int    maxStacks     = 6;
 
-    private int    hitCount      = 0;
-    private int    currentStacks = 0;
+    private int    hitCount       = 0;
+    private int    currentStacks  = 0;
+    private double lastMultiplier = 1.0; // the multiplier we last applied
 
     @Override
     public void configure(java.util.Map<String, Double> p) {
@@ -33,37 +29,60 @@ public class MomentumPassive extends WeaponPassive {
 
     @Override
     public void onSwitchIn(Weapon weapon) {
-        // Reset stacks on switch — momentum is lost when you put the weapon away
-        Player player = player(weapon);
-        if (player == null) return;
-        removeStacks(player);
-        hitCount = 0;
+        // Weapon definition was just reset by recalculateAllUpgrades/initWeapons —
+        // lastMultiplier is stale, so just zero everything out without undoing.
+        hitCount       = 0;
+        currentStacks  = 0;
+        lastMultiplier = 1.0;
     }
 
     @Override
     public void onSwitchOut(Weapon weapon) {
-        Player player = player(weapon);
-        if (player != null) removeStacks(player);
-        hitCount = 0;
+        // Undo last applied multiplier so the weapon def is clean for other effects
+        if (lastMultiplier != 1.0) {
+            WeaponItemDefinition def = (WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition();
+            def.setDamage(def.getDamage() / lastMultiplier);
+        }
+        hitCount       = 0;
+        currentStacks  = 0;
+        lastMultiplier = 1.0;
+    }
+
+    @Override
+    public void onWaveEnd(Weapon weapon) {
+        // Undo the damage bonus before the shop's recalculateAllUpgrades resets
+        // the weapon definition — prevents the inflated value from being carried over
+        if (lastMultiplier != 1.0) {
+            WeaponItemDefinition def = (WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition();
+            def.setDamage(def.getDamage() / lastMultiplier);
+        }
+        hitCount       = 0;
+        currentStacks  = 0;
+        lastMultiplier = 1.0;
     }
 
     @Override
     public void onAttack(Weapon weapon, double step) {
-        Player player = player(weapon);
-        if (player == null || currentStacks >= maxStacks) return;
-
-        hitCount++;
-        if (hitCount % hitsPerStack == 0) {
-            player.setStrength(player.getStrength() * (1.0 + bonusPerStack));
-            currentStacks++;
-        }
+        if (currentStacks >= maxStacks) return;
+        if (++hitCount % hitsPerStack == 0) currentStacks++;
     }
 
-    private void removeStacks(Player player) {
-        if (currentStacks > 0) {
-            double totalMul = Math.pow(1.0 + bonusPerStack, currentStacks);
-            player.setStrength(player.getStrength() / totalMul);
-            currentStacks = 0;
-        }
+    @Override
+    public void onUpdate(Weapon weapon, double step) {
+        double targetMultiplier = 1.0 + currentStacks * bonusPerStack;
+        if (Math.abs(targetMultiplier - lastMultiplier) < 0.0001) return;
+
+        WeaponItemDefinition def = (WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition();
+        // Undo previous multiplier, apply new one — preserves whatever else is in the damage value
+        def.setDamage(def.getDamage() / lastMultiplier * targetMultiplier);
+        lastMultiplier = targetMultiplier;
+    }
+    
+    @Override
+    public String describe() {
+        int    hits = paramInt("hitsPerStack",  5);
+        int    pct  = (int) Math.round(param("bonusPerStack", 0.08) * 100);
+        int    max  = paramInt("maxStacks",     6);
+        return String.format("Every %d hits +%d%% damage (max %dx). Resets on switch", hits, pct, max);
     }
 }

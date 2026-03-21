@@ -54,4 +54,10 @@ public class DodgeSynergyPassive extends WeaponPassive {
             lastBonus = bonus;
         }
     }
+    
+    @Override
+    public String describe() {
+        double ratio = param("speedPerDodgePct", 0.5);
+        return String.format("Each 1%% dodge grants +%.0f%% move speed", ratio * 100);
+    }
 }

@@ -148,6 +148,8 @@ public class Projectile extends AttackObject{
     	Vector3D diff = getPos().sub(getStartingPos());
     	Vector3D diffProj = new Vector3D(diff.getX(), diff.getY());
     	
+    	if(definition.getAttackStrategyDefinition() instanceof WeaponItemDefinition.MeleeStrategyDefinition) 
+    		return diffProj.norm() > 20;
     	return diffProj.norm() > definition.getRange();
     }
 

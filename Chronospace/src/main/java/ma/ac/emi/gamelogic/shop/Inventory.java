@@ -142,7 +142,7 @@ public class Inventory {
     // ── Full recalculation (unchanged logic) ──────────────────────────────
 
     public void recalculateAllUpgrades(Player player) {
-        player.setDefense(1);
+        player.setDefense(0);
         player.setRegenerationSpeed(0);
 
         player.resetBaseStats();
@@ -158,6 +158,9 @@ public class Inventory {
 
         applyPlayerUpgrades(player);
         applyWeaponUpgrades();
+
+        // Re-apply tick-based effect bonuses immediately for accurate shop display
+        effectContext.fireOnTick(player, 0);
     }
 
     private void applyWeaponUpgradesToItem(WeaponItem weapon) {
@@ -188,8 +191,9 @@ public class Inventory {
     private void applyPlayerUpgrades(Player player) {
         double hpMulBonus    = 0, hpAddBonus    = 0;
         double spdMulBonus   = 0, spdAddBonus   = 0;
-        double defAddBonus   = 0; // Defense usually stacks flatly
+        double defAddBonus   = 0;
         double regenAddBonus = 0;
+        double dodgeAddBonus = 0;
         double luckMulBonus  = 0, luckAddBonus  = 0;
 
         for (UpgradeItem upgrade : playerUpgrades) {
@@ -211,6 +215,9 @@ public class Inventory {
                         case HEALTH_REGEN    -> { 
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) regenAddBonus += mod.getValue();
                         }
+                        case DODGE           -> { 
+                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) dodgeAddBonus += mod.getValue();
+                        }
                         case LUCK            -> { 
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) luckMulBonus += mod.getValue() - 1.0;
                             else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  luckAddBonus += mod.getValue();
@@ -222,14 +229,12 @@ public class Inventory {
             }
         }
 
-        // Apply the results to the player object
         player.setHpMax(player.getBaseHPMax() * (1.0 + hpMulBonus) + hpAddBonus);
         player.setSpeed(player.getBaseSpeed() * (1.0 + spdMulBonus) + spdAddBonus);
         player.setLuck(player.getBaseLuck() + luckAddBonus + player.getBaseLuck() * luckMulBonus);
-        
-        // Setting your new stats
         player.setDefense(defAddBonus);
-        player.setRegenerationSpeed(regenAddBonus);
+        player.setDodge(dodgeAddBonus);
+        player.setRegenerationSpeed(player.getBaseRegenerationSpeed() + Math.max(0, regenAddBonus));
     }
 
     private void applyWeaponUpgrades() {
@@ -251,9 +256,7 @@ public class Inventory {
                             case ATTACK_SPEED  -> { if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) spdMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) spdAdd += mod.getValue(); else spdMul -= 1.0-1.0/mod.getValue(); }
                             case RANGE         -> { if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) rngMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) rngAdd += mod.getValue(); else rngMul -= 1.0-1.0/mod.getValue(); }
                             case MAGAZINE_SIZE -> { if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) magMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) magAdd += mod.getValue(); else magMul -= 1.0-1.0/mod.getValue(); }
-                            // RELOAD_TIME: DIVIDE means "faster" — treat symmetrically with MULTIPLY
-                            // Both accumulate as a bonus fraction so stacking is linear, not compounding
-                            case RELOAD_TIME   -> { if (mod.getOperation() == UpgradeItemDefinition.OperationType.DIVIDE) rldMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) rldMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) rldAdd += mod.getValue(); }
+                            case RELOAD_TIME   -> { if (mod.getOperation() == UpgradeItemDefinition.OperationType.DIVIDE || mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) rldMul += mod.getValue()-1; else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD) rldAdd += mod.getValue(); }
                         }
                     } catch (IllegalArgumentException e) {
                         System.err.println("Unknown weapon stat: " + mod.getStat());
@@ -266,7 +269,6 @@ public class Inventory {
             newDef.setAttackSpeed(baseDef.getAttackSpeed()     * (1.0 + spdMul) + spdAdd);
             newDef.setRange(baseDef.getRange()                 * (1.0 + rngMul) + rngAdd);
             newDef.setMagazineSize((int)(baseDef.getMagazineSize() * (1.0 + magMul) + magAdd));
-            // Reload: dividing by (1 + rldMul) makes it faster — same framing as DIVIDE operation
             newDef.setReloadingTime(baseDef.getReloadingTime() / (1.0 + rldMul) + rldAdd);
             weapon.setItemDefinition(newDef);
         }
@@ -290,53 +292,43 @@ public class Inventory {
         // called by ShopManager.init() → no action needed here
     }
 
-    /**
-     * Aggregated weapon stat bonuses from all currently owned upgrade items.
-     * Displayed in the shop's hero panel as "weapon bonuses" independently
-     * of any specific equipped weapon.
-     */
     public static class WeaponBonusSummary {
-        public double damageMul    = 1.0;  // multiplicative total
-        public double damageAdd    = 0.0;  // additive total
+        public double damageMul      = 1.0;
+        public double damageAdd      = 0.0;
         public double attackSpeedMul = 1.0;
         public double attackSpeedAdd = 0.0;
-        public double rangeMul     = 1.0;
-        public double rangeAdd     = 0.0;
-        public double magazineMul  = 1.0;
-        public double magazineAdd  = 0.0;
-        public double reloadDiv    = 0.0;  // accumulated bonus fraction; 0.08 = 8% faster
+        public double rangeMul       = 1.0;
+        public double rangeAdd       = 0.0;
+        public double magazineMul    = 1.0;
+        public double magazineAdd    = 0.0;
+        public double reloadDiv      = 0.0; // accumulated bonus fraction; 0.08 = 8% faster
     }
 
-    /**
-     * Computes and returns the total weapon bonuses granted by all upgrade items.
-     * Does NOT modify any weapon — purely for display purposes.
-     */
     public WeaponBonusSummary getWeaponBonusSummary() {
         WeaponBonusSummary s = new WeaponBonusSummary();
-
         for (UpgradeItem upgrade : weaponUpgrades) {
             for (UpgradeItemDefinition.Modification mod :
                     ((UpgradeItemDefinition) upgrade.getItemDefinition()).getWeaponModifications()) {
                 try {
                     switch (UpgradeItemDefinition.WeaponStat.valueOf(mod.getStat().toUpperCase())) {
                         case DAMAGE -> {
-                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.damageMul    += mod.getValue() - 1.0;
-                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.damageAdd    += mod.getValue();
+                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.damageMul      += mod.getValue() - 1.0;
+                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.damageAdd      += mod.getValue();
                         }
                         case ATTACK_SPEED -> {
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.attackSpeedMul += mod.getValue() - 1.0;
                             else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.attackSpeedAdd += mod.getValue();
                         }
                         case RANGE -> {
-                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.rangeMul     += mod.getValue() - 1.0;
-                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.rangeAdd     += mod.getValue();
+                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.rangeMul       += mod.getValue() - 1.0;
+                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.rangeAdd       += mod.getValue();
                         }
                         case MAGAZINE_SIZE -> {
-                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.magazineMul  += mod.getValue() - 1.0;
-                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.magazineAdd  += mod.getValue();
+                            if (mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY) s.magazineMul    += mod.getValue() - 1.0;
+                            else if (mod.getOperation() == UpgradeItemDefinition.OperationType.ADD)  s.magazineAdd    += mod.getValue();
                         }
+                        // Matches applyWeaponUpgrades: both DIVIDE and MULTIPLY stack additively
                         case RELOAD_TIME -> {
-                            // Additive accumulation — matches applyWeaponUpgrades
                             if (mod.getOperation() == UpgradeItemDefinition.OperationType.DIVIDE
                              || mod.getOperation() == UpgradeItemDefinition.OperationType.MULTIPLY)
                                 s.reloadDiv += mod.getValue() - 1.0;
@@ -347,7 +339,6 @@ public class Inventory {
                 }
             }
         }
-
         return s;
     }
 

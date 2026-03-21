@@ -362,7 +362,6 @@ public class GameUIPanel extends JPanel {
 
 		for (WeaponBehaviorDefinition b : def.getBehaviorDefinitions()) {
 			if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition p) {
-				// Simple passives — read the exact stat they modify
 				switch (p.getStat().toLowerCase()) {
 					case "dodge"        -> hasDodge    = true;
 					case "defense"      -> hasDefense  = true;
@@ -371,7 +370,6 @@ public class GameUIPanel extends JPanel {
 					case "health_regen" -> hasRegen    = true;
 				}
 			} else if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition p) {
-				// Complex passives — use the precise stat set each one declares
 				for (String stat : p.getAffectedStats()) {
 					switch (stat) {
 						case "dodge"        -> hasDodge    = true;
@@ -385,11 +383,15 @@ public class GameUIPanel extends JPanel {
 		}
 
 		java.util.List<String> stats = new java.util.ArrayList<>();
-		if (hasDodge)    stats.add(String.format("DODGE: %.0f%%",  player.getDodge() * 100));
-		if (hasDefense)  stats.add(String.format("ARMOR: %.0f",    player.getDefense()));
-		if (hasSpeed)    stats.add(String.format("SPEED: %.0f",    player.getSpeed()));
-		if (hasStrength) stats.add(String.format("DMG:   %.1f",    player.getStrength()));
-		if (hasRegen)    stats.add(String.format("REGEN: %.1f/s",  player.getRegenerationSpeed()));
+		if (hasDodge)   stats.add(String.format("DODGE: %.0f%%", player.getDodge() * 100));
+		if (hasDefense) stats.add(String.format("ARMOR: %.0f",   player.getDefense()));
+		if (hasSpeed)   stats.add(String.format("SPEED: %.0f",   player.getSpeed()));
+		if (hasStrength) {
+			// Show the weapon's actual current damage (includes item upgrades + effect bonuses),
+			// not player.strength which is a fixed config multiplier
+			stats.add(String.format("DMG:   %.1f", def.getDamage()));
+		}
+		if (hasRegen)   stats.add(String.format("REGEN: %.1f/s", player.getRegenerationSpeed()));
 		return stats;
 	}
 

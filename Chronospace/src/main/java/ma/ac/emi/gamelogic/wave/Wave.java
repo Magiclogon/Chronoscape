@@ -146,6 +146,13 @@ public class Wave extends WaveNotifier {
         if (player != null && player.getInventory() != null) {
             player.getInventory().getEffectContext().fireOnWaveEnd(player);
         }
+        // Fire onWaveEnd for weapon behaviors (MomentumPassive, etc.)
+        if (player != null) {
+            for (ma.ac.emi.gamelogic.weapon.Weapon weapon : player.getEquippedWeapons()) {
+                if (weapon != null)
+                    weapon.getBehaviors().forEach(b -> b.onWaveEnd(weapon));
+            }
+        }
     }
 
     private void spawnEnemy() {

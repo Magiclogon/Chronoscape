@@ -45,10 +45,15 @@ public abstract class WeaponPassive extends WeaponBehavior {
         return weapon.getBearer() instanceof Player p ? p : null;
     }
 
+    /** Human-readable description of what this passive does, shown in item tooltip. */
+    public abstract String describe();
+
     // ── Default no-ops so subclasses only override what they need ─────────
     @Override public void onInit(Weapon weapon)                {}
     @Override public void onUpdate(Weapon weapon, double step)  {}
     @Override public void onAttack(Weapon weapon, double step)  {}
     @Override public void onSwitchIn(Weapon weapon)             {}
     @Override public void onSwitchOut(Weapon weapon)            {}
+    @Override public void onWaveStart(Weapon weapon)            {}
+    @Override public void onWaveEnd(Weapon weapon)              {}
 }
