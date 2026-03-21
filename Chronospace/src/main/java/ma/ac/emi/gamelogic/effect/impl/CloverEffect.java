@@ -13,6 +13,6 @@ public class CloverEffect implements PlayerEffect {
     }
 
     @Override public void onDodge(Player player) {
-        player.setHp(Math.min(player.getHp() + healPerDodge, player.getHpMax()));
+        player.heal(healPerDodge);
     }
 }

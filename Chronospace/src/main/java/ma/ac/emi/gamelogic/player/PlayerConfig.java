@@ -24,6 +24,36 @@ public class PlayerConfig {
     public LightingStrategy lightingStrategy;
     
     public List<EntityBehaviorDefinition> behaviorDefinitions;
+
+    /** Optional — if absent, defaults are used. */
+    public StatCaps statCaps;
+
+    public static class StatCaps {
+        // Player stat caps — raw values stored unclamped, clamped on apply
+        public double minSpeed       =   50;
+        public double maxSpeed       =  600;
+        public double minRegen       =    0; 
+        public double maxRegen       =   50;
+        public double minLuck        =    0;
+        
+
+        // Weapon stat caps
+        public double minDamage      =    1;
+        public double minAttackSpeed =  0.1;
+        public double maxAttackSpeed =   30;
+        public double minRange       =   10;
+        public double maxRange       = 2000;
+        public int    minMagazine    =    1;
+        public int    maxMagazine    =  999;
+        public double minReloadTime  =  0.1;
+        public double maxReloadTime  =   30;
+    }
+
+    /** Returns statCaps, initialising with defaults if not set in JSON. */
+    public StatCaps getCaps() {
+        if (statCaps == null) statCaps = new StatCaps();
+        return statCaps;
+    }
     
     public static class AnimationDetails{
 		public String spriteSheetPath;

@@ -54,14 +54,12 @@
           "aligned": true
         },
         {
-          "type": "passive_complex",
-          "effect": "MomentumPassive",
-          "params": {
-            "hitsPerStack": 8,
-            "bonusPerStack": 0.05,
-            "maxStacks": 5
-          }
+        "type": "passive_complex",
+        "effect": "BulletHosePassive",
+        "params": {
+          "scaleFactor": 1
         }
+      }
       ]
     },
     {
@@ -117,7 +115,16 @@
           "params": {
             "damagePerArmor": 0.06
           }
-        }
+        },
+        {
+	        "type": "passive_complex",
+	        "effect": "MomentumPassive",
+	        "params": {
+	          "hitsPerStack": 3,
+	          "bonusPerStack": 0.12,
+	          "maxStacks": 5
+	        }
+	      }
       ]
     },
     {
@@ -137,6 +144,8 @@
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
       "stackable": false,
+      "relativeProjectilePosX": 15,
+      "relativeProjectilePosY": 0,
       "animationDetails": {
         "spriteSheetPath": "weapons/sword-Sheet.png",
         "handSpriteSheetPath": "hands/sword_hands-Sheet.png",
@@ -368,6 +377,8 @@
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
       "stackable": false,
+      "relativeProjectilePosX": 15,
+      "relativeProjectilePosY": 0,
       "animationDetails": {
         "spriteSheetPath": "weapons/lightsaber-Sheet.png",
         "handSpriteSheetPath": "hands/lightsaber_hands-Sheet.png",

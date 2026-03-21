@@ -143,7 +143,7 @@ public class Pickable extends Entity {
 
     public void applyEffect(Player player) {
         if (type == PickableType.HEALTH) {
-            player.setHp(Math.min(player.getHp() + value, player.getHpMax()));
+            player.heal(value);;
         } else if (type == PickableType.MONEY) {
             player.setMoney(player.getMoney() + (int)value);
         }

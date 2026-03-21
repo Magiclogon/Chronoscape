@@ -20,7 +20,7 @@ public class RangeStrategy extends AttackStrategy {
     @Override
     public void execute(Weapon weapon, Vector3D target, double step) {    	
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
-        if (weapon.getTsla() >= 1/definition.getAttackSpeed() && weapon.getAmmo() > 0) {
+        if (weapon.getTsla() >= 1/Math.max(weapon.caps().minAttackSpeed, Math.min(weapon.caps().maxAttackSpeed, definition.getAttackSpeed())) && weapon.getAmmo() > 0) {
         	for(int i = 0; i < projectileCount; i++) {
         		double angle = weapon.getDir().getAngle() + Math.random()*spread - spread/2;
         		Vector3D dir = new Vector3D(Math.cos(angle), Math.sin(angle));

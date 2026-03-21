@@ -3,39 +3,58 @@ package ma.ac.emi.gamelogic.effect.impl;
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
+import java.util.Map;
 
-/**
- * Berserker Soul — each kill stacks +1% damage bonus up to +50% total.
- * Works alongside the base +30% MULTIPLY modifier in the JSON.
- */
 public class BerserkerSoulEffect implements PlayerEffect {
 
-    private static final double BONUS_PER_KILL  = 0.01; // 1%
-    private static final double MAX_BONUS        = 0.50; // 50% cap
-    private double currentBonus = 0;
+    private double bonusPerKill    = 0.005;
+    private double maxBonus        = 0.20;
+    private double currentBonus    = 0;
+    private double lastMultiplier  = 1.0;
 
     @Override
-    public void onKill(Player player, LivingEntity killed) {
-        if (currentBonus >= MAX_BONUS) return;
-        double added = Math.min(BONUS_PER_KILL, MAX_BONUS - currentBonus);
-        currentBonus += added;
-        player.setStrength(player.getStrength() * (1.0 + added));
+    public void configure(Map<String, Double> p) {
+        bonusPerKill = PlayerEffect.param(p, "bonusPerKill", 0.005);
+        maxBonus     = PlayerEffect.param(p, "maxBonus",     0.20);
     }
 
     @Override
-    public void onUnregister(Player player) {
-        if (currentBonus > 0) {
-            player.setStrength(player.getStrength() / (1.0 + currentBonus));
-            currentBonus = 0;
-        }
+    public void onKill(Player player, LivingEntity killed) {
+        currentBonus = Math.min(maxBonus, currentBonus + bonusPerKill);
+    }
+
+    @Override
+    public void onTick(Player player, double step) {
+        if (player.getActiveWeapon() == null) return;
+        double targetMultiplier = 1.0 + currentBonus;
+        if (Math.abs(targetMultiplier - lastMultiplier) < 0.0001) return;
+
+        WeaponItemDefinition def = (WeaponItemDefinition)
+                player.getActiveWeapon().getWeaponItem().getItemDefinition();
+        def.setDamage(def.getDamage() / lastMultiplier * targetMultiplier);
+        lastMultiplier = targetMultiplier;
     }
 
     @Override
     public void onWaveStart(Player player) {
-        // Reset kill stacks each wave — keeps the item from snowballing permanently
-        if (currentBonus > 0) {
-            player.setStrength(player.getStrength() / (1.0 + currentBonus));
-            currentBonus = 0;
+        if (player.getActiveWeapon() != null && lastMultiplier != 1.0) {
+            WeaponItemDefinition def = (WeaponItemDefinition)
+                    player.getActiveWeapon().getWeaponItem().getItemDefinition();
+            def.setDamage(def.getDamage() / lastMultiplier);
         }
+        currentBonus   = 0;
+        lastMultiplier = 1.0;
+    }
+
+    @Override
+    public void onWaveEnd(Player player) {
+        if (player.getActiveWeapon() != null && lastMultiplier != 1.0) {
+            WeaponItemDefinition def = (WeaponItemDefinition)
+                    player.getActiveWeapon().getWeaponItem().getItemDefinition();
+            def.setDamage(def.getDamage() / lastMultiplier);
+        }
+        currentBonus   = 0;
+        lastMultiplier = 1.0;
     }
 }

@@ -87,4 +87,12 @@ public class RegenOnKillPassive extends WeaponPassive {
             timeRemaining = 0;
         }
     }
+    
+    @Override
+    public String describe() {
+        double regen    = param("regenPerKill",  2.0);
+        double duration = param("regenDuration", 4.0);
+        double maxR     = param("maxRegen",      10.0);
+        return String.format("Kill: +%.1f HP/s for %.0fs (max %.0f HP/s)", regen, duration, maxR);
+    }
 }

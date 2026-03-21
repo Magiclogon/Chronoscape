@@ -5,7 +5,8 @@ import lombok.Setter;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.player.Player; // Import Player
+import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.player.PlayerConfig;
 import ma.ac.emi.gamelogic.wave.WaveListener;
 import ma.ac.emi.gamelogic.wave.WaveNotifier;
 import ma.ac.emi.math.Vector3D;
@@ -80,8 +81,12 @@ public class PickableManager implements WaveListener, DifficultyObserver {
             // Base Drop Chance
             double dropChance = (currentDifficulty != null) ? currentDifficulty.getPickableDropRate() : 0.5;
 
-            // luck drop chance multiplier
-            dropChance *= (1.0 + Player.getInstance().getLuck() * 0.01);
+            // luck drop chance multiplier — clamp at consumption, raw value preserved
+            Player luckPlayer = Player.getInstance();
+            double effectiveLuck = luckPlayer.getConfig() != null
+                    ? Math.max(luckPlayer.getConfig().getCaps().minLuck, luckPlayer.getLuck())
+                    : Math.max(0, luckPlayer.getLuck());
+            dropChance *= (1.0 + effectiveLuck * 0.01);
 
             if (random.nextDouble() <= dropChance) {
                 Pickable pickable = createRandomPickable(pos);

@@ -53,63 +53,32 @@ public class WeaponPassiveDefinition extends WeaponBehaviorDefinition {
     }
 
     /** Human-readable summary for the item description panel. */
-    /** Returns the player stat names this passive actually modifies, for the live HUD. */
+    /** Returns the player/weapon stat names this passive actually modifies, for the live HUD. */
     public java.util.Set<String> getAffectedStats() {
         String name = effectName.contains(".")
                 ? effectName.substring(effectName.lastIndexOf('.') + 1)
                 : effectName;
         return switch (name) {
-            case "MomentumPassive"    -> java.util.Set.of("strength");
+            case "MomentumPassive"    -> java.util.Set.of("strength"); // damage via effectDamageMul
             case "DodgeSynergyPassive"-> java.util.Set.of("speed");
-            case "BloodRushPassive"   -> java.util.Set.of("strength");
-            case "ArmorCrunchPassive" -> java.util.Set.of("strength");
+            case "BloodRushPassive"   -> java.util.Set.of("strength"); // damage via effectDamageMul
+            case "ArmorCrunchPassive" -> java.util.Set.of("strength"); // damage via effectDamageFlat
             case "RegenOnKillPassive" -> java.util.Set.of("health_regen");
+            case "BulletHosePassive"  -> java.util.Set.of("magazine");
             default                   -> java.util.Set.of();
         };
     }
 
     public String describe() {
-        // Extract the simple class name whether effectName is qualified or not
-        String name = effectName.contains(".")
-                ? effectName.substring(effectName.lastIndexOf('.') + 1)
-                : effectName;
-        return switch (name) {
-            case "MomentumPassive" -> {
-                int    hits    = param("hitsPerStack",  5);
-                int    pct     = (int) Math.round(param("bonusPerStack", 0.08) * 100);
-                int    max     = param("maxStacks", 6);
-                yield  String.format("Every %d hits +%d%% damage (max %dx). Resets on switch", hits, pct, max);
-            }
-            case "DodgeSynergyPassive" -> {
-                double ratio = param("speedPerDodgePct", 0.5);
-                yield String.format("Each 1%% dodge grants +%.0f%% move speed", ratio * 100);
-            }
-            case "BloodRushPassive" -> {
-                int maxPct = (int) Math.round(param("maxBonus", 0.60) * 100);
-                yield String.format("Up to +%d%% damage as HP drops", maxPct);
-            }
-            case "ArmorCrunchPassive" -> {
-                double dpa = param("damagePerArmor", 0.05);
-                yield String.format("+%.2f damage per armor point", dpa);
-            }
-            case "RegenOnKillPassive" -> {
-                double regen    = param("regenPerKill",  2.0);
-                double duration = param("regenDuration", 4.0);
-                double maxR     = param("maxRegen",      10.0);
-                yield String.format("Kill: +%.1f HP/s for %.0fs (max %.0f HP/s)", regen, duration, maxR);
-            }
-            default -> effectName + " (active while equipped)";
-        };
-    }
-
-    private double param(String key, double def) {
-        if (params == null) return def;
-        Double v = params.get(key);
-        return v != null ? v : def;
-    }
-    private int param(String key, int def) {
-        if (params == null) return def;
-        Double v = params.get(key);
-        return v != null ? v.intValue() : def;
+        // Delegate to the passive instance — each WeaponPassive describes itself
+        String fqn = effectName.contains(".") ? effectName : PACKAGE + effectName;
+        try {
+            Class<?> cls     = Class.forName(fqn);
+            WeaponPassive passive = (WeaponPassive) cls.getDeclaredConstructor().newInstance();
+            passive.configure(params);
+            return passive.describe();
+        } catch (Exception e) {
+            return effectName + " (active while equipped)";
+        }
     }
 }

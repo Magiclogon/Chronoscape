@@ -3,21 +3,25 @@ package ma.ac.emi.gamelogic.effect.impl;
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.player.Player;
+import java.util.Map;
 
 /**
- * Syringe — every kill heals a flat 8 HP plus 5% of the killed enemy's max HP.
- * Scales with enemy strength rather than player damage output.
- *
- * JSON: "effectClass": "ma.ac.emi.gamelogic.effect.impl.SyringeEffect"
+ * Syringe — on kill, heal flat HP plus a percentage of the enemy's max HP.
+ * Params: flatHeal (default 8.0), enemyHpPercent (default 0.05)
  */
 public class SyringeEffect implements PlayerEffect {
 
-    private static final double FLAT_HEAL        = 8.0;
-    private static final double ENEMY_HP_PERCENT = 0.05;
+    private double flatHeal        = 8.0;
+    private double enemyHpPercent  = 0.05;
+
+    @Override
+    public void configure(Map<String, Double> p) {
+        flatHeal       = PlayerEffect.param(p, "flatHeal",       8.0);
+        enemyHpPercent = PlayerEffect.param(p, "enemyHpPercent", 0.05);
+    }
 
     @Override
     public void onKill(Player player, LivingEntity killed) {
-        double heal = FLAT_HEAL + killed.getHpMax() * ENEMY_HP_PERCENT;
-        player.setHp(Math.min(player.getHp() + heal, player.getHpMax()));
+        player.heal(flatHeal + killed.getHpMax() * enemyHpPercent);
     }
 }

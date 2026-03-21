@@ -22,6 +22,6 @@ public class LifeInsuranceEffect implements PlayerEffect {
     @Override
     public void onWaveEnd(Player player) {
         double heal = player.getHpMax() * healPercent;
-        player.setHp(Math.min(player.getHp() + heal, player.getHpMax()));
+        player.heal(heal);
     }
 }

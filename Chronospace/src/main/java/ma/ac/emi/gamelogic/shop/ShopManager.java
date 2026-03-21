@@ -1,13 +1,9 @@
 package ma.ac.emi.gamelogic.shop;
 
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.player.PlayerConfig;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -52,27 +48,17 @@ public class ShopManager {
 
 		setAvailableItems(new ArrayList<>());
 
-		// Track ids chosen this session — prevents the same item appearing twice
-		// at once, even for stackables (they can appear in a future reroll though)
-		Set<String> sessionIds = new HashSet<>();
-		int attempts    = 0;
-		int maxAttempts = SLOTNUM * 20; // safety valve
-
-		while(availableItems.size() < SLOTNUM && attempts < maxAttempts) {
-			attempts++;
+		// Use a loop to fill slots
+		int i = 0;
+		while(i < SLOTNUM) {
 			Rarity selectedRarity = determineRarityWithLuck(player.getLuck());
-			ItemDefinition item   = pickRandomItem(itemsMap.get(selectedRarity));
+			ItemDefinition item = pickRandomItem(itemsMap.get(selectedRarity));
 
-			if(item == null) continue;
-
-			// Weapons and non-stackable upgrades disappear once purchased
+			if(item == null || availableItems.contains(item.getItem())) continue;
 			if(!item.isStackable() && item.isBought()) continue;
 
-			// No duplicate ids in the same shop display
-			if(sessionIds.contains(item.getId())) continue;
-
 			availableItems.add(item.getItem());
-			sessionIds.add(item.getId());
+			i++;
 		}
 
 		this.player.setMoney(player.getMoney() - rerollPrice);
@@ -87,7 +73,10 @@ public class ShopManager {
 		double epicWeight = Rarity.EPIC.getChance();
 		double legWeight = Rarity.LEGENDARY.getChance();
 
-		double luckFactor = Math.max(0, luck);
+		// Clamp luck at consumption — raw value preserved on Player for synergy items
+		PlayerConfig.StatCaps caps = player.getConfig() != null
+				? player.getConfig().getCaps() : new PlayerConfig.StatCaps();
+		double luckFactor = Math.max(caps.minLuck, luck);
 
 		rareWeight *= (1.0 + (luckFactor * 0.15));
 		epicWeight *= (1.0 + (luckFactor * 0.25));
@@ -146,30 +135,24 @@ public class ShopManager {
 
 	public void refreshItem(ShopItem item) {
 		int index = -1;
-		for(int i = 0; i < availableItems.size(); i++) {
-			if(availableItems.get(i).equals(item)) { index = i; break; }
+		for(int i = 0; i < SLOTNUM; i++) {
+			if(this.getAvailableItems().get(i).equals(item)) {
+				index = i;
+				break;
+			}
 		}
-		if(index == -1) return;
 
-		// Collect ids currently in the shop (excluding the slot being replaced)
-		Set<String> sessionIds = new HashSet<>();
-		for(int i = 0; i < availableItems.size(); i++)
-			if(i != index) sessionIds.add(availableItems.get(i).getItemDefinition().getId());
 
-		int attempts = 0;
-		while(attempts < 40) {
-			attempts++;
-			Rarity         selectedRarity = determineRarityWithLuck(player.getLuck());
-			ItemDefinition newItem        = pickRandomItem(itemsMap.get(selectedRarity));
+		int i = 0;
+		while(i < 1) {
+			Rarity selectedRarity = determineRarityWithLuck(player.getLuck());
+			ItemDefinition newItem = pickRandomItem(itemsMap.get(selectedRarity));
 
-			if(newItem == null) continue;
-			if(!newItem.isStackable() && newItem.isBought()) continue;
-			if(sessionIds.contains(newItem.getId())) continue;
+			if(newItem == null || availableItems.contains(newItem.getItem())) continue;
 
-			availableItems.set(index, newItem.getItem());
-			return;
+			availableItems.remove(item);
+			availableItems.add(index, newItem.getItem());
+			i++;
 		}
-		// If nothing suitable found, just remove the slot
-		availableItems.remove(index);
 	}
 }

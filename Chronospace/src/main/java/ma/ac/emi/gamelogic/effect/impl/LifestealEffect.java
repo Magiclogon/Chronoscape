@@ -15,6 +15,6 @@ public class LifestealEffect implements PlayerEffect {
 
     @Override public void onDamageDealt(Player player, LivingEntity target, double damageDealt) {
         double heal = damageDealt * rate;
-        if (heal > 0) player.setHp(Math.min(player.getHp() + heal, player.getHpMax()));
+        if (heal > 0) player.heal(heal);
     }
 }
