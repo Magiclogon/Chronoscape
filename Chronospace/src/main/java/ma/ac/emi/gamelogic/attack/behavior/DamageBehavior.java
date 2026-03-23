@@ -49,13 +49,10 @@ public class DamageBehavior implements ProjectileBehavior {
         }
     }
 
-    /**
-     * Returns true if the player successfully dodges this hit.
-     * Dodge is a value in [0, 1] representing the probability of avoiding damage.
-     * e.g. dodge = 0.15 → 15% chance to dodge.
-     */
+   
     private boolean rollDodge(Player player) {
-        double dodge = Math.max(0, Math.min(1, player.getDodge()));
+        double maxDodge = player.getConfig() != null ? player.getConfig().getCaps().maxDodge : 0.75;
+        double dodge = Math.max(0, Math.min(maxDodge, player.getDodge()));
         return dodge > 0 && Math.random() < dodge;
     }
 

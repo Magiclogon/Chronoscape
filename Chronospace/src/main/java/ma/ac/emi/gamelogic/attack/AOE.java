@@ -150,8 +150,10 @@ public class AOE extends AttackObject {
         if (getLastAge() > closestInfCoolDownMultiple || getAge() < closestInfCoolDownMultiple) return;
         if (entity.isInvincible()) return;
 
+        // ── Dodge check — only the player can dodge ───────────────────────
         if (entity instanceof Player player) {
-            double dodge = Math.max(0, Math.min(1, player.getDodge()));
+            double maxDodge = player.getConfig() != null ? player.getConfig().getCaps().maxDodge : 0.75;
+            double dodge = Math.max(0, Math.min(maxDodge, player.getDodge()));
             if (dodge > 0 && Math.random() < dodge) {
                 FloatingTextManager.getInstance().spawn(
                         "DODGED!", FloatingText.Preset.DODGED, entity.getPos());
@@ -163,8 +165,9 @@ public class AOE extends AttackObject {
         WeaponItemDefinition def =
                 (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
 
+        // Route through takeDamage so armor, effects, and invincibility all apply
         entity.takeDamage(def.getDamage(), getWeapon().getBearer());
-        
+
         double knockbackForce = def.getKnockbackForce();
         if (knockbackForce != 0) {
             Vector3D kbDir = entity.getPos().sub(this.getPos()).normalize();

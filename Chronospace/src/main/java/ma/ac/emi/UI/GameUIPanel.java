@@ -192,7 +192,11 @@ public class GameUIPanel extends JPanel {
 		WeaponItem activeItem = (activeIndex >= 0 && activeIndex < Inventory.MAX_EQU)
 				? equipped[activeIndex] : null;
 		if (activeItem != null) {
-			WeaponItemDefinition def       = (WeaponItemDefinition) activeItem.getItemDefinition();
+			// Prefer the live Weapon object's definition — it's updated every frame by passives.
+			// Fall back to WeaponItem's definition if the Weapon object isn't ready yet.
+			WeaponItemDefinition def = player.getActiveWeapon() != null
+					? (WeaponItemDefinition) player.getActiveWeapon().getWeaponItem().getItemDefinition()
+					: (WeaponItemDefinition) activeItem.getItemDefinition();
 			java.util.List<String> passiveLines = collectPassiveLines(def);
 			java.util.List<String> liveStats    = collectLiveStats(player, def);
 
@@ -306,8 +310,6 @@ public class GameUIPanel extends JPanel {
 				g2.setColor(isActive ? Color.WHITE : new Color(180, 180, 190));
 				g2.drawString(name, txtX, slotsY + SLOT_SIZE - 6);
 
-				if (isActive && def.getMagazineSize() > 0)
-					drawAmmoPips(g2, slotX, slotsY, SLOT_SIZE, player, def);
 
 			} else {
 				g2.setFont(new Font(FONT_NAME, Font.PLAIN, 14));
@@ -318,28 +320,6 @@ public class GameUIPanel extends JPanel {
 						slotX + (SLOT_SIZE - fm.stringWidth(empty)) / 2,
 						slotsY + SLOT_SIZE / 2 + fm.getAscent() / 2);
 			}
-		}
-	}
-
-	private void drawAmmoPips(Graphics2D g2, int slotX, int slotY, int slotSize,
-	                           Player player, WeaponItemDefinition def) {
-		int mag  = def.getMagazineSize();
-		if (mag <= 0 || player.getActiveWeapon() == null) return;
-		int ammo = player.getActiveWeapon().getAmmo();
-
-		int maxPips   = Math.min(mag, 10);
-		int pipW      = Math.max(2, (slotSize - 8) / maxPips - 2);
-		int pipH      = 4;
-		int pipY      = slotY + slotSize - pipH - 3;
-		int totalW    = maxPips * (pipW + 2) - 2;
-		int pipStartX = slotX + (slotSize - totalW) / 2;
-
-		for (int p = 0; p < maxPips; p++) {
-			int     px     = pipStartX + p * (pipW + 2);
-			boolean filled = mag <= 10 ? (p < ammo)
-			               : (p < (int)((float) ammo / mag * maxPips));
-			g2.setColor(filled ? new Color(120, 220, 120) : new Color(50, 50, 60));
-			g2.fillRoundRect(px, pipY, pipW, pipH, 2, 2);
 		}
 	}
 
@@ -358,7 +338,8 @@ public class GameUIPanel extends JPanel {
 
 	private java.util.List<String> collectLiveStats(Player player, WeaponItemDefinition def) {
 		boolean hasDodge = false, hasDefense = false,
-		        hasSpeed = false, hasStrength = false, hasRegen = false;
+		        hasSpeed = false, hasStrength = false, hasRegen = false,
+		        hasMagazine = false;
 
 		for (WeaponBehaviorDefinition b : def.getBehaviorDefinitions()) {
 			if (b instanceof ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition p) {
@@ -377,21 +358,19 @@ public class GameUIPanel extends JPanel {
 						case "speed"        -> hasSpeed    = true;
 						case "strength"     -> hasStrength = true;
 						case "health_regen" -> hasRegen    = true;
+						case "magazine"     -> hasMagazine = true;
 					}
 				}
 			}
 		}
 
 		java.util.List<String> stats = new java.util.ArrayList<>();
-		if (hasDodge)   stats.add(String.format("DODGE: %.0f%%", player.getDodge() * 100));
-		if (hasDefense) stats.add(String.format("ARMOR: %.0f",   player.getDefense()));
-		if (hasSpeed)   stats.add(String.format("SPEED: %.0f",   player.getSpeed()));
-		if (hasStrength) {
-			// Show the weapon's actual current damage (includes item upgrades + effect bonuses),
-			// not player.strength which is a fixed config multiplier
-			stats.add(String.format("DMG:   %.1f", def.getDamage()));
-		}
-		if (hasRegen)   stats.add(String.format("REGEN: %.1f/s", player.getRegenerationSpeed()));
+		if (hasDodge)    stats.add(String.format("DODGE: %.0f%%", player.getDodge() * 100));
+		if (hasDefense)  stats.add(String.format("ARMOR: %.0f",   player.getDefense()));
+		if (hasSpeed)    stats.add(String.format("SPEED: %.0f",   player.getSpeed()));
+		if (hasStrength) stats.add(String.format("DMG:   %.1f",   def.getDamage()));
+		if (hasRegen)    stats.add(String.format("REGEN: %.1f/s", player.getRegenerationSpeed()));
+		if (hasMagazine) stats.add(String.format("MAG:   %d",     def.getMagazineSize()));
 		return stats;
 	}
 

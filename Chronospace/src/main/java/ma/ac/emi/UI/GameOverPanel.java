@@ -14,7 +14,7 @@ public class GameOverPanel extends JPanel implements Soundable {
 
     public GameOverPanel() {
         try {
-            backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/game_over_image.png"));
+            backgroundImage = ImageIO.read(getClass().getResource("/assets/Menus/gameover_art.png"));
         } catch (Exception e) {
             System.err.println("Error loading game over background: " + e.getMessage());
         }
@@ -53,7 +53,27 @@ public class GameOverPanel extends JPanel implements Soundable {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (backgroundImage != null)
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        if (backgroundImage == null) return;
+        
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        int imgWidth = backgroundImage.getWidth(this);
+        int imgHeight = backgroundImage.getHeight(this);
+
+        // Calculate the scale to "Cover" the panel
+        double scale = Math.max((double) panelWidth / imgWidth, (double) panelHeight / imgHeight);
+
+        int newWidth = (int) (imgWidth * scale);
+        int newHeight = (int) (imgHeight * scale);
+
+        // Center the image
+        int x = (panelWidth - newWidth) / 2;
+        int y = (panelHeight - newHeight) / 2;
+
+        g2d.drawImage(backgroundImage, x, y, newWidth, newHeight, this);
+    
     }
 }

@@ -3,6 +3,7 @@ package ma.ac.emi.UI;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.ImageObserver;
 
 /**
  * Persistent host panel that lives permanently as the "MENU_HOST" card in Window.
@@ -21,11 +22,11 @@ public class MenuHost extends JPanel {
 
     public MenuHost() {
         setLayout(new BorderLayout());
-        setBackground(Color.BLACK);
+        setBackground(Color.WHITE);
 
         try {
             backgroundImage = ImageIO.read(
-                    getClass().getResource("/assets/Menus/main_menu_image.png"));
+                    getClass().getResource("/assets/Menus/main_menu_art.png"));
         } catch (Exception e) {
             System.err.println("MenuHost: could not load background image.");
         }
@@ -65,7 +66,27 @@ public class MenuHost extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (backgroundImage != null)
-            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+        if (backgroundImage == null) return;
+
+        Graphics2D g2d = (Graphics2D) g;
+
+         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+        int panelWidth = getWidth();
+        int panelHeight = getHeight();
+        int imgWidth = backgroundImage.getWidth(this);
+        int imgHeight = backgroundImage.getHeight(this);
+
+        // Calculate the scale to "Cover" the panel
+        double scale = Math.max((double) panelWidth / imgWidth, (double) panelHeight / imgHeight);
+
+        int newWidth = (int) (imgWidth * scale);
+        int newHeight = (int) (imgHeight * scale);
+
+        // Center the image
+        int x = (panelWidth - newWidth) / 2;
+        int y = (panelHeight - newHeight) / 2;
+
+        g2d.drawImage(backgroundImage, x, y, newWidth, newHeight, this);
     }
 }
