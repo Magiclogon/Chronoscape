@@ -10,6 +10,8 @@ import com.jogamp.opengl.GL3;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.UI.FloatingText;
+import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
@@ -276,6 +278,9 @@ public abstract class LivingEntity extends Entity {
  
         setHp(Math.max(0, getHp() - finalDamage));
  
+        FloatingTextManager.getInstance().spawn(
+                String.format("%.0f", finalDamage), FloatingText.Preset.DAMAGE, this.getPos());
+        
         if (getBehaviors() != null)
             getBehaviors().forEach(b -> b.onHit(this));
  

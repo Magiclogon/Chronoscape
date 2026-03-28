@@ -196,7 +196,7 @@ public class GLGraphics {
      * flip in SpriteQuad compensates for the Y-axis inversion.
      */
     public void drawSpriteHUD(GL3 gl, int texId, float x, float y, float w, float h) {
-        float[] model = Mat4.transform(x, y, w, h);
+        float[] model = Mat4.transform(x, y+h, w, -h);
         spriteShader.use(gl);
         spriteShader.setMat4(gl, "uModel", model);
         ma.ac.emi.glgraphics.color.SpriteColorCorrection.resetUniforms(gl, spriteShader);
