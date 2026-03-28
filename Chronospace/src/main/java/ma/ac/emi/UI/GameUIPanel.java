@@ -83,8 +83,8 @@ public class GameUIPanel extends JPanel {
 		g2.setFont(new Font(FONT_NAME, Font.PLAIN, 24));
 		g2.setColor(GOLD_COLOR);
 
-		String fps = "FPS: " + String.valueOf(GameController.getInstance().getFPS());
-		g2.drawString(fps, panelWidth - 100, panelHeight - 8);
+//		String fps = "FPS: " + String.valueOf(GameController.getInstance().getFPS());
+//		g2.drawString(fps, panelWidth - 100, panelHeight - 8);
 
 		drawBossHud(g2, getWidth(), getHeight());
 

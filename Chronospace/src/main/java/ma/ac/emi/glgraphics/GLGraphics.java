@@ -147,6 +147,67 @@ public class GLGraphics {
         spriteShader.setInt(gl, "uUseTexture", 1);
     }
     
+
+    // ── HUD drawing (screen-space, no camera) ─────────────────────────────
+
+    /**
+     * Begin a HUD pass. Sets a screen-space projection: origin top-left,
+     * x right, y down, units = pixels. No camera transform.
+     */
+    public void beginHUD(GL3 gl, int screenW, int screenH) {
+        spriteShader.use(gl);
+        spriteShader.setMat4(gl, "uProjection", Mat4.orthoTopLeft(screenW, screenH));
+        spriteShader.setMat4(gl, "uView", Mat4.identity());
+    }
+
+    public void endHUD(GL3 gl) {
+        gl.glBindVertexArray(0);
+    }
+
+    /** Filled rectangle in screen-space pixels. color = {r,g,b,a} 0-1. */
+    public void drawQuadHUD(GL3 gl, float x, float y, float w, float h, float[] color) {
+        float[] model = Mat4.transform(x, y, w, h);
+        spriteShader.use(gl);
+        spriteShader.setMat4(gl, "uModel", model);
+        spriteShader.setInt(gl, "uUseTexture", 0);
+        spriteShader.setVec4(gl, "uColor", color[0], color[1], color[2], color[3]);
+        ma.ac.emi.glgraphics.color.SpriteColorCorrection.resetUniforms(gl, spriteShader);
+        spriteShader.setFloat(gl, "uEmission", 0.0f);
+        spriteShader.setVec3(gl, "uEmissionColor", 0.0f, 0.0f, 0.0f);
+        gl.glBindVertexArray(SpriteQuad.VAO);
+        gl.glDrawArrays(GL3.GL_TRIANGLE_FAN, 0, 4);
+        spriteShader.setInt(gl, "uUseTexture", 1);
+    }
+
+    /** Hollow rectangle outline — four thin filled quads. */
+    public void drawQuadOutlineHUD(GL3 gl, float x, float y, float w, float h,
+                                    float t, float[] color) {
+        drawQuadHUD(gl, x,         y,         w, t, color);           // top
+        drawQuadHUD(gl, x,         y + h - t, w, t, color);           // bottom
+        drawQuadHUD(gl, x,         y,         t, h, color);           // left
+        drawQuadHUD(gl, x + w - t, y,         t, h, color);           // right
+    }
+
+    /**
+     * Sprite in screen-space pixels.
+     * SpriteQuad UV layout: bottom-left=(0,0) origin.
+     * With the top-left projection this renders correctly — the shader's
+     * Mat4.transform places (0,0) at top-left of the quad and the UV
+     * flip in SpriteQuad compensates for the Y-axis inversion.
+     */
+    public void drawSpriteHUD(GL3 gl, int texId, float x, float y, float w, float h) {
+        float[] model = Mat4.transform(x, y, w, h);
+        spriteShader.use(gl);
+        spriteShader.setMat4(gl, "uModel", model);
+        ma.ac.emi.glgraphics.color.SpriteColorCorrection.resetUniforms(gl, spriteShader);
+        spriteShader.setFloat(gl, "uEmission", 0.0f);
+        spriteShader.setVec3(gl, "uEmissionColor", 0.0f, 0.0f, 0.0f);
+        spriteShader.setInt(gl, "uUseTexture", 1);
+        gl.glBindTexture(GL3.GL_TEXTURE_2D, texId);
+        gl.glBindVertexArray(SpriteQuad.VAO);
+        gl.glDrawArrays(GL3.GL_TRIANGLE_FAN, 0, 4);
+    }
+
     public void endFrame(GL3 gl) {
         gl.glBindVertexArray(0);
     }

@@ -2,25 +2,18 @@ package ma.ac.emi.gamecontrol;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import javax.swing.*;
-
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLProfile;
 
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.UI.*;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.fx.AssetsLoader;
-import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.type.AOELoader;
 import ma.ac.emi.gamelogic.attack.type.ProjectileLoader;
 import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
-import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
 import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
@@ -41,9 +34,6 @@ public class GameController implements Runnable {
     private static final long SIM_STEP = (long)(Math.pow(10, 9) / 60);
     private static GameController instance;
 
-    public static Semaphore draw   = new Semaphore(0);
-    public static Semaphore update = new Semaphore(1);
-
     public static GameController getInstance() {
         if (instance == null)
             instance = new GameController();
@@ -56,8 +46,8 @@ public class GameController implements Runnable {
 
     private final Window window;
     private WorldManager worldManager;
-    private GamePanel gamePanel;
-    private GameGLPanel gameGLPanel;
+    private GamePanel    gamePanel;
+    private GameGLPanel  gameGLPanel;
     private GameUIPanel gameUIPanel;
     private GraphicsSettingsPanel settings;
 
@@ -65,12 +55,11 @@ public class GameController implements Runnable {
     private Thread gameThread;
     private GameState state = GameState.MENU;
 
-    private ShopManager shopManager;
+    private ShopManager    shopManager;
     private ParticleSystem particleSystem;
+    private SoundManager   soundManager;
 
-    private SoundManager soundManager;
-
-    private DifficultyStrategy difficulty;
+    private DifficultyStrategy       difficulty;
     private List<DifficultyObserver> difficultyObservers;
 
     private PostFXConfig postFXConfig;
@@ -79,18 +68,11 @@ public class GameController implements Runnable {
         window = new Window();
         showLoadingScreen();
 
-        // Yield to the EDT so the loading screen renders its first frame,
-        // then do all heavy startup work on a background thread.
         SwingUtilities.invokeLater(() ->
             new Thread(this::startupLoad, "GameController-StartupLoader").start()
         );
     }
 
-    /**
-     * All heavy initialisation that was previously blocking the EDT.
-     * Runs on a background thread — must not touch Swing components directly.
-     * Swing setup at the end is marshalled back onto the EDT via invokeLater.
-     */
     private void startupLoad() {
         AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
@@ -101,26 +83,22 @@ public class GameController implements Runnable {
         postFXConfig = PostFXConfigLoader.load();
 
         difficultyObservers = new ArrayList<>();
-
         soundManager = new SoundManager();
         loadSounds();
 
-        // All loading done — kick off the fade on the EDT.
-        // Heavy Swing setup runs inside switchAction (at peak black) so the
-        // fade plays smoothly before any EDT work blocks it.
+        
         SwingUtilities.invokeLater(() ->
             window.getTransitionManager().fadeTo(
                 () -> {
-                    // At peak black: create Swing components — freeze is invisible
-                    gamePanel   = new GamePanel();
-                    gameUIPanel = new GameUIPanel();
+                    gamePanel  = new GamePanel();
                     gameGLPanel = new GameGLPanel();
-
+                    gameUIPanel = new GameUIPanel();
+                    
+                    // Post-processing reload
                     GraphicsSettingsCallback callback = (updatedConfig) -> {
                         gameGLPanel.invoke(false, (glDrawable) -> {
                             gameGLPanel.getRenderer().reloadPostProcessing(
-                                    glDrawable.getGL().getGL3(),
-                                    updatedConfig);
+                                    glDrawable.getGL().getGL3(), updatedConfig);
                             return true;
                         });
                     };
@@ -128,12 +106,17 @@ public class GameController implements Runnable {
 
                     window.addSettings(settings, "Graphics");
                     window.addSettings(new SoundSettingsPanel(), "Sound");
-                    window.showGame(gameGLPanel, gameUIPanel);
 
-                    // Switch card to main menu while still black
+                    // Register KeyHandler on the JFrame — works for both the
+                    // Swing menus and the GLCanvas (heavyweight, no InputMap)
+                    KeyHandler.getInstance().setupKeyBindings(window);
+
+                    // Register the canvas with the window (adds it to the JFrame)
+                    window.registerGLCanvas(gameGLPanel);
+
                     window.showMenuMain();
                 },
-                null  // fade back in reveals the main menu
+                null
             )
         );
     }
@@ -172,24 +155,16 @@ public class GameController implements Runnable {
         });
     }
 
-    /** Shows the main menu — navigates to MENU_HOST and shows the main button set. */
     public void showMainMenu() {
         state = GameState.MENU;
         SwingUtilities.invokeLater(() -> window.showMenuMain());
-        //soundManager.loop("main_menu_music");
     }
 
-    /** Shows the difficulty sidebar inside MENU_HOST — background stays put. */
     public void showDifficultyMenu() {
         state = GameState.DIFFICULTY_SELECT;
         SwingUtilities.invokeLater(() -> window.showMenuDifficulty());
     }
 
-    /**
-     * Level selection is removed (only one level).
-     * DifficultyMenuSidebar calls restartGameWithTransition() directly.
-     * This stub is kept so any lingering call-sites compile without error.
-     */
     public void showLevelSelection() {
         restartGameWithTransition();
     }
@@ -207,9 +182,7 @@ public class GameController implements Runnable {
         state = GameState.SHOP;
         shopManager.init();
         particleSystem.clearActiveEffects();
-
         SwingUtilities.invokeLater(() -> {
-            System.out.println("showing shop..");
             window.refreshShop();
             window.navigateTo("SHOP");
         });
@@ -251,18 +224,13 @@ public class GameController implements Runnable {
     // ── Game start ────────────────────────────────────────────────────────
 
     public void restartGameWithTransition() {
-        // loadingWork runs off the EDT — safe for heavy setup
-        // onComplete runs on the EDT after the second fade-in begins
+    	gameGLPanel.resetFade();
         window.getTransitionManager().startWithLoading(
-                this::loadGame,   // background thread: world/player init
-                this::startGame   // EDT: camera setup + show game card
+                this::loadGame,
+                this::startGame
         );
     }
 
-    /**
-     * Heavy initialisation — runs on a background thread inside TransitionManager.
-     * Must NOT touch Swing components directly.
-     */
     private void loadGame() {
         removeAllDrawables();
         particleSystem.init();
@@ -274,7 +242,7 @@ public class GameController implements Runnable {
         shopManager.init();
     }
 
-    /** @deprecated kept so external call-sites compile; use restartGameWithTransition() */
+    /** @deprecated use restartGameWithTransition() */
     public void restartGame() { restartGameWithTransition(); }
 
     public void startGame() {
@@ -296,6 +264,8 @@ public class GameController implements Runnable {
 
         System.out.println("Starting game");
         startGameThread();
+        
+        gameUIPanel.setSize(gameGLPanel.getWidth(), gameGLPanel.getHeight());
     }
 
     public void startGameThread() {
@@ -327,8 +297,8 @@ public class GameController implements Runnable {
             } else {
                 accumTime = 0;
             }
-
-            SwingUtilities.invokeLater(() -> gameUIPanel.repaint());
+            
+            gameGLPanel.display();
 
             try { Thread.sleep(1); }
             catch (InterruptedException e) { e.printStackTrace(); }
@@ -340,7 +310,7 @@ public class GameController implements Runnable {
         camera.update(step);
         Player.getInstance().update(step);
         particleSystem.update(step);
-        gameGLPanel.update(step);
+        gameGLPanel.update(step); // calls renderer.update() then display()
         GameTime.addTime(step);
     }
 

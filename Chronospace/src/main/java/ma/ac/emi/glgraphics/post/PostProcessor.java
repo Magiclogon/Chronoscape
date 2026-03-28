@@ -103,7 +103,9 @@ public class PostProcessor {
         
         // Final pass to screen
         gl.glBindFramebuffer(GL3.GL_FRAMEBUFFER, 0);
-        gl.glViewport(0, 0, (int)(currentWidth/renderScale), (int)(currentHeight/renderScale));
+        
+        // FIX: Use the stored physical screen dimensions directly
+        gl.glViewport(0, 0, screenWidth, screenHeight);
         
         if (!effects.isEmpty()) {
             effects.get(effects.size() - 1).apply(gl, currentInputTexture, quad);
@@ -136,18 +138,29 @@ public class PostProcessor {
         return snapshotFBO.getTextureId();
     }
     
-    public void resize(GL3 gl, int width, int height) {
-        this.currentWidth = width;
-        this.currentHeight = height;
-        
-        this.sceneFBO.init(gl, width, height, true);
-        this.fboA.init(gl, width, height, true);
-        this.fboB.init(gl, width, height, true);
-        bloomFboA.init(gl, width / bloomDownscale, height / bloomDownscale, false);
-        bloomFboB.init(gl, width / bloomDownscale, height / bloomDownscale, false);
-        this.glowFBO.init(gl, width, height, true);
-        this.snapshotFBO.init(gl, width, height, true);
+    private int screenWidth, screenHeight; // Explicitly store the physical target
 
+    public void resize(GL3 gl, int internalW, int internalH, int physicalW, int physicalH) {
+        // Guard against 0-size initialization during early AWT startup
+        if (internalW <= 0 || internalH <= 0 || physicalW <= 0 || physicalH <= 0) return;
+
+        this.currentWidth = internalW;
+        this.currentHeight = internalH;
+        this.screenWidth = physicalW;
+        this.screenHeight = physicalH;
+        
+        // Re-initialize FBOs using internal resolution
+        this.sceneFBO.init(gl, internalW, internalH, true);
+        this.fboA.init(gl, internalW, internalH, true);
+        this.fboB.init(gl, internalW, internalH, true);
+        
+        int bW = Math.max(1, internalW / bloomDownscale);
+        int bH = Math.max(1, internalH / bloomDownscale);
+        bloomFboA.init(gl, bW, bH, false);
+        bloomFboB.init(gl, bW, bH, false);
+        
+        this.glowFBO.init(gl, internalW, internalH, true);
+        this.snapshotFBO.init(gl, internalW, internalH, true);
     }
     
     public void dispose(GL3 gl) {

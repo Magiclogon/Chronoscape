@@ -98,6 +98,7 @@ public class Camera {
 	    float width  = GameController.getInstance().getGameGLPanel().getWidth();
 	    float height = GameController.getInstance().getGameGLPanel().getHeight();
 	 
+	    System.out.println(width + " " + height);
 	    float[] projection = Mat4.ortho(-width / 2, width / 2, height / 2, -height / 2);
 	    float[] view       = getViewMatrix();
 	    float[] viewProj   = Matrix4.multiply(projection, view);

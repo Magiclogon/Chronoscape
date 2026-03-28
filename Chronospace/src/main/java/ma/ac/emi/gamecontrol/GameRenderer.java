@@ -1,12 +1,17 @@
 package ma.ac.emi.gamecontrol;
 
 import com.jogamp.opengl.*;
+
+import ma.ac.emi.UI.GameUIPanel;
 import ma.ac.emi.camera.Camera;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.gamelogic.particle.ParticleAnimationCache;
 import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.glgraphics.GLGraphics;
+import ma.ac.emi.glgraphics.HUDRenderer;
 import ma.ac.emi.glgraphics.Mat4;
+import ma.ac.emi.glgraphics.hud.BitmapFont;
+import ma.ac.emi.glgraphics.hud.GLHud;
 import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.glgraphics.lighting.LightingSystem;
@@ -30,13 +35,26 @@ public class GameRenderer implements GLEventListener {
 
     private float renderScale = 0.4f;
 
+    /** DPI scale set by GameGLPanel.addNotify() — e.g. 1.25 at 125% Windows scaling. */
+    private float dpiScale = 1.0f;
+
+    public void setDpiScale(float scale) {
+        this.dpiScale = (scale > 0) ? scale : 1.0f;
+    }
+
     private PostProcessor postProcessor;
     private LightingSystem lightingSystem;
+    private HUDRenderer hudRenderer;
     private Color bg;
     
     private long lastTime = System.nanoTime();
     private int frames = 0;
     private double fps = 0.0;
+	private GLHud glHud;
+	
+	private float fadeAlpha       = 1f;
+    private boolean fading        = false;
+    private static final float FADE_STEP = 0.02f;
 
     public void setCamera(Camera camera) {
         this.camera = camera;
@@ -161,6 +179,12 @@ public class GameRenderer implements GLEventListener {
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 
         glGraphics = new GLGraphics(gl);
+        
+        BitmapFont font = new BitmapFont();
+        font.init(gl, "/assets/Fonts/ByteBounce.ttf");
+
+        glHud = new GLHud(font);
+        
         ParticleAnimationCache.initializeAllTextures(gl);
         
         PostFXConfig config = GameController.getInstance().getPostFXConfig();
@@ -269,6 +293,21 @@ public class GameRenderer implements GLEventListener {
         postProcessor.render(gl);
         
 
+         //PASS 4 — HUD
+        if (glHud != null) {
+        	gl.glViewport(0, 0, width, height);
+        	glHud.render(gl, glGraphics, camera, width, height, dpiScale);
+        }
+        
+        if (fading || fadeAlpha > 0f) {
+            fadeAlpha = Math.max(0f, fadeAlpha - FADE_STEP);
+            if (fadeAlpha <= 0f) fading = false;
+            
+            glGraphics.beginHUD(gl, width, height);
+            glGraphics.drawQuadHUD(gl, 0, 0, width, height,
+                    new float[]{0f, 0f, 0f, fadeAlpha});
+            glGraphics.endHUD(gl);
+        }
     }
 
     private void renderInterleavedWithParticles(
@@ -353,16 +392,19 @@ public class GameRenderer implements GLEventListener {
 
     @Override
     public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
+        if (postProcessor == null || lightingSystem == null) return;
+
         GL3 gl = drawable.getGL().getGL3();
 
-        width = w;
-        height = h;
+        // w/h are AWT logical pixels; multiply by dpiScale for physical pixels
+        width  = Math.round(w * dpiScale);
+        height = Math.round(h * dpiScale);
         computeInternalResolution();
 
-        postProcessor.resize(gl, internalWidth, internalHeight);
+        postProcessor.resize(gl, internalWidth, internalHeight, width, height);
         lightingSystem.resize(gl, internalWidth, internalHeight);
 
-        gl.glViewport(0, 0, w, h);
+        gl.glViewport(0, 0, width, height);
     }
 
     private void computeInternalResolution() {
@@ -377,9 +419,11 @@ public class GameRenderer implements GLEventListener {
     	
     	ParticleAnimationCache.clear(gl);
     	
-    	glGraphics.dispose(gl);
-    	postProcessor.dispose(gl);
-    	lightingSystem.dispose(gl);
+    	if (hudRenderer   != null) hudRenderer.dispose(gl);
+    	if (glGraphics    != null) glGraphics.dispose(gl);
+    	if (postProcessor != null) postProcessor.dispose(gl);
+    	if (lightingSystem!= null) lightingSystem.dispose(gl);
+    	if (glHud != null) glHud.dispose(gl);
     	
     	AssetsLoader.disposeAll(gl);
     }
@@ -403,9 +447,27 @@ public class GameRenderer implements GLEventListener {
 	public double getRenderScale() {
 		return this.renderScale;
 	}
+	
+	public void setHUDPanel(GL3 gl, GameUIPanel panel) {
+		hudRenderer = new HUDRenderer(panel);
+		hudRenderer.init(gl);
+		hudRenderer.resize(gl, width, height);
+	}
 
 	public void reloadPostProcessing(GL3 gl, PostFXConfig updatedConfig) {
 		postProcessor.clearEffects(gl);
 		initPostProcessor(gl, updatedConfig);
+
+		// After rebuilding all framebuffers, force the viewport back to the
+		// full canvas size. Without this the screen stays black until the next
+		// reshape() call (e.g. a manual window resize triggers it).
+		postProcessor.resize(gl, internalWidth, internalHeight, width, height);
+		lightingSystem.resize(gl, internalWidth, internalHeight);
+		gl.glViewport(0, 0, width, height);
+	}
+
+	public void resetFade() {
+		this.fadeAlpha = 1;
+		this.fading = true;
 	}
 }
