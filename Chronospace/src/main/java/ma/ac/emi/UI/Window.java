@@ -5,11 +5,17 @@ import javax.swing.*;
 import ma.ac.emi.gamecontrol.*;
 
 public class Window extends JFrame {
-    private final CardLayout layout;
+
+    // These handle the swap between the Menus and the 3D Game
+    private final CardLayout rootLayout;
+    private final JPanel rootContainer;
+
+    // These handle the swap between different menu screens (Loading, Menu, Shop)
+    private final CardLayout layout; // Restored your original name
     private final JPanel mainPanel;
+    
     private final NavigationManager navigationManager;
 
-    // Screens
     private final LoadingScreen loadingScreen;
     private final PauseMenu pauseMenu;
     private final MenuHost menuHost;
@@ -17,77 +23,108 @@ public class Window extends JFrame {
     private GameOverPanel gameOverPanel;
     private final Settings settings;
 
-    private final JLayeredPane gamePane;
-
-    private final JLayeredPane    transitionPane;
-    private final FadeOverlay     fadeOverlay;
+    private final JLayeredPane transitionPane;
+    private final FadeOverlay fadeOverlay;
     private final TransitionManager transitionManager;
 
+    private GameGLPanel glCanvas;
+
     public Window() {
+        // 1. Initialize the Root System (The "Master" Switch)
+        rootLayout = new CardLayout();
+        rootContainer = new JPanel(rootLayout);
+        rootContainer.setBackground(Color.BLACK);
+
+        // 2. Initialize the UI System (The Menu Switch)
         layout = new CardLayout();
         mainPanel = new JPanel(layout);
+        mainPanel.setOpaque(false); // Allows GL to show through if needed
+        
         navigationManager = new NavigationManager();
+
+        loadingScreen = new LoadingScreen();
+        pauseMenu = new PauseMenu();
+        menuHost = new MenuHost();
+        shopUI = new ShopUI();
+        gameOverPanel = new GameOverPanel();
+        settings = new Settings(this::goBack);
+
+        mainPanel.add(loadingScreen, "LOADING");
+        mainPanel.add(menuHost, "MENU_HOST");
+        mainPanel.add(pauseMenu, "PAUSE");
+        mainPanel.add(shopUI, "SHOP");
+        mainPanel.add(gameOverPanel, "GAMEOVER");
+        mainPanel.add(settings, "SETTINGS");
+
+        // 3. Setup the Layered Pane (Menus + Fade Effect)
+        fadeOverlay = new FadeOverlay();
+        
+        // Fix for OverlayLayout resizing: components must share the same alignment
+        mainPanel.setAlignmentX(0.0f);
+        mainPanel.setAlignmentY(0.0f);
+        fadeOverlay.setAlignmentX(0.0f);
+        fadeOverlay.setAlignmentY(0.0f);
 
         transitionPane = new JLayeredPane();
         transitionPane.setLayout(new OverlayLayout(transitionPane));
-
-        fadeOverlay = new FadeOverlay();
-
-        loadingScreen  = new LoadingScreen();
-        pauseMenu      = new PauseMenu();
-        menuHost       = new MenuHost();
-        shopUI         = new ShopUI();
-        gameOverPanel  = new GameOverPanel();
-        settings       = new Settings(this::goBack);
+        
+        transitionPane.add(mainPanel, JLayeredPane.DEFAULT_LAYER);
+        transitionPane.add(fadeOverlay, JLayeredPane.PALETTE_LAYER);
 
         transitionManager = new TransitionManager(this, loadingScreen, fadeOverlay);
 
-        gamePane = new JLayeredPane();
-        gamePane.setLayout(new OverlayLayout(gamePane));
-
-        mainPanel.add(loadingScreen, "LOADING");
-        mainPanel.add(menuHost,      "MENU_HOST"); // one card for all menu screens
-        mainPanel.add(pauseMenu,     "PAUSE");
-        mainPanel.add(gamePane,      "GAME");
-        mainPanel.add(shopUI,        "SHOP");
-        mainPanel.add(gameOverPanel, "GAMEOVER");
-        mainPanel.add(settings,      "SETTINGS");
-
-        transitionPane.add(mainPanel,    JLayeredPane.DEFAULT_LAYER);
-        transitionPane.add(fadeOverlay,  JLayeredPane.PALETTE_LAYER);
-
-        add(transitionPane);
+        // 4. Assemble the Root
+        rootContainer.add(transitionPane, "UI_VIEW");
+        
+        // JFrame Setup
+        setTitle("Chronospace"); // Use your game title
+        setLayout(new BorderLayout());
+        getContentPane().setBackground(Color.BLACK);
+        add(rootContainer, BorderLayout.CENTER);
 
         setSize(1280, 720);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setVisible(true);
-
-        mainPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        fadeOverlay.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        transitionPane.setSize(getWidth(), getHeight());
-
+        
         navigationManager.addNavigationListener((from, to) ->
                 System.out.println("Navigation: " + from + " -> " + to));
+        
+        setVisible(true);
     }
 
-    // ── MenuHost passthrough — lets GameController drive internal menu nav ─
+    // ── GLCanvas registration ─────────────────────────────────────────────
 
-    public void showMenuMain() {
-        menuHost.showMainMenu();
-        navigateTo("MENU_HOST");
+    public void registerGLCanvas(GameGLPanel canvas) {
+        if (this.glCanvas != null) {
+            rootContainer.remove(this.glCanvas);
+        }
+        this.glCanvas = canvas;
+        
+        // Add the game view as a card in the root container
+        rootContainer.add(glCanvas, "GAME_VIEW");
+        
+        // Ensure the game view is hidden initially
+        rootLayout.show(rootContainer, "UI_VIEW");
+        revalidate();
     }
 
-    public void showMenuDifficulty() {
-        menuHost.showDifficultyMenu();
-        navigateTo("MENU_HOST");
-    }
-
-    // ── Standard navigation ───────────────────────────────────────────────
+    // ── Navigation (Fixed to handle Root Swapping) ─────────────────────────
 
     public void navigateTo(String name) {
         navigationManager.navigateTo(name);
-        layout.show(mainPanel, name);
+
+        if ("GAME".equals(name)) {
+            // Swap to the Game Card
+            rootLayout.show(rootContainer, "GAME_VIEW");
+            if (glCanvas != null) {
+                glCanvas.requestFocusInWindow();
+            }
+        } else {
+            // Swap to the UI Card, then show the specific menu
+            rootLayout.show(rootContainer, "UI_VIEW");
+            layout.show(mainPanel, name);
+        }
+
         revalidate();
         repaint();
     }
@@ -99,12 +136,24 @@ public class Window extends JFrame {
         repaint();
     }
 
+    // ── MenuHost passthrough ──────────────────────────────────────────────
+
+    public void showMenuMain() {
+        menuHost.showMainMenu();
+        navigateTo("MENU_HOST");
+    }
+
+    public void showMenuDifficulty() {
+        menuHost.showDifficultyMenu();
+        navigateTo("MENU_HOST");
+    }
+
+    // ── Misc & Helpers (Matching GameController requirements) ──────────────
+
     public boolean goBack() {
         String previous = navigationManager.goBack();
         if (previous != null) {
-            layout.show(mainPanel, previous);
-            revalidate();
-            repaint();
+            navigateTo(previous);
             return true;
         }
         return false;
@@ -113,9 +162,7 @@ public class Window extends JFrame {
     public boolean goForward() {
         String next = navigationManager.goForward();
         if (next != null) {
-            layout.show(mainPanel, next);
-            revalidate();
-            repaint();
+            navigateTo(next);
             return true;
         }
         return false;
@@ -124,76 +171,21 @@ public class Window extends JFrame {
     public void backToMainMenu() {
         navigationManager.backToRoot("MENU_HOST");
         menuHost.showMainMenu();
-        layout.show(mainPanel, "MENU_HOST");
-        revalidate();
-        repaint();
+        navigateTo("MENU_HOST");
     }
 
-    public boolean canGoBack()        { return navigationManager.canGoBack(); }
-    public boolean canGoForward()     { return navigationManager.canGoForward(); }
+    public boolean canGoBack()       { return navigationManager.canGoBack(); }
+    public boolean canGoForward()    { return navigationManager.canGoForward(); }
     public String  getCurrentScreen() { return navigationManager.getCurrentScreen(); }
-    public NavigationManager getNavigationManager() { return navigationManager; }
-
-    /** @deprecated Use navigateTo() instead */
-    @Deprecated
-    public void showScreen(String name) { navigateTo(name); }
-
-    public void refreshShop() { shopUI.refresh(); }
-
+    
+    public void refreshShop()        { if(shopUI != null) shopUI.refresh(); }
     public void addSettings(JPanel s, String title) { settings.addTab(title, s); }
-
-    public void showGame(GameGLPanel gameGLPanel, GameUIPanel uiPanel) {
-        gamePane.removeAll();
-        Dimension max = new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
-
-        gameGLPanel.setPreferredSize(new Dimension(1280, 720));
-        gameGLPanel.setMaximumSize(max);
-
-        uiPanel.setPreferredSize(new Dimension(1280, 720));
-        uiPanel.setMaximumSize(max);
-
-        gamePane.add(gameGLPanel, Integer.valueOf(0));
-        gamePane.add(uiPanel,     Integer.valueOf(1));
-        gamePane.revalidate();
-        gamePane.repaint();
-    }
-
+    
     public TransitionManager getTransitionManager() { return transitionManager; }
     public LoadingScreen     getLoadingScreen()      { return loadingScreen; }
+    public NavigationManager getNavigationManager() { return navigationManager; }
 
-    private boolean isTransitioning = false;
-
-    /**
-     * Fades out, runs midAction at peak opacity, then fades back in.
-     * Ignores calls made while a transition is already in progress.
-     */
     public void transition(Runnable midAction) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-
-        Timer timer = new Timer(16, null);
-        final float[]   alpha     = {0f};
-        final boolean[] fadingOut = {true};
-
-        timer.addActionListener(e -> {
-            if (fadingOut[0]) {
-                alpha[0] += 0.02f;
-                if (alpha[0] >= 1f) {
-                    alpha[0] = 1f;
-                    fadingOut[0] = false;
-                    midAction.run();
-                }
-            } else {
-                alpha[0] -= 0.02f;
-                if (alpha[0] <= 0f) {
-                    alpha[0] = 0f;
-                    isTransitioning = false;
-                    timer.stop();
-                }
-            }
-            fadeOverlay.setAlpha(alpha[0]);
-        });
-
-        timer.start();
+        transitionManager.fadeTo(midAction, null);
     }
 }

@@ -122,8 +122,8 @@ public class ShopUI extends JPanel {
         gbc.weighty = 1.0;
         gbc.insets = new Insets(0, 5, 0, 5);
         gbc.gridx = 0; gbc.weightx = 0.26; contentGrid.add(heroPanel, gbc);
-        gbc.gridx = 1; gbc.weightx = 0.49; contentGrid.add(shopPanel, gbc);
-        gbc.gridx = 2; gbc.weightx = 0.25; contentGrid.add(bagPanel,  gbc);
+        gbc.gridx = 1; gbc.weightx = 0.48; contentGrid.add(shopPanel, gbc);
+        gbc.gridx = 2; gbc.weightx = 0.26; contentGrid.add(bagPanel,  gbc);
         add(contentGrid, BorderLayout.CENTER);
     }
 
@@ -167,7 +167,7 @@ public class ShopUI extends JPanel {
         statsContainer.add(Box.createVerticalStrut(6));
         statsContainer.add(createStatRow("DEFENSE",  String.format("%.0f",      player.getDefense())));
         statsContainer.add(Box.createVerticalStrut(6));
-        statsContainer.add(createStatRow("DODGE",    formatDodge(player.getDodge())));
+        statsContainer.add(createStatRow("DODGE",    formatDodge(player.getDodge(), player.getConfig() != null ? player.getConfig().getCaps().maxDodge : 0.75)));
         statsContainer.add(Box.createVerticalStrut(6));
         statsContainer.add(createStatRow("LUCK",     formatLuck(player.getLuck(), player.getConfig() != null ? player.getConfig().getCaps().minLuck : 0)));
 
@@ -348,8 +348,8 @@ public class ShopUI extends JPanel {
 
     // ── Helpers ───────────────────────────────────────────────────────────
 
-    private String formatDodge(double raw) {
-        double clamped  = Math.max(0, Math.min(1, raw));
+    private String formatDodge(double raw, double max) {
+        double clamped  = Math.max(0, Math.min(max, raw));
         double overflow = raw - clamped;
         String base = String.format("%.0f%%", clamped * 100);
         if (Math.abs(overflow) < 0.001) return base;

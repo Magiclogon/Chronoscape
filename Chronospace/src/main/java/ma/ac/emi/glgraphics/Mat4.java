@@ -42,4 +42,14 @@ public class Mat4 {
             matrix[13]  // m12 (translateY)
         );
     }
+
+    /** Screen-space orthographic projection: origin top-left, y down. */
+    public static float[] orthoTopLeft(int w, int h) {
+        return new float[] {
+            2f/w,  0,     0, 0,
+            0,    -2f/h,  0, 0,
+            0,     0,    -1, 0,
+           -1,     1,     0, 1
+        };
+    }
 }

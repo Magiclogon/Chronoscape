@@ -1,194 +1,92 @@
 package ma.ac.emi.input;
 
-import java.awt.Canvas;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-
-import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JFrame;
 
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * KeyHandler rewritten as a plain AWT KeyAdapter.
+ *
+ * GLCanvas is a heavyweight AWT component so Swing InputMap/ActionMap are
+ * unavailable. Instead we register on the JFrame, which always receives key
+ * events when the application window is focused — regardless of which child
+ * component (GLCanvas or a Swing panel) currently holds focus.
+ *
+ * Call setupKeyBindings(window) once after the JFrame is created.
+ * All other call-sites (consumeSwitchWeapon, consumeTogglePause, reset,
+ * getters) are unchanged.
+ */
 @Getter
 @Setter
-public class KeyHandler{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private boolean left, right, up, down, switchWeapon, togglePause;
-	private static KeyHandler instance;
-	
-	private KeyHandler() {
-		reset();
-	}
-	
-	public static KeyHandler getInstance() {
-		if(instance == null) {
-			instance = new KeyHandler();
-		}
-		return instance;
-	}
+public class KeyHandler extends KeyAdapter {
 
-    public void setupKeyBindings(JComponent component) {
-        InputMap inputMap = component.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = component.getActionMap();
+    private boolean left, right, up, down, switchWeapon, togglePause;
 
-        // LEFT arrow pressed
-        inputMap.put(KeyStroke.getKeyStroke("pressed A"), "A Pressed");
-        actionMap.put("A Pressed", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
+    private static KeyHandler instance;
 
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setLeft(true);
-            }
-        });
-
-        // LEFT arrow released
-        inputMap.put(KeyStroke.getKeyStroke("released A"), "A Released");
-        actionMap.put("A Released", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setLeft(false);
-            }
-        });
-
-        // RIGHT pressed
-        inputMap.put(KeyStroke.getKeyStroke("pressed D"), "D Pressed");
-        actionMap.put("D Pressed", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setRight(true);
-            }
-        });
-
-        // RIGHT released
-        inputMap.put(KeyStroke.getKeyStroke("released D"), "D Released");
-        actionMap.put("D Released", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setRight(false);
-            }
-        });
-
-        // UP pressed
-        inputMap.put(KeyStroke.getKeyStroke("pressed W"), "W Pressed");
-        actionMap.put("W Pressed", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setUp(true);
-            }
-        });
-
-        // UP released
-        inputMap.put(KeyStroke.getKeyStroke("released W"), "W Released");
-        actionMap.put("W Released", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-            	setUp(false);
-            }
-        });
-
-        // DOWN pressed
-        inputMap.put(KeyStroke.getKeyStroke("pressed S"), "S Pressed");
-        actionMap.put("S Pressed", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setDown(true);
-            }
-        });
-
-        // DOWN released
-        inputMap.put(KeyStroke.getKeyStroke("released S"), "S Released");
-        actionMap.put("S Released", new AbstractAction() {
-            /**
-			 * 
-			 */
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public void actionPerformed(ActionEvent e) {
-            	setDown(false);
-            }
-        });
-        
-        // E pressed - Switch Weapon (single action trigger)
-        inputMap.put(KeyStroke.getKeyStroke("pressed E"), "E Pressed");
-        actionMap.put("E Pressed", new AbstractAction() {
-			private static final long serialVersionUID = 1L;
-			@Override
-            public void actionPerformed(ActionEvent e) {
-                setSwitchWeapon(true);
-            }
-        });
-
-        // Esc Pressed
-        inputMap.put(KeyStroke.getKeyStroke("pressed ESCAPE"), "Esc Pressed");
-        actionMap.put("Esc Pressed", new AbstractAction() {
-            private static final long serialVersionUID = 1L;
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setTogglePause(true);
-            }
-        });
-        
-
+    private KeyHandler() {
+        reset();
     }
-    
-    public boolean consumeSwitchWeapon() {
-        if (switchWeapon) {
-            switchWeapon = false;
-            return true;
+
+    public static KeyHandler getInstance() {
+        if (instance == null) instance = new KeyHandler();
+        return instance;
+    }
+
+    /**
+     * Register this handler on the JFrame.
+     * Safe to call multiple times — removes the old listener first to avoid
+     * double-registration on game restart.
+     */
+    public void setupKeyBindings(JFrame frame) {
+        frame.removeKeyListener(this);
+        frame.addKeyListener(this);
+        frame.setFocusable(true);
+    }
+
+    // ── KeyListener ───────────────────────────────────────────────────────
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A      -> setLeft(true);
+            case KeyEvent.VK_D      -> setRight(true);
+            case KeyEvent.VK_W      -> setUp(true);
+            case KeyEvent.VK_S      -> setDown(true);
+            case KeyEvent.VK_E      -> setSwitchWeapon(true);
+            case KeyEvent.VK_ESCAPE -> setTogglePause(true);
         }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_A -> setLeft(false);
+            case KeyEvent.VK_D -> setRight(false);
+            case KeyEvent.VK_W -> setUp(false);
+            case KeyEvent.VK_S -> setDown(false);
+        }
+    }
+
+    // ── Consume helpers (unchanged) ───────────────────────────────────────
+
+    public boolean consumeSwitchWeapon() {
+        if (switchWeapon) { switchWeapon = false; return true; }
         return false;
     }
 
     public boolean consumeTogglePause() {
-        if (togglePause) {
-            togglePause = false;
-            return true;
-        }
+        if (togglePause) { togglePause = false; return true; }
         return false;
     }
 
-	public void reset() {
-		setLeft(false);
-		setRight(false);
-		setUp(false);
-		setDown(false);
-	}
+    public void reset() {
+        setLeft(false);
+        setRight(false);
+        setUp(false);
+        setDown(false);
+    }
 }

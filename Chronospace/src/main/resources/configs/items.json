@@ -930,7 +930,7 @@
       ]
     },
     { "type": "upgrade", "id": "lucky_rabbit_foot", "name": "Lucky Rabbit's Foot",
-      "description": "Heal 2 HP on every kill.",
+      "description": "Heal 2 HP on every kill. Previous owner wasn't so lucky..''",
       "rarity": "COMMON", "basePrice": 300, "stackable": true,
       "effectClass": "ma.ac.emi.gamelogic.effect.impl.VampirismEffect",
       "effectParams": { "healAmount": 2.0 },

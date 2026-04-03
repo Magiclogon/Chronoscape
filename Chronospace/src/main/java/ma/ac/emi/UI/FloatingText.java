@@ -6,7 +6,7 @@ public class FloatingText {
 
     public enum Preset {
         DODGED ("#7EC8E3", 22),   // icy blue
-        DAMAGE ("#FF6B6B", 18),   // red
+        DAMAGE ("#FF4B4B", 22),   // red
         HEAL   ("#7BFF7B", 18);   // green
 
         public final String hex;
@@ -31,6 +31,7 @@ public class FloatingText {
         this.preset   = preset;
         this.worldPos = new Vector3D(worldPos);
     }
+    
 
     public void update(double step) {
         age     += step;

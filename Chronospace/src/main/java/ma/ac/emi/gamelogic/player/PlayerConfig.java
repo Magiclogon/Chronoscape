@@ -32,13 +32,17 @@ public class PlayerConfig {
         // Player stat caps — raw values stored unclamped, clamped on apply
         public double minSpeed       =   50;
         public double maxSpeed       =  600;
-        public double minRegen       =    0; 
+        public double minRegen       =    0;  // raw stored; only display/apply is clamped
         public double maxRegen       =   50;
-        public double minLuck        =    0;
-        
+        public double minLuck        =    0;  // raw stored; only display/apply is clamped
+        // defense: intentionally uncapped (negative = glass cannon mechanic)
+        // dodge: raw stored unclamped so synergy items can read overflow;
+        // maxDodge caps the effective value at consumption (DamageBehavior/AOE)
+        public double maxDodge = 0.75; // 75% max dodge chance
+        // maxHp: min 1, no max
 
         // Weapon stat caps
-        public double minDamage      =    1;
+        public double minDamage      =    1;  // no max on damage
         public double minAttackSpeed =  0.1;
         public double maxAttackSpeed =   30;
         public double minRange       =   10;
