@@ -96,6 +96,9 @@ public class WorldContext {
     	
     	return tileManager.isSolid(gridX, gridY);
     }
+
+    public void clearObstacles() { obstacles.clear(); }
+
     public List<Ennemy> getCurrentEnemies() {
         return waveManager != null ? waveManager.getCurrentEnemies() : new ArrayList<>();
     }

@@ -7,7 +7,8 @@ public class FloatingText {
     public enum Preset {
         DODGED ("#7EC8E3", 22),   // icy blue
         DAMAGE ("#FF4B4B", 22),   // red
-        HEAL   ("#7BFF7B", 18);   // green
+        HEAL   ("#7BFF7B", 18),   // green
+        MONEY  ("#FFFF00", 18);   // yellow/gold
 
         public final String hex;
         public final int    fontSize;

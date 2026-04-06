@@ -1,11 +1,13 @@
 package ma.ac.emi.gamelogic.weapon;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ma.ac.emi.camera.CameraShakeDefinition;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.attack.Projectile;
 import ma.ac.emi.gamelogic.attack.behavior.LobbingBehavior;
+import ma.ac.emi.gamelogic.attack.behavior.SoundProjectileBehavior;
 import ma.ac.emi.gamelogic.attack.type.ProjectileFactory;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.math.Vector3D;
@@ -36,6 +38,12 @@ public class LobbedStrategy extends AttackStrategy{
         			newTarget = weapon.getPos().add(dir.mult(definition.getRange()));
         		}
         		
+        		List<ma.ac.emi.gamelogic.attack.behavior.ProjectileBehavior> additionalBehaviors = new ArrayList<>();
+        		additionalBehaviors.add(new LobbingBehavior(gravity, scale));
+        		if (definition.getDeactivateSound() != null && !definition.getDeactivateSound().isEmpty()) {
+        			additionalBehaviors.add(new SoundProjectileBehavior(definition.getDeactivateSound()));
+        		}
+        		
         		Projectile projectile = ProjectileFactory.createProjectile(
             			definition.getProjectileId(),
             			weapon.getPos().add(weapon.getRelativeProjectilePos()),
@@ -43,7 +51,7 @@ public class LobbedStrategy extends AttackStrategy{
             			definition.getProjectileSpeed()*weapon.getBearer().getProjectileSpeedMultiplier(),
             			weapon,
             			newTarget,
-            			List.of(new LobbingBehavior(gravity, scale)),
+            			additionalBehaviors,
             			weapon.getAttackObjectManager()
             		);
         		

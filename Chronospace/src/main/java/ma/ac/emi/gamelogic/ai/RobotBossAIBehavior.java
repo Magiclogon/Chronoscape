@@ -44,6 +44,7 @@ public class RobotBossAIBehavior implements AIBehavior {
 
     private double stateTimer;
     private double weaponSwitchTimer = 10.0;
+    private int shotsFiredWithCurrentWeapon = 0;
     private double spawnTimer = 7.0;
     private boolean isSpawningNow = false;
     private int spawnQuantity = 3;
@@ -77,10 +78,10 @@ public class RobotBossAIBehavior implements AIBehavior {
 
         isSpawningNow = false;
 
-        if (weaponSwitchTimer <= 0) {
-            //switchRandomWeapon(enemy);
-        	switchRandomWeapon();
+        if (weaponSwitchTimer <= 0 && shotsFiredWithCurrentWeapon >= 1) {
+            switchRandomWeapon();
             weaponSwitchTimer = 5 + random.nextDouble() * 3;
+            shotsFiredWithCurrentWeapon = 0;  // reset for next weapon
         }
 
         if (spawnTimer <= 0 && currentState != BossState.SUMMONING) {
@@ -180,10 +181,11 @@ public class RobotBossAIBehavior implements AIBehavior {
             case PHASE_3: smoothingFactor = 0.25; break;
         }
     }
-    
+
     private void switchRandomWeapon() {
-    	shouldSwitchWeapon = true;
-    	weaponPointer = Math.random();
+        shouldSwitchWeapon = true;
+        weaponPointer = Math.random();
+        shotsFiredWithCurrentWeapon = 0;
     }
     
     public boolean consumeShouldSwitchWeapon() {
@@ -247,11 +249,11 @@ public class RobotBossAIBehavior implements AIBehavior {
 
     @Override
     public boolean shouldAttack(Ennemy enemy, Vector3D playerPos) {
-    	if(((BossEnnemy)enemy).isSwitching()) return false;
+        if (((BossEnnemy) enemy).isSwitching()) return false;
         double distance = enemy.getPos().distance(playerPos);
 
-        // Standard Attack (No manual cooldown, weapon handles fire rate)
         if (distance < attackRange && currentState != BossState.SUMMONING) {
+            shotsFiredWithCurrentWeapon++;
             return true;
         }
         return false;

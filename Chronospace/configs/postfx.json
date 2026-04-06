@@ -22,8 +22,8 @@
     "enabled": true,
     "downscale": 2,
     "blurRadius": 0.049999997,
-    "intensity": 0.5,
+    "intensity": 0.7,
     "saturationBoost": 1.5
   },
-  "renderScale": 0.4
+  "renderScale": 1.0
 }
