@@ -370,9 +370,6 @@ public class SoundManager {
         return e == null ? 0.0 : e.durationSec;
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Internal helpers
-    // ─────────────────────────────────────────────────────────────────────────
 
     private void playFromPool(SoundEntry entry, boolean restart, float gain) {
         // Find a free clip from the pool, or grab the oldest running one

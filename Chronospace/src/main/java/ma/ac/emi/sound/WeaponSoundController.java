@@ -44,15 +44,7 @@ public final class WeaponSoundController {
 
     private WeaponSoundController() {}
 
-    // ─────────────────────────────────────────────────────────────────────────
 
-    /**
-     * Call once per attack tick from AttackStrategy.execute().
-     *
-     * @param weaponId    the weapon's id field from JSON (e.g. "ak47")
-     * @param soundId     the attackSound field from JSON (e.g. "ak47")
-     * @param attackSpeed shots per second from WeaponItemDefinition
-     */
     public static void playAttackSound(String weaponId, String soundId, double attackSpeed) {
         if (soundId == null || soundId.isEmpty()) return;
 
@@ -86,13 +78,7 @@ public final class WeaponSoundController {
         sm.play(soundId, true, speedFactor);
     }
 
-    /**
-     * Call when a looped weapon stops firing (e.g. fire button released,
-     * magazine empty, weapon switched out).
-     *
-     * @param weaponId the weapon's id field from JSON
-     * @param soundId  the attackSound field
-     */
+
     public static void stopLoopedAttackSound(String weaponId, String soundId) {
         if (!LOOPED_WEAPONS.contains(weaponId)) return;
         if (soundId == null || soundId.isEmpty()) return;
@@ -101,19 +87,14 @@ public final class WeaponSoundController {
         if (sm != null) sm.stopLoop(soundId);
     }
 
-    /**
-     * Convenience – stops any looped sound regardless of weapon, used on
-     * weapon switch-out to guarantee no orphaned loops.
-     */
+
     public static void forceStopLoopedSound(String soundId) {
         if (soundId == null || soundId.isEmpty()) return;
         SoundManager sm = GameController.getInstance().getSoundManager();
         if (sm != null) sm.stopLoop(soundId);
     }
 
-    /**
-     * Plays a one-off sound associated with a weapon (e.g. projectile deactivation/detonation).
-     */
+
     public static void playWeaponSound(String soundId) {
         if (soundId == null || soundId.isEmpty()) return;
         SoundManager sm = GameController.getInstance().getSoundManager();
