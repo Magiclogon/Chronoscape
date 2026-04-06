@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.pickable;
 
 import lombok.Getter;
 import lombok.Setter;
+import ma.ac.emi.UI.FloatingText;
+import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.fx.AnimationState;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Frame;
@@ -11,6 +13,7 @@ import ma.ac.emi.fx.StateMachine;
 import ma.ac.emi.gamelogic.entity.Entity;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.math.Vector3D;
 
 import java.awt.Graphics;
@@ -143,10 +146,15 @@ public class Pickable extends Entity {
 
     public void applyEffect(Player player) {
         if (type == PickableType.HEALTH) {
-            player.heal(value);;
+            player.heal(value);
+            FloatingTextManager.getInstance().spawn(
+                    String.format("+%.0fhp", value), FloatingText.Preset.HEAL, this.getPos());
         } else if (type == PickableType.MONEY) {
             player.setMoney(player.getMoney() + (int)value);
+            FloatingTextManager.getInstance().spawn(
+                    String.format("+$%.0f", value), FloatingText.Preset.MONEY, this.getPos());
         }
+        GameController.getInstance().getSoundManager().play("pickable_collect");
         this.isPickedUp = true;
     }
 }

@@ -36,16 +36,19 @@ import ma.ac.emi.tiles.TileType;
 public class World extends GameObject{
 	private final WorldContext context;
 	private final CollisionManager collisionManager;
-	
+
+	// Tracks which wave was active last update so we can detect wave transitions
+	private int lastWaveIndex = -1;
+
 	public World(int width, int height, EnnemySpecieFactory specieFactory, TileManager tileManager) {
 		context = new WorldContext(width, height, specieFactory, tileManager, new LightObjectManager());
-		
+
 		initializeManagers();
 
 		collisionManager = new CollisionManager(context);
-		
+
 		syncMapObstacles();
-		
+
 		getPos().setZ(-0.02);
 	}
 
@@ -53,7 +56,7 @@ public class World extends GameObject{
 		// Create attack object manager
 		AttackObjectManager attackObjectManager = new AttackObjectManager(context);
 		context.setAttackObjectManager(attackObjectManager);
-		
+
 		// Create pickable manager
 		PickableManager pickableManager = new PickableManager(context);
 		context.setPickableManager(pickableManager);
@@ -83,30 +86,30 @@ public class World extends GameObject{
 
 	private void setupEnemyAI(Ennemy enemy) {
 		PathFinder pathfinder = context.getPathFinder();
-		
+
 		if (enemy instanceof RangedEnnemy || enemy instanceof CommonEnnemy) {
 			enemy.setAiBehavior(new RangedAIBehavior(
-				pathfinder, 
-				150, 
-				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
+					pathfinder,
+					150,
+					((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		} else if (enemy instanceof SpeedsterEnnemy) {
 			enemy.setAiBehavior(new MeleeAIBehavior(
-				pathfinder, 
-				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
+					pathfinder,
+					((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		} else if (enemy instanceof BossEnnemy) {
 			if (context.getSpecieFactory() instanceof RobotFactory) {
-				enemy.setAiBehavior(new RobotBossAIBehavior(pathfinder, 
-					((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
+				enemy.setAiBehavior(new RobotBossAIBehavior(pathfinder,
+						((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 				));
 			} else {
 				enemy.setAiBehavior(new AlienBossAIBehavior(pathfinder));
 			}
 		}else {
 			enemy.setAiBehavior(new MeleeAIBehavior(
-				pathfinder, 
-				((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
+					pathfinder,
+					((WeaponItemDefinition) enemy.getActiveWeapon().getWeaponItem().getItemDefinition()).getRange()
 			));
 		}
 	}
@@ -117,8 +120,8 @@ public class World extends GameObject{
 				if (context.getTileManager().isSolid(x, y)) {
 					context.addObstacle(new Obstacle(
 							new Vector3D(
-								x * GamePanel.TILE_SIZE,
-								y * GamePanel.TILE_SIZE
+									x * GamePanel.TILE_SIZE,
+									y * GamePanel.TILE_SIZE
 							),
 							context.getTileManager().getCurrentMap().getTile(y, x),
 							context.getTileManager()
@@ -126,7 +129,7 @@ public class World extends GameObject{
 				}
 			}
 		}
-		
+
 	}
 
 	// Delegate to context
@@ -139,8 +142,16 @@ public class World extends GameObject{
 	}
 
 	public void update(double step) {
-		// Update wave manager
 		WaveManager waveManager = context.getWaveManager();
+
+		// Detect wave transitions and switch to a random map on each new wave
+		int currentWaveIndex = waveManager.getCurrentWaveIndex();
+		if (currentWaveIndex != lastWaveIndex) {
+			lastWaveIndex = currentWaveIndex;
+			onWaveChanged();
+		}
+
+		// Update wave manager
 		waveManager.update(step, Player.getInstance().getPos());
 
 		// Ensure enemies have AI
@@ -160,12 +171,36 @@ public class World extends GameObject{
 				}
 			}
 		}
-		
+
 		context.getPickableManager().update(step);
 		context.getAttackObjectManager().update(step);
 		context.getLightObjectManager().update(step);
-		
+
 		collisionManager.handleCollisions(step);
+	}
+
+	/**
+	 * Called whenever the active wave index changes. Picks a random map from
+	 * the TileManager's pool so every wave gets a fresh arena layout.
+	 */
+	private void onWaveChanged() {
+		TileManager tileManager = context.getTileManager();
+		if (tileManager == null || tileManager.getMaps().size() <= 1) return;
+
+		// Pick a random map, rebuild the cache, then re-sync obstacles
+		tileManager.refreshCurrentMap();
+		resyncMapObstacles();
+
+		System.out.println("Wave changed — switched to map index "
+				+ tileManager.getMaps().indexOf(tileManager.getCurrentMap()));
+	}
+
+	/**
+	 * Clears old obstacle data and re-reads it from the newly active map.
+	 */
+	private void resyncMapObstacles() {
+		context.clearObstacles();
+		syncMapObstacles();
 	}
 
 	private void spawnBossMinions(Vector3D bossPos, int baseCount) {
@@ -223,7 +258,7 @@ public class World extends GameObject{
 
 		System.out.println("Robot Boss spawned " + minionCount + " minions!");
 	}
-	
+
 
 	private Vector3D clampToWorld(Vector3D pos) {
 		double margin = GamePanel.TILE_SIZE;
@@ -241,7 +276,7 @@ public class World extends GameObject{
 			context.getTileManager().draw(g);
 		}
 	}
-	
+
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		if (context.getTileManager() != null) {
@@ -253,35 +288,35 @@ public class World extends GameObject{
 	public int getWidth() {
 		return context.getWorldWidth();
 	}
-	
+
 	public int getHeight() {
 		return context.getWorldHeight();
 	}
-	
+
 	public Player getPlayer() {
 		return context.getPlayer();
 	}
-	
+
 	public WaveManager getWaveManager() {
 		return context.getWaveManager();
 	}
-	
+
 	public AttackObjectManager getAttackObjectManager() {
 		return context.getAttackObjectManager();
 	}
-	
+
 	public PickableManager getPickableManager() {
 		return context.getPickableManager();
 	}
-	
+
 	public EnnemySpecieFactory getSpecieFactory() {
 		return context.getSpecieFactory();
 	}
-	
+
 	public void setSpecieFactory(EnnemySpecieFactory factory) {
 		context.setSpecieFactory(factory);
 	}
-	
+
 	public TileManager getTileManager() {
 		return context.getTileManager();
 	}
@@ -293,7 +328,7 @@ public class World extends GameObject{
 	public void addLightObject(LightObject lightObject) {
 		context.addLightObject(lightObject);
 	}
-	
+
 	public void removeLightObject(LightObject lightObject) {
 		context.removeLightObject(lightObject);
 	}
@@ -306,7 +341,4 @@ public class World extends GameObject{
 	public void clearAttackObjects() {
 		this.getAttackObjectManager().clearObjects();
 	}
-
-
-	
 }
