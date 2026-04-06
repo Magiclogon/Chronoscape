@@ -110,4 +110,13 @@ public final class WeaponSoundController {
         SoundManager sm = GameController.getInstance().getSoundManager();
         if (sm != null) sm.stopLoop(soundId);
     }
+
+    /**
+     * Plays a one-off sound associated with a weapon (e.g. projectile deactivation/detonation).
+     */
+    public static void playWeaponSound(String soundId) {
+        if (soundId == null || soundId.isEmpty()) return;
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play(soundId, false);
+    }
 }

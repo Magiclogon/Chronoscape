@@ -31,6 +31,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
     private int relativeProjectilePosX;
     private int relativeProjectilePosY;
     private String attackSound;
+    private String deactivateSound;
     
     private WeaponAnimationDetails animationDetails;
     private AttackStrategyDefinition attackStrategyDefinition;
@@ -102,6 +103,7 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.relativeProjectilePosX = other.relativeProjectilePosX;
         this.relativeProjectilePosY = other.relativeProjectilePosY;
         this.attackSound = other.attackSound;
+        this.deactivateSound = other.deactivateSound;
         
         this.animationDetails = other.animationDetails;
         this.attackStrategyDefinition = other.attackStrategyDefinition;

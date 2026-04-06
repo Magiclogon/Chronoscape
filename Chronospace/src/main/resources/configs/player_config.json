@@ -7,7 +7,7 @@
   "baseStrength": 1.0,
   "baseRegenerationSpeed": 0,
   "baseLuck": 0,
-  "startingWeaponId": "ak47",
+  "startingWeaponId": "robot_boss_cannon",
   "animationDetails": {
     "spriteSheetPath": "player/main_character-Sheet.png",
     "spriteWidth": 32,

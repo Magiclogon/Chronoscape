@@ -141,6 +141,7 @@ public class GameController implements Runnable {
         sm.load("melee_weapon",  "/sounds/scratch_001.wav", SoundManager.Category.SFX);
         sm.load("explosion",     "/sounds/explosion.wav",   SoundManager.Category.SFX);
         sm.load("spear",         "/sounds/spear.wav",       SoundManager.Category.SFX);
+        sm.load("detonation",         "/sounds/detonation.wav",       SoundManager.Category.SFX);
 
         // ── Weapon-specific SFX ───────────────────────────────────────────────
         sm.load("ak47",        "/sounds/ak47.wav",        SoundManager.Category.SFX);
