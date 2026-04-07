@@ -58,9 +58,6 @@ public class Camera {
 			double worldPixelHeight = GameController.getInstance().getWorldManager().getCurrentWorld().getHeight() * GamePanel.TILE_SIZE;
 			
 
-			// bloquer cam aux bordures
-			//this.pos.setX(Math.max(0, Math.min(this.pos.getX(), worldPixelWidth - this.width)));
-			//this.pos.setY(Math.max(0, Math.min(this.pos.getY(), worldPixelHeight - this.height)));
 			setPos(Vector3D.lerp(getPos(), targetPos, step * 3));
 
 			if(shakeIntensity > 0) {
@@ -93,26 +90,49 @@ public class Camera {
 	public AffineTransform getCamTransform() {
 		return camTransform;
 	}
-	
+
+	/**
+	 * Convert a world-space position to screen-space pixels (origin top-left).
+	 *
+	 * The key insight: worldToScreen must use the same projection+view that
+	 * the renderer uses when drawing the scene.
+	 *
+	 * The renderer draws into an internal framebuffer of size:
+	 *   internalW = physicalW * renderScale
+	 *   internalH = physicalH * renderScale
+	 *
+	 * and getViewMatrix() is used with that internal resolution.
+	 * After post-processing, the result is upscaled to fill the full canvas.
+	 *
+	 * So the correct transform is:
+	 *   1. Project using the internal resolution ortho (what the renderer uses)
+	 *   2. Map clip space → screen using the PHYSICAL canvas size
+	 *      (because the final image fills the full canvas after upscale)
+	 */
 	public Vector3D worldToScreen(Vector3D worldPos) {
-	    float width  = GameController.getInstance().getGameGLPanel().getWidth();
-	    float height = GameController.getInstance().getGameGLPanel().getHeight();
-	 
-	    float[] projection = Mat4.ortho(-width / 2, width / 2, height / 2, -height / 2);
+	    float physW = GameController.getInstance().getGameGLPanel().getWidth();
+	    float physH = GameController.getInstance().getGameGLPanel().getHeight();
+
+	    // Internal resolution — matches GameRenderer.internalWidth/Height
+	    float intW = (float)(physW * renderScale);
+	    float intH = (float)(physH * renderScale);
+
+	    // Projection over the internal resolution (same as renderer's PASS 1)
+	    float[] projection = Mat4.ortho(-intW / 2, intW / 2, intH / 2, -intH / 2);
 	    float[] view       = getViewMatrix();
 	    float[] viewProj   = Matrix4.multiply(projection, view);
-	 
+
 	    AffineTransform transform = Mat4.toAffineTransform(viewProj);
-	 
-	    // Forward transform: world → clip space
-	    Point2D.Double worldPoint  = new Point2D.Double(worldPos.getX(), worldPos.getY());
-	    Point2D.Double clipPoint   = new Point2D.Double();
+
+	    Point2D.Double worldPoint = new Point2D.Double(worldPos.getX(), worldPos.getY());
+	    Point2D.Double clipPoint  = new Point2D.Double();
 	    transform.transform(worldPoint, clipPoint);
-	 
-	    // clip → screen  (inverse of the clip→NDC step in calculateMouseWorldPos)
-	    double screenX = (clipPoint.x + 0.5) * width;
-	    double screenY = (0.5 - clipPoint.y) * height;
-	 
+
+	    // clip [-1,1] → screen [0, physW/physH]
+	    // The internal image is upscaled to fill the canvas, so we map to physW/physH.
+	    double screenX = (clipPoint.x * scalingFactor * 2  + 1.0) / 2.0 * physW;
+	    double screenY = (1.0 - clipPoint.y * scalingFactor * 2)  / 2.0 * physH;
+
 	    return new Vector3D(screenX, screenY);
 	}
 	
@@ -131,5 +151,4 @@ public class Camera {
 	        tx*sx, ty*sy, 0, 1
 	    };
 	}
-
 }

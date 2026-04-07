@@ -44,10 +44,13 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	    float width = GameController.getInstance().getGameGLPanel().getWidth();
 	    float height = GameController.getInstance().getGameGLPanel().getHeight();
 
-	    float clipX = (float) ((getMouseScreenPos().getX() / width) - 0.5f);
-	    float clipY = (float) (0.5f - (getMouseScreenPos().getY() / height)); 
+	    float clipX = (float) ((getMouseScreenPos().getX() / width) - 0.5f) / (float)camera.getScalingFactor();
+	    float clipY = (float) (0.5f - (getMouseScreenPos().getY() / height)) / (float)camera.getScalingFactor();
 
-	    float[] projection = Mat4.ortho(-width/2, width/2, height/2, -height/2);
+	    float intW = (float) (width * camera.getRenderScale());
+	    float intH = (float) (height * camera.getRenderScale());
+	    
+	    float[] projection = Mat4.ortho(-intW/2, intW/2, intH/2, -intH/2);
 	    float[] view = camera.getViewMatrix();
 	    float[] viewProj = Matrix4.multiply(projection, view);
 
@@ -59,7 +62,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	        Point2D.Double clipPoint = new Point2D.Double(clipX, clipY);
 	        Point2D.Double worldPoint = new Point2D.Double();
 	        inverseTransform.transform(clipPoint, worldPoint);
-
+	        
 	        setMouseWorldPos(new Vector3D(worldPoint.x, worldPoint.y));
 
 	    } catch (NoninvertibleTransformException e) {
