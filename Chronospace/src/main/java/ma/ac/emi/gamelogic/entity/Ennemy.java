@@ -174,6 +174,9 @@ public abstract class Ennemy extends LivingEntity {
             if (player != null && player.getInventory() != null) {
                 player.getInventory().getEffectContext().fireOnKill(player, this);
             }
+            
+            if (player.getActiveWeapon() != null)
+                player.getActiveWeapon().onKill(this);
         }
 
 		if(getHp() <= 0) {

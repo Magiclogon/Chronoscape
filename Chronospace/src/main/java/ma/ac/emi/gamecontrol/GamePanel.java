@@ -41,52 +41,57 @@ public class GamePanel extends JPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-        GameController.getInstance();
-        //GameController.draw.acquire();
-
-        super.paintComponent(g);
-
-        g.setColor(GameController.getInstance().getWorldManager().getCurrentWorld().getVoidColor());
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
-
-        Graphics2D g2d = (Graphics2D) g;
-        if (camera == null) {
-            System.out.println("Camera is null");
-            return;
-        }
-        AffineTransform oldTransform = g2d.getTransform();
-
-
-        AffineTransform camTx;
-        synchronized (camera) {
-            camTx = new AffineTransform(camera.getCamTransform());
-        }
-        g2d.transform(camTx);
-
-        GameObject o = null;
-        try{
-            List<GameObject> snapshot;
-            synchronized (drawables) {
-                snapshot = new ArrayList<>(drawables);
-            }
-
-            for (GameObject d : snapshot) {
-                o = d;
-                d.draw(g);
-            }
-
-        }catch(Exception e) {
-
-            System.err.println("drawing error from: " + o.getClass());
-            e.printStackTrace();
-        }
-        g2d.setTransform(oldTransform);
-
-        GameController.getInstance();
-        //GameController.update.release();
-
-
-    }
+//		try {
+//			GameController.getInstance();
+//			GameController.draw.acquire();
+//			
+//			super.paintComponent(g);
+//			
+//			g.setColor(GameController.getInstance().getWorldManager().getCurrentWorld().getVoidColor());
+//			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+//			
+//			Graphics2D g2d = (Graphics2D) g;
+//			if (camera == null) {
+//				System.out.println("Camera is null");
+//				return;
+//			}		
+//			AffineTransform oldTransform = g2d.getTransform();
+//			
+//			
+//			AffineTransform camTx;
+//			synchronized (camera) {
+//			    camTx = new AffineTransform(camera.getCamTransform());
+//			}
+//			g2d.transform(camTx);
+//
+//			GameObject o = null;
+//			try{
+//				List<GameObject> snapshot;
+//				synchronized (drawables) {
+//				    snapshot = new ArrayList<>(drawables);
+//				}
+//
+//				for (GameObject d : snapshot) {
+//					o = d;
+//				    d.draw(g);
+//				}
+//
+//			}catch(Exception e) {
+//
+//				System.err.println("drawing error from: " + o.getClass());
+//				e.printStackTrace();
+//			}
+//			g2d.setTransform(oldTransform);
+//			
+//			GameController.getInstance();
+//			GameController.update.release();
+//		} catch (InterruptedException e1) {
+//			// TODO Auto-generated catch block
+//			e1.printStackTrace();
+//		}
+		
+		
+	}
 	
 	public void update(double step) {
 		drawables.removeIf(d -> !d.isDrawn());

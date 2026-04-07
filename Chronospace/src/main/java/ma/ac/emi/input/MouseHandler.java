@@ -23,6 +23,7 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	private static MouseHandler instance;
 	private Vector3D mouseScreenPos, mouseWorldPos;
 	private boolean mouseDown;
+
 	private int mouseWheelRot;
 	private Camera camera;
 	
@@ -68,7 +69,6 @@ public class MouseHandler implements MouseMotionListener, MouseListener, MouseWh
 	
 	public Vector3D getMouseWorldPos() {
 		calculateMouseWorldPos();
-		
 		return mouseWorldPos;
 	}
 

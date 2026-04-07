@@ -1,5 +1,6 @@
 package ma.ac.emi.gamelogic.weapon.behavior;
 
+import ma.ac.emi.gamelogic.entity.LivingEntity;
 import ma.ac.emi.gamelogic.weapon.Weapon;
 
 public abstract class WeaponBehavior {
@@ -11,11 +12,12 @@ public abstract class WeaponBehavior {
 		this.offsetY = offsetY;
 	}
 	
-	public abstract void onInit(Weapon weapon);
-	public abstract void onUpdate(Weapon weapon, double step);
-	public abstract void onAttack(Weapon weapon, double step);
-	public abstract void onSwitchIn(Weapon weapon);
-	public abstract void onSwitchOut(Weapon weapon);
+	public void onInit(Weapon weapon) {}
+	public void onUpdate(Weapon weapon, double step) {}
+	public void onAttack(Weapon weapon, double step) {}
+	public void onKill(Weapon weapon, LivingEntity killed) {}
+	public void onSwitchIn(Weapon weapon) {}
+	public void onSwitchOut(Weapon weapon) {}
 	public void onWaveStart(Weapon weapon) {}
 	public void onWaveEnd(Weapon weapon)   {}
 }

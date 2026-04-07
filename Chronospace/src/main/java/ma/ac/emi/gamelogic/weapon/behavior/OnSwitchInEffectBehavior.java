@@ -71,11 +71,6 @@ public class OnSwitchInEffectBehavior extends WeaponBehavior{
 			if(!emitter.isActive()) emitter.activate();
 		}
 	}
-	
-	@Override
-	public void onAttack(Weapon weapon, double step) {
-		
-	}
 
 	@Override
 	public void onSwitchIn(Weapon weapon) {
@@ -84,13 +79,6 @@ public class OnSwitchInEffectBehavior extends WeaponBehavior{
 			if(aligned) e.setDir(weapon.getDir());
 			e.setShouldEmit(true);
 		});
-		
-	}
-
-
-	@Override
-	public void onSwitchOut(Weapon weapon) {
-		// TODO Auto-generated method stub
 		
 	}
 	

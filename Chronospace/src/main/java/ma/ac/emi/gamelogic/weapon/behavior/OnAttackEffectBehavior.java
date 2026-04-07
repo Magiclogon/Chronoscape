@@ -82,21 +82,10 @@ protected List<Vector3D> randomOffsets = new ArrayList<>();
 		});
 				
 	}
-
-	@Override
-	public void onSwitchIn(Weapon weapon) {
-		
-	}
-
-
-	@Override
-	public void onSwitchOut(Weapon weapon) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}
+
 
 }
