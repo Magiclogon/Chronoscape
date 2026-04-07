@@ -5,10 +5,10 @@ import ma.ac.emi.math.Vector3D;
 public class FloatingText {
 
     public enum Preset {
-        DODGED ("#7EC8E3", 22),   // icy blue
-        DAMAGE ("#FF4B4B", 22),   // red
-        HEAL   ("#7BFF7B", 18),   // green
-        MONEY  ("#FFFF00", 18);   // yellow/gold
+        DODGED ("#7EC8E3", 24),   // icy blue
+        DAMAGE ("#FF4B4B", 24),   // red
+        HEAL   ("#7BFF7B", 24),   // green
+        MONEY  ("#FFFF00", 24);   // yellow/gold
 
         public final String hex;
         public final int    fontSize;

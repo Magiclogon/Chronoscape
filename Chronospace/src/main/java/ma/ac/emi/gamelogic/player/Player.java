@@ -337,6 +337,7 @@ public class Player extends LivingEntity {
 	@Override
 	public void draw(Graphics g) {
 		super.draw(g);
+		
 		if(activeWeapon != null)
 			activeWeapon.draw(g);
 	}
@@ -345,8 +346,9 @@ public class Player extends LivingEntity {
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		super.drawGL(gl, glGraphics);
-//		if(activeWeapon != null && hp > 0)
-//			activeWeapon.drawGL(gl, glGraphics);
+		glGraphics.drawQuad(gl, (float) MouseHandler.getInstance().getMouseWorldPos().getX()-3, 
+				(float) MouseHandler.getInstance().getMouseWorldPos().getY()-3,
+				6, 6);
 	}
 
 	public void setWeapon(Weapon weapon) {

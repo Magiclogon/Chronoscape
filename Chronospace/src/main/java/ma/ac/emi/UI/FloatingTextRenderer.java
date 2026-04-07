@@ -66,10 +66,11 @@ public class FloatingTextRenderer {
             // Apply rise offset in world space
             Vector3D world  = ft.getWorldPos().add(new Vector3D(0, ft.getOffsetY(), 0));
             Vector3D screen = camera.worldToScreen(world);
+            
 
             float sx = (float) screen.getX()*dpiScale;
             float sy = (float) screen.getY()*dpiScale;
-
+ 
             // Skip if off-screen (using physical bounds)
             if (sx < -100 * dpiScale || sx > screenW + 100 * dpiScale || 
                 sy < -60 * dpiScale || sy > screenH + 60 * dpiScale) continue;
