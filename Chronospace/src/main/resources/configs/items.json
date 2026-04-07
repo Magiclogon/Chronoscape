@@ -193,7 +193,8 @@
       "magazineSize": 100,
       "relativeProjectilePosX": 18,
       "relativeProjectilePosY": 3,
-      "attackSound": "heavy_weapon",
+      "attackSound": "rpg_launch",
+      "deactivateSound": "detonation",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/rpg7-Sheet.png",
@@ -731,6 +732,7 @@
       "relativeProjectilePosX": 17,
       "relativeProjectilePosY": -20,
       "attackSound": "explosion",
+      "deactivateSound": "detonation",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/boss_cannon-Sheet.png",

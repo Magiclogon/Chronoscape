@@ -36,7 +36,7 @@ public class Sprite {
 	public Sprite(BufferedImage sprite) {
 		this.sprite = sprite;
 	}
-	
+
 	public Sprite getSubimage(int x, int y, int width, int height) {
 		return new Sprite(sprite.getSubimage(x, y, width, height));
 	}

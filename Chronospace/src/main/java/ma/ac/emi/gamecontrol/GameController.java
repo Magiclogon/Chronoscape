@@ -123,22 +123,58 @@ public class GameController implements Runnable {
     }
 
     private void loadSounds() {
-        soundManager.load("main_menu_music", "/sounds/main_menu_1.wav");
-        soundManager.load("select_menu",     "/sounds/select_004.wav");
-        soundManager.load("hover_menu",      "/sounds/pluck_001.wav");
-        soundManager.load("pause_menu_music","/sounds/pause_menu_1.wav");
-        soundManager.load("game_over_music", "/sounds/game_over_1.wav");
 
-        soundManager.load("light_weapon",  "/sounds/tick_001.wav");
-        soundManager.load("heavy_weapon",  "/sounds/bong_001.wav");
-        soundManager.load("ranged_weapon", "/sounds/click_001.wav");
-        soundManager.load("melee_weapon",  "/sounds/scratch_001.wav");
-        soundManager.load("ak47",          "/sounds/ak47.wav");
-        soundManager.load("sniper",        "/sounds/sniper.wav");
-        soundManager.load("machine_gun",   "/sounds/machine_gun.wav");
-        soundManager.load("gun",           "/sounds/gun.wav");
-        soundManager.load("spear",         "/sounds/spear.wav");
-        soundManager.load("explosion",     "/sounds/explosion.wav");
+        SoundManager sm = soundManager;   // alias for brevity
+
+        // ── Music ─────────────────────────────────────────────────────────────
+        sm.load("main_menu_music",   "/sounds/main_menu_1.wav",   SoundManager.Category.MUSIC);
+        sm.load("pause_menu_music",  "/sounds/pause_menu_1.wav",  SoundManager.Category.MUSIC);
+        sm.load("game_over_music",   "/sounds/game_over_1.wav",   SoundManager.Category.MUSIC);
+
+        // ── UI  ───────────────────────────────────────────────────────────────
+        sm.load("select_menu", "/sounds/select_004.wav", SoundManager.Category.UI);
+        sm.load("hover_menu",  "/sounds/pluck_001.wav",  SoundManager.Category.UI);
+
+        // ── Generic SFX ───────────────────────────────────────────────────────
+        sm.load("light_weapon",  "/sounds/tick_001.wav",    SoundManager.Category.SFX);
+        sm.load("heavy_weapon",  "/sounds/bong_001.wav",    SoundManager.Category.SFX);
+        sm.load("ranged_weapon", "/sounds/click_001.wav",   SoundManager.Category.SFX);
+        sm.load("melee_weapon",  "/sounds/scratch_001.wav", SoundManager.Category.SFX);
+        sm.load("explosion",     "/sounds/explosion.wav",   SoundManager.Category.SFX);
+        sm.load("spear",         "/sounds/spear.wav",       SoundManager.Category.SFX);
+        sm.load("detonation",         "/sounds/detonation.wav",       SoundManager.Category.SFX);
+        sm.load("pickable_collect",   "/sounds/confirmation_001.wav", SoundManager.Category.SFX);
+
+        // ── Weapon-specific SFX ───────────────────────────────────────────────
+        sm.load("ak47",        "/sounds/ak47.wav",        SoundManager.Category.SFX);
+        sm.load("sniper",      "/sounds/sniper.wav",      SoundManager.Category.SFX);
+        sm.load("machine_gun", "/sounds/machine_gun.wav", SoundManager.Category.SFX);
+        sm.load("gun",         "/sounds/gun.wav",         SoundManager.Category.SFX);
+        sm.load("flamethrower", "/sounds/flamethrower.wav", SoundManager.Category.SFX);
+        sm.load("shotgun", "/sounds/shotgun.wav", SoundManager.Category.SFX);
+        sm.load("hammer",       "/sounds/hammer.wav",       SoundManager.Category.SFX);
+        sm.load("rpg_launch",       "/sounds/rpg_launch.wav",       SoundManager.Category.SFX);
+
+        sm.setCooldown("flamethrower", 2000);  // loop manager handles timing
+        sm.setCooldown("ak47",        15);
+        sm.setCooldown("rpg_launch", 20);
+
+        // Machine gun fires 12 shots/sec as well
+        sm.setCooldown("machine_gun", 100);
+
+        // Shotgun / heavy weapons don't need a pool, but short cooldown prevents
+        // accidental double-plays on the same frame.
+        sm.setCooldown("heavy_weapon", 30);
+        sm.setCooldown("gun",          30);
+        sm.setCooldown("hammer", 15);
+
+        // Sniper has a slow reload – generous window
+        sm.setCooldown("sniper", 200);
+        sm.setCooldown("shotgun", 40);
+
+        // UI sounds: don't spam on fast hover
+        sm.setCooldown("hover_menu",  80);
+        sm.setCooldown("select_menu", 120);
     }
 
     public void nextWorld() {
@@ -193,7 +229,7 @@ public class GameController implements Runnable {
         state = GameState.GAME_OVER;
         SwingUtilities.invokeLater(() -> window.navigateTo("GAMEOVER"));
         soundManager.stopAll();
-        soundManager.play("game_over_music");
+        soundManager.loop("game_over_music");
     }
 
     // ── Pause ─────────────────────────────────────────────────────────────
@@ -206,7 +242,8 @@ public class GameController implements Runnable {
     public void pauseGame() {
         state = GameState.PAUSED;
         SwingUtilities.invokeLater(() -> window.navigateTo("PAUSE"));
-        soundManager.stopAll();
+        soundManager.stopCategory(SoundManager.Category.SFX);
+        soundManager.stopCategory(SoundManager.Category.MUSIC);
     }
 
     public void resumeGame() {
