@@ -91,6 +91,7 @@ public class OnSwitchOutEffectBehavior extends WeaponBehavior{
 		});
 	}
 	
+	
 	private ParticleEmitter initEmitter(Vector3D pos, Vector3D dir) {
 		return new ParticleEmitter(particleId, pos, dir, ageMax, emitterRadius, false);
 	}

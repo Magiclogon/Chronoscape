@@ -103,7 +103,8 @@ public class GameController implements Runnable {
                         });
                     };
                     settings = new GraphicsSettingsPanel(postFXConfig, callback);
-
+                    
+                    window.addSettings(new ControlsPanel(), "Controls");
                     window.addSettings(settings, "Graphics");
                     window.addSettings(new SoundSettingsPanel(), "Sound");
 

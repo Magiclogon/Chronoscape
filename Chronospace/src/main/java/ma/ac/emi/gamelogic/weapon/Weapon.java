@@ -510,5 +510,9 @@ public class Weapon extends Entity{
 		if(handsBottom != null) handsBottom.addTemporaryEffect(new InvincibilityFlashingEffect(duration, flashingFrequency));
 	}
 
+	public void onKill(LivingEntity killed) {
+		behaviors.forEach(b -> b.onKill(this, killed));
+	}
+
 
 }

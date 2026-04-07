@@ -29,6 +29,7 @@ import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.lighting.Light;
 import ma.ac.emi.input.KeyHandler;
+import ma.ac.emi.input.AimController;
 import ma.ac.emi.input.MouseHandler;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.gamelogic.shop.*;
@@ -272,8 +273,9 @@ public class Player extends LivingEntity {
 		
 		applyRegen(step);
 				
-		if(MouseHandler.getInstance().isMouseDown()) {
-			attack(MouseHandler.getInstance().getMouseWorldPos(), step);
+		AimController.getInstance().update(getPos());
+		if(AimController.getInstance().isFiring()) {
+			attack(AimController.getInstance().getTarget(), step);
 		}
 
 		velocity.init();
@@ -319,7 +321,7 @@ public class Player extends LivingEntity {
 		}
 		
 		
-		pointAt(MouseHandler.getInstance().getMouseWorldPos());
+		pointAt(AimController.getInstance().getTarget());
 		
 		changeStateDirection();
 		stateMachine.update(step);

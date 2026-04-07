@@ -74,6 +74,7 @@ public class ShopItemButton extends JButton {
             GameController.getInstance().getShopManager().purchaseItem(item);
             shopUI.refresh();
         });
+        
     }
 
     private void buildGeometry() {

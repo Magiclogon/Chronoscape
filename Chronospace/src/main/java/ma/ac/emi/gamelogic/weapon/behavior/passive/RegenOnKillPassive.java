@@ -61,6 +61,7 @@ public class RegenOnKillPassive extends WeaponPassive {
     //     player.getActiveWeapon().getBehaviors().forEach(b -> b.onKill(weapon, this));
     // ─────────────────────────────────────────────────────────────────────────
 
+    @Override
     public void onKill(Weapon weapon, LivingEntity killed) {
         if (!active) return;
         Player player = player(weapon);
@@ -72,6 +73,8 @@ public class RegenOnKillPassive extends WeaponPassive {
             activeBonus += gain;
         }
         timeRemaining = regenDuration; // refresh timer on each kill
+        
+        System.out.println("KILLED!!");
     }
 
     @Override
