@@ -8,6 +8,8 @@ import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.shop.ShopItem;
+import ma.ac.emi.gamelogic.shop.UpgradeItem;
+import ma.ac.emi.gamelogic.shop.UpgradeItemDefinition;
 
 public class ShopItemButton extends JButton {
     private static final long serialVersionUID = 1L;
@@ -21,7 +23,7 @@ public class ShopItemButton extends JButton {
     private static final Color PRICE_COLOR   = MenuStyle.ACCENT;
     private static final Color ACCENT_GOLD   = new Color(255, 215, 0);
 
-    private static final int PADDING     = 12;
+    private static int PADDING     = 12;
     private static final int ICON_SIZE   = 56;
     private static final int PRICE_BAR_H = 36;
 
@@ -35,6 +37,7 @@ public class ShopItemButton extends JButton {
 
     private int     iconX, iconY, drawW, drawH;
     private boolean geometryReady = false;
+    private boolean isUpgradeItem = false;
 
     public ShopItemButton(ShopUI shopUI, ShopItem item) {
         if (item == null) {
@@ -65,7 +68,9 @@ public class ShopItemButton extends JButton {
             case COMMON:    borderColor = new Color( 50, 205,  50); break;
             default:        borderColor = new Color( 60,  60,  70); break;
         }
-
+        
+        isUpgradeItem = item instanceof UpgradeItem;
+        
         String iconPath = item.getItemDefinition().getIconPath();
         if (iconPath != null && !iconPath.isBlank())
             icon = AssetsLoader.getSprite(iconPath);
@@ -102,20 +107,34 @@ public class ShopItemButton extends JButton {
                   : BG_NORMAL);
         g2.fillRoundRect(0, 0, w, h, 12, 12);
 
-        // Icon box
+        
+     // Icon box
         int boxSize = ICON_SIZE + PADDING;
         g2.setColor(new Color(35, 35, 42));
         g2.fillRoundRect(PADDING, PADDING, boxSize, boxSize, 8, 8);
+        
+        if (icon != null) {
+            if (!geometryReady) buildGeometry();
+            
+            int cx, cy;
+            
+            if(isUpgradeItem) {
+            	cx = PADDING;
+                cy = PADDING;
+                g2.drawImage(icon.getSprite(), cx, cy, boxSize, boxSize, null);
+
+            }else {
+            	cx = PADDING + (boxSize - drawW) / 2;
+                cy = PADDING + (boxSize - drawH) / 2;
+                g2.drawImage(icon.getSprite(), cx, cy, drawW, drawH, null);
+
+            }
+            
+        }
+
         g2.setColor(borderColor.darker());
         g2.setStroke(new BasicStroke(1.5f));
         g2.drawRoundRect(PADDING, PADDING, boxSize, boxSize, 8, 8);
-
-        if (icon != null) {
-            if (!geometryReady) buildGeometry();
-            int cx = PADDING + (boxSize - drawW) / 2;
-            int cy = PADDING + (boxSize - drawH) / 2;
-            g2.drawImage(icon.getSprite(), cx, cy, drawW, drawH, null);
-        }
 
         // Name + type
         int textX    = PADDING + boxSize + PADDING;

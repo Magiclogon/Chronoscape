@@ -44,7 +44,6 @@ public class GameRenderer implements GLEventListener {
 
     private PostProcessor postProcessor;
     private LightingSystem lightingSystem;
-    private HUDRenderer hudRenderer;
     private Color bg;
     
     private long lastTime = System.nanoTime();
@@ -202,6 +201,8 @@ public class GameRenderer implements GLEventListener {
     public void display(GLAutoDrawable drawable) {
         GL3 gl = drawable.getGL().getGL3();
         
+        double delta = 1.0 / 60.0;
+        
         long currentTime = System.nanoTime();
         frames++;
 
@@ -295,6 +296,7 @@ public class GameRenderer implements GLEventListener {
 
          //PASS 4 — HUD
         if (glHud != null) {
+        	glHud.update(delta);
         	gl.glViewport(0, 0, width, height);
         	glHud.render(gl, glGraphics, camera, width, height, dpiScale);
         }
@@ -411,6 +413,17 @@ public class GameRenderer implements GLEventListener {
         internalWidth = Math.max(1, (int) (width * renderScale));
         internalHeight = Math.max(1, (int) (height * renderScale));
     }
+    
+    public void showWaveCard(int waveNumber, Runnable onDone) {
+        if (glHud != null) {
+            glHud.showWaveCard(waveNumber, onDone);
+        }
+    }
+
+    public void startFadeIn() {
+        fadeAlpha = 1.0f;
+        fading = true;
+    }
 
     @Override
     public void dispose(GLAutoDrawable drawable) {
@@ -419,7 +432,6 @@ public class GameRenderer implements GLEventListener {
     	
     	ParticleAnimationCache.clear(gl);
     	
-    	if (hudRenderer   != null) hudRenderer.dispose(gl);
     	if (glGraphics    != null) glGraphics.dispose(gl);
     	if (postProcessor != null) postProcessor.dispose(gl);
     	if (lightingSystem!= null) lightingSystem.dispose(gl);
@@ -448,12 +460,7 @@ public class GameRenderer implements GLEventListener {
 		return this.renderScale;
 	}
 	
-	public void setHUDPanel(GL3 gl, GameUIPanel panel) {
-		hudRenderer = new HUDRenderer(panel);
-		hudRenderer.init(gl);
-		hudRenderer.resize(gl, width, height);
-	}
-
+	
 	public void reloadPostProcessing(GL3 gl, PostFXConfig updatedConfig) {
 		postProcessor.clearEffects(gl);
 		initPostProcessor(gl, updatedConfig);

@@ -168,4 +168,16 @@ public class ItemLoader {
         }
         return null;
     }
+    
+    public List<WeaponItemDefinition> getAllWeaponDefinitions() {
+        List<WeaponItemDefinition> weapons = new ArrayList<>();
+        for (Map<String, ItemDefinition> rarityMap : itemsByRarity.values()) {
+            for (ItemDefinition def : rarityMap.values()) {
+                if (def instanceof WeaponItemDefinition weaponDef) {
+                    weapons.add(weaponDef);
+                }
+            }
+        }
+        return weapons;
+    }
 }

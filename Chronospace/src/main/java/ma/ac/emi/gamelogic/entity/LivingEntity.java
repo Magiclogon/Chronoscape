@@ -172,7 +172,7 @@ public abstract class LivingEntity extends Entity {
 		return isInState("Dying");
 	}
 	
-	protected boolean isSpawning() {
+	public boolean isSpawning() {
 		return isInState("Spawning");
 	}
 	

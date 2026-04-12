@@ -32,6 +32,13 @@ import ma.ac.emi.world.WorldManager;
 @Setter
 public class GameController implements Runnable {
     private static final long SIM_STEP = (long)(Math.pow(10, 9) / 60);
+ 
+    // Wave intro timing controls (in milliseconds)
+    private static final int PRE_PLAYER_DELAY_MS = 2000;      // Delay before player appears
+    private static final int PRE_STARTING_WEAPON_DELAY_MS = 1000;      // Delay before starting weapon selection appears
+    private static final int PRE_TITLE_DELAY_MS = 1000;      // Delay before wave title appears
+    private static final int POST_TITLE_DELAY_MS = 500;     // Delay after title fades before wave starts
+    
     private static GameController instance;
 
     public static GameController getInstance() {
@@ -256,8 +263,17 @@ public class GameController implements Runnable {
 
     public void nextWave() {
         worldManager.getCurrentWorld().clearAttackObjects();
-        resumeGame();
+        Vector3D centerPos = new Vector3D(
+    			GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getWidth() / 2,
+    			GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getHeight() / 2
+    		);
+		Player.getInstance().setPos(centerPos);
+        particleSystem.clearActiveEffects();
+
+        showGame();
+        startWaveIntro();
     }
+
 
     // ── Game start ────────────────────────────────────────────────────────
 
@@ -294,6 +310,9 @@ public class GameController implements Runnable {
         camera.setRenderScale(gameGLPanel.getRenderer().getRenderScale());
         gamePanel.setCamera(camera);
         gameGLPanel.setCamera(camera);
+        
+        gameGLPanel.getRenderer().startFadeIn();
+        startWaveIntro();
 
         KeyHandler.getInstance().reset();
         MouseHandler.getInstance().setCamera(camera);
@@ -304,6 +323,100 @@ public class GameController implements Runnable {
         startGameThread();
         
         gameUIPanel.setSize(gameGLPanel.getWidth(), gameGLPanel.getHeight());
+    }
+    
+ // ── Wave intro sequence ───────────────────────────────────────────────
+
+    /**
+     * Runs the wave intro sequence:
+     *  1. Player is (re)added as drawable — spawn animation plays automatically
+     *     because LivingEntity.initStateMachine() sets "Spawning_Right" as default.
+     *  2. Background thread polls until spawn animation finishes.
+     *  3. Wave number card fades in/holds/fades out in the GL renderer.
+     *  4. Callback fires beginWave() and resumes gameplay.
+     */
+    private void startWaveIntro() {
+        state = GameState.WAVE_INTRO;
+        KeyHandler.getInstance().reset();
+
+        int waveNum = worldManager.getCurrentWorld()
+                                   .getWaveManager().getCurrentWaveIndex() + 1;
+        
+        removeDrawable(Player.getInstance());
+        removeDrawable(Player.getInstance().getShadow());
+        Player.getInstance().setVelocity(new Vector3D());
+        if(Player.getInstance().getActiveWeapon() != null) removeDrawable(Player.getInstance().getActiveWeapon());
+
+        
+        new Thread(() -> {
+            // PHASE 1: Wait before showing player
+            try {
+                Thread.sleep(PRE_PLAYER_DELAY_MS);
+            } catch (InterruptedException ignored) {}
+
+            // PHASE 2: Show player spawning
+            SwingUtilities.invokeLater(() -> Player.getInstance().startSpawning());
+            
+            try {
+                Thread.sleep(200); // Brief delay for spawn animation to register
+                while (Player.getInstance().isSpawning()) {
+                    Thread.sleep(50);
+                }
+            } catch (InterruptedException ignored) {}
+
+            // PHASE 3: Show weapon selection (NEW!)
+            
+            try {
+            	Thread.sleep(PRE_STARTING_WEAPON_DELAY_MS);
+            }catch (InterruptedException ignored) {}
+            
+            // Only show on first wave of a run
+            if (waveNum == 1) {
+                final boolean[] weaponSelected = {false};
+                
+                SwingUtilities.invokeLater(() -> 
+                    window.showWeaponSelection(() -> {
+                        synchronized (weaponSelected) {
+                            weaponSelected[0] = true;
+                            weaponSelected.notify();
+                        }
+                    })
+                );
+                
+                // Wait for weapon selection
+                synchronized (weaponSelected) {
+                    while (!weaponSelected[0]) {
+                        try { weaponSelected.wait(); } 
+                        catch (InterruptedException ignored) {}
+                    }
+                }
+                
+             // Small delay after selection before showing wave card
+                try {
+                    Thread.sleep(PRE_TITLE_DELAY_MS);
+                } catch (InterruptedException ignored) {}
+            }else {
+            	Player.getInstance().initWeapons();
+            }
+
+            // PHASE 4: Show wave card with post-title delay
+            SwingUtilities.invokeLater(() -> 
+                gameGLPanel.getRenderer().showWaveCard(waveNum, () -> {
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(POST_TITLE_DELAY_MS);
+                        } catch (InterruptedException ignored) {}
+                        
+                        SwingUtilities.invokeLater(() -> {
+                            worldManager.getCurrentWorld().getWaveManager().beginWave();
+                            state = GameState.PLAYING;
+                            latestTime = System.nanoTime();
+                        });
+                    }, "WaveStartDelay").start();
+                })
+            );
+
+        }, "WaveIntro").start();
     }
 
     public void startGameThread() {
@@ -326,7 +439,7 @@ public class GameController implements Runnable {
             deltaTime  = currentTime - latestTime;
             latestTime = currentTime;
 
-            if (state == GameState.PLAYING) {
+            if (state == GameState.PLAYING || state == GameState.WAVE_INTRO) {
                 accumTime += deltaTime;
                 while (accumTime > SIM_STEP) {
                     update(SIM_STEP / Math.pow(10, 9));

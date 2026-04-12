@@ -132,44 +132,47 @@ public class Player extends LivingEntity {
 	
 	@Override
 	public void init() {
-		baseHP = 100;
-		baseHPMax = 100;
-		baseSpeed = 200;
-		defense = 0;
+	    baseHP = 100;
+	    baseHPMax = 100;
+	    baseSpeed = 200;
+	    defense = 0;
 
-		hp = 100;
-		money = 10000;
-		luck = baseLuck;
-		
-		weaponIndex = 0;
-		
-		weaponXOffset = 9;
-		weaponYOffset = 5;
-		
-		knockback.init();
-		
-		config = PlayerConfigLoader.load("/configs/player_config.json");
-		applyBaseStats(config);
-		
-		setBaseColorCorrection(config.colorCorrection);
-		setLightingStrategy(config.lightingStrategy);
-		
-		behaviors.clear();
-		config.behaviorDefinitions.forEach(b -> this.behaviors.add(b.create()));
-		
-		WeaponItem startingWeaponItem = WeaponItemFactory.getInstance().createWeaponItem(config.startingWeaponId);
-		
-		getInventory().init();
-        getInventory().addItem(startingWeaponItem);
-        getInventory().equipWeapon(startingWeaponItem, 0);
-        initWeapons();
-        
-        setupAnimations();
-        if(!isIdle()) stateMachine.trigger("Stop");
-        
-        setLight(new Light(getPos(), 200));
-        
-        behaviors.forEach(b -> b.onInit(this));
+	    hp = 100;
+	    money = 10000;
+	    luck = baseLuck;
+	    
+	    weaponIndex = 0;
+	    
+	    weaponXOffset = 9;
+	    weaponYOffset = 5;
+	    
+	    knockback.init();
+	    
+	    config = PlayerConfigLoader.load("/configs/player_config.json");
+	    applyBaseStats(config);
+	    
+	    setBaseColorCorrection(config.colorCorrection);
+	    setLightingStrategy(config.lightingStrategy);
+	    
+	    behaviors.clear();
+	    config.behaviorDefinitions.forEach(b -> this.behaviors.add(b.create()));
+	    
+	    // REMOVED: No longer auto-equip starting weapon from config
+	    // WeaponItem startingWeaponItem = WeaponItemFactory.getInstance().createWeaponItem(config.startingWeaponId);
+	    
+	    getInventory().init();
+	    // REMOVED: getInventory().addItem(startingWeaponItem);
+	    // REMOVED: getInventory().equipWeapon(startingWeaponItem, 0);
+	    
+	    // Don't init weapons yet - will be done after weapon selection
+	    // initWeapons();
+	    
+	    setupAnimations();
+	    if(!isIdle()) stateMachine.trigger("Stop");
+	    
+	    setLight(new Light(getPos(), 200));
+	    
+	    behaviors.forEach(b -> b.onInit(this));
 	}
 	
 	public void applyBaseStats(PlayerConfig cfg) {
@@ -231,6 +234,7 @@ public class Player extends LivingEntity {
 	
 	public void setActiveWeapon(Weapon weapon) {
 		this.activeWeapon = weapon;
+		System.out.println("Player: ActiveWeapon = " + activeWeapon);
 		if(activeWeapon != null) {
 			GameController.getInstance().addDrawable(activeWeapon);
 		}
@@ -246,19 +250,17 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void update(double step) {
-		
-		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
-		
-		if(isSpawning()) {
+		if (GameController.getInstance().getState() == ma.ac.emi.gamecontrol.GameState.WAVE_INTRO) {
+			setDir(new Vector3D(1,0));
 			stateMachine.update(step);
-
-			if(stateMachine.getCurrentAnimationState().isAnimationDone()) {
-				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
+			if(activeWeapon != null) {
+				activeWeapon.update(step);
 			}
 			super.update(step);
 			return;
 		}
-
+		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
+		
 		if(getHp() <= 0) {
 			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);
 			if(!isDying()) stateMachine.trigger("Die");
@@ -435,6 +437,16 @@ public class Player extends LivingEntity {
 	
 	public void applyRegen(double step) {
 		heal(Math.max(this.config.statCaps.minRegen, Math.min(this.config.statCaps.maxRegen, getRegenerationSpeed())) * step);
+	}
+	
+	public void startSpawning() {
+		if(stateMachine != null) {
+			stateMachine.setCurrentAnimationState("Spawning_Right");
+		}
+		
+		GameController.getInstance().addDrawable(this);
+		GameController.getInstance().addDrawable(getShadow());
+
 	}
 
 

@@ -48,7 +48,7 @@ public class WaveManager implements DifficultyObserver {
         this.waveFactory = new WaveFactory();
         this.waves = new ArrayList<>();
         this.currentWaveNumber = 0;
-        this.state = WaveState.WAITING;
+        this.state = WaveState.INTRO;
         this.waveDelay = 3;
         this.waveTimer = 0;
 
@@ -102,6 +102,11 @@ public class WaveManager implements DifficultyObserver {
 
     public void update(double deltaTime, Vector3D playerPos) {
         switch (state) {
+            case INTRO:
+                // Held here by GameController during spawn/wave-card sequence.
+                // beginWave() advances to WAITING so startNextWave() fires immediately.
+                break;
+
             case WAITING:
                 waveTimer += deltaTime;
                 if (waveTimer >= waveDelay) {
@@ -163,7 +168,7 @@ public class WaveManager implements DifficultyObserver {
             GameController.getInstance().showShop();
             GameController.getInstance().nextWorld();
         } else {
-            state = WaveState.WAITING;
+            state = WaveState.INTRO;
             waveTimer = 0;
             context.refreshCurrentMap();
             GameController.getInstance().showShop();
@@ -210,6 +215,17 @@ public class WaveManager implements DifficultyObserver {
             return Math.max(0, waveDelay - waveTimer);
         }
         return 0;
+    }
+
+    /**
+     * Called by GameController once the wave intro sequence completes.
+     * Advances from INTRO → immediately starts the next wave.
+     */
+    public void beginWave() {
+        if (state == WaveState.INTRO) {
+            waveTimer = 0;
+            startNextWave();
+        }
     }
 
     public void reset() {
