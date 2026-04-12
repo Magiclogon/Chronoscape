@@ -10,5 +10,6 @@ public enum GameState {
     GAME_OVER, 
     DIFFICULTY_SELECT, 
     LEVEL_SELECT, 
-    STOPPED
+    STOPPED,
+    WAVE_INTRO
 }

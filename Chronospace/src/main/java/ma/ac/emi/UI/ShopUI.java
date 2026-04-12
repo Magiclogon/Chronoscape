@@ -139,7 +139,6 @@ public class ShopUI extends JPanel {
         nextWaveButton = new RetroButton("START WAVE >", RetroButton.Style.SOLID, MenuStyle.ACCENT, Color.BLACK);
         nextWaveButton.setPreferredSize(new Dimension(180, 44));
         nextWaveButton.addActionListener(e -> {
-            Player.getInstance().initWeapons();
             GameController.getInstance().nextWave();
         });
 

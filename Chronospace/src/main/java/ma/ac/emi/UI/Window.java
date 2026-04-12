@@ -22,6 +22,7 @@ public class Window extends JFrame {
     private ShopUI shopUI;
     private GameOverPanel gameOverPanel;
     private final Settings settings;
+    private StartupWeaponSelection weaponSelection;
 
     private final JLayeredPane transitionPane;
     private final FadeOverlay fadeOverlay;
@@ -48,6 +49,7 @@ public class Window extends JFrame {
         shopUI = new ShopUI();
         gameOverPanel = new GameOverPanel();
         settings = new Settings(this::goBack);
+        weaponSelection = new StartupWeaponSelection();
 
         mainPanel.add(loadingScreen, "LOADING");
         mainPanel.add(menuHost, "MENU_HOST");
@@ -55,6 +57,7 @@ public class Window extends JFrame {
         mainPanel.add(shopUI, "SHOP");
         mainPanel.add(gameOverPanel, "GAMEOVER");
         mainPanel.add(settings, "SETTINGS");
+        mainPanel.add(weaponSelection, "WEAPON_SELECT");
 
         // 3. Setup the Layered Pane (Menus + Fade Effect)
         fadeOverlay = new FadeOverlay();
@@ -172,6 +175,14 @@ public class Window extends JFrame {
         navigationManager.backToRoot("MENU_HOST");
         menuHost.showMainMenu();
         navigateTo("MENU_HOST");
+    }
+    
+    public void showWeaponSelection(Runnable onSelected) {
+        weaponSelection.setOnWeaponSelected(() -> {
+            navigateTo("GAME"); // Hide the UI
+            onSelected.run();
+        });
+        navigateTo("WEAPON_SELECT");
     }
 
     public boolean canGoBack()       { return navigationManager.canGoBack(); }

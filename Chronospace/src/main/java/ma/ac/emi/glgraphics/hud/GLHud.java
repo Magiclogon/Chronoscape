@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 /**
  * Draws all HUD elements directly in OpenGL with DPI scaling support.
  */
@@ -66,6 +68,16 @@ public class GLHud {
     private int minimapSrcH  = -1;
 
     private int screenW, screenH;
+    
+    private enum CardState { HIDDEN, FADE_IN, HOLD, FADE_OUT }
+    private CardState cardState = CardState.HIDDEN;
+    private float cardAlpha = 0f;
+    private float cardHoldTimer = 0f;
+    private int cardWaveNumber = 1;
+    private Runnable cardDoneCallback;
+    
+    private static final float CARD_HOLD_SECS = 3f;
+    private static final float FADE_STEP = 0.02f; // approx 60fps step
 
     public GLHud(BitmapFont font) {
         this.font = font;
@@ -93,11 +105,82 @@ public class GLHud {
         drawWeaponSlots(gl, g, inv, player.getWeaponIndex(), dpiScale);
         drawMinimap(gl, g, player, dpiScale);
         drawFPS(gl, dpiScale);
+        if (cardState != CardState.HIDDEN && cardAlpha > 0) {
+            drawWaveCard(gl, g, sw, sh, dpiScale, font);
+        }
 
         if (camera != null)
             FloatingTextRenderer.renderGL(gl, font, camera, sw, sh, dpiScale);
 
         g.endHUD(gl);
+    }
+    
+    public void showWaveCard(int waveNumber, Runnable onDone) {
+        this.cardWaveNumber = waveNumber;
+        this.cardDoneCallback = onDone;
+        this.cardAlpha = 0f;
+        this.cardHoldTimer = 0f;
+        this.cardState = CardState.FADE_IN;
+    }
+    
+    public void update(double delta) {
+        switch (cardState) {
+            case FADE_IN -> {
+                cardAlpha += FADE_STEP * 1.5f;
+                if (cardAlpha >= 1f) { cardAlpha = 1f; cardState = CardState.HOLD; }
+            }
+            case HOLD -> {
+                cardHoldTimer += delta;
+                if (cardHoldTimer >= CARD_HOLD_SECS) cardState = CardState.FADE_OUT;
+            }
+            case FADE_OUT -> {
+                cardAlpha -= FADE_STEP * 1.5f;
+                if (cardAlpha <= 0f) {
+                    cardAlpha = 0f;
+                    cardState = CardState.HIDDEN;
+                    if (cardDoneCallback != null) {
+                        Runnable cb = cardDoneCallback;
+                        cardDoneCallback = null;
+                        SwingUtilities.invokeLater(cb);
+                    }
+                }
+            }
+            default -> {}
+        }
+    }
+    
+    private void drawWaveCard(GL3 gl, GLGraphics g, int sw, int sh, float dpiScale, BitmapFont font) {
+        // Scale panel dimensions
+        int panelW = (int)(sw * 0.4f);
+        int panelH = (int)(90 * dpiScale);
+        int panelX = (sw - panelW) / 2;
+        int panelY = (sh - panelH) / 4;
+
+//        // Background Panel
+//        g.drawQuadHUD(gl, panelX, panelY, panelW, panelH, 
+//                new float[]{0f, 0f, 0f, cardAlpha * 0.75f});
+//        
+//        // Border (Green-ish matching your original snippet)
+//        g.drawQuadOutlineHUD(gl, panelX, panelY, panelW, panelH, (int)(2 * dpiScale), 
+//                new float[]{0.31f, 0.78f, 0.39f, cardAlpha});
+
+        if (font != null) {
+            String text = "WAVE " + cardWaveNumber;
+            float size = 72f * dpiScale;
+            float tw = font.measureWidth(text, size);
+            float lh = font.lineHeight(size);
+            float tx = (sw - tw) / 2f;
+            float ty = panelY + (panelH - lh) / 2f;
+
+            // Shadow
+            font.drawText(gl, text, tx + (2 * dpiScale), ty + (2 * dpiScale), size,
+                    0f, 0f, 0f, cardAlpha * 0.7f, sw, sh);
+            // Main Text
+            font.drawText(gl, text, tx, ty, size,
+            		C_GOLD[0], C_GOLD[1], C_GOLD[2], cardAlpha, sw, sh);
+//            font.drawText(gl, text, tx, ty, size,
+//            		0.31f, 0.78f, 0.39f, cardAlpha, sw, sh);
+        }
     }
 
     // ── HP bar ────────────────────────────────────────────────────────────
