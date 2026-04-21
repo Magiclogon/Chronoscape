@@ -27,6 +27,7 @@ import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehavior;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.gamelogic.player.PlayerConfig;
@@ -51,6 +52,7 @@ public class Weapon extends Entity{
     private double tsla;
     private int ammo;
     private double tssr;
+    private boolean reloadTrigger;
     private boolean attacking;
     private Vector3D target;
     private AttackObjectManager attackObjectManager;
@@ -178,6 +180,7 @@ public class Weapon extends Entity{
 		AnimationState switching_out_left = stateMachine.getAnimationStateByTitle("Switching_Out_Left");
 		AnimationState switching_out_right = stateMachine.getAnimationStateByTitle("Switching_Out_Right");
 		
+		System.out.println("Weapon: sprite sheet path="+animationDetails.spriteSheetPath);
 		
 		if(spriteSheet.getSheet() == null) {
 			for(AnimationState state : stateMachine.getAnimationStates()) {
@@ -309,6 +312,77 @@ public class Weapon extends Entity{
                 
         if(handsTop != null) handsTop.drawGL(gl, glGraphics);
     }
+    @Override
+    public void drawGlowGL(GL3 gl, GLGraphics glGraphics) {
+    	if(getBearer() == null) return;
+    	
+    	if(handsBottom != null) handsBottom.drawGL(gl, glGraphics);
+    	
+    	Sprite sprite;
+    	if (stateMachine.getCurrentAnimationState() != null) {
+    		sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite();
+    	} else {
+    		sprite = AssetsLoader.getSprite("default_weapon.png");
+    	}
+    	
+    	if(sprite == null) sprite = new Sprite();
+    	Texture texture = sprite.getTexture(gl);
+    	
+    	float[] model = new float[16];
+    	Matrix4.identity(model);
+    	
+    	float px = (float) getPos().getX();
+    	float py = (float) (getPos().getY() - getPos().getZ());
+    	Matrix4.translate(model, px, py, 0f);
+    	
+    	double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
+    	Matrix4.rotateZ(model, (float) theta);
+    	
+    	float wx = (float) - sprite.getWidth() / 2f;
+    	float wy = -sprite.getHeight() / 2f;
+    	Matrix4.translate(model, wx, wy, 0f);
+    	
+    	Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+    	
+    	glGraphics.drawSprite(gl, texture, model, null, getColorCorrection());
+    	
+    }
+    @Override
+    public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+    	if(getBearer() == null) return;
+    	
+    	if(handsBottom != null) handsBottom.drawGL(gl, glGraphics);
+    	
+    	Sprite sprite;
+    	if (stateMachine.getCurrentAnimationState() != null) {
+    		sprite = stateMachine.getCurrentAnimationState().getCurrentFrameSprite();
+    	} else {
+    		sprite = AssetsLoader.getSprite("default_weapon.png");
+    	}
+    	
+    	if(sprite == null) sprite = new Sprite();
+    	Texture texture = sprite.getTexture(gl);
+    	
+    	float[] model = new float[16];
+    	Matrix4.identity(model);
+    	
+    	float px = (float) getPos().getX();
+    	float py = (float) (getPos().getY() - getPos().getZ());
+    	Matrix4.translate(model, px, py, 0f);
+    	
+    	double theta = getDir() != null ? Math.atan2(getDir().getY(), getDir().getX()) : 0;
+    	Matrix4.rotateZ(model, (float) theta);
+    	
+    	float wx = (float) - sprite.getWidth() / 2f;
+    	float wy = -sprite.getHeight() / 2f;
+    	Matrix4.translate(model, wx, wy, 0f);
+    	
+    	Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+    	
+    	glGraphics.drawSprite(gl, texture, model, null, SpriteColorCorrection.BLACK);
+    	
+    	if(handsTop != null) handsTop.drawBlackGL(gl, glGraphics);
+    }
     
     
     /** Returns config caps, falling back to defaults if bearer has no config. */
@@ -391,7 +465,9 @@ public class Weapon extends Entity{
         
         if(getTsla() <= 1.0 / Math.max(caps().minAttackSpeed, Math.min(caps().maxAttackSpeed, def.getAttackSpeed()))) setAttacking(false);
         
-        if (getAmmo() <= 0 && def.getMagazineSize() != 0) {
+        if(getAmmo() <= 0) triggerReload();
+        
+        if (reloadTrigger && def.getMagazineSize() != 0) {
         	if(!isInState("Reload")) {
         		if(isCurrentAnimationDone()) {
         			stateMachine.getCurrentAnimationState().reset();
@@ -408,10 +484,19 @@ public class Weapon extends Entity{
         WeaponItemDefinition reloadDef = (WeaponItemDefinition)weaponItem.getItemDefinition();
         double effectiveReload = Math.max(caps().minReloadTime, Math.min(caps().maxReloadTime, reloadDef.getReloadingTime()));
         int effectiveMag = Math.max(caps().minMagazine, Math.min(caps().maxMagazine, reloadDef.getMagazineSize()));
-        if (tssr >= effectiveReload && reloadDef.getMagazineSize() != 0) {
-        	stateMachine.trigger(TRIGGER_STOP);
-            setAmmo(effectiveMag);
-            setTssr(0);
+        double reloadDuration = effectiveReload;
+        if(effectiveMag != 0) reloadDuration = effectiveReload * (1 - (double)ammo/(double)effectiveMag);
+        
+        if (tssr >= reloadDuration && reloadDef.getMagazineSize() != 0 && reloadTrigger) {
+        	if(stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Left") ||
+                	stateMachine.getCurrentAnimationState().getTitle().equals("Reload_Right")) 
+        		stateMachine.trigger(TRIGGER_STOP);
+            
+        	if(isInState("Reload_Finish")) {
+                setAmmo(effectiveMag);
+                reloadTrigger = false;
+                setTssr(0);
+        	}
         }
        
         changeStateDirection();
@@ -432,13 +517,6 @@ public class Weapon extends Entity{
         if(handsBottom != null) {
         	handsBottom.setBaseColorCorrection(entity.getBaseColorCorrection());
         }
-    }
-
-    public void reload() {
-        int effectiveMag = Math.max(caps().minMagazine, Math.min(caps().maxMagazine,
-                ((WeaponItemDefinition)weaponItem.getItemDefinition()).getMagazineSize()));
-        if (ammo == effectiveMag || tssr > 0) return;
-        tssr = 0;
     }
     
     public boolean isFromPlayer() {
@@ -514,5 +592,13 @@ public class Weapon extends Entity{
 		behaviors.forEach(b -> b.onKill(this, killed));
 	}
 
+	@Override
+	public double getDrawnHeight() {
+		if(getBearer() == null) return getPos().getY();
+		return getBearer().getDrawnHeight();
+	}
 
+	public void triggerReload() {
+		reloadTrigger = true;
+	}
 }

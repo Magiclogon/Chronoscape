@@ -12,6 +12,7 @@ import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
+import ma.ac.emi.glgraphics.post.ColorCorrectionEffect;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.gamelogic.physics.AABB;
 import ma.ac.emi.tiles.TileManager;
@@ -152,7 +153,25 @@ public class Obstacle extends GameObject {
 //        		(float)(hitbox.half.getX()*2),
 //        		(float)(hitbox.half.getY()*2));
     }
+    
+
+	@Override
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+		Sprite sprite = getSpriteSheet().getSprite(0, 0, GamePanel.TILE_SIZE, GamePanel.TILE_SIZE);
+        Texture texture = sprite.getTexture(gl);
+
+        glGraphics.drawSprite(
+                gl,
+                texture,
+                (float) (pos.getX() - GamePanel.TILE_SIZE / 2),
+                (float) (pos.getY() - GamePanel.TILE_SIZE / 2),
+                GamePanel.TILE_SIZE,
+                GamePanel.TILE_SIZE,
+                SpriteColorCorrection.BLACK
+        );
+	}
 
     @Override
     public void update(double step) { }
+
 }

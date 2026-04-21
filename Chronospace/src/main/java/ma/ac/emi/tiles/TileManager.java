@@ -147,4 +147,8 @@ public class TileManager implements GameDrawable{
             glGraphics.drawSprite(gl, texture, 0, 0, mapCache.getWidth(), mapCache.getHeight(), colorCorrection);
         }
 	}
+
+	@Override
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {}
+	public void drawGlowGL(GL3 gl, GLGraphics glGraphics) {}
 }

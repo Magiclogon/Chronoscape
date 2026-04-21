@@ -12,6 +12,7 @@ public class GameGLPanel extends GLCanvas {
     private final GameRenderer renderer;
 
     public GameGLPanel() {
+    	//super(createCapabilities());
         this.renderer = new GameRenderer();
         addGLEventListener(renderer);
 

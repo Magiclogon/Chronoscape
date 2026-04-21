@@ -7,6 +7,7 @@ import ma.ac.emi.gamecontrol.ObjectPool;
 import ma.ac.emi.gamelogic.attack.AttackObject;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
+import ma.ac.emi.gamelogic.entity.BossEnnemy;
 import ma.ac.emi.gamelogic.entity.Ennemy;
 import ma.ac.emi.gamelogic.factory.EnnemySpecieFactory;
 import ma.ac.emi.gamelogic.player.Player;
@@ -97,15 +98,20 @@ public class Wave extends WaveNotifier {
             }
         }
 
-        // dead enemies positions
-        List<Vector3D> deadEnemyPositions = new ArrayList<>();
+        List<SpawnDropEvent> dropEvents = new ArrayList<>();
         enemies.forEach(e -> {
-            if(!e.isActive()) deadEnemyPositions.add(e.getPos());
+            if (!e.isActive()) {
+                boolean isBoss = e instanceof BossEnnemy;
+                dropEvents.add(new SpawnDropEvent(
+                    e.getPos(),
+                    isBoss ? 10 : 1,      
+                    isBoss ? 1.0 : -1.0  
+                ));
+            }
         });
 
-        // Notify Pickable manager
-        if (!deadEnemyPositions.isEmpty()) {
-            notifyListeners(deadEnemyPositions);
+        if (!dropEvents.isEmpty()) {
+            notifyListeners(dropEvents);
         }
 
         enemies.forEach(enemy -> {

@@ -4,11 +4,14 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 import ma.ac.emi.fx.Sprite;
 import ma.ac.emi.fx.SpriteSheet;
 import ma.ac.emi.gamelogic.physics.AABB;
+import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.glgraphics.color.TemporaryColorEffect;
 import ma.ac.emi.glgraphics.lighting.Light;
@@ -75,6 +78,11 @@ public abstract class GameObject implements GameDrawable{
 	
 	public double getZOrder() {
 		return getDrawnHeight()/2 + getPos().getY() + getPos().getZ() * 100000;
+	}
+	
+	@Override
+	public void drawGlowGL(GL3 gl, GLGraphics glgraphics) {
+		drawGL(gl, glgraphics);
 	}
 		
 	@Override

@@ -41,6 +41,9 @@ public class ShadowComponent extends GameObject{
 	    
 	    gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
     }
+    
+    @Override
+    public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {}
 
 	@Override
 	public void draw(Graphics g) {

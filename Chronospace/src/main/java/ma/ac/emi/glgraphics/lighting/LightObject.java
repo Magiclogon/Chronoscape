@@ -82,5 +82,6 @@ public class LightObject extends GameObject{
 
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {}
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {}
 
 }

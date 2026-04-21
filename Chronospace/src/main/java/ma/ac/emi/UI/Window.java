@@ -3,6 +3,7 @@ package ma.ac.emi.UI;
 import java.awt.*;
 import javax.swing.*;
 import ma.ac.emi.gamecontrol.*;
+import ma.ac.emi.input.InputConfig;
 
 public class Window extends JFrame {
 
@@ -93,6 +94,9 @@ public class Window extends JFrame {
                 System.out.println("Navigation: " + from + " -> " + to));
         
         setVisible(true);
+        
+        CursorManager.init();
+        CursorManager.apply(rootContainer, CursorManager.CursorType.ARROW);
     }
 
     // ── GLCanvas registration ─────────────────────────────────────────────
@@ -103,29 +107,29 @@ public class Window extends JFrame {
         }
         this.glCanvas = canvas;
         
-        // Add the game view as a card in the root container
         rootContainer.add(glCanvas, "GAME_VIEW");
         
-        // Ensure the game view is hidden initially
         rootLayout.show(rootContainer, "UI_VIEW");
+
         revalidate();
     }
 
-    // ── Navigation (Fixed to handle Root Swapping) ─────────────────────────
+    // ── Navigation ─────────────────────────
 
     public void navigateTo(String name) {
         navigationManager.navigateTo(name);
 
         if ("GAME".equals(name)) {
-            // Swap to the Game Card
             rootLayout.show(rootContainer, "GAME_VIEW");
-            if (glCanvas != null) {
-                glCanvas.requestFocusInWindow();
-            }
+            CursorManager.apply(glCanvas, 
+            		InputConfig.getInstance().keyboardAimMode ?
+            				CursorManager.CursorType.HIDDEN :
+            				CursorManager.CursorType.TARGET);
+            if (glCanvas != null) glCanvas.requestFocusInWindow();
         } else {
-            // Swap to the UI Card, then show the specific menu
             rootLayout.show(rootContainer, "UI_VIEW");
             layout.show(mainPanel, name);
+            CursorManager.apply(rootContainer, CursorManager.CursorType.ARROW);
         }
 
         revalidate();

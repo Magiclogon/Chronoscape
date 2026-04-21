@@ -133,9 +133,9 @@
     },
     {
       "id": "arrow",
-      "sprite": "assets/projectiles/arrow.png",
-      "width": 3,
-      "height": 10,
+      "sprite": "projectiles/arrow.png",
+      "width": 16,
+      "height": 16,
       "behaviors": [
         {
           "type": "damage",

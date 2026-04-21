@@ -82,7 +82,6 @@ public class ItemLoader {
                         }
 
                         if (obj.has("postProcessingDetails")) {
-                        	System.out.println("Weapon with id: " + obj.get("id").getAsString());
         	                JsonObject ppDetails = obj.getAsJsonObject("postProcessingDetails");
         	                PostProcessingDetails postProcessing = gson.fromJson(ppDetails, PostProcessingDetails.class);
 
@@ -122,7 +121,7 @@ public class ItemLoader {
                         def = gson.fromJson(obj, UpgradeItemDefinition.class);
                         break;
                 }
-
+                if(def != null) System.out.println("ItemLoader: def.id=" + def.id + ", def.unbuyable=" + def.unbuyable);
                 if (def != null)
                     itemsByRarity.get(def.getRarity()).put(def.getId(), def);
             }

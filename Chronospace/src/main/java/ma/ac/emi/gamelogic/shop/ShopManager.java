@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class ShopManager {
 	public static final double SELLING_PERCENTAGE = 0.5;
-	private final int SLOTNUM = 6;
+	private final int SLOTNUM = 4;
     private List<ShopItem> availableItems;
     private Player player;
     private int rerollPrice;
@@ -44,6 +44,8 @@ public class ShopManager {
     }
 
 	public void refreshAvailableItems() {
+		ItemDefinition def = itemsMap.get(Rarity.LEGENDARY).get("robot_boss_cannon");
+		System.out.println("ShopManager: def.unbuyable=" + def.unbuyable);
 		if(rerollPrice > player.getMoney()) return;
 
 		setAvailableItems(new ArrayList<>());
@@ -53,8 +55,9 @@ public class ShopManager {
 		while(i < SLOTNUM) {
 			Rarity selectedRarity = determineRarityWithLuck(player.getLuck());
 			ItemDefinition item = pickRandomItem(itemsMap.get(selectedRarity));
-
+			
 			if(item == null || availableItems.contains(item.getItem())) continue;
+			if(item.unbuyable) continue;
 			if(!item.isStackable() && item.isBought()) continue;
 
 			availableItems.add(item.getItem());
@@ -130,6 +133,10 @@ public class ShopManager {
 		player.setMoney(player.getMoney() + item.getPrice() * SELLING_PERCENTAGE);
 		player.getInventory().removeItem(item);
 		player.getInventory().recalculateAllUpgrades(player);
+		
+		itemsMap.get(item.getItemDefinition().getRarity())
+			.get(item.getItemDefinition().id).setBought(false);
+		
 		return true;
 	}
 
@@ -154,5 +161,10 @@ public class ShopManager {
 			availableItems.add(index, newItem.getItem());
 			i++;
 		}
+	}
+	
+	public void onStartingWeaponPicked(WeaponItemDefinition def) {
+		itemsMap.get(def.getRarity())
+		.get(def.id).setBought(true);
 	}
 }

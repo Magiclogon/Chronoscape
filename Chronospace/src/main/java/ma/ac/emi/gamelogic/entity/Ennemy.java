@@ -278,8 +278,6 @@ public abstract class Ennemy extends LivingEntity {
 	@Override
 	public void switchWeapons() {}
 
-	public void onSpawn() {
-		behaviors.forEach(b -> b.onSpawn(this));
-	}
+
 
 }

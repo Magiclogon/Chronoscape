@@ -18,6 +18,7 @@ import ma.ac.emi.gamelogic.particle.ParticleSystem;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.ItemLoader;
 import ma.ac.emi.gamelogic.shop.ShopManager;
+import ma.ac.emi.gamelogic.wave.WaveState;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.glgraphics.post.config.PostFXConfig;
 import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
@@ -185,9 +186,8 @@ public class GameController implements Runnable {
     }
 
     public void nextWorld() {
-        gamePanel.removeAllDrawables();
-        gamePanel.addDrawable(Player.getInstance());
-        Player.getInstance().setDrawn(true);
+        removeAllDrawables();
+        addDrawable(Player.getInstance());
         worldManager.nextWorld();
     }
 
@@ -262,6 +262,7 @@ public class GameController implements Runnable {
     }
 
     public void nextWave() {
+    	if(worldManager.isCurrentWorldDone()) nextWorld();
         worldManager.getCurrentWorld().clearAttackObjects();
         Vector3D centerPos = new Vector3D(
     			GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getWidth() / 2,
@@ -270,6 +271,9 @@ public class GameController implements Runnable {
 		Player.getInstance().setPos(centerPos);
         particleSystem.clearActiveEffects();
 
+        FloatingTextManager.getInstance().clearFloatingText();
+        worldManager.getCurrentWorld().clearLightObjects();
+        
         showGame();
         startWaveIntro();
     }
@@ -312,6 +316,9 @@ public class GameController implements Runnable {
         gameGLPanel.setCamera(camera);
         
         gameGLPanel.getRenderer().startFadeIn();
+        
+        FloatingTextManager.getInstance().clearFloatingText();
+        world.clearLightObjects();
         startWaveIntro();
 
         KeyHandler.getInstance().reset();
@@ -339,8 +346,7 @@ public class GameController implements Runnable {
         state = GameState.WAVE_INTRO;
         KeyHandler.getInstance().reset();
 
-        int waveNum = worldManager.getCurrentWorld()
-                                   .getWaveManager().getCurrentWaveIndex() + 1;
+        int waveNum = worldManager.getCurrentWaveNumber();
         
         removeDrawable(Player.getInstance());
         removeDrawable(Player.getInstance().getShadow());
@@ -418,6 +424,8 @@ public class GameController implements Runnable {
 
         }, "WaveIntro").start();
     }
+    
+    
 
     public void startGameThread() {
         latestTime = System.nanoTime();

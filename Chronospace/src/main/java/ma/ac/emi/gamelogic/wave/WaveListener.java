@@ -6,5 +6,5 @@ import java.util.List;
 public interface WaveListener {
     void subscribe(WaveNotifier waveNotifier);
     void unsubscribe(WaveNotifier waveNotifier);
-    void onNotify(List<Vector3D> spawnPoints);
+    void onNotify(List<SpawnDropEvent> events);
 }

@@ -299,5 +299,9 @@ public abstract class LivingEntity extends Entity {
 		setHp(Math.min(getHpMax(), getHp()+healAmount));
 
 	}
+	
+	public void onSpawn() {
+		behaviors.forEach(b -> b.onSpawn(this));
+	}
 
 }

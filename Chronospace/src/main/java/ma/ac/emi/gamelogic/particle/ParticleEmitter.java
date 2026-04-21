@@ -81,6 +81,7 @@ public class ParticleEmitter extends GameObject{
 
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {}
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {}
 	
 	@Override
 	public double getDrawnHeight() {

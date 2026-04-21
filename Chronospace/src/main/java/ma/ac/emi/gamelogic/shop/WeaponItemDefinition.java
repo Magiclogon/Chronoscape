@@ -90,6 +90,8 @@ public class WeaponItemDefinition extends ItemDefinition implements Cloneable{
         this.setBasePrice(other.getBasePrice());
         this.setIconPath(other.getIconPath());
         this.setRarity(other.getRarity());
+        this.setUnbuyable(other.isStackable());
+        this.setUnbuyable(other.isUnbuyable());
 
         this.damage = other.damage;
 		this.recoilForce = other.recoilForce;

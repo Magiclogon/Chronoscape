@@ -116,11 +116,11 @@ public class Player extends LivingEntity {
 			die_right.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(6, config.animationDetails.spawningLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(8, config.animationDetails.spawningLength)) {
 			spawn_left.addFrame(sprite);
 		}
 		
-		for(Sprite sprite : spriteSheet.getAnimationRow(7, config.animationDetails.spawningLength)) {
+		for(Sprite sprite : spriteSheet.getAnimationRow(9, config.animationDetails.spawningLength)) {
 			spawn_right.addFrame(sprite);
 		}
 	}
@@ -157,15 +157,7 @@ public class Player extends LivingEntity {
 	    behaviors.clear();
 	    config.behaviorDefinitions.forEach(b -> this.behaviors.add(b.create()));
 	    
-	    // REMOVED: No longer auto-equip starting weapon from config
-	    // WeaponItem startingWeaponItem = WeaponItemFactory.getInstance().createWeaponItem(config.startingWeaponId);
-	    
 	    getInventory().init();
-	    // REMOVED: getInventory().addItem(startingWeaponItem);
-	    // REMOVED: getInventory().equipWeapon(startingWeaponItem, 0);
-	    
-	    // Don't init weapons yet - will be done after weapon selection
-	    // initWeapons();
 	    
 	    setupAnimations();
 	    if(!isIdle()) stateMachine.trigger("Stop");
@@ -303,6 +295,12 @@ public class Player extends LivingEntity {
 			velocity.setX(1);
 		}
 		
+		if(KeyHandler.getInstance().isReload()) {
+			if(activeWeapon != null) {
+				activeWeapon.triggerReload();
+			}
+		}
+		
 		velocity = velocity.normalize().mult(Math.max(this.config.statCaps.minSpeed, Math.min(this.config.statCaps.maxSpeed, speed)));
 
 		
@@ -348,9 +346,6 @@ public class Player extends LivingEntity {
 	@Override
 	public void drawGL(GL3 gl, GLGraphics glGraphics) {
 		super.drawGL(gl, glGraphics);
-		glGraphics.drawQuad(gl, (float) MouseHandler.getInstance().getMouseWorldPos().getX()-3, 
-				(float) MouseHandler.getInstance().getMouseWorldPos().getY()-3,
-				6, 6);
 	}
 
 	public void setWeapon(Weapon weapon) {
@@ -446,6 +441,9 @@ public class Player extends LivingEntity {
 		
 		GameController.getInstance().addDrawable(this);
 		GameController.getInstance().addDrawable(getShadow());
+		
+		onSpawn();
+	    //behaviors.forEach(b -> b.onInit(this));
 
 	}
 

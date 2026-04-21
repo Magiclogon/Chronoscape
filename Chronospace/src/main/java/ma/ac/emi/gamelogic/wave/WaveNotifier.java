@@ -19,10 +19,10 @@ public abstract class WaveNotifier {
         listeners.remove(listener);
     }
 
-    protected void notifyListeners(List<Vector3D> spawnPoints) {
+    protected void notifyListeners(List<SpawnDropEvent> events) {
     	System.out.println("Notifying pickables");
         for (WaveListener listener : listeners) {
-            listener.onNotify(spawnPoints);
+            listener.onNotify(events);
         }
     }
 }

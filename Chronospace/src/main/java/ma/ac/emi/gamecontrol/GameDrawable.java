@@ -10,4 +10,6 @@ public interface GameDrawable extends Comparable<GameObject>{
 	void draw(Graphics g);
 	
 	void drawGL(GL3 gl, GLGraphics glGraphics);
+	void drawBlackGL(GL3 gl, GLGraphics glGraphics);
+	void drawGlowGL(GL3 gl, GLGraphics glGraphics);
 }

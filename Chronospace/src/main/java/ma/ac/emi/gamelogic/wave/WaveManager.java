@@ -166,7 +166,6 @@ public class WaveManager implements DifficultyObserver {
         if (currentWaveNumber >= waves.size()) {
             state = WaveState.COMPLETED;
             GameController.getInstance().showShop();
-            GameController.getInstance().nextWorld();
         } else {
             state = WaveState.INTRO;
             waveTimer = 0;
@@ -282,5 +281,9 @@ public class WaveManager implements DifficultyObserver {
 	@SuppressWarnings("unchecked")
 	public <T extends Ennemy> ObjectPool<T> getPool(Class<T> type) {
 	    return (ObjectPool<T>) pools.get(type);
+	}
+
+	public boolean isCompleted() {
+		return getState() == WaveState.COMPLETED;
 	}
 }

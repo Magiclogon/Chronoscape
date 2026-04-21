@@ -204,6 +204,7 @@ public class ParticleSystem {
     		for (Particle p : batch) {
     			if(p.getLightingStrategy() == null) continue;
     			if(p.getLightingStrategy().shouldBloom()) p.drawGLBatched(gl, glGraphics, texture);
+    			else p.drawBlackGLBatched(gl, glGraphics, texture);
     		}
     	}
     	

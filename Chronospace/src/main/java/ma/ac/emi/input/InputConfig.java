@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InputConfig {
 
@@ -18,6 +20,7 @@ public class InputConfig {
     public int moveRight = KeyEvent.VK_D;
 
     public int switchWeapon = KeyEvent.VK_E;
+    public int reload = KeyEvent.VK_R;
     public int pause        = KeyEvent.VK_ESCAPE;
 
     public int aimUp    = KeyEvent.VK_UP;
@@ -26,7 +29,6 @@ public class InputConfig {
     public int aimRight = KeyEvent.VK_RIGHT;
 
     public boolean keyboardAimMode = false;
-
 
     public static InputConfig getInstance() {
         if (instance == null) instance = load();
