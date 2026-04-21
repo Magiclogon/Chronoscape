@@ -359,8 +359,15 @@ public class GameRenderer implements GLEventListener {
     	Set<Float> zLayers = particleSystem.getZLayers();
     	if (zLayers.isEmpty()) {
     		for (GameObject o : objects) {
-    			if(o.getLightingStrategy() == null) continue;
-    			if(o.getLightingStrategy().shouldBloom()) o.drawGL(gl, glGraphics);
+    			if(o.getLightingStrategy() == null) {
+    				o.drawBlackGL(gl, glGraphics);
+    				continue;
+    			}
+    			if(!o.getLightingStrategy().shouldBloom()) {
+    				o.drawBlackGL(gl, glGraphics);
+    				continue;
+    			}
+    			o.drawGlowGL(gl, glGraphics);
     		}
     		return;
     	}
@@ -369,8 +376,14 @@ public class GameRenderer implements GLEventListener {
     	Arrays.sort(sortedZLayers);
     	int layerIndex = 0;
     	for (GameObject obj : objects) {
-    		if(obj.getLightingStrategy() == null) continue;
-			if(!obj.getLightingStrategy().shouldBloom()) continue;
+    		if(obj.getLightingStrategy() == null) {
+				obj.drawBlackGL(gl, glGraphics);
+				continue;
+			}
+			if(!obj.getLightingStrategy().shouldBloom()) {
+				obj.drawBlackGL(gl, glGraphics);
+				continue;
+			}
     		double objZ = obj.getZOrder();
     		
     		while (layerIndex < sortedZLayers.length
@@ -380,7 +393,7 @@ public class GameRenderer implements GLEventListener {
     					);
     			layerIndex++;
     		}
-    		obj.drawGL(gl, glGraphics);
+    		obj.drawGlowGL(gl, glGraphics);
     		
     	}
     	
@@ -419,6 +432,8 @@ public class GameRenderer implements GLEventListener {
             glHud.showWaveCard(waveNumber, onDone);
         }
     }
+    
+    
 
     public void startFadeIn() {
         fadeAlpha = 1.0f;

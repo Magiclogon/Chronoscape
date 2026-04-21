@@ -12,6 +12,7 @@ import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GameObject;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.Texture;
+import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
 
@@ -165,6 +166,47 @@ public class Particle extends GameObject {
 //        		);
         
     }
+    @Override
+    public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+    	// Get pre-cached texture directly
+    	if(this.animation == null) return;
+    	
+    	Texture texture = animation.getTexture(phase, frameIndex);
+    	Sprite sprite = getCurrentSprite();
+    	
+    	if (texture == null || sprite == null) return;
+    	
+    	float[] model = new float[16];
+    	Matrix4.identity(model);
+    	
+    	float px = (float) getPos().getX();
+    	float py = (float) (getPos().getY() - getPos().getZ());
+    	Matrix4.translate(model, px, py, 0f);
+    	
+    	double theta = getDir() != null ? getDir().getAngle() : 0;
+    	Matrix4.rotateZ(model, (float) theta);
+    	
+    	float wx = -sprite.getWidth()/2;
+    	float wy = -sprite.getHeight() / 2f;
+    	Matrix4.translate(model, wx, wy, 0f);
+    	
+    	Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+    	
+    	glGraphics.drawSprite(gl, texture, 
+    			model,
+    			getLightingStrategy(),
+    			SpriteColorCorrection.BLACK
+    			);
+//        glGraphics.drawSprite(gl, texture, 
+//        		(float)(getPos().getX() - sprite.getWidth() / 2), 
+//        		(float)(getPos().getY() - sprite.getHeight() / 2 - pos.getZ()),
+//        		sprite.getWidth(),
+//        		sprite.getHeight(),
+//        		getLightingStrategy(),
+//        		getColorCorrection()
+//        		);
+    	
+    }
     
     @Override
     public Sprite getCurrentSprite() {
@@ -197,5 +239,32 @@ public class Particle extends GameObject {
             getLightingStrategy(),
             getColorCorrection()
         );
+    }
+    public void drawBlackGLBatched(GL3 gl, GLGraphics glGraphics, Texture texture) {
+    	Sprite sprite = animation.getSprite(phase, frameIndex);
+    	if (sprite == null) return;
+    	
+    	// Use a version of drawSprite that doesn't bind texture
+    	float[] model = new float[16];
+    	Matrix4.identity(model);
+    	
+    	float px = (float) getPos().getX();
+    	float py = (float) (getPos().getY() - getPos().getZ());
+    	Matrix4.translate(model, px, py, 0f);
+    	
+    	double theta = getDir() != null ? getDir().getAngle() : 0;
+    	Matrix4.rotateZ(model, (float) theta);
+    	
+    	float wx = -sprite.getWidth()/2;
+    	float wy = -sprite.getHeight() / 2f;
+    	Matrix4.translate(model, wx, wy, 0f);
+    	
+    	Matrix4.scale(model, sprite.getWidth(), sprite.getHeight(), 1f);
+    	
+    	glGraphics.drawSpriteBatched(gl, texture,
+    			model,
+    			getLightingStrategy(),
+    			SpriteColorCorrection.BLACK
+    			);
     }
 }

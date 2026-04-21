@@ -14,6 +14,7 @@ public abstract class ItemDefinition implements Cloneable{
     protected Rarity rarity;
     protected boolean stackable;
     protected boolean bought;
+    protected boolean unbuyable;
     
     public abstract ShopItem getItem();
 

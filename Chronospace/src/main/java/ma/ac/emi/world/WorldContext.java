@@ -114,4 +114,8 @@ public class WorldContext {
 	public void removeLightObject(LightObject lightObject) {
 		this.lightObjectManager.removeLightObject(lightObject);
 	}
+
+	public void clearLigthObjects() {
+		this.lightObjectManager.clear();
+	}
 }

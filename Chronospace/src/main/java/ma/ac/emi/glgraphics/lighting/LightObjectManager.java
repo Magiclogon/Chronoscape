@@ -24,4 +24,11 @@ public class LightObjectManager {
 		
 		lightObjects.removeIf(l -> !l.isAlive());
 	}
+
+	public void clear() {
+		lightObjects.forEach(l -> {
+			GameController.getInstance().removeDrawable(l);
+		});
+		lightObjects.clear();
+	}
 }

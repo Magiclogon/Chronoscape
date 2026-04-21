@@ -134,6 +134,26 @@ public abstract class Entity extends GameObject{
 	    );
 	    
 	}
+	@Override
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+		
+		Sprite sprite = stateMachine.getCurrentAnimationState() != null
+				? stateMachine.getCurrentAnimationState().getCurrentFrameSprite()
+						: AssetsLoader.getSprite("default_sprite.png");
+		
+		Texture texture = sprite.getTexture(gl);
+		
+		glGraphics.drawSprite(
+				gl,
+				texture,
+				(float)(getPos().getX() - sprite.getWidth() / 2f),
+				(float)(getPos().getY() - sprite.getHeight() / 2f - getPos().getZ()),
+				sprite.getWidth(),
+				sprite.getHeight(),
+				SpriteColorCorrection.BLACK
+				);
+		
+	}
 	
 	public Sprite getCurrentSprite() {
     	if(getStateMachine() == null) return null;

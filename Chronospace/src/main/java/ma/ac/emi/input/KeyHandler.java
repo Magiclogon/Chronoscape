@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class KeyHandler extends KeyAdapter {
 
-    private boolean left, right, up, down, switchWeapon, togglePause;
+    private boolean left, right, up, down, switchWeapon, togglePause, reload;
 
     private boolean aimUp, aimDown, aimLeft, aimRight;
     
@@ -47,10 +47,12 @@ public class KeyHandler extends KeyAdapter {
         else if (k == cfg.moveDown)     setDown(true);
         else if (k == cfg.switchWeapon) setSwitchWeapon(true);
         else if (k == cfg.pause)        setTogglePause(true);
+        else if (k == cfg.reload) setReload(true); 
         if      (k == cfg.aimUp)    setAimUp(true);
         else if (k == cfg.aimDown)  setAimDown(true);
         else if (k == cfg.aimLeft)  setAimLeft(true);
         else if (k == cfg.aimRight) setAimRight(true);
+        
     }
 
     @Override
@@ -61,6 +63,7 @@ public class KeyHandler extends KeyAdapter {
         else if (k == cfg.moveRight) setRight(false);
         else if (k == cfg.moveUp)    setUp(false);
         else if (k == cfg.moveDown)  setDown(false);
+        else if (k == cfg.reload) setReload(false); 
         if      (k == cfg.aimUp)    setAimUp(false);
         else if (k == cfg.aimDown)  setAimDown(false);
         else if (k == cfg.aimLeft)  setAimLeft(false);

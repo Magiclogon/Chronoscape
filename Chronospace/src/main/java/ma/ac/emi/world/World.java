@@ -22,6 +22,7 @@ import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.WeaponItemDefinition;
 import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveManager;
+import ma.ac.emi.gamelogic.wave.WaveState;
 import ma.ac.emi.glgraphics.GLGraphics;
 import ma.ac.emi.glgraphics.lighting.LightObject;
 import ma.ac.emi.glgraphics.lighting.LightObjectManager;
@@ -332,6 +333,10 @@ public class World extends GameObject{
 	public void removeLightObject(LightObject lightObject) {
 		context.removeLightObject(lightObject);
 	}
+	
+	public void clearLightObjects() {
+		context.clearLigthObjects();
+	}
 
 	@Override
 	public double getDrawnHeight() {
@@ -341,4 +346,15 @@ public class World extends GameObject{
 	public void clearAttackObjects() {
 		this.getAttackObjectManager().clearObjects();
 	}
+
+	@Override
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public boolean isDone() {
+		return getWaveManager().isCompleted();
+	}
+	
 }

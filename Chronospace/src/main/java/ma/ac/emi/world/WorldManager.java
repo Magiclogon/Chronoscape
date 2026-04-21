@@ -16,6 +16,7 @@ import ma.ac.emi.gamelogic.wave.Wave;
 import ma.ac.emi.gamelogic.wave.WaveConfig;
 import ma.ac.emi.gamelogic.wave.WaveConfigLoader;
 import ma.ac.emi.gamelogic.wave.WaveFactory;
+import ma.ac.emi.gamelogic.wave.WaveState;
 import ma.ac.emi.math.Vector3D;
 import ma.ac.emi.tiles.MapTheme;
 import ma.ac.emi.tiles.TileManager;
@@ -154,5 +155,26 @@ public class WorldManager {
 		setupPlayerForWorld();
 		
 		player.initWeapons();
+	}
+
+	public boolean isFirstWorld() {
+		return currentWorldIndex == 0;
+	}
+
+	public int getCurrentWaveNumber() {
+		int currentWaveNum = 0;
+		for (int i = 0; i < currentWorldIndex && i < worlds.size(); ++i) {
+			currentWaveNum += worlds.get(i).getWaveManager().getTotalWaves();
+		}
+		if(currentWorldIndex >= worlds.size()) {
+			currentWaveNum += endlessGenerator.WAVES_PER_WORLD * (currentWorldIndex - worlds.size());
+		}
+		currentWaveNum += currentWorld.getWaveManager().getCurrentWaveIndex() + 1;
+		
+		return currentWaveNum;
+	}
+
+	public boolean isCurrentWorldDone() {
+		return getCurrentWorld().isDone();
 	}
 }

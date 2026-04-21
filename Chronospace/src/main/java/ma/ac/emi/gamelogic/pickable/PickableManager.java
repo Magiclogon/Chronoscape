@@ -7,6 +7,7 @@ import ma.ac.emi.gamelogic.difficulty.DifficultyObserver;
 import ma.ac.emi.gamelogic.difficulty.DifficultyStrategy;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.player.PlayerConfig;
+import ma.ac.emi.gamelogic.wave.SpawnDropEvent;
 import ma.ac.emi.gamelogic.wave.WaveListener;
 import ma.ac.emi.gamelogic.wave.WaveNotifier;
 import ma.ac.emi.math.Vector3D;
@@ -74,27 +75,41 @@ public class PickableManager implements WaveListener, DifficultyObserver {
     }
 
     @Override
-    public void onNotify(List<Vector3D> spawnPoints) {
-        System.out.println("Drop Chance: Processing " + spawnPoints.size() + " points");
-
-        for (Vector3D pos : spawnPoints) {
-            // Base Drop Chance
-            double dropChance = (currentDifficulty != null) ? currentDifficulty.getPickableDropRate() : 0.5;
-
-            // luck drop chance multiplier — clamp at consumption, raw value preserved
-            Player luckPlayer = Player.getInstance();
-            double effectiveLuck = luckPlayer.getConfig() != null
-                    ? Math.max(luckPlayer.getConfig().getCaps().minLuck, luckPlayer.getLuck())
-                    : Math.max(0, luckPlayer.getLuck());
-            dropChance *= (1.0 + effectiveLuck * 0.01);
+    public void onNotify(List<SpawnDropEvent> events) {
+        for (SpawnDropEvent event : events) {
+            double dropChance = event.dropChanceOverride() >= 0
+                ? event.dropChanceOverride()   // boss: forced 1.0
+                : buildDropChance();           // normal luck/difficulty logic
 
             if (random.nextDouble() <= dropChance) {
-                Pickable pickable = createRandomPickable(pos);
-                if (pickable != null) {
-                    addPickable(pickable);
+                for (int i = 0; i < event.dropCount(); i++) {
+                    // slight position scatter so items don't stack
+                    Vector3D scattered = scatterPosition(event.position(), i);
+                    Pickable pickable = createRandomPickable(scattered);
+                    if (pickable != null) addPickable(pickable);
                 }
             }
         }
+    }
+
+    private double buildDropChance() {
+        double dropChance = (currentDifficulty != null)
+            ? currentDifficulty.getPickableDropRate() : 0.5;
+        Player luckPlayer = Player.getInstance();
+        double effectiveLuck = luckPlayer.getConfig() != null
+            ? Math.max(luckPlayer.getConfig().getCaps().minLuck, luckPlayer.getLuck())
+            : Math.max(0, luckPlayer.getLuck());
+        return dropChance * (1.0 + effectiveLuck * 0.01);
+    }
+
+    private Vector3D scatterPosition(Vector3D base, int index) {
+        double angle = Math.random()*Math.PI*2;
+        double radius = Math.random()*50 + 10;
+        return new Vector3D(
+            base.getX() + Math.cos(angle) * radius,
+            base.getY() + Math.sin(angle) * radius,
+            base.getZ()
+        );
     }
 
     private Pickable createRandomPickable(Vector3D position) {

@@ -28,6 +28,10 @@ public class FloatingTextManager {
         for (FloatingText ft : active) ft.update(step);
         active.removeIf(FloatingText::isDead);
     }
+    
+    public void clearFloatingText() {
+    	active.clear();
+    }
 
     public List<FloatingText> getActive() { return active; }
 }

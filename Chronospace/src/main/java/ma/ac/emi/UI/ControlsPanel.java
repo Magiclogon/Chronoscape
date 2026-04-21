@@ -10,42 +10,30 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.IntSupplier;
 
-/**
- * Settings panel for key bindings and keyboard aim mode.
- *
- * Each binding row shows the action name and a button.
- * Clicking the button enters "listening" mode — the next key press
- * is captured and assigned to that binding.
- */
 public class ControlsPanel extends JPanel implements SettingsPanel {
 
     // Working copy — written to InputConfig only on applyChanges()
     private int wMoveUp, wMoveDown, wMoveLeft, wMoveRight;
-    private int wSwitchWeapon, wPause;
+    private int wSwitchWeapon, wPause, wReload;  // Added wReload
     private int wAimUp, wAimDown, wAimLeft, wAimRight;
     private boolean wKeyboardAim;
 
-    // Binding buttons so we can refresh their labels
+    // Binding buttons
     private RetroButton btnMoveUp, btnMoveDown, btnMoveLeft, btnMoveRight;
-    private RetroButton btnSwitch, btnPause;
+    private RetroButton btnSwitch, btnPause, btnReload;  // Added btnReload
     private RetroButton btnAimUp, btnAimDown, btnAimLeft, btnAimRight;
     private RetroButton btnAimMode;
 
-    // Currently listening button — null when idle
+    // Currently listening button
     private RetroButton listeningBtn = null;
     private Consumer<Integer> listeningCallback = null;
 
-    // Key listener attached to the top-level frame while in listening mode
     private final KeyAdapter captureListener = new KeyAdapter() {
         @Override
         public void keyPressed(KeyEvent e) {
             int vk = e.getKeyCode();
-            // Ignore modifier-only presses
             if (vk == KeyEvent.VK_SHIFT || vk == KeyEvent.VK_CONTROL
                     || vk == KeyEvent.VK_ALT || vk == KeyEvent.VK_META) return;
 
@@ -65,7 +53,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         card.setBackground(MenuStyle.BG_PANEL);
         card.setBorder(new EmptyBorder(24, 32, 24, 32));
 
-        // ── Keyboard aim toggle ───────────────────────────────────────────
+        // AIM MODE
         card.add(makeSectionLabel("AIM MODE"));
         card.add(Box.createVerticalStrut(8));
         card.add(makeAimModeRow());
@@ -73,7 +61,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         card.add(makeSeparator());
         card.add(Box.createVerticalStrut(16));
 
-        // ── Movement bindings ─────────────────────────────────────────────
+        // MOVEMENT
         card.add(makeSectionLabel("MOVEMENT"));
         card.add(Box.createVerticalStrut(8));
         btnMoveUp    = makeBindRow(card, "MOVE UP",    wMoveUp,    vk -> { wMoveUp    = vk; refreshBtn(btnMoveUp,    vk); });
@@ -84,16 +72,17 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         card.add(makeSeparator());
         card.add(Box.createVerticalStrut(16));
 
-        // ── Actions ───────────────────────────────────────────────────────
+        // ACTIONS (added RELOAD)
         card.add(makeSectionLabel("ACTIONS"));
         card.add(Box.createVerticalStrut(8));
         btnSwitch = makeBindRow(card, "SWITCH WEAPON", wSwitchWeapon, vk -> { wSwitchWeapon = vk; refreshBtn(btnSwitch, vk); });
         btnPause  = makeBindRow(card, "PAUSE",         wPause,        vk -> { wPause        = vk; refreshBtn(btnPause,  vk); });
+        btnReload = makeBindRow(card, "RELOAD",        wReload,       vk -> { wReload       = vk; refreshBtn(btnReload, vk); });  // NEW
         card.add(Box.createVerticalStrut(16));
         card.add(makeSeparator());
         card.add(Box.createVerticalStrut(16));
 
-        // ── Keyboard aim directions ───────────────────────────────────────
+        // AIM DIRECTION
         card.add(makeSectionLabel("AIM DIRECTION (KEYBOARD MODE)"));
         card.add(Box.createVerticalStrut(8));
         btnAimUp    = makeBindRow(card, "AIM UP",    wAimUp,    vk -> { wAimUp    = vk; refreshBtn(btnAimUp,    vk); });
@@ -102,7 +91,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         btnAimRight = makeBindRow(card, "AIM RIGHT", wAimRight, vk -> { wAimRight = vk; refreshBtn(btnAimRight, vk); });
         card.add(Box.createVerticalStrut(24));
 
-        // ── Scroll wrapper ────────────────────────────────────────────────
+        // Scroll wrapper
         JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setBackground(MenuStyle.BG_DARK);
         GridBagConstraints gbc = new GridBagConstraints();
@@ -125,8 +114,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         add(scroll, BorderLayout.CENTER);
     }
 
-    // ── SettingsPanel ─────────────────────────────────────────────────────
-
     @Override
     public void applyChanges() {
         stopListening();
@@ -137,6 +124,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         cfg.moveRight   = wMoveRight;
         cfg.switchWeapon = wSwitchWeapon;
         cfg.pause       = wPause;
+        cfg.reload      = wReload;  // NEW
         cfg.aimUp       = wAimUp;
         cfg.aimDown     = wAimDown;
         cfg.aimLeft     = wAimLeft;
@@ -148,7 +136,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
     @Override
     public void resetToDefaults() {
         stopListening();
-        // Replace working copy with a fresh default config
         InputConfig defaults = new InputConfig();
         wMoveUp      = defaults.moveUp;
         wMoveDown    = defaults.moveDown;
@@ -156,6 +143,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         wMoveRight   = defaults.moveRight;
         wSwitchWeapon = defaults.switchWeapon;
         wPause       = defaults.pause;
+        wReload      = defaults.reload;  // NEW
         wAimUp       = defaults.aimUp;
         wAimDown     = defaults.aimDown;
         wAimLeft     = defaults.aimLeft;
@@ -163,8 +151,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         wKeyboardAim = defaults.keyboardAimMode;
         refreshAllButtons();
     }
-
-    // ── Build helpers ─────────────────────────────────────────────────────
 
     private JLabel makeSectionLabel(String text) {
         JLabel lbl = new JLabel(text, SwingConstants.CENTER);
@@ -220,10 +206,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         return row;
     }
 
-    /**
-     * Creates a binding row, adds it to the parent, and returns the bind button
-     * so the caller can store a reference for later label refresh.
-     */
     private RetroButton makeBindRow(JPanel parent, String label, int currentVK,
                                      Consumer<Integer> onBound) {
         JPanel row = new JPanel(new BorderLayout(16, 0));
@@ -250,10 +232,8 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         return btn;
     }
 
-    // ── Listening mode ────────────────────────────────────────────────────
-
     private void startListening(RetroButton btn, Consumer<Integer> callback) {
-        stopListening(); // cancel any previous
+        stopListening();
 
         listeningBtn      = btn;
         listeningCallback = callback;
@@ -262,7 +242,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         btn.setToggled(true);
         btn.repaint();
 
-        // Attach key capture listener to the root frame
         JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(this);
         if (frame != null) {
             frame.addKeyListener(captureListener);
@@ -281,8 +260,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         if (frame != null) frame.removeKeyListener(captureListener);
     }
 
-    // ── Label refresh ─────────────────────────────────────────────────────
-
     private void refreshBtn(RetroButton btn, int vk) {
         btn.setText(InputConfig.keyName(vk));
         btn.repaint();
@@ -295,6 +272,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         refreshBtn(btnMoveRight, wMoveRight);
         refreshBtn(btnSwitch,    wSwitchWeapon);
         refreshBtn(btnPause,     wPause);
+        refreshBtn(btnReload,    wReload);
         refreshBtn(btnAimUp,     wAimUp);
         refreshBtn(btnAimDown,   wAimDown);
         refreshBtn(btnAimLeft,   wAimLeft);
@@ -304,8 +282,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         btnAimMode.repaint();
     }
 
-    // ── Load ──────────────────────────────────────────────────────────────
-
     private void loadFromConfig() {
         InputConfig cfg = InputConfig.getInstance();
         wMoveUp       = cfg.moveUp;
@@ -314,6 +290,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         wMoveRight    = cfg.moveRight;
         wSwitchWeapon = cfg.switchWeapon;
         wPause        = cfg.pause;
+        wReload       = cfg.reload;  // NEW
         wAimUp        = cfg.aimUp;
         wAimDown      = cfg.aimDown;
         wAimLeft      = cfg.aimLeft;

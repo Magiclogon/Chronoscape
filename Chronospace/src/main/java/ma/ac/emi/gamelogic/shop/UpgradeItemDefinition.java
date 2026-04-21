@@ -59,6 +59,8 @@ public class UpgradeItemDefinition extends ItemDefinition implements Cloneable {
         this.setIconPath(other.getIconPath());
         this.setRarity(other.getRarity());
         this.setStackable(other.isStackable());
+        this.setUnbuyable(other.isUnbuyable());
+        
         this.effectClass   = other.effectClass;
         this.effectParams  = other.effectParams;
         this.modifications = new ArrayList<>();

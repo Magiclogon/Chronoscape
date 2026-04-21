@@ -11,6 +11,17 @@
       	"initLength": 7,
       	"loopLength": 1,
       	"finishLength": 41
+      },
+      
+      "postProcessingDetails":{
+      	"colorCorrection":{
+      		"tint":{
+      		  "r": 1,
+      		  "g": 1,
+      		  "b": 1,
+      		  "a": 0
+      		}
+      	}
       }
     },
     {

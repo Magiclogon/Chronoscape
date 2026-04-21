@@ -486,6 +486,40 @@
       }
     },
     {
+      "id": "player_spawn",
+      "lifetime": 0.8,
+      "spawnRate": 0.5,
+      "hasFixedDir": true,
+      "dirX": 1,
+      "dirY": 0,
+      "shouldFollowSource": true,
+      "animationDetails": {
+      	"spritePath": "particles/player_spawning_effect-Sheet.png",
+      	"spriteWidth": 32,
+      	"spriteHeight": 32,
+      	"initLength": 7,
+      	"loopLength": 1,
+      	"finishLength": 1
+      },
+      "postProcessingDetails": {
+        "colorCorrection": {
+          "hueShift": -0.05,
+          "saturation": 1.5,
+          "value": 1.2,
+          "brightness": 0.1
+        },
+        "lighting": {
+          "type": "glow",
+          "intensity": 1.2,
+          "color": {
+            "r": 0.0,
+            "g": 0.4,
+            "b": 1.0
+          }
+        }
+      }
+    },
+    {
       "id": "on_enemy_hit",
       "lifetime": 1,
       "spawnRate": 1,

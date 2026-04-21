@@ -5,7 +5,7 @@
       "id": "ak47",
       "name": "AK-47",
       "description": "Automatic rifle with high fire rate.",
-      "iconPath": "icons/ak_icon.png",
+      "iconPath": "icons/ak47_icon.png",
       "rarity": "RARE",
       "basePrice": 500,
       "damage": 120,
@@ -180,7 +180,7 @@
       "id": "rpg7",
       "name": "RPG-7",
       "description": "Fires a rocket that explodes on impact.",
-      "iconPath": "icons/rpg_icon.png",
+      "iconPath": "icons/rpg7_icon.png",
       "rarity": "LEGENDARY",
       "basePrice": 1200,
       "damage": 400,
@@ -236,9 +236,10 @@
     },
     {
       "type": "weapon",
-      "id": "bow",
-      "name": "Hunter's Bow",
+      "id": "crossbow",
+      "name": "Crossbow",
       "description": "Simple but precise ranged weapon.",
+      "iconPath": "icons/crossbow_icon.png",
       "rarity": "COMMON",
       "basePrice": 250,
       "damage": 35,
@@ -251,7 +252,20 @@
       "magazineSize": 1,
       "attackSound": "ranged_weapon",
       "stackable": false,
-      "animationDetails": {},
+      "animationDetails": {
+        "spriteSheetPath": "weapons/crossbow-Sheet.png",
+        "handSpriteSheetPath": "hands/crossbow_hands-Sheet.png",
+        "spriteWidth": 58,
+        "spriteHeight": 52,
+        "idleLength": 1,
+        "attackingInitLength": 3,
+        "attackingLength": 10,
+        "reloadInitLength": 10,
+        "reloadLength": 4,
+        "reloadFinishLength": 10,
+        "switchingInLength": 10,
+        "switchingOutLength": 1
+      },
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
@@ -278,6 +292,7 @@
       "id": "fists",
       "name": "Normal Fists",
       "description": "Your good old fists.",
+      "iconPath": "icons/fist_icon.png",
       "rarity": "COMMON",
       "basePrice": 1,
       "damage": 10,
@@ -288,7 +303,20 @@
       "projectileSpeed": 800,
       "attackSound": "light_weapon",
       "stackable": false,
-      "animationDetails": {},
+      "animationDetails": {
+        "spriteSheetPath": "weapons/fist-Sheet.png",
+        "handSpriteSheetPath": "hands/fist-Sheet.png",
+        "spriteWidth": 50,
+        "spriteHeight": 54,
+        "idleLength": 1,
+        "attackingInitLength": 7,
+        "attackingLength": 19,
+        "reloadInitLength": 1,
+        "reloadLength": 1,
+        "reloadFinishLength": 1,
+        "switchingInLength": 15,
+        "switchingOutLength": 1
+      },
       "attackStrategy": {
         "type": "melee"
       },
@@ -351,7 +379,7 @@
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
-        "spread": 0
+        "spread": 0.7
       },
       "behaviors": [
         {
@@ -463,7 +491,7 @@
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
-        "spread": 0
+        "spread": 0.15
       },
       "behaviors": [
         {
@@ -652,6 +680,7 @@
       "relativeProjectilePosY": 6,
       "attackSound": "machine_gun",
       "stackable": false,
+      "unbuyable": true,
       "animationDetails": {
         "spriteSheetPath": "weapons/boss_machinegun-Sheet.png",
         "handSpriteSheetPath": "hands/boss_machinegun_hands_top-Sheet.png",
@@ -734,6 +763,7 @@
       "attackSound": "explosion",
       "deactivateSound": "detonation",
       "stackable": false,
+      "unbuyable": true,
       "animationDetails": {
         "spriteSheetPath": "weapons/boss_cannon-Sheet.png",
         "handSpriteSheetPath": "hands/boss_cannon_hands_top-Sheet.png",
@@ -812,6 +842,7 @@
       "projectileSpeed": 900,
       "attackSound": "spear",
       "stackable": false,
+      "unbuyable": true,
       "animationDetails": {
         "spriteSheetPath": "weapons/boss_spear-Sheet.png",
         "handSpriteSheetPath": "hands/boss_spear_hands_top-Sheet.png",

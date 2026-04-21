@@ -8,6 +8,7 @@ import ma.ac.emi.UI.MenuStyle;
 import ma.ac.emi.UI.component.RetroScrollBar;
 import ma.ac.emi.fx.AssetsLoader;
 import ma.ac.emi.fx.Sprite;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamelogic.player.Player;
 import ma.ac.emi.gamelogic.shop.*;
 import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
@@ -135,6 +136,13 @@ public class StartupWeaponSelection extends JPanel {
         player.getInventory().equipWeapon(chosenWeapon, 0);
         player.initWeapons();
 
+        ShopManager shopManager = GameController.getInstance().getShopManager();
+        if(shopManager != null) {
+        	shopManager.onStartingWeaponPicked(def);
+        }else {
+        	System.out.println("ShopManager is not initialized!");
+        }
+        
         if (onWeaponSelected != null) onWeaponSelected.run();
     }
 

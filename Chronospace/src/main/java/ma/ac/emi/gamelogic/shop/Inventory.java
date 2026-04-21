@@ -9,6 +9,8 @@ import lombok.Setter;
 import ma.ac.emi.gamelogic.effect.EffectContext;
 import ma.ac.emi.gamelogic.effect.PlayerEffect;
 import ma.ac.emi.gamelogic.player.Player;
+import ma.ac.emi.gamelogic.shop.WeaponItemDefinition.MeleeStrategyDefinition;
+import ma.ac.emi.gamelogic.weapon.MeleeStrategy;
 
 @Getter
 @Setter
@@ -178,7 +180,7 @@ public class Inventory {
             switch (UpgradeItemDefinition.WeaponStat.valueOf(mod.getStat().toUpperCase())) {
                 case DAMAGE       -> newWeaponDef.setDamage(applyOp(newWeaponDef.getDamage(),       mod));
                 case ATTACK_SPEED -> newWeaponDef.setAttackSpeed(applyOp(newWeaponDef.getAttackSpeed(), mod));
-                case RANGE        -> newWeaponDef.setRange(applyOp(newWeaponDef.getRange(),          mod));
+                case RANGE        -> newWeaponDef.setRange(newWeaponDef.getAttackStrategyDefinition() instanceof MeleeStrategyDefinition ? newWeaponDef.getRange() : applyOp(newWeaponDef.getRange(),          mod));
                 case MAGAZINE_SIZE-> newWeaponDef.setMagazineSize((int) applyOp(newWeaponDef.getMagazineSize(), mod));
                 case RELOAD_TIME  -> newWeaponDef.setReloadingTime(applyOp(newWeaponDef.getReloadingTime(), mod));
             }
@@ -267,7 +269,7 @@ public class Inventory {
             WeaponItemDefinition newDef = new WeaponItemDefinition(baseDef);
             newDef.setDamage(baseDef.getDamage()               * (1.0 + dmgMul) + dmgAdd);
             newDef.setAttackSpeed(baseDef.getAttackSpeed()     * (1.0 + spdMul) + spdAdd);
-            newDef.setRange(baseDef.getRange()                 * (1.0 + rngMul) + rngAdd);
+            if(newDef.getAttackStrategyDefinition() instanceof MeleeStrategyDefinition) newDef.setRange(baseDef.getRange()                 * (1.0 + rngMul) + rngAdd);
             newDef.setMagazineSize((int)(baseDef.getMagazineSize() * (1.0 + magMul) + magAdd));
             newDef.setReloadingTime(baseDef.getReloadingTime() / (1.0 + rldMul) + rldAdd);
             weapon.setItemDefinition(newDef);

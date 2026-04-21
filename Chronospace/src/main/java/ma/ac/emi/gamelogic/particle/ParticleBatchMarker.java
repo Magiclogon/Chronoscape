@@ -39,4 +39,10 @@ public class ParticleBatchMarker extends GameObject {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {
+		// TODO Auto-generated method stub
+		
+	}
 }
