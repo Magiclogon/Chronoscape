@@ -84,10 +84,10 @@ public class GameController implements Runnable {
     private void startupLoad() {
         AssetsLoader.loadAssets("assets");
         particleSystem = new ParticleSystem();
-        particleSystem.loadFromJson("src/main/resources/configs/particles.json");
-        ItemLoader.getInstance().loadItems("src/main/resources/configs/items.json");
-        ProjectileLoader.getInstance().load("src/main/resources/configs/projectiles.json");
-        AOELoader.getInstance().load("src/main/resources/configs/aoe.json");
+        particleSystem.loadFromJson("/configs/particles.json");
+        ItemLoader.getInstance().loadItems("/configs/items.json");
+        ProjectileLoader.getInstance().load("/configs/projectiles.json");
+        AOELoader.getInstance().load("/configs/aoe.json");
         postFXConfig = PostFXConfigLoader.load();
 
         difficultyObservers = new ArrayList<>();

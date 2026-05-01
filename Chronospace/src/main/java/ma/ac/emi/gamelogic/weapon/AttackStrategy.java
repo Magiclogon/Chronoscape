@@ -20,10 +20,11 @@ public abstract class AttackStrategy {
 				(WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition();
 
 		// ── Sound ─────────────────────────────────────────────────────────────
+        double effectiveAttackSpeed = Math.max(weapon.caps().minAttackSpeed, Math.min(weapon.caps().maxAttackSpeed, definition.getAttackSpeed())) * weapon.getBearer().getAttackSpeedMultiplier();
 		WeaponSoundController.playAttackSound(
 				definition.getId(),
 				definition.getAttackSound(),
-				definition.getAttackSpeed()
+				effectiveAttackSpeed
 		);
 
 		// ── Recoil ────────────────────────────────────────────────────────────

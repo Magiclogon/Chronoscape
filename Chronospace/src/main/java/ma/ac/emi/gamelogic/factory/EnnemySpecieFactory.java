@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.factory;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,8 @@ public abstract class EnnemySpecieFactory implements DifficultyObserver {
 	
 	protected void loadConfig(String path) {
 		definitions.clear();
-		try (FileReader reader = new FileReader(path)) {
+		try (InputStream is = getClass().getResourceAsStream(path);
+		    	Reader reader = new java.io.InputStreamReader(is);) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray types = root.getAsJsonArray("types");
             Gson gson = new Gson();

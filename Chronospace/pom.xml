@@ -52,36 +52,127 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>--add-exports</argument>
-                        <argument>java.base/java.lang=ALL-UNNAMED</argument>
-                        <argument>--add-exports</argument>
-                        <argument>java.desktop/sun.awt=ALL-UNNAMED</argument>
-                        <argument>--add-exports</argument>
-                        <argument>java.desktop/sun.java2d=ALL-UNNAMED</argument>
-                        <argument>--add-opens</argument>
-                        <argument>java.desktop/sun.awt.windows=ALL-UNNAMED</argument>
-                        <argument>-classpath</argument>
-                        <classpath/>
-                        <argument>ma.ac.emi.Main</argument>
-                    </arguments>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <plugins>
+
+        <!-- 1. Keep your dev runner as-is -->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>3.1.0</version>
+            <configuration>
+                <executable>java</executable>
+                <arguments>
+                    <argument>--add-exports</argument>
+                    <argument>java.base/java.lang=ALL-UNNAMED</argument>
+                    <argument>--add-exports</argument>
+                    <argument>java.desktop/sun.awt=ALL-UNNAMED</argument>
+                    <argument>--add-exports</argument>
+                    <argument>java.desktop/sun.java2d=ALL-UNNAMED</argument>
+                    <argument>--add-opens</argument>
+                    <argument>java.desktop/sun.awt.windows=ALL-UNNAMED</argument>
+                    <argument>-classpath</argument>
+                    <classpath/>
+                    <argument>ma.ac.emi.Main</argument>
+                </arguments>
+            </configuration>
+        </plugin>
+
+        <!-- 2. Copy all dependency JARs to target/libs -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <version>3.6.1</version>
+            <executions>
+                <execution>
+                    <id>copy-deps</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/libs</outputDirectory>
+                        <excludeScope>provided</excludeScope>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+
+        <!-- 3. Build a thin JAR (your code only, no dependencies) -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>ma.ac.emi.Main</mainClass>
+                        <addClasspath>true</addClasspath>
+                        <classpathPrefix>libs/</classpathPrefix>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+
+        <!-- 4. jpackage — run with: mvn package exec:exec@jpackage -->
+        <!-- jpackage -->
+<plugin>
+    <groupId>org.panteleyev</groupId>
+    <artifactId>jpackage-maven-plugin</artifactId>
+    <version>1.6.5</version>
+    <configuration>
+    <name>Chronospace</name>
+    <appVersion>1.0.0</appVersion>
+    <mainClass>ma.ac.emi.Main</mainClass>
+    <mainJar>${project.artifactId}-${project.version}.jar</mainJar>
+    <input>${project.build.directory}</input>
+    <destination>${project.basedir}/dist</destination>
+    <type>APP_IMAGE</type>
+    <javaOptions>
+        <option>--add-exports=java.base/java.lang=ALL-UNNAMED</option>
+        <option>--add-exports=java.desktop/sun.awt=ALL-UNNAMED</option>
+        <option>--add-exports=java.desktop/sun.java2d=ALL-UNNAMED</option>
+        <option>--add-opens=java.desktop/sun.awt.windows=ALL-UNNAMED</option>
+    </javaOptions>
+</configuration>
+    <executions>
+        <execution>
+            <id>jpackage</id>
+            <phase>none</phase> <!-- manual: mvn jpackage:jpackage -->
+        </execution>
+    </executions>
+</plugin>
+
+    </plugins>
+</build>
+
+<profiles>
+    <profile>
+        <id>windows</id>
+        <activation>
+            <os><family>windows</family></os>
+        </activation>
+        <properties>
+            <platform.jvm.args>--add-opens=java.desktop/sun.awt.windows=ALL-UNNAMED</platform.jvm.args>
+        </properties>
+    </profile>
+    <profile>
+        <id>linux</id>
+        <activation>
+            <os><family>unix</family></os>
+        </activation>
+        <properties>
+            <platform.jvm.args>--add-opens=java.desktop/sun.awt.X11=ALL-UNNAMED</platform.jvm.args>
+        </properties>
+    </profile>
+    <profile>
+        <id>mac</id>
+        <activation>
+            <os><family>mac</family></os>
+        </activation>
+        <properties>
+            <platform.jvm.args>-XstartOnFirstThread</platform.jvm.args>
+        </properties>
+    </profile>
+</profiles>
 
 </project>

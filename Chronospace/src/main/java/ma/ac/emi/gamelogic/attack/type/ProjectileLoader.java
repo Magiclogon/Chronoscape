@@ -11,6 +11,9 @@ import ma.ac.emi.glgraphics.lighting.LightingStrategy;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 
 public class ProjectileLoader {
@@ -26,8 +29,10 @@ public class ProjectileLoader {
     }
 
     public void load(String filePath) {
+    	
 
-        try (FileReader reader = new FileReader(filePath)) {
+        try (InputStream is = getClass().getResourceAsStream(filePath);
+            	Reader reader = new InputStreamReader(is);) {
 
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray projectiles = root.getAsJsonArray("projectiles");

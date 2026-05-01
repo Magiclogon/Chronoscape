@@ -7,7 +7,7 @@ import ma.ac.emi.math.Vector3D;
 public class RobotFactory extends EnnemySpecieFactory{
 	private static RobotFactory instance;
     private RobotFactory() {
-    	loadConfig("src/main/resources/configs/robots.json");
+    	loadConfig("/configs/robots.json");
     }
 
 	public static RobotFactory getInstance() {

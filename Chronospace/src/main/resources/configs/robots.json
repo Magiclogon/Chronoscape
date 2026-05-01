@@ -1,303 +1,307 @@
-{	
-
+{
   "types": [
-	  {
-	  	"type": "common",
-	  	"speed": 50,
-	  	"hpMax": 100,
-	  	
-	  	"weaponId": "blaster404",
-	  	"projectileSpeedMultiplier": 0.3,
-	  	
-	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/common robot-Sheet.png",
-	  		"spriteWidth": 32,
-	  		"spriteHeight": 32,
-	  		"idleLength": 1,
-	  		"runningLength": 6,
-	  		"backingLength": 6,
-	  		"dyingLength": 28,
-	  		"spawningLength": 47
-	  	},
-	  	
-	  	"weaponXOffset": 8,
-	  	"weaponYOffset": 0,
-	  	
-	  	"behaviors": [
-		  	{
-	          "type": "onMovement",
-	          "particleId": "dust",
-	          "emitterRadius": 5,
-		      "offsetX": 0,
-		      "offsetY": 16
-	        },
-	        {
-	          "type": "onHitFlash",
-	          "duration": 0.1,
-	          "intensity": 1
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "lightning_small",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        },
-		    {
-	          "type": "onSpawn",
-	          "particleId": "spawning_marker",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        }
-	    ]
-	  },
-	    	
-	  {
-	  	"type": "ranged",
-	  	"speed": 35,
-	  	"hpMax": 100,
-	  	
-	  	"weaponId": "snipnk",
-	  	"projectileSpeedMultiplier": 0.3,
-	  	
-	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/ranged robot-Sheet.png",
-	  		"spriteWidth": 32,
-	  		"spriteHeight": 32,
-	  		"idleLength": 1,
-	  		"runningLength": 7,
-	  		"backingLength": 7,
-	  		"dyingLength": 29,
-	  		"spawningLength": 47
-	  	
-	  	},
-	  	
-	  	"weaponXOffset": 13,
-	  	"weaponYOffset": -2,
-	  	
-	  	"behaviors": [
-		  	{
-	          "type": "onMovement",
-	          "particleId": "dust",
-	          "emitterRadius": 5,
-		      "offsetX": 0,
-		      "offsetY": 16
-	        },
-	        {
-	          "type": "onHitFlash",
-	          "duration": 0.1,
-	          "intensity": 1
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "lightning_small",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        },
-		    {
-	          "type": "onSpawn",
-	          "particleId": "spawning_marker",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        }
-	    ]
-	  },
-	  		
-	  {
-	  	"type": "speedster",
-	  	"speed": 100,
-	  	"hpMax": 60,
-	  	
-	  	"weaponId": "lightsaber",
-	  	"projectileSpeedMultiplier": 1,
-	  	
-	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/speedster robot-Sheet.png",
-	  		"spriteWidth": 48,
-	  		"spriteHeight": 48,
-	  		"idleLength": 1,
-	  		"runningLength": 8,
-	  		"backingLength": 8,
-	  		"dyingLength": 28,
-	  		"spawningLength": 47
-	  	
-	  	},
-	  	
-	  	"weaponXOffset": 14,
-	  	"weaponYOffset": 3,
-	  	
-	  	"behaviors": [
-		  	{
-	          "type": "onMovement",
-	          "particleId": "dust",
-	          "emitterRadius": 5,
-		      "offsetX": 0,
-		      "offsetY": 24
-	        },
-	        {
-	          "type": "onHitFlash",
-	          "duration": 0.1,
-	          "intensity": 1
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "lightning_small",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        },
-		    {
-	          "type": "onSpawn",
-	          "particleId": "spawning_marker_medium",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        }
-	    ]
-	  },
-	  		
-	  {
-	  	"type": "tank",
-	  	"speed": 20,
-	  	"hpMax": 450,
-	  	
-	  	"weaponId": "hammer",
-	  	"projectileSpeedMultiplier": 1,
-	  	
-	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/tank robot-Sheet.png",
-	  		"spriteWidth": 48,
-	  		"spriteHeight": 48,
-	  		"idleLength": 1,
-	  		"runningLength": 15,
-	  		"backingLength": 15,
-	  		"dyingLength": 29,
-	  		"spawningLength": 47
-	  	
-	  	},
-	  	
-	  	"weaponXOffset": -10,
-	  	"weaponYOffset": 3,
-	  	
-	  	"behaviors": [
-		  	{
-	          "type": "onMovement",
-	          "particleId": "dust",
-	          "emitterRadius": 5,
-		      "offsetX": 0,
-		      "offsetY": 24
-	        },
-	        {
-	          "type": "onHitFlash",
-	          "duration": 0.1,
-	          "intensity": 1
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "lightning_medium",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        },
-		    {
-	          "type": "onSpawn",
-	          "particleId": "spawning_marker_medium",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        }
-	    ]
-	  },
-	  		
-	  {
-	  	"type": "boss",
-	  	"speed": 50,
-	  	"hpMax": 1000,
-	  	
-	  	"weaponId": "robot_boss_machinegun",
-	  	"weaponIds": [
-	  		"robot_boss_machinegun",
-	  		"robot_boss_cannon",
-	  		"robot_boss_spear"
-	  	],
-	  	"projectileSpeedMultiplier": 0.3,
-	  	
-	  	"animationDetails": {
-	  		"spriteSheetPath": "enemies/boss robot-Sheet.png",
-	  		"spriteWidth": 96,
-	  		"spriteHeight": 96,
-	  		"idleLength": 18,
-	  		"runningLength": 32,
-	  		"backingLength": 32,
-	  		"dyingLength": 106,
-	  		"spawningLength": 47
-	  	
-	  	},
-	  	
-	  	"weaponXOffset": 24,
-	  	"weaponYOffset": -1,
-	  	
-	  	"behaviors": [
-		  	{
-	          "type": "onMovement",
-	          "particleId": "dust",
-	          "emitterRadius": 5,
-		      "offsetX": 0,
-		      "offsetY": 64
-	        },
-	        {
-	          "type": "onHitFlash",
-	          "duration": 0.1,
-	          "intensity": 1
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "lightning_big",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        },
-		    {
-	          "type": "onDeath",
-	          "particleId": "boss_death_smoke",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 5,
-	          "ageMax": 3,
-	          "isOneTime": false
-	        },
-		    {
-	          "type": "onSpawn",
-	          "particleId": "spawning_marker_boss",
-	          "count": 1,
-	          "radius": 50,
-	          "emitterRadius": 0,
-	          "ageMax": 0,
-	          "isOneTime": true
-	        }
-	    ]
-	  }
-  ]
+    {
+      "type": "common",
+      "speed": 40,
+      "hpMax": 80,
 
+      "weaponId": "blaster404",
+      "projectileSpeedMultiplier": 0.2,
+      "damageMultiplier": 0.5,
+      "attackSpeedMultiplier": 0.1,
+
+      "animationDetails": {
+        "spriteSheetPath": "enemies/common robot-Sheet.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "idleLength": 1,
+        "runningLength": 6,
+        "backingLength": 6,
+        "dyingLength": 28,
+        "spawningLength": 47
+      },
+
+      "weaponXOffset": 8,
+      "weaponYOffset": 0,
+
+      "behaviors": [
+        {
+          "type": "onMovement",
+          "particleId": "dust",
+          "emitterRadius": 5,
+          "offsetX": 0,
+          "offsetY": 16
+        },
+        {
+          "type": "onHitFlash",
+          "duration": 0.1,
+          "intensity": 1
+        },
+        {
+          "type": "onDeath",
+          "particleId": "lightning_small",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "onSpawn",
+          "particleId": "spawning_marker",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        }
+      ]
+    },
+
+    {
+      "type": "ranged",
+      "speed": 30,
+      "hpMax": 70,
+
+      "weaponId": "snipnk",
+      "projectileSpeedMultiplier": 0.3,
+      "damageMultiplier": 0.30,
+      "attackSpeedMultiplier": 0.35,
+
+      "animationDetails": {
+        "spriteSheetPath": "enemies/ranged robot-Sheet.png",
+        "spriteWidth": 32,
+        "spriteHeight": 32,
+        "idleLength": 1,
+        "runningLength": 7,
+        "backingLength": 7,
+        "dyingLength": 29,
+        "spawningLength": 47
+      },
+
+      "weaponXOffset": 13,
+      "weaponYOffset": -2,
+
+      "behaviors": [
+        {
+          "type": "onMovement",
+          "particleId": "dust",
+          "emitterRadius": 5,
+          "offsetX": 0,
+          "offsetY": 16
+        },
+        {
+          "type": "onHitFlash",
+          "duration": 0.1,
+          "intensity": 1
+        },
+        {
+          "type": "onDeath",
+          "particleId": "lightning_small",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "onSpawn",
+          "particleId": "spawning_marker",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        }
+      ]
+    },
+
+    {
+      "type": "speedster",
+      "speed": 80,
+      "hpMax": 50,
+
+      "weaponId": "lightsaber",
+      "projectileSpeedMultiplier": 1.0,
+      "damageMultiplier": 0.45,
+      "attackSpeedMultiplier": 1.0,
+
+      "animationDetails": {
+        "spriteSheetPath": "enemies/speedster robot-Sheet.png",
+        "spriteWidth": 48,
+        "spriteHeight": 48,
+        "idleLength": 1,
+        "runningLength": 8,
+        "backingLength": 8,
+        "dyingLength": 28,
+        "spawningLength": 47
+      },
+
+      "weaponXOffset": 14,
+      "weaponYOffset": 3,
+
+      "behaviors": [
+        {
+          "type": "onMovement",
+          "particleId": "dust",
+          "emitterRadius": 5,
+          "offsetX": 0,
+          "offsetY": 24
+        },
+        {
+          "type": "onHitFlash",
+          "duration": 0.1,
+          "intensity": 1
+        },
+        {
+          "type": "onDeath",
+          "particleId": "lightning_small",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "onSpawn",
+          "particleId": "spawning_marker_medium",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        }
+      ]
+    },
+
+    {
+      "type": "tank",
+      "speed": 22,
+      "hpMax": 380,
+
+      "weaponId": "hammer",
+      "projectileSpeedMultiplier": 1.0,
+      "damageMultiplier": 0.55,
+      "attackSpeedMultiplier": 0.7,
+
+      "animationDetails": {
+        "spriteSheetPath": "enemies/tank robot-Sheet.png",
+        "spriteWidth": 48,
+        "spriteHeight": 48,
+        "idleLength": 1,
+        "runningLength": 15,
+        "backingLength": 15,
+        "dyingLength": 29,
+        "spawningLength": 47
+      },
+
+      "weaponXOffset": -10,
+      "weaponYOffset": 3,
+
+      "behaviors": [
+        {
+          "type": "onMovement",
+          "particleId": "dust",
+          "emitterRadius": 5,
+          "offsetX": 0,
+          "offsetY": 24
+        },
+        {
+          "type": "onHitFlash",
+          "duration": 0.1,
+          "intensity": 1
+        },
+        {
+          "type": "onDeath",
+          "particleId": "lightning_medium",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "onSpawn",
+          "particleId": "spawning_marker_medium",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        }
+      ]
+    },
+
+    {
+      "type": "boss",
+      "speed": 55,
+      "hpMax": 1800,
+
+      "weaponId": "robot_boss_machinegun",
+      "weaponIds": [
+        "robot_boss_machinegun",
+        "robot_boss_cannon",
+        "robot_boss_spear"
+      ],
+      "projectileSpeedMultiplier": 0.75,
+      "damageMultiplier": 0.85,
+      "attackSpeedMultiplier": 0.9,
+
+      "animationDetails": {
+        "spriteSheetPath": "enemies/boss robot-Sheet.png",
+        "spriteWidth": 96,
+        "spriteHeight": 96,
+        "idleLength": 18,
+        "runningLength": 32,
+        "backingLength": 32,
+        "dyingLength": 106,
+        "spawningLength": 47
+      },
+
+      "weaponXOffset": 24,
+      "weaponYOffset": -1,
+
+      "behaviors": [
+        {
+          "type": "onMovement",
+          "particleId": "dust",
+          "emitterRadius": 5,
+          "offsetX": 0,
+          "offsetY": 64
+        },
+        {
+          "type": "onHitFlash",
+          "duration": 0.1,
+          "intensity": 1
+        },
+        {
+          "type": "onDeath",
+          "particleId": "lightning_big",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        },
+        {
+          "type": "onDeath",
+          "particleId": "boss_death_smoke",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 5,
+          "ageMax": 3,
+          "isOneTime": false
+        },
+        {
+          "type": "onSpawn",
+          "particleId": "spawning_marker_boss",
+          "count": 1,
+          "radius": 50,
+          "emitterRadius": 0,
+          "ageMax": 0,
+          "isOneTime": true
+        }
+      ]
+    }
+  ]
 }

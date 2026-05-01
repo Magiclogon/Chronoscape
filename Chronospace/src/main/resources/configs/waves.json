@@ -31,8 +31,15 @@
       "specieType": "robot",
       "waves": [
         { "waveNumber": 1, "enemies": { "common": 5 }, "spawnDelay": 1.0, "isBossWave": false },
-        { "waveNumber": 2, "enemies": { "common": 7, "ranged": 2 }, "spawnDelay": 1.0, "isBossWave": false },
-        { "waveNumber": 3, "enemies": { "common": 6, "ranged": 2, "boss": 1 }, "spawnDelay": 0.9, "isBossWave": true }
+        { "waveNumber": 2, "enemies": { "common": 8, "speedster": 2 }, "spawnDelay": 1.0, "isBossWave": false },
+        { "waveNumber": 3, "enemies": { "common": 10, "ranged": 2 }, "spawnDelay": 0.9, "isBossWave": false },
+        { "waveNumber": 4, "enemies": { "common": 10, "speedster": 6 }, "spawnDelay": 0.9, "isBossWave": false },
+        { "waveNumber": 5, "enemies": { "common": 12, "ranged": 4, "tank": 1 }, "spawnDelay": 0.8, "isBossWave": false },
+        { "waveNumber": 6, "enemies": { "common": 15, "speedster": 10 }, "spawnDelay": 0.8, "isBossWave": false },
+        { "waveNumber": 7, "enemies": { "common": 15, "ranged": 6, "tank": 3 }, "spawnDelay": 0.7, "isBossWave": false },
+        { "waveNumber": 8, "enemies": { "common": 20, "speedster": 15, "tank": 2 }, "spawnDelay": 0.7, "isBossWave": false },
+        { "waveNumber": 9, "enemies": { "common": 25, "ranged": 10, "speedster": 10 }, "spawnDelay": 0.6, "isBossWave": false },
+        { "waveNumber": 10, "enemies": { "boss": 1, "common": 10, "speedster": 8, "tank": 2 }, "spawnDelay": 0.5, "isBossWave": true }
       ]
     },
     {
