@@ -418,7 +418,7 @@ public class Weapon extends Entity{
         }
         
     	
-    	double effectiveAttackSpeed = Math.max(caps().minAttackSpeed, Math.min(caps().maxAttackSpeed, def.getAttackSpeed()));
+    	double effectiveAttackSpeed = Math.max(caps().minAttackSpeed, Math.min(caps().maxAttackSpeed, def.getAttackSpeed())) * (getBearer()!=null ? getBearer().getAttackSpeedMultiplier():1);
     	double playSpeed = def.getAnimationDetails().attackingLength * effectiveAttackSpeed / 24;
     	stateMachine.getAnimationStateByTitle("Attacking_Right").setPlaySpeed(playSpeed);
     	stateMachine.getAnimationStateByTitle("Attacking_Left").setPlaySpeed(playSpeed);

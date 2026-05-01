@@ -42,7 +42,7 @@ public class Player extends LivingEntity {
 	private double baseLuck;
 	private double luck;
 	private double defense;
-	private double dodge = 01.0;
+	private double dodge = 0;
 	
 	private Gender gender;
 	private Inventory inventory;
@@ -191,7 +191,7 @@ public class Player extends LivingEntity {
 	    this.strength = baseStrength;
 	    this.regenerationSpeed = baseRegenerationSpeed;
 		this.luck = baseLuck;
-		this.dodge = 1.0;
+		this.dodge = 0.0;
 	}
 	
 	public double getDamageMultiplier() {

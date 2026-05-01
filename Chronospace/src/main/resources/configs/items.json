@@ -7,16 +7,16 @@
       "description": "Automatic rifle with high fire rate.",
       "iconPath": "icons/ak47_icon.png",
       "rarity": "RARE",
-      "basePrice": 500,
-      "damage": 120,
+      "basePrice": 350,
+      "damage": 18,
       "recoilForce": 35,
       "knockbackForce": 10,
       "range": 500,
-      "attackSpeed": 12,
+      "attackSpeed": 8,
       "projectileId": "bullet",
       "projectileSpeed": 800,
-      "reloadingTime": 2.5,
-      "magazineSize": 20,
+      "reloadingTime": 2.2,
+      "magazineSize": 25,
       "relativeProjectilePosX": 21,
       "relativeProjectilePosY": 0,
       "attackSound": "ak47",
@@ -38,7 +38,7 @@
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
-        "spread": 0
+        "spread": 0.05
       },
       "behaviors": [
         {
@@ -54,12 +54,12 @@
           "aligned": true
         },
         {
-        "type": "passive_complex",
-        "effect": "BulletHosePassive",
-        "params": {
-          "scaleFactor": 1
+          "type": "passive_complex",
+          "effect": "BulletHosePassive",
+          "params": {
+            "scaleFactor": 1
+          }
         }
-      }
       ]
     },
     {
@@ -69,12 +69,12 @@
       "description": "Crush enemies with a powerful ground slam.",
       "iconPath": "icons/hammer_icon.png",
       "rarity": "EPIC",
-      "basePrice": 800,
-      "damage": 80,
+      "basePrice": 560,
+      "damage": 110,
       "recoilForce": 0,
       "knockbackForce": 500,
-      "range": 24,
-      "attackSpeed": 0.8,
+      "range": 28,
+      "attackSpeed": 0.9,
       "projectileId": "hammerShockwave",
       "projectileSpeed": 100,
       "relativeProjectilePosX": 20,
@@ -106,40 +106,40 @@
         {
           "type": "passive",
           "stat": "defense",
-          "value": 30,
+          "value": 20,
           "operation": "ADD"
         },
         {
           "type": "passive_complex",
           "effect": "ArmorCrunchPassive",
           "params": {
-            "damagePerArmor": 0.06
+            "damagePerArmor": 0.05
           }
         },
         {
-	        "type": "passive_complex",
-	        "effect": "MomentumPassive",
-	        "params": {
-	          "hitsPerStack": 3,
-	          "bonusPerStack": 0.12,
-	          "maxStacks": 5
-	        }
-	      }
+          "type": "passive_complex",
+          "effect": "MomentumPassive",
+          "params": {
+            "hitsPerStack": 3,
+            "bonusPerStack": 0.1,
+            "maxStacks": 5
+          }
+        }
       ]
     },
     {
       "type": "weapon",
       "id": "sword",
       "name": "Knight's Sword",
-      "description": "Balanced melee weapon for close combat.",
+      "description": "Balanced melee weapon. Agile: +5% speed.",
       "iconPath": "icons/sword_icon.png",
       "rarity": "RARE",
-      "basePrice": 350,
-      "damage": 45,
+      "basePrice": 244,
+      "damage": 38,
       "recoilForce": 0,
       "knockbackForce": 30,
       "range": 40,
-      "attackSpeed": 2,
+      "attackSpeed": 2.2,
       "projectileId": "none",
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
@@ -168,10 +168,16 @@
           "type": "passive_complex",
           "effect": "MomentumPassive",
           "params": {
-            "hitsPerStack": 5,
+            "hitsPerStack": 4,
             "bonusPerStack": 0.08,
             "maxStacks": 6
           }
+        },
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 1.05,
+          "operation": "MULTIPLY"
         }
       ]
     },
@@ -182,15 +188,15 @@
       "description": "Fires a rocket that explodes on impact.",
       "iconPath": "icons/rpg7_icon.png",
       "rarity": "LEGENDARY",
-      "basePrice": 1200,
-      "damage": 400,
+      "basePrice": 840,
+      "damage": 280,
       "recoilForce": 320,
-      "range": 1000,
-      "attackSpeed": 2,
+      "range": 900,
+      "attackSpeed": 1.0,
       "projectileId": "rocket",
       "projectileSpeed": 400,
-      "reloadingTime": 0.5,
-      "magazineSize": 100,
+      "reloadingTime": 3.5,
+      "magazineSize": 2,
       "relativeProjectilePosX": 18,
       "relativeProjectilePosY": 3,
       "attackSound": "rpg_launch",
@@ -223,13 +229,13 @@
         {
           "type": "passive",
           "stat": "strength",
-          "value": 1.15,
+          "value": 1.12,
           "operation": "MULTIPLY"
         },
         {
           "type": "passive",
           "stat": "speed",
-          "value": 0.65,
+          "value": 0.75,
           "operation": "MULTIPLY"
         }
       ]
@@ -241,14 +247,14 @@
       "description": "Simple but precise ranged weapon.",
       "iconPath": "icons/crossbow_icon.png",
       "rarity": "COMMON",
-      "basePrice": 250,
-      "damage": 35,
+      "basePrice": 175,
+      "damage": 28,
       "recoilForce": 25,
-      "range": 300,
-      "attackSpeed": 2,
+      "range": 320,
+      "attackSpeed": 1.8,
       "projectileId": "arrow",
       "projectileSpeed": 300,
-      "reloadingTime": 1.2,
+      "reloadingTime": 1.4,
       "magazineSize": 1,
       "attackSound": "ranged_weapon",
       "stackable": false,
@@ -275,7 +281,7 @@
         {
           "type": "passive",
           "stat": "speed",
-          "value": 1.08,
+          "value": 1.06,
           "operation": "MULTIPLY"
         },
         {
@@ -294,11 +300,11 @@
       "description": "Your good old fists.",
       "iconPath": "icons/fist_icon.png",
       "rarity": "COMMON",
-      "basePrice": 1,
-      "damage": 10,
+      "basePrice": 0,
+      "damage": 14,
       "recoilForce": 0,
       "range": 35,
-      "attackSpeed": 1.5,
+      "attackSpeed": 2.5,
       "projectileId": "none",
       "projectileSpeed": 800,
       "attackSound": "light_weapon",
@@ -324,20 +330,20 @@
         {
           "type": "passive",
           "stat": "dodge",
-          "value": 0.2,
+          "value": 0.15,
           "operation": "ADD"
         },
         {
           "type": "passive",
           "stat": "speed",
-          "value": 1.1,
+          "value": 1.12,
           "operation": "MULTIPLY"
         },
         {
           "type": "passive_complex",
           "effect": "BloodRushPassive",
           "params": {
-            "maxBonus": 0.8
+            "maxBonus": 0.7
           }
         }
       ]
@@ -349,15 +355,15 @@
       "description": "Slow but moderately powerful close range weapon.",
       "iconPath": "icons/blaster404_icon.png",
       "rarity": "COMMON",
-      "basePrice": 50,
-      "damage": 10,
+      "basePrice": 35,
+      "damage": 20,
       "recoilForce": 25,
-      "range": 300,
-      "attackSpeed": 1,
+      "range": 280,
+      "attackSpeed": 4.0,
       "projectileId": "bullet",
       "projectileSpeed": 600,
-      "reloadingTime": 1,
-      "magazineSize": 4,
+      "reloadingTime": 1.5,
+      "magazineSize": 8,
       "relativeProjectilePosX": 13,
       "relativeProjectilePosY": 2,
       "attackSound": "gun",
@@ -379,13 +385,13 @@
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
-        "spread": 0.7
+        "spread": 0.18
       },
       "behaviors": [
         {
           "type": "passive",
           "stat": "health_regen",
-          "value": 1.5,
+          "value": 1.0,
           "operation": "ADD"
         }
       ]
@@ -394,14 +400,14 @@
       "type": "weapon",
       "id": "lightsaber",
       "name": "LightSaber",
-      "description": "Lightsaber from s**ar wars. Very potent.. and hot..",
+      "description": "Lightsaber from s**ar wars. Very potent and light: +8% speed.",
       "iconPath": "icons/lightsaber_icon.png",
       "rarity": "RARE",
-      "basePrice": 120,
-      "damage": 30,
+      "basePrice": 294,
+      "damage": 32,
       "recoilForce": 0,
-      "range": 40,
-      "attackSpeed": 1.4,
+      "range": 42,
+      "attackSpeed": 2.8,
       "projectileId": "none",
       "projectileSpeed": 800,
       "attackSound": "melee_weapon",
@@ -447,10 +453,16 @@
           "type": "passive_complex",
           "effect": "MomentumPassive",
           "params": {
-            "hitsPerStack": 4,
-            "bonusPerStack": 0.06,
+            "hitsPerStack": 3,
+            "bonusPerStack": 0.07,
             "maxStacks": 8
           }
+        },
+        {
+          "type": "passive",
+          "stat": "speed",
+          "value": 1.08,
+          "operation": "MULTIPLY"
         }
       ]
     },
@@ -461,15 +473,15 @@
       "description": "Pinky, shiny, glowy, and deadly..",
       "iconPath": "icons/snipnk_icon.png",
       "rarity": "EPIC",
-      "basePrice": 300,
-      "damage": 90,
+      "basePrice": 489,
+      "damage": 120,
       "recoilForce": 350,
-      "range": 800,
-      "attackSpeed": 0.5,
+      "range": 900,
+      "attackSpeed": 0.7,
       "projectileId": "sniping_bullet",
-      "projectileSpeed": 900,
-      "reloadingTime": 2.5,
-      "magazineSize": 2,
+      "projectileSpeed": 1000,
+      "reloadingTime": 2.8,
+      "magazineSize": 3,
       "relativeProjectilePosX": 37,
       "relativeProjectilePosY": -1,
       "attackSound": "sniper",
@@ -491,7 +503,7 @@
       "attackStrategy": {
         "type": "range",
         "projectileCount": 1,
-        "spread": 0.15
+        "spread": 0.04
       },
       "behaviors": [
         {
@@ -509,14 +521,14 @@
         {
           "type": "passive",
           "stat": "speed",
-          "value": 1.15,
+          "value": 1.1,
           "operation": "MULTIPLY"
         },
         {
           "type": "passive_complex",
           "effect": "DodgeSynergyPassive",
           "params": {
-            "speedPerDodgePct": 0.8
+            "speedPerDodgePct": 0.6
           }
         }
       ]
@@ -528,15 +540,15 @@
       "description": "Glorified fireworks at long range, otherwise pretty solid!",
       "iconPath": "icons/shotgun_icon.png",
       "rarity": "RARE",
-      "basePrice": 300,
-      "damage": 30,
-      "range": 250,
+      "basePrice": 280,
+      "damage": 22,
+      "range": 240,
       "recoilForce": 350,
-      "attackSpeed": 1,
+      "attackSpeed": 1.0,
       "projectileId": "bullet",
       "projectileSpeed": 300,
-      "reloadingTime": 1,
-      "magazineSize": 2,
+      "reloadingTime": 1.2,
+      "magazineSize": 4,
       "relativeProjectilePosX": 29,
       "relativeProjectilePosY": 0,
       "attackSound": "heavy_weapon",
@@ -557,8 +569,8 @@
       },
       "attackStrategy": {
         "type": "range",
-        "projectileCount": 5,
-        "spread": 0.8
+        "projectileCount": 6,
+        "spread": 0.7
       },
       "behaviors": [
         {
@@ -588,7 +600,7 @@
         {
           "type": "passive",
           "stat": "defense",
-          "value": 20,
+          "value": 12,
           "operation": "ADD"
         },
         {
@@ -607,15 +619,15 @@
       "description": "Throws fire.",
       "iconPath": "icons/flamethrower_icon.png",
       "rarity": "LEGENDARY",
-      "basePrice": 1000,
-      "damage": 5,
+      "basePrice": 700,
+      "damage": 8,
       "range": 200,
       "recoilForce": 0,
-      "attackSpeed": 10,
+      "attackSpeed": 12,
       "projectileId": "flame",
       "projectileSpeed": 150,
-      "reloadingTime": 1,
-      "magazineSize": 100,
+      "reloadingTime": 2.0,
+      "magazineSize": 80,
       "relativeProjectilePosX": 25,
       "relativeProjectilePosY": 4,
       "attackSound": "light_weapon",
@@ -645,7 +657,7 @@
         {
           "type": "passive",
           "stat": "defense",
-          "value": 20,
+          "value": 12,
           "operation": "ADD"
         },
         {
@@ -666,7 +678,7 @@
       "description": "The robots boss's personal machinegun.",
       "iconPath": "icons/boss_machinegun_icon.png",
       "rarity": "LEGENDARY",
-      "basePrice": 300,
+      "basePrice": 210,
       "damage": 25,
       "range": 250,
       "recoilForce": 100,
@@ -748,7 +760,7 @@
       "description": "The robots boss's personal cannon.",
       "iconPath": "icons/boss_canon_icon.png",
       "rarity": "LEGENDARY",
-      "basePrice": 300,
+      "basePrice": 210,
       "damage": 50,
       "range": 280,
       "recoilForce": 250,
@@ -833,7 +845,7 @@
       "description": "The robots boss's personal spear.",
       "iconPath": "icons/boss_spear_icon.png",
       "rarity": "LEGENDARY",
-      "basePrice": 300,
+      "basePrice": 210,
       "damage": 100,
       "range": 120,
       "knockbackForce": 150,
@@ -889,810 +901,1330 @@
         }
       ]
     },
-    
-  {
-    "type": "upgrade",
-    "id": "duct_tape",
-    "name": "Duct Tape",
-    "description": "+8% magazine size, +8% reload speed.",
-    "rarity": "COMMON",
-    "basePrice": 180,
-    "stackable": true,
-    "iconPath": "icons/duct_tape.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "MAGAZINE_SIZE", "value": 1.08, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "RELOAD_TIME", "value": 1.08, "operation": "DIVIDE" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "bandage_roll",
-    "name": "Bandage Roll",
-    "description": "+1.5 HP/s regeneration.",
-    "rarity": "COMMON",
-    "basePrice": 220,
-    "stackable": true,
-    "iconPath": "icons/bandage_roll.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "HEALTH_REGEN", "value": 1.5, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "coffee_cup",
-    "name": "Coffee Cup",
-    "description": "+8% attack speed. Your hands shake a little: -5% range.",
-    "rarity": "RARE",
-    "basePrice": 380,
-    "stackable": false,
-    "iconPath": "icons/coffee_cup.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 1.08, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "RANGE", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "iron_boots",
-    "name": "Iron Boots",
-    "description": "+20 armor. Heavy: -10% movement speed.",
-    "rarity": "RARE",
-    "basePrice": 420,
-    "stackable": false,
-    "iconPath": "icons/iron_boots.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": 20, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "fridge",
-    "name": "Fridge",
-    "description": "+40% max health. Extremely heavy: -20% movement speed, -10% attack speed.",
-    "rarity": "EPIC",
-    "basePrice": 800,
-    "stackable": false,
-    "iconPath": "icons/fridge.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.4, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.8, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "running_shoes",
-    "name": "Running Shoes",
-    "description": "+12% movement speed. Thin soles: -10 armor.",
-    "rarity": "COMMON",
-    "basePrice": 280,
-    "stackable": false,
-    "iconPath": "icons/running_shoes.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 1.12, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": -10, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "magnifying_scope",
-    "name": "Magnifying Scope",
-    "description": "+25% range, +5% damage. Tunnel vision: -12% attack speed.",
-    "rarity": "EPIC",
-    "basePrice": 700,
-    "stackable": false,
-    "iconPath": "icons/magnifying_scope.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "RANGE", "value": 1.25, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.05, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.88, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "backpack",
-    "name": "Backpack",
-    "description": "+25% magazine size. Bulky: -5% movement speed.",
-    "rarity": "COMMON",
-    "basePrice": 240,
-    "stackable": true,
-    "iconPath": "icons/backpack.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "MAGAZINE_SIZE", "value": 1.25, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "spiked_gloves",
-    "name": "Spiked Gloves",
-    "description": "+8% weapon damage. Hard to grip: -8% attack speed.",
-    "rarity": "COMMON",
-    "basePrice": 260,
-    "stackable": true,
-    "iconPath": "icons/spiked_gloves.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.08, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.92, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "lucky_rabbit_foot",
-    "name": "Lucky Rabbit's Foot",
-    "description": "Heal 2 HP on every kill. Previous owner wasn't so lucky..",
-    "rarity": "COMMON",
-    "basePrice": 300,
-    "stackable": true,
-    "iconPath": "icons/lucky_rabbit_foot.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.VampirismEffect",
-    "effectParams": { "healAmount": 2.0 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "broken_stopwatch",
-    "name": "Broken Stopwatch",
-    "description": "Every 5 kills, +40% speed for 2 seconds.",
-    "rarity": "RARE",
-    "basePrice": 600,
-    "stackable": false,
-    "iconPath": "icons/broken_stopwatch.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.AdrenalineEffect",
-    "effectParams": { "killsRequired": 5, "boostFactor": 1.4, "boostDuration": 2.0 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "cracked_shield",
-    "name": "Cracked Shield",
-    "description": "Take 15% less damage below 50% HP. -5% max health.",
-    "rarity": "RARE",
-    "basePrice": 500,
-    "stackable": false,
-    "iconPath": "icons/cracked_shield.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LastStandEffect",
-    "effectParams": { "hpThreshold": 0.5, "damageReduction": 0.15 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "bloody-towel",
-    "name": "Blood stained towel",
-    "description": "Every 10 kills, restore 15 HP.",
-    "rarity": "RARE",
-    "basePrice": 550,
-    "stackable": false,
-    "iconPath": "icons/bloody-towel.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.ExecutionerEffect",
-    "effectParams": { "killsRequired": 10, "healAmount": 15.0 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "coin_pouch",
-    "name": "Coin Pouch",
-    "description": "Earn +8 gold per kill at wave end. -3% dodge.",
-    "rarity": "COMMON",
-    "basePrice": 200,
-    "stackable": true,
-    "iconPath": "icons/coin_pouch.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.WaveBountyEffect",
-    "effectParams": { "goldPerKill": 8.0 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": -0.03, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "rusty_nail",
-    "name": "Rusty Nail",
-    "description": "Each kill stacks +1.5 flat damage for the wave.",
-    "rarity": "RARE",
-    "basePrice": 500,
-    "stackable": false,
-    "iconPath": "icons/rusty_nail.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.KillingSpreeEffect",
-    "effectParams": { "damagePerKill": 1.5 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "whetstone",
-    "name": "Whetstone",
-    "description": "+10% damage. Each kill stacks +0.5% more, up to +20%. -8% reload speed.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1200,
-    "stackable": false,
-    "iconPath": "icons/whetstone.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.BerserkerSoulEffect",
-    "effectParams": { "bonusPerKill": 0.005, "maxBonus": 0.2 },
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.1, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "RELOAD_TIME", "value": 0.92, "operation": "DIVIDE" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "cactus_jacket",
-    "name": "Cactus Jacket",
-    "description": "Reduces incoming damage by 8%. Reflects 25% of the damage taken to the attacker. -5% attack speed.",
-    "rarity": "RARE",
-    "basePrice": 480,
-    "stackable": true,
-    "iconPath": "icons/cactus_jacket.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.ThornsEffect",
-    "effectParams": { "reduction": 0.08, "reflectRate": 0.25 },
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "concrete_boots_other_kind",
-    "name": "Concrete Boots (the good kind)",
-    "description": "+4 armor per wave, up to +40. -8% movement speed.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1100,
-    "stackable": false,
-    "iconPath": "icons/concrete_boots_other_kind.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.BattleHardenedEffect",
-    "effectParams": { "armorPerWave": 4.0, "maxBonus": 40.0 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.92, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "leech_bottle",
-    "name": "Leech Bottle",
-    "description": "Heal 6% of every damage instance dealt.",
-    "rarity": "RARE",
-    "basePrice": 550,
-    "stackable": true,
-    "iconPath": "icons/leech_bottle.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifestealEffect",
-    "effectParams": { "rate": 0.06 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "sponge",
-    "name": "Sponge",
-    "description": "Heal 15% of damage dealt. Max health -20%.",
-    "rarity": "EPIC",
-    "basePrice": 800,
-    "stackable": false,
-    "iconPath": "icons/sponge.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifestealEffect",
-    "effectParams": { "rate": 0.15 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.8, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "syringe",
-    "name": "Syringe",
-    "description": "On kill: heal 5 HP + 3% of the enemy's max HP.",
-    "rarity": "EPIC",
-    "basePrice": 700,
-    "stackable": true,
-    "iconPath": "icons/syringe.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.SyringeEffect",
-    "effectParams": { "flatHeal": 5.0, "enemyHpPercent": 0.03 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "crimson_belt",
-    "name": "Crimson Belt",
-    "description": "Lifesteal scales from 3% at full HP up to 18% near death. -5% movement speed.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1200,
-    "stackable": false,
-    "iconPath": "icons/crimson_belt.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.CrimsonBeltEffect",
-    "effectParams": { "minRate": 0.03, "maxRate": 0.18 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "barbell",
-    "name": "Barbell",
-    "description": "For every 50 max HP, +3 weapon damage. -8% movement speed.",
-    "rarity": "EPIC",
-    "basePrice": 800,
-    "stackable": false,
-    "iconPath": "icons/barbell.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.BarbellEffect",
-    "effectParams": { "hpPerStep": 50.0, "damagePerStep": 3.0 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.92, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "paper_skin",
-    "name": "Paper Skin",
-    "description": "+8% movement speed. For every 10% speed above base, take 3% more damage.",
-    "rarity": "RARE",
-    "basePrice": 380,
-    "stackable": false,
-    "iconPath": "icons/paper_skin.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.PaperSkinEffect",
-    "effectParams": { "damageIncreasePerTenPct": 0.03 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 1.08, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "wrench",
-    "name": "Wrench",
-    "description": "For every 20 armor, +3% attack speed. -5% dodge.",
-    "rarity": "EPIC",
-    "basePrice": 850,
-    "stackable": false,
-    "iconPath": "icons/wrench.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.SteelWoolEffect",
-    "effectParams": { "armorPerStep": 20.0, "attackSpeedPerStep": 0.03 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": 15, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": -0.05, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "kitty_paws",
-    "name": "Kitty Paws",
-    "description": "+6% dodge chance. Pillow hands: -4% weapon damage.",
-    "rarity": "COMMON",
-    "basePrice": 280,
-    "stackable": true,
-    "iconPath": "icons/kitty_paws.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.06, "operation": "ADD" },
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 0.96, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "smoke_grenade",
-    "name": "Smoke Grenade",
-    "description": "+8% dodge, +6% movement speed. -10% magazine size.",
-    "rarity": "RARE",
-    "basePrice": 420,
-    "stackable": false,
-    "iconPath": "icons/smoke_grenade.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.08, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 1.06, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "MAGAZINE_SIZE", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "silk_suit",
-    "name": "Silk Suit",
-    "description": "Tears easily. +12% dodge, -15 armor.",
-    "rarity": "EPIC",
-    "basePrice": 650,
-    "stackable": false,
-    "iconPath": "icons/silk_suit.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.12, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": -15, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "banana_peel",
-    "name": "Banana Peel",
-    "description": "After dodging, +40% speed for 1.5 seconds. -6% dodge.",
-    "rarity": "EPIC",
-    "basePrice": 750,
-    "stackable": false,
-    "iconPath": "icons/banana_peel.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.PhantomStepEffect",
-    "effectParams": { "boostFactor": 1.4, "boostDuration": 1.5 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": -0.06, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "wet_sock",
-    "name": "Wet Sock",
-    "description": "Each dodge heals 5 HP. -3% damage.",
-    "rarity": "RARE",
-    "basePrice": 520,
-    "stackable": true,
-    "iconPath": "icons/wet_sock.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.CloverEffect",
-    "effectParams": { "healPerDodge": 5.0 },
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 0.97, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "boxing_glove",
-    "name": "Boxing Glove",
-    "description": "Dodging grants +80% damage for 1 second. -8% attack speed, -5% dodge.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1100,
-    "stackable": false,
-    "iconPath": "icons/boxing_glove.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.CounterStrikeEffect",
-    "effectParams": { "damageMultiplier": 1.8, "windowDuration": 1.0 },
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.92, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": -0.05, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "ballet_shoes",
-    "name": "Ballet Shoes",
-    "description": "For every 10% speed above base, +1% dodge (up to +10%). -10 armor.",
-    "rarity": "EPIC",
-    "basePrice": 800,
-    "stackable": false,
-    "iconPath": "icons/ballet_shoes.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.NimbleSynergyEffect",
-    "effectParams": { "dodgePer10PctSpeed": 0.01, "maxBonusDodge": 0.1 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 1.1, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": -10, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "ladder",
-    "name": "Ladder",
-    "description": "Each dodge stacks +0.3% dodge, up to +8%. Resets each wave. -5% damage.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1000,
-    "stackable": false,
-    "iconPath": "icons/ladder.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.DodgeStackEffect",
-    "effectParams": { "dodgePerStack": 0.003, "maxStacked": 0.08 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": 0.04, "operation": "ADD" },
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "horseshoe",
-    "name": "Horseshoe",
-    "description": "+0.3 luck. Classic.",
-    "rarity": "COMMON",
-    "basePrice": 250,
-    "stackable": true,
-    "iconPath": "icons/horseshoe.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "LUCK", "value": 0.3, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "dice",
-    "name": "Dice",
-    "description": "+0.5 luck. Also +5% damage: you always roll well.",
-    "rarity": "RARE",
-    "basePrice": 480,
-    "stackable": false,
-    "iconPath": "icons/dice.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "LUCK", "value": 0.5, "operation": "ADD" },
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.05, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "cracked_mirror",
-    "name": "Cracked Mirror",
-    "description": "+0.8 luck. Seven years of bad luck already paid off: -8% max health.",
-    "rarity": "RARE",
-    "basePrice": 420,
-    "stackable": false,
-    "iconPath": "icons/cracked_mirror.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "LUCK", "value": 0.8, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.92, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "black_cat",
-    "name": "Black Cat",
-    "description": "+1.0 luck. Crossed your path in the right direction. -5% dodge (distracting).",
-    "rarity": "EPIC",
-    "basePrice": 700,
-    "stackable": false,
-    "iconPath": "icons/black_cat.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "LUCK", "value": 1.0, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "DODGE", "value": -0.05, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "four_leaf_clover",
-    "name": "Four Leaf Clover",
-    "description": "+0.2 luck per wave completed, up to +2.0.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1000,
-    "stackable": false,
-    "iconPath": "icons/four_leaf_clover.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LuckyPennyEffect",
-    "effectParams": { "luckPerWave": 0.2, "maxBonus": 2.0 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "gamblers_chip",
-    "name": "Gambler's Chip",
-    "description": "+1.5 luck. The house always loses. -10 armor, -5% max health.",
-    "rarity": "EPIC",
-    "basePrice": 750,
-    "stackable": false,
-    "iconPath": "icons/gamblers_chip.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "LUCK", "value": 1.5, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": -10, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "birthday_cake",
-    "name": "Birthday Cake",
-    "description": "+20% max health.",
-    "rarity": "COMMON",
-    "basePrice": 300,
-    "stackable": true,
-    "iconPath": "icons/birthday_cake.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.2, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "meal_prep",
-    "name": "Meal Prep",
-    "description": "+15% max health, +1 HP/s regen. Consistency is key.",
-    "rarity": "COMMON",
-    "basePrice": 320,
-    "stackable": true,
-    "iconPath": "icons/meal_prep.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.15, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "HEALTH_REGEN", "value": 1.0, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "saiyan_armor",
-    "name": "Saiyan Armor",
-    "description": "+25% max health, +10 armor. Slow to put on: -6% attack speed.",
-    "rarity": "RARE",
-    "basePrice": 500,
-    "stackable": false,
-    "iconPath": "icons/saiyan_armor.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.25, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": 10, "operation": "ADD" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.94, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "blood_bag",
-    "name": "Blood Bag",
-    "description": "+35% max health. All that extra blood weighs something: -8% movement speed.",
-    "rarity": "RARE",
-    "basePrice": 580,
-    "stackable": false,
-    "iconPath": "icons/blood_bag.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.35, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.92, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "giants_helmet",
-    "name": "Giant's Helmet",
-    "description": "+60% max health, +20 armor. You move like a giant too: -15% movement speed, -10% attack speed.",
-    "rarity": "EPIC",
-    "basePrice": 900,
-    "stackable": false,
-    "iconPath": "icons/giants_helmet.png",
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.6, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": 20, "operation": "ADD" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.85, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "warranty_card",
-    "name": "Warranty Card",
-    "description": "+25% max health. On reaching 0 HP once per wave, survive with 1 HP instead.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1400,
-    "stackable": false,
-    "iconPath": "icons/warranty_card.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.WarrantyCardEffect",
-    "effectParams": { "shieldsPerWave": 1 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.25, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "dumbbell",
-    "name": "Dumbbell",
-    "description": "For every 30 max HP, +2 weapon damage and +3 armor. Stacks with Barbell.",
-    "rarity": "EPIC",
-    "basePrice": 950,
-    "stackable": false,
-    "iconPath": "icons/dumbbell.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.DumbbellEffect",
-    "effectParams": { "hpPerStep": 30, "damagePerStep": 2, "armorPerStep": 3 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "life_insurance",
-    "name": "Life Insurance",
-    "description": "+30% max health. Heal 8% of max HP on wave end.",
-    "rarity": "RARE",
-    "basePrice": 620,
-    "stackable": false,
-    "iconPath": "icons/life_insurance.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifeInsuranceEffect",
-    "effectParams": { "healPercent": 0.08 },
-    "modifications": [
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 1.3, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "overflow_flask",
-    "name": "Overflow Flask",
-    "description": "Heals that exceed your max HP permanently increase it. Returns diminish the more HP you accumulate.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1100,
-    "stackable": false,
-    "iconPath": "icons/overflow_flask.png",
-    "effectClass": "ma.ac.emi.gamelogic.effect.impl.OverhealEffect",
-    "effectParams": { "conversionRate": 0.5 },
-    "modifications": []
-  },
-  {
-    "type": "upgrade",
-    "id": "trigger_spring",
-    "name": "Trigger Spring",
-    "description": "+12% attack speed. Light and nimble: no drawbacks.",
-    "rarity": "COMMON",
-    "basePrice": 300,
-    "stackable": true,
-    "iconPath": "icons/trigger_spring.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 1.12, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "adrenaline_shot",
-    "name": "Adrenaline Shot",
-    "description": "+20% attack speed. Your heart can't take much more: -10% max health.",
-    "rarity": "RARE",
-    "basePrice": 480,
-    "stackable": false,
-    "iconPath": "icons/adrenaline_shot.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 1.2, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "overclock_chip",
-    "name": "Overclock Chip",
-    "description": "+15% attack speed, +10% magazine size. Runs hot: -8% reload speed.",
-    "rarity": "EPIC",
-    "basePrice": 750,
-    "stackable": false,
-    "iconPath": "icons/overclock_chip.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 1.15, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "MAGAZINE_SIZE", "value": 1.1, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "RELOAD_TIME", "value": 0.92, "operation": "DIVIDE" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "anvil",
-    "name": "Anvil",
-    "description": "+8% weapon damage. The extra weight slows you down: -6% movement speed.",
-    "rarity": "COMMON",
-    "basePrice": 260,
-    "stackable": true,
-    "iconPath": "icons/anvil.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.08, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MOVEMENT_SPEED", "value": 0.94, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "shady_bullet",
-    "name": "Shady Bullet",
-    "description": "+15% weapon damage. Illegal in most places: -10% magazine size.",
-    "rarity": "RARE",
-    "basePrice": 520,
-    "stackable": false,
-    "iconPath": "icons/shady_bullet.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.15, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "MAGAZINE_SIZE", "value": 0.9, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "glass_cannon",
-    "name": "Glass Cannon",
-    "description": "+25% weapon damage. All offense, no defense: -25% max health, -15 armor.",
-    "rarity": "EPIC",
-    "basePrice": 900,
-    "stackable": false,
-    "iconPath": "icons/glass_cannon.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.25, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "MAX_HEALTH", "value": 0.75, "operation": "MULTIPLY" },
-      { "upgradeType": "PLAYER", "stat": "DEFENSE", "value": -15, "operation": "ADD" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "tripod",
-    "name": "Tripod",
-    "description": "+20% range. Harder to maneuver: -5% attack speed.",
-    "rarity": "RARE",
-    "basePrice": 440,
-    "stackable": false,
-    "iconPath": "icons/long_barrel.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "RANGE", "value": 1.2, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.95, "operation": "MULTIPLY" }
-    ]
-  },
-  {
-    "type": "upgrade",
-    "id": "broom",
-    "name": "Broom",
-    "description": "+35% range, +8% damage. -20% attack speed.",
-    "rarity": "LEGENDARY",
-    "basePrice": 1100,
-    "stackable": false,
-    "iconPath": "icons/broom.png",
-    "modifications": [
-      { "upgradeType": "WEAPON", "stat": "RANGE", "value": 1.35, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "DAMAGE", "value": 1.08, "operation": "MULTIPLY" },
-      { "upgradeType": "WEAPON", "stat": "ATTACK_SPEED", "value": 0.8, "operation": "MULTIPLY" }
-    ]
-  }
-
- ]
+    {
+      "type": "upgrade",
+      "id": "duct_tape",
+      "name": "Duct Tape",
+      "description": "+8% magazine size, +8% reload speed, +5% movement speed.",
+      "rarity": "COMMON",
+      "basePrice": 125,
+      "stackable": true,
+      "iconPath": "icons/duct_tape.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 1.08,
+          "operation": "DIVIDE"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.05,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "bandage_roll",
+      "name": "Bandage Roll",
+      "description": "+1.5 HP/s regeneration.",
+      "rarity": "COMMON",
+      "basePrice": 154,
+      "stackable": true,
+      "iconPath": "icons/bandage_roll.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "HEALTH_REGEN",
+          "value": 1.5,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "coffee_cup",
+      "name": "Coffee Cup",
+      "description": "+8% attack speed, +7% movement speed. Your hands shake a little: -5% range.",
+      "rarity": "RARE",
+      "basePrice": 266,
+      "stackable": false,
+      "iconPath": "icons/coffee_cup.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.07,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "iron_boots",
+      "name": "Iron Boots",
+      "description": "+20 armor. Heavy: -10% movement speed.",
+      "rarity": "RARE",
+      "basePrice": 294,
+      "stackable": false,
+      "iconPath": "icons/iron_boots.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 20,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "fridge",
+      "name": "Fridge",
+      "description": "+40% max health. Extremely heavy: -20% movement speed, -10% attack speed.",
+      "rarity": "EPIC",
+      "basePrice": 560,
+      "stackable": false,
+      "iconPath": "icons/fridge.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.4,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.8,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "running_shoes",
+      "name": "Running Shoes",
+      "description": "+12% movement speed. Thin soles: -10 armor.",
+      "rarity": "COMMON",
+      "basePrice": 196,
+      "stackable": false,
+      "iconPath": "icons/running_shoes.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.12,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": -10,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "magnifying_scope",
+      "name": "Magnifying Scope",
+      "description": "+25% range, +5% damage. Tunnel vision: -12% attack speed.",
+      "rarity": "EPIC",
+      "basePrice": 489,
+      "stackable": false,
+      "iconPath": "icons/magnifying_scope.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.05,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.88,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "backpack",
+      "name": "Backpack",
+      "description": "+25% magazine size. Bulky: -5% movement speed.",
+      "rarity": "COMMON",
+      "basePrice": 168,
+      "stackable": true,
+      "iconPath": "icons/backpack.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "spiked_gloves",
+      "name": "Spiked Gloves",
+      "description": "+8% weapon damage. Hard to grip: -8% attack speed.",
+      "rarity": "COMMON",
+      "basePrice": 182,
+      "stackable": true,
+      "iconPath": "icons/spiked_gloves.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "lucky_rabbit_foot",
+      "name": "Lucky Rabbit's Foot",
+      "description": "Heal 2 HP on every kill. Previous owner wasn't so lucky..",
+      "rarity": "COMMON",
+      "basePrice": 210,
+      "stackable": true,
+      "iconPath": "icons/lucky_rabbit_foot.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.VampirismEffect",
+      "effectParams": {
+        "healAmount": 2.0
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "broken_stopwatch",
+      "name": "Broken Stopwatch",
+      "description": "Every 5 kills, +40% speed for 2 seconds.",
+      "rarity": "RARE",
+      "basePrice": 420,
+      "stackable": false,
+      "iconPath": "icons/broken_stopwatch.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.AdrenalineEffect",
+      "effectParams": {
+        "killsRequired": 5,
+        "boostFactor": 1.4,
+        "boostDuration": 2.0
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "cracked_shield",
+      "name": "Cracked Shield",
+      "description": "Take 15% less damage below 50% HP. -5% max health.",
+      "rarity": "RARE",
+      "basePrice": 350,
+      "stackable": false,
+      "iconPath": "icons/cracked_shield.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.LastStandEffect",
+      "effectParams": {
+        "hpThreshold": 0.5,
+        "damageReduction": 0.15
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "bloody-towel",
+      "name": "Blood stained towel",
+      "description": "Every 10 kills, restore 15 HP.",
+      "rarity": "RARE",
+      "basePrice": 385,
+      "stackable": false,
+      "iconPath": "icons/bloody-towel.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.ExecutionerEffect",
+      "effectParams": {
+        "killsRequired": 10,
+        "healAmount": 15.0
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "coin_pouch",
+      "name": "Coin Pouch",
+      "description": "Earn +5 gold per kill at wave end. -3% dodge.",
+      "rarity": "COMMON",
+      "basePrice": 140,
+      "stackable": true,
+      "iconPath": "icons/coin_pouch.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.WaveBountyEffect",
+      "effectParams": {
+        "goldPerKill": 5.0
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": -0.03,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "rusty_nail",
+      "name": "Rusty Nail",
+      "description": "Each kill stacks +1.5 flat damage for the wave.",
+      "rarity": "RARE",
+      "basePrice": 350,
+      "stackable": false,
+      "iconPath": "icons/rusty_nail.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.KillingSpreeEffect",
+      "effectParams": {
+        "damagePerKill": 1.5
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "whetstone",
+      "name": "Whetstone",
+      "description": "+10% damage. Each kill stacks +0.5% more, up to +20%. -8% reload speed.",
+      "rarity": "LEGENDARY",
+      "basePrice": 665,
+      "stackable": false,
+      "iconPath": "icons/whetstone.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.BerserkerSoulEffect",
+      "effectParams": {
+        "bonusPerKill": 0.005,
+        "maxBonus": 0.2
+      },
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 0.92,
+          "operation": "DIVIDE"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "cactus_jacket",
+      "name": "Cactus Jacket",
+      "description": "Reduces incoming damage by 8%. Reflects 25% of the damage taken to the attacker. -5% attack speed.",
+      "rarity": "RARE",
+      "basePrice": 336,
+      "stackable": true,
+      "iconPath": "icons/cactus_jacket.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.ThornsEffect",
+      "effectParams": {
+        "reduction": 0.08,
+        "reflectRate": 0.25
+      },
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "concrete_boots_other_kind",
+      "name": "Concrete Boots (the good kind)",
+      "description": "+4 armor per wave, up to +40. -8% movement speed.",
+      "rarity": "LEGENDARY",
+      "basePrice": 770,
+      "stackable": false,
+      "iconPath": "icons/concrete_boots_other_kind.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.BattleHardenedEffect",
+      "effectParams": {
+        "armorPerWave": 4.0,
+        "maxBonus": 40.0
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "leech_bottle",
+      "name": "Leech Bottle",
+      "description": "Heal 4% of every damage instance dealt.",
+      "rarity": "RARE",
+      "basePrice": 350,
+      "stackable": false,
+      "iconPath": "icons/leech_bottle.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifestealEffect",
+      "effectParams": {
+        "rate": 0.04
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "sponge",
+      "name": "Sponge",
+      "description": "Heal 10% of damage dealt. Max health -20%.",
+      "rarity": "EPIC",
+      "basePrice": 560,
+      "stackable": false,
+      "iconPath": "icons/sponge.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifestealEffect",
+      "effectParams": {
+        "rate": 0.1
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.8,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "syringe",
+      "name": "Syringe",
+      "description": "On kill: heal 5 HP + 3% of the enemy's max HP.",
+      "rarity": "EPIC",
+      "basePrice": 489,
+      "stackable": true,
+      "iconPath": "icons/syringe.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.SyringeEffect",
+      "effectParams": {
+        "flatHeal": 5.0,
+        "enemyHpPercent": 0.03
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "crimson_belt",
+      "name": "Crimson Belt",
+      "description": "Lifesteal scales from 3% at full HP up to 18% near death. -5% movement speed.",
+      "rarity": "LEGENDARY",
+      "basePrice": 840,
+      "stackable": false,
+      "iconPath": "icons/crimson_belt.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.CrimsonBeltEffect",
+      "effectParams": {
+        "minRate": 0.03,
+        "maxRate": 0.18
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "barbell",
+      "name": "Barbell",
+      "description": "For every 50 max HP, +3 weapon damage. -8% movement speed.",
+      "rarity": "EPIC",
+      "basePrice": 560,
+      "stackable": false,
+      "iconPath": "icons/barbell.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.BarbellEffect",
+      "effectParams": {
+        "hpPerStep": 50.0,
+        "damagePerStep": 3.0
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "paper_skin",
+      "name": "Paper Skin",
+      "description": "+8% movement speed. For every 10% speed above base, take 3% more damage.",
+      "rarity": "RARE",
+      "basePrice": 266,
+      "stackable": false,
+      "iconPath": "icons/paper_skin.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.PaperSkinEffect",
+      "effectParams": {
+        "damageIncreasePerTenPct": 0.03
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "wrench",
+      "name": "Wrench",
+      "description": "For every 20 armor, +3% attack speed. -5% dodge.",
+      "rarity": "EPIC",
+      "basePrice": 595,
+      "stackable": false,
+      "iconPath": "icons/wrench.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.SteelWoolEffect",
+      "effectParams": {
+        "armorPerStep": 20.0,
+        "attackSpeedPerStep": 0.03
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 15,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": -0.05,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "kitty_paws",
+      "name": "Kitty Paws",
+      "description": "+6% dodge chance. Pillow hands: -4% weapon damage.",
+      "rarity": "COMMON",
+      "basePrice": 196,
+      "stackable": true,
+      "iconPath": "icons/kitty_paws.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": 0.06,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 0.96,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "smoke_grenade",
+      "name": "Smoke Grenade",
+      "description": "+8% dodge, +6% movement speed. -10% magazine size.",
+      "rarity": "RARE",
+      "basePrice": 294,
+      "stackable": false,
+      "iconPath": "icons/smoke_grenade.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": 0.08,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.06,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "silk_suit",
+      "name": "Silk Suit",
+      "description": "Tears easily. +12% dodge, -15 armor.",
+      "rarity": "EPIC",
+      "basePrice": 454,
+      "stackable": false,
+      "iconPath": "icons/silk_suit.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": 0.12,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": -15,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "banana_peel",
+      "name": "Banana Peel",
+      "description": "After dodging, +40% speed for 1.5 seconds. -6% dodge.",
+      "rarity": "EPIC",
+      "basePrice": 525,
+      "stackable": false,
+      "iconPath": "icons/banana_peel.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.PhantomStepEffect",
+      "effectParams": {
+        "boostFactor": 1.4,
+        "boostDuration": 1.5
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": -0.06,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "wet_sock",
+      "name": "Wet Sock",
+      "description": "Each dodge heals 5 HP. -3% damage.",
+      "rarity": "RARE",
+      "basePrice": 364,
+      "stackable": true,
+      "iconPath": "icons/wet_sock.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.CloverEffect",
+      "effectParams": {
+        "healPerDodge": 5.0
+      },
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 0.97,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "boxing_glove",
+      "name": "Boxing Glove",
+      "description": "Dodging grants +80% damage for 1 second. -8% attack speed, -5% dodge.",
+      "rarity": "LEGENDARY",
+      "basePrice": 770,
+      "stackable": false,
+      "iconPath": "icons/boxing_glove.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.CounterStrikeEffect",
+      "effectParams": {
+        "damageMultiplier": 1.8,
+        "windowDuration": 1.0
+      },
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": -0.05,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "ballet_shoes",
+      "name": "Ballet Shoes",
+      "description": "For every 10% speed above base, +1% dodge (up to +10%). -10 armor.",
+      "rarity": "EPIC",
+      "basePrice": 560,
+      "stackable": false,
+      "iconPath": "icons/ballet_shoes.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.NimbleSynergyEffect",
+      "effectParams": {
+        "dodgePer10PctSpeed": 0.01,
+        "maxBonusDodge": 0.1
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": -10,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "ladder",
+      "name": "Ladder",
+      "description": "Each dodge stacks +0.3% dodge, up to +8%. Resets each wave. -5% damage.",
+      "rarity": "LEGENDARY",
+      "basePrice": 700,
+      "stackable": false,
+      "iconPath": "icons/ladder.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.DodgeStackEffect",
+      "effectParams": {
+        "dodgePerStack": 0.003,
+        "maxStacked": 0.08
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": 0.04,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "horseshoe",
+      "name": "Horseshoe",
+      "description": "+0.3 luck. Classic.",
+      "rarity": "COMMON",
+      "basePrice": 175,
+      "stackable": true,
+      "iconPath": "icons/horseshoe.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "LUCK",
+          "value": 0.3,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "dice",
+      "name": "Dice",
+      "description": "+0.5 luck. Also +5% damage: you always roll well.",
+      "rarity": "RARE",
+      "basePrice": 336,
+      "stackable": false,
+      "iconPath": "icons/dice.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "LUCK",
+          "value": 0.5,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.05,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "cracked_mirror",
+      "name": "Cracked Mirror",
+      "description": "+0.8 luck. Seven years of bad luck already paid off: -8% max health.",
+      "rarity": "RARE",
+      "basePrice": 294,
+      "stackable": false,
+      "iconPath": "icons/cracked_mirror.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "LUCK",
+          "value": 0.8,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "black_cat",
+      "name": "Black Cat",
+      "description": "+1.0 luck. Crossed your path in the right direction. -5% dodge (distracting).",
+      "rarity": "EPIC",
+      "basePrice": 489,
+      "stackable": false,
+      "iconPath": "icons/black_cat.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "LUCK",
+          "value": 1.0,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DODGE",
+          "value": -0.05,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "four_leaf_clover",
+      "name": "Four Leaf Clover",
+      "description": "+0.2 luck per wave completed, up to +2.0.",
+      "rarity": "LEGENDARY",
+      "basePrice": 700,
+      "stackable": false,
+      "iconPath": "icons/four_leaf_clover.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.LuckyPennyEffect",
+      "effectParams": {
+        "luckPerWave": 0.2,
+        "maxBonus": 2.0
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "gamblers_chip",
+      "name": "Gambler's Chip",
+      "description": "+1.5 luck. The house always loses. -10 armor, -5% max health.",
+      "rarity": "EPIC",
+      "basePrice": 525,
+      "stackable": false,
+      "iconPath": "icons/gamblers_chip.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "LUCK",
+          "value": 1.5,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": -10,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "birthday_cake",
+      "name": "Birthday Cake",
+      "description": "+20% max health.",
+      "rarity": "COMMON",
+      "basePrice": 210,
+      "stackable": true,
+      "iconPath": "icons/birthday_cake.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "meal_prep",
+      "name": "Meal Prep",
+      "description": "+15% max health, +1 HP/s regen. Consistency is key.",
+      "rarity": "COMMON",
+      "basePrice": 224,
+      "stackable": true,
+      "iconPath": "icons/meal_prep.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "HEALTH_REGEN",
+          "value": 1.0,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "saiyan_armor",
+      "name": "Saiyan Armor",
+      "description": "+25% max health, +10 armor. Slow to put on: -6% attack speed.",
+      "rarity": "RARE",
+      "basePrice": 350,
+      "stackable": false,
+      "iconPath": "icons/saiyan_armor.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 10,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.94,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "blood_bag",
+      "name": "Blood Bag",
+      "description": "+35% max health. All that extra blood weighs something: -8% movement speed.",
+      "rarity": "RARE",
+      "basePrice": 406,
+      "stackable": false,
+      "iconPath": "icons/blood_bag.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.35,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.92,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "giants_helmet",
+      "name": "Giant's Helmet",
+      "description": "+60% max health, +20 armor. You move like a giant too: -15% movement speed, -10% attack speed.",
+      "rarity": "EPIC",
+      "basePrice": 630,
+      "stackable": false,
+      "iconPath": "icons/giants_helmet.png",
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.6,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": 20,
+          "operation": "ADD"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.85,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "warranty_card",
+      "name": "Warranty Card",
+      "description": "+25% max health. On reaching 0 HP once per wave, survive with 1 HP instead.",
+      "rarity": "LEGENDARY",
+      "basePrice": 979,
+      "stackable": false,
+      "iconPath": "icons/warranty_card.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.WarrantyCardEffect",
+      "effectParams": {
+        "shieldsPerWave": 1
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "dumbbell",
+      "name": "Dumbbell",
+      "description": "For every 30 max HP, +2 weapon damage and +3 armor. Stacks with Barbell.",
+      "rarity": "EPIC",
+      "basePrice": 665,
+      "stackable": false,
+      "iconPath": "icons/dumbbell.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.DumbbellEffect",
+      "effectParams": {
+        "hpPerStep": 30,
+        "damagePerStep": 2,
+        "armorPerStep": 3
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "life_insurance",
+      "name": "Life Insurance",
+      "description": "+30% max health. Heal 8% of max HP on wave end.",
+      "rarity": "RARE",
+      "basePrice": 434,
+      "stackable": false,
+      "iconPath": "icons/life_insurance.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.LifeInsuranceEffect",
+      "effectParams": {
+        "healPercent": 0.08
+      },
+      "modifications": [
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 1.3,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "overflow_flask",
+      "name": "Overflow Flask",
+      "description": "Heals that exceed your max HP permanently increase it. Returns diminish the more HP you accumulate.",
+      "rarity": "LEGENDARY",
+      "basePrice": 770,
+      "stackable": false,
+      "iconPath": "icons/overflow_flask.png",
+      "effectClass": "ma.ac.emi.gamelogic.effect.impl.OverhealEffect",
+      "effectParams": {
+        "conversionRate": 0.3
+      },
+      "modifications": []
+    },
+    {
+      "type": "upgrade",
+      "id": "trigger_spring",
+      "name": "Trigger Spring",
+      "description": "+12% attack speed. Light and nimble: no drawbacks.",
+      "rarity": "COMMON",
+      "basePrice": 210,
+      "stackable": true,
+      "iconPath": "icons/trigger_spring.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.12,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "adrenaline_shot",
+      "name": "Adrenaline Shot",
+      "description": "+20% attack speed. Your heart can't take much more: -10% max health.",
+      "rarity": "RARE",
+      "basePrice": 336,
+      "stackable": false,
+      "iconPath": "icons/adrenaline_shot.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "overclock_chip",
+      "name": "Overclock Chip",
+      "description": "+15% attack speed, +10% magazine size. Runs hot: -8% reload speed.",
+      "rarity": "EPIC",
+      "basePrice": 525,
+      "stackable": false,
+      "iconPath": "icons/overclock_chip.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 1.1,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RELOAD_TIME",
+          "value": 0.92,
+          "operation": "DIVIDE"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "anvil",
+      "name": "Anvil",
+      "description": "+8% weapon damage. The extra weight slows you down: -6% movement speed.",
+      "rarity": "COMMON",
+      "basePrice": 182,
+      "stackable": true,
+      "iconPath": "icons/anvil.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MOVEMENT_SPEED",
+          "value": 0.94,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "shady_bullet",
+      "name": "Shady Bullet",
+      "description": "+15% weapon damage. Illegal in most places: -10% magazine size.",
+      "rarity": "RARE",
+      "basePrice": 364,
+      "stackable": false,
+      "iconPath": "icons/shady_bullet.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.15,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "MAGAZINE_SIZE",
+          "value": 0.9,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "glass_cannon",
+      "name": "Glass Cannon",
+      "description": "+25% weapon damage. All offense, no defense: -25% max health, -15 armor.",
+      "rarity": "EPIC",
+      "basePrice": 630,
+      "stackable": false,
+      "iconPath": "icons/glass_cannon.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.25,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "MAX_HEALTH",
+          "value": 0.75,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "PLAYER",
+          "stat": "DEFENSE",
+          "value": -15,
+          "operation": "ADD"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "tripod",
+      "name": "Tripod",
+      "description": "+20% range. Harder to maneuver: -5% attack speed.",
+      "rarity": "RARE",
+      "basePrice": 308,
+      "stackable": false,
+      "iconPath": "icons/long_barrel.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.2,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.95,
+          "operation": "MULTIPLY"
+        }
+      ]
+    },
+    {
+      "type": "upgrade",
+      "id": "broom",
+      "name": "Broom",
+      "description": "+35% range, +8% damage. -20% attack speed.",
+      "rarity": "LEGENDARY",
+      "basePrice": 770,
+      "stackable": false,
+      "iconPath": "icons/broom.png",
+      "modifications": [
+        {
+          "upgradeType": "WEAPON",
+          "stat": "RANGE",
+          "value": 1.35,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "DAMAGE",
+          "value": 1.08,
+          "operation": "MULTIPLY"
+        },
+        {
+          "upgradeType": "WEAPON",
+          "stat": "ATTACK_SPEED",
+          "value": 0.8,
+          "operation": "MULTIPLY"
+        }
+      ]
+    }
+  ]
 }

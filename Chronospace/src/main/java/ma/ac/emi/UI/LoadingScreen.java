@@ -64,7 +64,7 @@ public class LoadingScreen extends JPanel {
         g2.setFont(MenuStyle.FONT_HEADER);
         g2.setColor(Color.WHITE);
         FontMetrics fm = g2.getFontMetrics();
-        String label = "LOADING";
+        String label = "LOADING...";
         int textX = (w - fm.stringWidth(label)) / 2;
         int textY = h / 2 - 48;
         g2.drawString(label, textX, textY);

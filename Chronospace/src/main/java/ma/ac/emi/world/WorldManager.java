@@ -53,7 +53,7 @@ public class WorldManager {
 		worlds = new ArrayList<>();
 		
 		try {
-			loadWorldsFromConfig("src/main/resources/configs/waves.json");
+			loadWorldsFromConfig("/configs/waves.json");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +80,7 @@ public class WorldManager {
 		currentWorld.setPlayer(player);
 	}
 	
-	public void loadWorldsFromConfig(String filepath) throws IOException {
+	private void loadWorldsFromConfig(String filepath) throws IOException {
 		configs = configLoader.loadWorldsFromFile(filepath);
 		
 		for (WorldConfig worldConfig : configs) {

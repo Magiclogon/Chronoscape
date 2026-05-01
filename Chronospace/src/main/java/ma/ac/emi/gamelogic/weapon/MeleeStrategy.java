@@ -17,7 +17,8 @@ public class MeleeStrategy extends AttackStrategy {
 	@Override
     public void execute(Weapon weapon, Vector3D target, double step) {		
     	WeaponItemDefinition definition = ((WeaponItemDefinition) weapon.getWeaponItem().getItemDefinition());
-        if (weapon.getTsla() >= 1/Math.max(weapon.caps().minAttackSpeed, Math.min(weapon.caps().maxAttackSpeed, definition.getAttackSpeed()))) {
+        double effectiveAttackSpeed = Math.max(weapon.caps().minAttackSpeed, Math.min(weapon.caps().maxAttackSpeed, definition.getAttackSpeed())) * weapon.getBearer().getAttackSpeedMultiplier();
+    	if (weapon.getTsla() >= 1/effectiveAttackSpeed) {
         	Projectile projectile = ProjectileFactory.createProjectile(
         			definition.getProjectileId(),
         			weapon.getPos().add(weapon.getRelativeProjectilePos()),

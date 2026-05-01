@@ -39,6 +39,9 @@ public class DamageBehavior implements ProjectileBehavior {
         damage *= p.getWeapon().getBearer().getStrength();
         if (p.getWeapon().getBearer() instanceof Player player && player.getConfig() != null)
             damage = Math.max(player.getConfig().getCaps().minDamage, damage);
+        damage *= p.getWeapon().getBearer().getDamageMultiplier();
+        System.out.println("DamageBehavior: damageMultiplier=" + p.getWeapon().getBearer().getDamageMultiplier());
+        System.out.println("DamageBehavior: damage=" + damage);
         entity.takeDamage(damage, p.getWeapon().getBearer());
         System.out.println("Target hit, damage: " + damage + ", remaining hp: " + entity.getHp());
 

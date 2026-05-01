@@ -166,7 +166,7 @@ public class AOE extends AttackObject {
                 (WeaponItemDefinition) getWeapon().getWeaponItem().getItemDefinition();
 
         // Route through takeDamage so armor, effects, and invincibility all apply
-        entity.takeDamage(def.getDamage(), getWeapon().getBearer());
+        entity.takeDamage(def.getDamage()*getWeapon().getBearer().getDamageMultiplier(), getWeapon().getBearer());
 
         double knockbackForce = def.getKnockbackForce();
         if (knockbackForce != 0) {

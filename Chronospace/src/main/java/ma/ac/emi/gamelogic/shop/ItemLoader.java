@@ -13,6 +13,9 @@ import ma.ac.emi.glgraphics.entitypost.config.PostProcessingFactory;
 import ma.ac.emi.glgraphics.lighting.LightingStrategy;
 
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.*;
 
 public class ItemLoader {
@@ -32,7 +35,8 @@ public class ItemLoader {
     }
 
     public void loadItems(String filePath) {
-        try (FileReader reader = new FileReader(filePath)) {
+        try (InputStream is = getClass().getResourceAsStream(filePath);
+            	Reader reader = new InputStreamReader(is);) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray itemsArray = root.getAsJsonArray("items");
 

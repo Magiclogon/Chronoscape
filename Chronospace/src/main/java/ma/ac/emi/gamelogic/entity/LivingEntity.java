@@ -53,6 +53,8 @@ public abstract class LivingEntity extends Entity {
 	protected double regenerationSpeed;
 	protected double speed;
 	protected double projectileSpeedMultiplier = 1;
+	protected double damageMultiplier = 1;
+	protected double attackSpeedMultiplier = 1;
 	protected AttackObjectManager attackObjectManager;
 	
 	protected AABB bound;

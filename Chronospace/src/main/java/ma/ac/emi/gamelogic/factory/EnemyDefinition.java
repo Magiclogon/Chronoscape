@@ -13,6 +13,8 @@ public abstract class EnemyDefinition {
 	
 	protected final String weaponId;
 	protected double projectileSpeedMultiplier = 1;
+	protected double damageMultiplier = 1;
+	protected double attackSpeedMultiplier = 1;
 	
 	protected final AnimationDetails animationDetails;
 	protected final int weaponXOffset, weaponYOffset;
@@ -20,12 +22,15 @@ public abstract class EnemyDefinition {
 	protected List<EntityBehaviorDefinition> behaviorDefinitions;
 	
 	public EnemyDefinition(double speed, double hpMax, String weaponId,
-			double projectileSpeedMultiplier, AnimationDetails animationDetails,
+			double projectileSpeedMultiplier, double damageMultiplier, double attackSpeedMultiplier,
+			AnimationDetails animationDetails,
 			int weaponXOffset, int weaponYOffset) {
 		this.speed = speed;
 		this.hpMax = hpMax;
 		this.weaponId = weaponId;
 		this.projectileSpeedMultiplier = projectileSpeedMultiplier;
+		this.damageMultiplier = damageMultiplier;
+		this.attackSpeedMultiplier = attackSpeedMultiplier;
 		
 		this.animationDetails = animationDetails;
 		this.weaponXOffset = weaponXOffset;

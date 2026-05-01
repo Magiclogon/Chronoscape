@@ -23,10 +23,8 @@ public class WaveConfigLoader {
     }
 
     public List<WorldConfig> loadWorldsFromFile(String filepath) throws IOException {
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filepath);
-             InputStreamReader reader = new InputStreamReader(
-                     inputStream != null ? inputStream : new FileInputStream(filepath),
-                     StandardCharsets.UTF_8)) {
+        try (InputStream is = getClass().getResourceAsStream(filepath);
+            	Reader reader = new InputStreamReader(is);) {
 
             WaveData waveData = gson.fromJson(reader, WaveData.class);
             if (waveData == null || waveData.getWorlds() == null) {

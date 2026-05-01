@@ -2,6 +2,8 @@ package ma.ac.emi.gamelogic.particle;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Map;
 
@@ -19,7 +21,8 @@ import ma.ac.emi.glgraphics.lighting.LightingStrategy;
 public class ParticleLoader {
 	
 	public void loadFromJson(String filePath, Map<String, ParticleDefinition> definitions, Map<String, Double> lastSpawnTimes) {
-        try (Reader reader = new FileReader(filePath)) {
+        try (InputStream is = getClass().getResourceAsStream(filePath);
+            	Reader reader = new InputStreamReader(is);) {
             JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
             JsonArray arr = root.getAsJsonArray("effects");
             Gson gson = new Gson();

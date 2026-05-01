@@ -1,8 +1,8 @@
 [
   {
     "type": "HEALTH",
-    "value": 20.0,
-    "dropProbability": 0.1,
+    "value": 15.0,
+    "dropProbability": 0.12,
     "spritePath": "assets/pickables/health_sheet.png",
     "isAnimated": true,
     "frameWidth": 16,
@@ -13,7 +13,7 @@
   {
     "type": "MONEY",
     "value": 50.0,
-    "dropProbability": 0.2,
+    "dropProbability": 0.65,
     "spritePath": "assets/pickables/coin_sheet.png",
     "isAnimated": true,
     "frameWidth": 16,
