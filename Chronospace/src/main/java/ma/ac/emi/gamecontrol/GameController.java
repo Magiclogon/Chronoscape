@@ -33,13 +33,13 @@ import ma.ac.emi.world.WorldManager;
 @Setter
 public class GameController implements Runnable {
     private static final long SIM_STEP = (long)(Math.pow(10, 9) / 60);
- 
+
     // Wave intro timing controls (in milliseconds)
     private static final int PRE_PLAYER_DELAY_MS = 2000;      // Delay before player appears
     private static final int PRE_STARTING_WEAPON_DELAY_MS = 1000;      // Delay before starting weapon selection appears
     private static final int PRE_TITLE_DELAY_MS = 1000;      // Delay before wave title appears
     private static final int POST_TITLE_DELAY_MS = 500;     // Delay after title fades before wave starts
-    
+
     private static GameController instance;
 
     public static GameController getInstance() {
@@ -77,7 +77,7 @@ public class GameController implements Runnable {
         showLoadingScreen();
 
         SwingUtilities.invokeLater(() ->
-            new Thread(this::startupLoad, "GameController-StartupLoader").start()
+                new Thread(this::startupLoad, "GameController-StartupLoader").start()
         );
     }
 
@@ -94,39 +94,39 @@ public class GameController implements Runnable {
         soundManager = new SoundManager();
         loadSounds();
 
-        
+
         SwingUtilities.invokeLater(() ->
-            window.getTransitionManager().fadeTo(
-                () -> {
-                    gamePanel  = new GamePanel();
-                    gameGLPanel = new GameGLPanel();
-                    gameUIPanel = new GameUIPanel();
-                    
-                    // Post-processing reload
-                    GraphicsSettingsCallback callback = (updatedConfig) -> {
-                        gameGLPanel.invoke(false, (glDrawable) -> {
-                            gameGLPanel.getRenderer().reloadPostProcessing(
-                                    glDrawable.getGL().getGL3(), updatedConfig);
-                            return true;
-                        });
-                    };
-                    settings = new GraphicsSettingsPanel(postFXConfig, callback);
-                    
-                    window.addSettings(new ControlsPanel(), "Controls");
-                    window.addSettings(settings, "Graphics");
-                    window.addSettings(new SoundSettingsPanel(), "Sound");
+                window.getTransitionManager().fadeTo(
+                        () -> {
+                            gamePanel  = new GamePanel();
+                            gameGLPanel = new GameGLPanel();
+                            gameUIPanel = new GameUIPanel();
 
-                    // Register KeyHandler on the JFrame — works for both the
-                    // Swing menus and the GLCanvas (heavyweight, no InputMap)
-                    KeyHandler.getInstance().setupKeyBindings(window);
+                            // Post-processing reload
+                            GraphicsSettingsCallback callback = (updatedConfig) -> {
+                                gameGLPanel.invoke(false, (glDrawable) -> {
+                                    gameGLPanel.getRenderer().reloadPostProcessing(
+                                            glDrawable.getGL().getGL3(), updatedConfig);
+                                    return true;
+                                });
+                            };
+                            settings = new GraphicsSettingsPanel(postFXConfig, callback);
 
-                    // Register the canvas with the window (adds it to the JFrame)
-                    window.registerGLCanvas(gameGLPanel);
+                            window.addSettings(new ControlsPanel(), "Controls");
+                            window.addSettings(settings, "Graphics");
+                            window.addSettings(new SoundSettingsPanel(), "Sound");
 
-                    window.showMenuMain();
-                },
-                null
-            )
+                            // Register KeyHandler on the JFrame — works for both the
+                            // Swing menus and the GLCanvas (heavyweight, no InputMap)
+                            KeyHandler.getInstance().setupKeyBindings(window);
+
+                            // Register the canvas with the window (adds it to the JFrame)
+                            window.registerGLCanvas(gameGLPanel);
+
+                            window.showMenuMain();
+                        },
+                        null
+                )
         );
     }
 
@@ -162,10 +162,28 @@ public class GameController implements Runnable {
         sm.load("shotgun", "/sounds/shotgun.wav", SoundManager.Category.SFX);
         sm.load("hammer",       "/sounds/hammer.wav",       SoundManager.Category.SFX);
         sm.load("rpg_launch",       "/sounds/rpg_launch.wav",       SoundManager.Category.SFX);
+        sm.load("sword",            "/sounds/sword_sfx.wav",        SoundManager.Category.SFX);
+        sm.load("blaster",          "/sounds/blaster_sfx.wav",      SoundManager.Category.SFX);
+        sm.load("crossbow",         "/sounds/crossbow_sfx.wav",     SoundManager.Category.SFX);
+        sm.load("boss_stepping",    "/sounds/boss_step_sfx.wav",    SoundManager.Category.SFX);
+        sm.load("robot_death_1",    "/sounds/robot_death_1_sfx.wav", SoundManager.Category.SFX);
+        sm.load("robot_death_2",    "/sounds/robot_death_2_sfx.wav", SoundManager.Category.SFX);
+        sm.load("player_hit",       "/sounds/player_hit_sfx.wav",   SoundManager.Category.SFX);
+        sm.load("weapon_reload",    "/sounds/weapon_reload_sfx.wav", SoundManager.Category.SFX);
+        sm.load("weapon_switch",    "/sounds/switch_weapon_sfx.wav", SoundManager.Category.SFX);
+        sm.load("punch",            "/sounds/punch_sfx.wav",        SoundManager.Category.SFX);
 
         sm.setCooldown("flamethrower", 2000);  // loop manager handles timing
         sm.setCooldown("ak47",        15);
         sm.setCooldown("rpg_launch", 20);
+        sm.setCooldown("sword",       15);
+        sm.setCooldown("blaster",     20);
+        sm.setCooldown("crossbow",    50);
+        sm.setCooldown("boss_stepping", 600);
+        sm.setCooldown("player_hit",  200);
+        sm.setCooldown("weapon_reload", 500);
+        sm.setCooldown("weapon_switch", 200);
+        sm.setCooldown("punch",       15);
 
         // Machine gun fires 12 shots/sec as well
         sm.setCooldown("machine_gun", 100);
@@ -180,9 +198,21 @@ public class GameController implements Runnable {
         sm.setCooldown("sniper", 200);
         sm.setCooldown("shotgun", 40);
 
+        // ── Shop / Weapon-selection UI sounds ─────────────────────────────
+        sm.load("shop_hover",   "/sounds/select_002.wav",   SoundManager.Category.UI);
+        sm.load("shop_buy",     "/sounds/confirmation_001.wav",     SoundManager.Category.UI);
+        sm.load("shop_sell",    "/sounds/confirmation_003.wav",    SoundManager.Category.UI);
+        sm.load("shop_equip",   "/sounds/select_003.wav",   SoundManager.Category.UI);
+        sm.load("shop_already_owned", "/sounds/error_002.wav", SoundManager.Category.UI);
+
         // UI sounds: don't spam on fast hover
         sm.setCooldown("hover_menu",  80);
         sm.setCooldown("select_menu", 120);
+        sm.setCooldown("shop_hover",  80);
+        sm.setCooldown("shop_buy",    200);
+        sm.setCooldown("shop_sell",   200);
+        sm.setCooldown("shop_equip",  150);
+        sm.setCooldown("shop_already_owned", 150);
     }
 
     public void nextWorld() {
@@ -262,18 +292,18 @@ public class GameController implements Runnable {
     }
 
     public void nextWave() {
-    	if(worldManager.isCurrentWorldDone()) nextWorld();
+        if(worldManager.isCurrentWorldDone()) nextWorld();
         worldManager.getCurrentWorld().clearAttackObjects();
         Vector3D centerPos = new Vector3D(
-    			GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getWidth() / 2,
-    			GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getHeight() / 2
-    		);
-		Player.getInstance().setPos(centerPos);
+                GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getWidth() / 2,
+                GamePanel.TILE_SIZE * worldManager.getCurrentWorld().getHeight() / 2
+        );
+        Player.getInstance().setPos(centerPos);
         particleSystem.clearActiveEffects();
 
         FloatingTextManager.getInstance().clearFloatingText();
         worldManager.getCurrentWorld().clearLightObjects();
-        
+
         showGame();
         startWaveIntro();
     }
@@ -282,7 +312,7 @@ public class GameController implements Runnable {
     // ── Game start ────────────────────────────────────────────────────────
 
     public void restartGameWithTransition() {
-    	gameGLPanel.resetFade();
+        gameGLPanel.resetFade();
         window.getTransitionManager().startWithLoading(
                 this::loadGame,
                 this::startGame
@@ -314,9 +344,9 @@ public class GameController implements Runnable {
         camera.setRenderScale(gameGLPanel.getRenderer().getRenderScale());
         gamePanel.setCamera(camera);
         gameGLPanel.setCamera(camera);
-        
+
         gameGLPanel.getRenderer().startFadeIn();
-        
+
         FloatingTextManager.getInstance().clearFloatingText();
         world.clearLightObjects();
         startWaveIntro();
@@ -328,11 +358,11 @@ public class GameController implements Runnable {
 
         System.out.println("Starting game");
         startGameThread();
-        
+
         gameUIPanel.setSize(gameGLPanel.getWidth(), gameGLPanel.getHeight());
     }
-    
- // ── Wave intro sequence ───────────────────────────────────────────────
+
+    // ── Wave intro sequence ───────────────────────────────────────────────
 
     /**
      * Runs the wave intro sequence:
@@ -347,13 +377,13 @@ public class GameController implements Runnable {
         KeyHandler.getInstance().reset();
 
         int waveNum = worldManager.getCurrentWaveNumber();
-        
+
         removeDrawable(Player.getInstance());
         removeDrawable(Player.getInstance().getShadow());
         Player.getInstance().setVelocity(new Vector3D());
         if(Player.getInstance().getActiveWeapon() != null) removeDrawable(Player.getInstance().getActiveWeapon());
 
-        
+
         new Thread(() -> {
             // PHASE 1: Wait before showing player
             try {
@@ -362,7 +392,7 @@ public class GameController implements Runnable {
 
             // PHASE 2: Show player spawning
             SwingUtilities.invokeLater(() -> Player.getInstance().startSpawning());
-            
+
             try {
                 Thread.sleep(200); // Brief delay for spawn animation to register
                 while (Player.getInstance().isSpawning()) {
@@ -371,61 +401,61 @@ public class GameController implements Runnable {
             } catch (InterruptedException ignored) {}
 
             // PHASE 3: Show weapon selection (NEW!)
-            
+
             try {
-            	Thread.sleep(PRE_STARTING_WEAPON_DELAY_MS);
+                Thread.sleep(PRE_STARTING_WEAPON_DELAY_MS);
             }catch (InterruptedException ignored) {}
-            
+
             // Only show on first wave of a run
             if (waveNum == 1) {
                 final boolean[] weaponSelected = {false};
-                
-                SwingUtilities.invokeLater(() -> 
-                    window.showWeaponSelection(() -> {
-                        synchronized (weaponSelected) {
-                            weaponSelected[0] = true;
-                            weaponSelected.notify();
-                        }
-                    })
+
+                SwingUtilities.invokeLater(() ->
+                        window.showWeaponSelection(() -> {
+                            synchronized (weaponSelected) {
+                                weaponSelected[0] = true;
+                                weaponSelected.notify();
+                            }
+                        })
                 );
-                
+
                 // Wait for weapon selection
                 synchronized (weaponSelected) {
                     while (!weaponSelected[0]) {
-                        try { weaponSelected.wait(); } 
+                        try { weaponSelected.wait(); }
                         catch (InterruptedException ignored) {}
                     }
                 }
-                
-             // Small delay after selection before showing wave card
+
+                // Small delay after selection before showing wave card
                 try {
                     Thread.sleep(PRE_TITLE_DELAY_MS);
                 } catch (InterruptedException ignored) {}
             }else {
-            	Player.getInstance().initWeapons();
+                Player.getInstance().initWeapons();
             }
 
             // PHASE 4: Show wave card with post-title delay
-            SwingUtilities.invokeLater(() -> 
-                gameGLPanel.getRenderer().showWaveCard(waveNum, () -> {
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(POST_TITLE_DELAY_MS);
-                        } catch (InterruptedException ignored) {}
-                        
-                        SwingUtilities.invokeLater(() -> {
-                            worldManager.getCurrentWorld().getWaveManager().beginWave();
-                            state = GameState.PLAYING;
-                            latestTime = System.nanoTime();
-                        });
-                    }, "WaveStartDelay").start();
-                })
+            SwingUtilities.invokeLater(() ->
+                    gameGLPanel.getRenderer().showWaveCard(waveNum, () -> {
+                        new Thread(() -> {
+                            try {
+                                Thread.sleep(POST_TITLE_DELAY_MS);
+                            } catch (InterruptedException ignored) {}
+
+                            SwingUtilities.invokeLater(() -> {
+                                worldManager.getCurrentWorld().getWaveManager().beginWave();
+                                state = GameState.PLAYING;
+                                latestTime = System.nanoTime();
+                            });
+                        }, "WaveStartDelay").start();
+                    })
             );
 
         }, "WaveIntro").start();
     }
-    
-    
+
+
 
     public void startGameThread() {
         latestTime = System.nanoTime();
@@ -456,7 +486,7 @@ public class GameController implements Runnable {
             } else {
                 accumTime = 0;
             }
-            
+
             gameGLPanel.display();
 
             try { Thread.sleep(1); }

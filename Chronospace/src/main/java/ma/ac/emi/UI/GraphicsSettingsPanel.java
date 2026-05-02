@@ -7,8 +7,10 @@ import ma.ac.emi.UI.MenuStyle;
 import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.UI.component.RetroScrollBar;
 import ma.ac.emi.UI.component.SettingsPanel;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.glgraphics.post.config.PostFXConfig;
 import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
+import ma.ac.emi.sound.SoundManager;
 
 public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
 
@@ -84,7 +86,8 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         moreBtn.setPreferredSize(new Dimension(220, MenuStyle.BTN_HEIGHT_SM));
         moreBtn.setMaximumSize(new Dimension(220, MenuStyle.BTN_HEIGHT_SM));
         moreBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        moreBtn.addActionListener(e -> showFullAdvancedSettings());
+        moreBtn.addActionListener(e -> { playUiSound("select_menu"); showFullAdvancedSettings(); });
+        addHoverSound(moreBtn);
         contentPanel.add(moreBtn);
         contentPanel.add(Box.createVerticalStrut(20));
         contentPanel.add(makeSeparatorPanel());
@@ -105,6 +108,17 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
 
         detectCurrentPreset();
         updateUIForCurrentPreset();
+    }
+
+    private void playUiSound(String name) {
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play(name);
+    }
+
+    private void addHoverSound(javax.swing.JButton btn) {
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { playUiSound("hover_menu"); }
+        });
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────
@@ -307,8 +321,10 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         RetroButton cancel = new RetroButton("CANCEL", RetroButton.Style.DANGER, MenuStyle.ACCENT_RED, Color.WHITE);
         ok.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
         cancel.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
-        ok.addActionListener(e -> { adv.applyToConfig(config); hasUnsavedChanges = true; switchToCustomPreset(); dialog.dispose(); });
-        cancel.addActionListener(e -> dialog.dispose());
+        ok.addActionListener(e -> { playUiSound("select_menu"); adv.applyToConfig(config); hasUnsavedChanges = true; switchToCustomPreset(); dialog.dispose(); });
+        cancel.addActionListener(e -> { playUiSound("select_menu"); dialog.dispose(); });
+        addHoverSound(ok);
+        addHoverSound(cancel);
         btns.add(ok); btns.add(cancel);
         dialog.add(btns, BorderLayout.SOUTH);
         dialog.pack(); dialog.setLocationRelativeTo(this); dialog.setVisible(true);
@@ -365,10 +381,10 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
             add(text, BorderLayout.CENTER);
 
             addMouseListener(new java.awt.event.MouseAdapter() {
-                public void mouseEntered(java.awt.event.MouseEvent e) { isHovered = true;  repaint(); }
+                public void mouseEntered(java.awt.event.MouseEvent e) { isHovered = true;  playUiSound("hover_menu"); repaint(); }
                 public void mouseExited (java.awt.event.MouseEvent e) { isHovered = false; repaint(); }
             });
-            addActionListener(e -> { if (isSelected()) applyPreset(preset); });
+            addActionListener(e -> { playUiSound("select_menu"); if (isSelected()) applyPreset(preset); });
         }
 
         @Override

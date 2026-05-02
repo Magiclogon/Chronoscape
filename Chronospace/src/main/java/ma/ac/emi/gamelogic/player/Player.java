@@ -384,6 +384,15 @@ public class Player extends LivingEntity {
 	}
 
 	@Override
+	public void takeDamage(double amount, LivingEntity attacker) {
+		double oldHp = getHp();
+		super.takeDamage(amount, attacker);
+		if (getHp() < oldHp) {
+			GameController.getInstance().getSoundManager().play("player_hit");
+		}
+	}
+
+	@Override
 	public void switchWeapons() {
 		if(activeWeapon != null) {
 			activeWeapon.triggerSwitchingOut();
@@ -397,7 +406,10 @@ public class Player extends LivingEntity {
 				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 				
 				switching = false;
-				if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+				if(activeWeapon != null) {
+					activeWeapon.triggerSwitchingIn();
+					GameController.getInstance().getSoundManager().play("weapon_switch");
+				}
 
 			}
 		}else {
@@ -407,7 +419,10 @@ public class Player extends LivingEntity {
 			if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 			
 			switching = false;
-			if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+			if(activeWeapon != null) {
+				activeWeapon.triggerSwitchingIn();
+				GameController.getInstance().getSoundManager().play("weapon_switch");
+			}
 
 		}
 	}

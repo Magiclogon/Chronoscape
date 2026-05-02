@@ -79,7 +79,7 @@
       "projectileSpeed": 100,
       "relativeProjectilePosX": 20,
       "relativeProjectilePosY": 13,
-      "attackSound": "heavy_weapon",
+      "attackSound": "hammer",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/hammer-Sheet.png",
@@ -142,7 +142,7 @@
       "attackSpeed": 2.2,
       "projectileId": "none",
       "projectileSpeed": 800,
-      "attackSound": "melee_weapon",
+      "attackSound": "sword",
       "stackable": false,
       "relativeProjectilePosX": 15,
       "relativeProjectilePosY": 0,
@@ -256,7 +256,7 @@
       "projectileSpeed": 300,
       "reloadingTime": 1.4,
       "magazineSize": 1,
-      "attackSound": "ranged_weapon",
+      "attackSound": "crossbow",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/crossbow-Sheet.png",
@@ -307,7 +307,7 @@
       "attackSpeed": 2.5,
       "projectileId": "none",
       "projectileSpeed": 800,
-      "attackSound": "light_weapon",
+      "attackSound": "punch",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/fist-Sheet.png",
@@ -366,7 +366,7 @@
       "magazineSize": 8,
       "relativeProjectilePosX": 13,
       "relativeProjectilePosY": 2,
-      "attackSound": "gun",
+      "attackSound": "blaster",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/blaster404-Sheet.png",
@@ -551,7 +551,7 @@
       "magazineSize": 4,
       "relativeProjectilePosX": 29,
       "relativeProjectilePosY": 0,
-      "attackSound": "heavy_weapon",
+      "attackSound": "shotgun",
       "stackable": false,
       "animationDetails": {
         "spriteSheetPath": "weapons/shotgun-Sheet.png",

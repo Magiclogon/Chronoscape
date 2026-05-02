@@ -69,6 +69,10 @@ public class BossEnnemy extends Ennemy{
     public void update(double step, Vector3D target) {
     	super.update(step, target);
     	
+    	if (isRunning() || isBacking()) {
+    		GameController.getInstance().getSoundManager().play("boss_stepping");
+    	}
+
     	if(aiBehavior != null) {
 	    	if(((RobotBossAIBehavior)aiBehavior).consumeShouldSwitchWeapon()) {
 				switching = true;
@@ -94,7 +98,10 @@ public class BossEnnemy extends Ennemy{
 				if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 				
 				switching = false;
-				if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+				if(activeWeapon != null) {
+					activeWeapon.triggerSwitchingIn();
+					GameController.getInstance().getSoundManager().play("weapon_switch");
+				}
 
 			}
 		}else {
@@ -104,7 +111,10 @@ public class BossEnnemy extends Ennemy{
 			if(activeWeapon != null) GameController.getInstance().addDrawable(activeWeapon);
 			
 			switching = false;
-			if(activeWeapon != null) activeWeapon.triggerSwitchingIn();
+			if(activeWeapon != null) {
+				activeWeapon.triggerSwitchingIn();
+				GameController.getInstance().getSoundManager().play("weapon_switch");
+			}
 
 		}
 	}

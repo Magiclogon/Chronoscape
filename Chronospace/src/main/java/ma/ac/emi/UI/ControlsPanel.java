@@ -4,6 +4,8 @@ import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.UI.component.RetroScrollBar;
 import ma.ac.emi.UI.component.SettingsPanel;
 import ma.ac.emi.input.InputConfig;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.sound.SoundManager;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -37,10 +39,21 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
             if (vk == KeyEvent.VK_SHIFT || vk == KeyEvent.VK_CONTROL
                     || vk == KeyEvent.VK_ALT || vk == KeyEvent.VK_META) return;
 
-            if (listeningCallback != null) listeningCallback.accept(vk);
+            if (listeningCallback != null) { playUiSound("select_menu"); listeningCallback.accept(vk); }
             stopListening();
         }
     };
+
+    private void playUiSound(String name) {
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play(name);
+    }
+
+    private void addHoverSound(javax.swing.JButton btn) {
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { playUiSound("hover_menu"); }
+        });
+    }
 
     public ControlsPanel() {
         loadFromConfig();
@@ -195,11 +208,14 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         btnAimMode.setPreferredSize(new Dimension(90, MenuStyle.BTN_HEIGHT_SM));
         btnAimMode.setToggled(wKeyboardAim);
         btnAimMode.addActionListener(e -> {
+            playUiSound("select_menu");
             wKeyboardAim = !wKeyboardAim;
             btnAimMode.setText(wKeyboardAim ? "ON" : "OFF");
             btnAimMode.setToggled(wKeyboardAim);
             btnAimMode.repaint();
         });
+
+        addHoverSound(btnAimMode);
 
         row.add(left,       BorderLayout.CENTER);
         row.add(btnAimMode, BorderLayout.EAST);
@@ -207,7 +223,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
     }
 
     private RetroButton makeBindRow(JPanel parent, String label, int currentVK,
-                                     Consumer<Integer> onBound) {
+                                    Consumer<Integer> onBound) {
         JPanel row = new JPanel(new BorderLayout(16, 0));
         row.setBackground(MenuStyle.BG_PANEL);
         row.setBorder(new EmptyBorder(6, 0, 6, 0));
@@ -224,7 +240,8 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
                 MenuStyle.ACCENT);
         btn.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
 
-        btn.addActionListener(e -> startListening(btn, onBound));
+        btn.addActionListener(e -> { playUiSound("select_menu"); startListening(btn, onBound); });
+        addHoverSound(btn);
 
         row.add(lbl, BorderLayout.WEST);
         row.add(btn, BorderLayout.EAST);

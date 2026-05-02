@@ -15,6 +15,7 @@ import ma.ac.emi.gamelogic.weapon.WeaponItemFactory;
 import ma.ac.emi.gamelogic.weapon.behavior.WeaponBehaviorDefinition;
 import ma.ac.emi.gamelogic.weapon.behavior.passive.PassiveWeaponEffectDefinition;
 import ma.ac.emi.gamelogic.weapon.behavior.passive.WeaponPassiveDefinition;
+import ma.ac.emi.sound.SoundManager;
 
 public class StartupWeaponSelection extends JPanel {
 
@@ -102,11 +103,11 @@ public class StartupWeaponSelection extends JPanel {
         weaponsGrid.removeAll();
 
         List<WeaponItemDefinition> commonWeapons = ItemLoader.getInstance()
-            .getAllWeaponDefinitions()
-            .stream()
-            .filter(def -> true)
+                .getAllWeaponDefinitions()
+                .stream()
+                .filter(def -> true)
 //            .filter(def -> def.getRarity() == Rarity.COMMON)
-            .toList();
+                .toList();
 
         int weaponCount = commonWeapons.size();
         int rows = (int) Math.ceil(weaponCount / (double) GRID_COLUMNS);
@@ -126,11 +127,14 @@ public class StartupWeaponSelection extends JPanel {
 
     // ── Weapon selection ───────────────────────────────────────────────────
     private void selectWeapon(WeaponItemDefinition def) {
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play("select_menu");
+
         Player player = Player.getInstance();
         player.getInventory().init();
 
         WeaponItem chosenWeapon = WeaponItemFactory.getInstance()
-            .createWeaponItem(def.getId());
+                .createWeaponItem(def.getId());
 
         player.getInventory().addItem(chosenWeapon);
         player.getInventory().equipWeapon(chosenWeapon, 0);
@@ -138,11 +142,11 @@ public class StartupWeaponSelection extends JPanel {
 
         ShopManager shopManager = GameController.getInstance().getShopManager();
         if(shopManager != null) {
-        	shopManager.onStartingWeaponPicked(def);
+            shopManager.onStartingWeaponPicked(def);
         }else {
-        	System.out.println("ShopManager is not initialized!");
+            System.out.println("ShopManager is not initialized!");
         }
-        
+
         if (onWeaponSelected != null) onWeaponSelected.run();
     }
 
@@ -205,12 +209,20 @@ public class StartupWeaponSelection extends JPanel {
             setText("");
 
             addActionListener(e -> onSelect.accept(def));
+
+            addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    SoundManager sm = GameController.getInstance().getSoundManager();
+                    if (sm != null) sm.play("shop_hover");
+                }
+            });
         }
 
         private void buildGeometry() {
             if (icon == null) return;
             double scale = Math.min((double) ICON_SIZE / icon.getWidth(),
-                                    (double) ICON_SIZE / icon.getHeight());
+                    (double) ICON_SIZE / icon.getHeight());
             drawW = (int)(icon.getWidth()  * scale);
             drawH = (int)(icon.getHeight() * scale);
             geometryReady = true;
@@ -227,7 +239,7 @@ public class StartupWeaponSelection extends JPanel {
             int h = getHeight();
 
             g2.setColor(getModel().isPressed() ? new Color(20, 20, 26)
-                      : getModel().isRollover() ? new Color(38, 38, 48)
+                    : getModel().isRollover() ? new Color(38, 38, 48)
                       : MenuStyle.BG_PANEL);
             g2.fillRoundRect(0, 0, w, h, MenuStyle.ARC * 2, MenuStyle.ARC * 2);
 
@@ -251,12 +263,12 @@ public class StartupWeaponSelection extends JPanel {
             g2.setFont(MenuStyle.FONT_BODY);
             g2.setColor(MenuStyle.TEXT_MAIN);
             int nameH = drawWrappedString(g2, def.getName(), textX,
-                PADDING + g2.getFontMetrics().getAscent(), maxTextW);
+                    PADDING + g2.getFontMetrics().getAscent(), maxTextW);
 
             g2.setFont(MenuStyle.FONT_SMALL);
             g2.setColor(MenuStyle.TEXT_GRAY);
             String typeStr = def.getRarity().toString().substring(0, 1).toUpperCase()
-                           + def.getRarity().toString().substring(1).toLowerCase();
+                    + def.getRarity().toString().substring(1).toLowerCase();
             g2.drawString(typeStr, textX, PADDING + nameH + g2.getFontMetrics().getAscent());
 
             g2.setFont(MenuStyle.FONT_SMALL);
@@ -265,10 +277,10 @@ public class StartupWeaponSelection extends JPanel {
             int maxStatW = w - PADDING * 2;
 
             String[] statLines = {
-                String.format("DMG: %.0f", def.getDamage()),
-                String.format("SPD: %.1f", def.getAttackSpeed()),
-                String.format("MAG: %d",   def.getMagazineSize()),
-                String.format("RNG: %.0f", def.getRange())
+                    String.format("DMG: %.0f", def.getDamage()),
+                    String.format("SPD: %.1f", def.getAttackSpeed()),
+                    String.format("MAG: %d",   def.getMagazineSize()),
+                    String.format("RNG: %.0f", def.getRange())
             };
 
             for (String line : statLines) {
