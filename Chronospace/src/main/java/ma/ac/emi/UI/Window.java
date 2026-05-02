@@ -29,6 +29,9 @@ public class Window extends JFrame {
     private final FadeOverlay fadeOverlay;
     private final TransitionManager transitionManager;
 
+    private boolean isFullScreen = false;
+    private Rectangle previousBounds;
+
     private GameGLPanel glCanvas;
 
     public Window() {
@@ -199,6 +202,38 @@ public class Window extends JFrame {
     public TransitionManager getTransitionManager() { return transitionManager; }
     public LoadingScreen     getLoadingScreen()      { return loadingScreen; }
     public NavigationManager getNavigationManager() { return navigationManager; }
+
+    public void setFullScreen(boolean fullScreen) {
+        if (this.isFullScreen == fullScreen) return;
+        this.isFullScreen = fullScreen;
+
+        dispose(); // Must dispose before changing undecorated state
+
+        if (fullScreen) {
+            previousBounds = getBounds();
+            setUndecorated(true);
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            if (gd.isFullScreenSupported()) {
+                gd.setFullScreenWindow(this);
+            }
+        } else {
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            if (gd.getFullScreenWindow() == this) {
+                gd.setFullScreenWindow(null);
+            }
+            setUndecorated(false);
+            setExtendedState(JFrame.NORMAL);
+            if (previousBounds != null) {
+                setBounds(previousBounds);
+            } else {
+                setSize(1280, 720);
+                setLocationRelativeTo(null);
+            }
+        }
+
+        setVisible(true);
+    }
 
     public void transition(Runnable midAction) {
         transitionManager.fadeTo(midAction, null);

@@ -6,6 +6,7 @@ public class PostFXConfig {
     public Bloom bloom;
     public Glow glow;
 	public float renderScale = 0.4f;
+    public boolean fullScreen = true;
 
     public static class ColorCorrection {
         public boolean enabled;
