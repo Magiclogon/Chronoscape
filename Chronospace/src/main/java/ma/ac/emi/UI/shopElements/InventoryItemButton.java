@@ -47,7 +47,13 @@ public class InventoryItemButton extends JButton {
             icon = AssetsLoader.getSprite(iconPath);
         }
 
-        addActionListener(e -> shopUI.showItemDetails(item));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                shopUI.playHoverSound();
+            }
+        });
+
+        addActionListener(e -> shopUI.showItemDetails(item, true));
     }
 
     @Override

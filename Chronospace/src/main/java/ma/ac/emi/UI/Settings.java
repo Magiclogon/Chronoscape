@@ -6,6 +6,8 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.UI.component.SettingsPanel;
+import ma.ac.emi.gamecontrol.GameController;
+import ma.ac.emi.sound.SoundManager;
 
 public class Settings extends JPanel {
     private static final long serialVersionUID = 1L;
@@ -61,9 +63,13 @@ public class Settings extends JPanel {
         resetBtn.setPreferredSize(new Dimension(140, 38));
         backBtn.setPreferredSize(new Dimension(140, 38));
 
-        applyBtn.addActionListener(e -> withCurrentPanel(SettingsPanel::applyChanges));
-        resetBtn.addActionListener(e -> withCurrentPanel(SettingsPanel::resetToDefaults));
-        backBtn.addActionListener(e -> goBackAction.run());
+        applyBtn.addActionListener(e -> { playUiSound("select_menu"); withCurrentPanel(SettingsPanel::applyChanges); });
+        resetBtn.addActionListener(e -> { playUiSound("select_menu"); withCurrentPanel(SettingsPanel::resetToDefaults); });
+        backBtn.addActionListener(e -> { playUiSound("select_menu"); goBackAction.run(); });
+
+        addHoverSound(applyBtn);
+        addHoverSound(resetBtn);
+        addHoverSound(backBtn);
 
         footer.add(applyBtn);
         footer.add(resetBtn);
@@ -80,6 +86,19 @@ public class Settings extends JPanel {
         card.setMaximumSize(new Dimension(MAX_WIDTH, Integer.MAX_VALUE));
         outer.add(card, gbc);
         add(outer, BorderLayout.CENTER);
+    }
+
+    // ── Sound helpers ─────────────────────────────────────────────────────
+
+    private void playUiSound(String name) {
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play(name);
+    }
+
+    private void addHoverSound(javax.swing.JButton btn) {
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) { playUiSound("hover_menu"); }
+        });
     }
 
     // ── Tab management ────────────────────────────────────────────────────
@@ -113,7 +132,7 @@ public class Settings extends JPanel {
                 tabPane.setBorder(javax.swing.BorderFactory.createEmptyBorder());
             }
             @Override protected void paintTabBackground(Graphics g, int tabPlacement,
-                    int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+                                                        int tabIndex, int x, int y, int w, int h, boolean isSelected) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 // Tab row backdrop
@@ -124,15 +143,15 @@ public class Settings extends JPanel {
                 g2.dispose();
             }
             @Override protected void paintTabBorder(Graphics g, int tabPlacement,
-                    int tabIndex, int x, int y, int w, int h, boolean isSelected) {
+                                                    int tabIndex, int x, int y, int w, int h, boolean isSelected) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 if (isSelected) { g2.setColor(ACCENT_GREEN); g2.fillRect(x, y+h-3, w, 3); }
                 g2.setColor(BORDER_DIM); g2.drawRect(x, y, w-1, h);
                 g2.dispose();
             }
             @Override protected void paintFocusIndicator(Graphics g, int tp,
-                    java.awt.Rectangle[] rects, int ti,
-                    java.awt.Rectangle ir, java.awt.Rectangle tr, boolean sel) {}
+                                                         java.awt.Rectangle[] rects, int ti,
+                                                         java.awt.Rectangle ir, java.awt.Rectangle tr, boolean sel) {}
             @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 int tabAreaH = calculateTabAreaHeight(tabPlacement, runCount, maxTabHeight);

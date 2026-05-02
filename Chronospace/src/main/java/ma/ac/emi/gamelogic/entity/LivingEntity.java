@@ -13,6 +13,7 @@ import lombok.Setter;
 import ma.ac.emi.UI.FloatingText;
 import ma.ac.emi.UI.FloatingTextManager;
 import ma.ac.emi.fx.AnimationState;
+import ma.ac.emi.gamecontrol.GameController;
 import ma.ac.emi.gamecontrol.GamePanel;
 import ma.ac.emi.gamelogic.attack.manager.AttackObjectManager;
 import ma.ac.emi.gamelogic.entity.behavior.EntityBehavior;
@@ -280,6 +281,11 @@ public abstract class LivingEntity extends Entity {
  
         setHp(Math.max(0, getHp() - finalDamage));
  
+        if (getHp() <= 0 && finalDamage > 0) {
+            String deathSound = Math.random() < 0.5 ? "robot_death_1" : "robot_death_2";
+            GameController.getInstance().getSoundManager().play(deathSound);
+        }
+
         FloatingTextManager.getInstance().spawn(
                 String.format("%.0f", finalDamage), FloatingText.Preset.DAMAGE, this.getPos());
         

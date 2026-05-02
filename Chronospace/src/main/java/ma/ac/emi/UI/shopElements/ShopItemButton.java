@@ -47,7 +47,7 @@ public class ShopItemButton extends JButton {
 
         this.itemName  = item.getItemDefinition().getName();
         this.itemType  = item.getItemDefinition().getRarity().name().substring(0, 1).toUpperCase()
-                       + item.getItemDefinition().getRarity().name().substring(1).toLowerCase();
+                + item.getItemDefinition().getRarity().name().substring(1).toLowerCase();
         this.itemPrice = String.valueOf(item.getPrice());
         // getStatsDescription() uses "---" to separate flavor text from stat lines.
         // We only want the stat lines here — the flavor text goes nowhere (name + rarity suffice).
@@ -68,23 +68,30 @@ public class ShopItemButton extends JButton {
             case COMMON:    borderColor = new Color( 50, 205,  50); break;
             default:        borderColor = new Color( 60,  60,  70); break;
         }
-        
+
         isUpgradeItem = item instanceof UpgradeItem;
-        
+
         String iconPath = item.getItemDefinition().getIconPath();
         if (iconPath != null && !iconPath.isBlank())
             icon = AssetsLoader.getSprite(iconPath);
 
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseEntered(java.awt.event.MouseEvent e) {
+                shopUI.playHoverSound();
+            }
+        });
+
         addActionListener(e -> {
             GameController.getInstance().getShopManager().purchaseItem(item);
+            shopUI.playBuySound();
             shopUI.refresh();
         });
-        
+
     }
 
     private void buildGeometry() {
         double scale = Math.min((double) ICON_SIZE / icon.getWidth(),
-                                (double) ICON_SIZE / icon.getHeight());
+                (double) ICON_SIZE / icon.getHeight());
         drawW = (int)(icon.getWidth()  * scale);
         drawH = (int)(icon.getHeight() * scale);
         iconX = PADDING;
@@ -103,33 +110,33 @@ public class ShopItemButton extends JButton {
 
         // Background
         g2.setColor(getModel().isPressed() ? BG_PRESS
-                  : getModel().isRollover() ? BG_HOVER
+                : getModel().isRollover() ? BG_HOVER
                   : BG_NORMAL);
         g2.fillRoundRect(0, 0, w, h, 12, 12);
 
-        
-     // Icon box
+
+        // Icon box
         int boxSize = ICON_SIZE + PADDING;
         g2.setColor(new Color(35, 35, 42));
         g2.fillRoundRect(PADDING, PADDING, boxSize, boxSize, 8, 8);
-        
+
         if (icon != null) {
             if (!geometryReady) buildGeometry();
-            
+
             int cx, cy;
-            
+
             if(isUpgradeItem) {
-            	cx = PADDING;
+                cx = PADDING;
                 cy = PADDING;
                 g2.drawImage(icon.getSprite(), cx, cy, boxSize, boxSize, null);
 
             }else {
-            	cx = PADDING + (boxSize - drawW) / 2;
+                cx = PADDING + (boxSize - drawW) / 2;
                 cy = PADDING + (boxSize - drawH) / 2;
                 g2.drawImage(icon.getSprite(), cx, cy, drawW, drawH, null);
 
             }
-            
+
         }
 
         g2.setColor(borderColor.darker());

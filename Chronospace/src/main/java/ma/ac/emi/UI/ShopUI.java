@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ma.ac.emi.sound.SoundManager;
+
 public class ShopUI extends JPanel {
 
     // ── Shop-specific colors not covered by MenuStyle ─────────────────────
@@ -32,6 +34,28 @@ public class ShopUI extends JPanel {
     public final Dimension inventoryButtonSize = new Dimension(80, 80);
 
     private JLabel moneyLabel;
+    
+    private void playShopSound(String name) {
+        SoundManager sm = GameController.getInstance().getSoundManager();
+        if (sm != null) sm.play(name);
+    }
+
+    public void playHoverSound() {
+        playShopSound("shop_hover");
+    }
+
+    public void playBuySound() {
+        playShopSound("shop_buy");
+    }
+
+    /**
+     * Called by ShopItemButton on click (item available in shop — buying).
+     * Called by InventoryItemButton on click (item already owned).
+     */
+    public void showItemDetails(ShopItem item, boolean alreadyOwned) {
+        playShopSound(alreadyOwned ? "shop_already_owned" : "shop_buy");
+        showItemDetails(item);
+    }
     private JPanel heroPanel, shopPanel, bagPanel;
     private JPanel availableItemsGrid, statsContainer, detailsContainer;
     private JPanel equippedFooter;
@@ -148,7 +172,7 @@ public class ShopUI extends JPanel {
         header.add(moneyLabel,     BorderLayout.WEST);
         header.add(nextWaveButton, BorderLayout.EAST);
 
-        
+
         return header;
     }
 
@@ -283,7 +307,7 @@ public class ShopUI extends JPanel {
         nameLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         String rarityStr = item.getItemDefinition().getRarity().toString().substring(0, 1).toUpperCase()
-                         + item.getItemDefinition().getRarity().toString().substring(1).toLowerCase();
+                + item.getItemDefinition().getRarity().toString().substring(1).toLowerCase();
         JLabel rarityLbl = new JLabel(rarityStr);
         rarityLbl.setFont(MenuStyle.FONT_SMALL);
         rarityLbl.setForeground(rarityColor);
@@ -303,6 +327,7 @@ public class ShopUI extends JPanel {
                 RetroButton.Style.DANGER, MenuStyle.ACCENT_RED, Color.WHITE);
         sellBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, MenuStyle.BTN_HEIGHT_SM));
         sellBtn.addActionListener(e -> {
+            playShopSound("shop_sell");
             GameController.getInstance().getShopManager().sellItem(item);
             refresh();
             detailsContainer.removeAll();
@@ -495,6 +520,7 @@ public class ShopUI extends JPanel {
                     eq ? MenuStyle.TEXT_GRAY       : Color.BLACK);
             btn.setMaximumSize(new Dimension(Integer.MAX_VALUE, MenuStyle.BTN_HEIGHT_SM));
             btn.addActionListener(e -> {
+                playShopSound("shop_equip");
                 Inventory inv2 = Player.getInstance().getInventory();
                 int slot2 = inv2.getEquippedSlot(weaponItem);
                 if (slot2 >= 0) {

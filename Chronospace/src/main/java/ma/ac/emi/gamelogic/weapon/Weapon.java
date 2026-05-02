@@ -30,6 +30,7 @@ import ma.ac.emi.glgraphics.color.InvincibilityFlashingEffect;
 import ma.ac.emi.glgraphics.color.SpriteColorCorrection;
 import ma.ac.emi.math.Matrix4;
 import ma.ac.emi.math.Vector3D;
+import ma.ac.emi.sound.WeaponSoundController;
 import ma.ac.emi.gamelogic.player.PlayerConfig;
 
 @Getter
@@ -599,6 +600,8 @@ public class Weapon extends Entity{
 	}
 
 	public void triggerReload() {
+		if (reloadTrigger) return;
 		reloadTrigger = true;
+		WeaponSoundController.playWeaponSound("weapon_reload");
 	}
 }
