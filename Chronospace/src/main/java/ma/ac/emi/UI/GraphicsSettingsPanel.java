@@ -33,7 +33,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
     private GraphicsPreset currentPreset = GraphicsPreset.BALANCED;
     private ButtonGroup presetButtonGroup;
     private JSlider renderScaleSlider, bloomIntensitySlider, glowIntensitySlider;
-    private JCheckBox fullScreenCheckBox;
+    private RetroButton btnFullScreen;
 
     public GraphicsSettingsPanel(PostFXConfig config) { this(config, null); }
 
@@ -71,19 +71,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         contentPanel.add(makeSectionLabel("ADVANCED SETTINGS"));
         contentPanel.add(Box.createVerticalStrut(14));
 
-        fullScreenCheckBox = new JCheckBox("FULL SCREEN MODE");
-        fullScreenCheckBox.setFont(MenuStyle.FONT_BODY);
-        fullScreenCheckBox.setForeground(MenuStyle.TEXT_BORDER);
-        fullScreenCheckBox.setBackground(MenuStyle.BG_PANEL);
-        fullScreenCheckBox.setFocusPainted(false);
-        fullScreenCheckBox.setSelected(config.fullScreen);
-        fullScreenCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
-        fullScreenCheckBox.addActionListener(e -> {
-            playUiSound("select_menu");
-            switchToCustomPreset();
-            hasUnsavedChanges = true;
-        });
-        contentPanel.add(fullScreenCheckBox);
+        contentPanel.add(makeFullScreenRow());
         contentPanel.add(Box.createVerticalStrut(20));
 
         renderScaleSlider = createSlider(0.25f, 1.0f, config.renderScale, 0.05f);
@@ -145,6 +133,39 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         lbl.setForeground(MenuStyle.TEXT_BORDER);
         lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
         return lbl;
+    }
+
+    private JPanel makeFullScreenRow() {
+        JPanel row = new JPanel(new BorderLayout(16, 0));
+        row.setBackground(MenuStyle.BG_PANEL);
+        row.setBorder(new EmptyBorder(8, 0, 8, 0));
+        row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 48));
+
+        JLabel lbl = new JLabel("FULL SCREEN MODE");
+        lbl.setFont(MenuStyle.FONT_BODY);
+        lbl.setForeground(MenuStyle.TEXT_BORDER);
+
+        btnFullScreen = new RetroButton(
+                config.fullScreen ? "ON" : "OFF",
+                RetroButton.Style.OUTLINE,
+                config.fullScreen ? MenuStyle.ACCENT : MenuStyle.BG_MUTED);
+        btnFullScreen.setPreferredSize(new Dimension(90, MenuStyle.BTN_HEIGHT_SM));
+        btnFullScreen.setToggled(config.fullScreen);
+        btnFullScreen.addActionListener(e -> {
+            playUiSound("select_menu");
+            config.fullScreen = !config.fullScreen;
+            btnFullScreen.setText(config.fullScreen ? "ON" : "OFF");
+            btnFullScreen.setToggled(config.fullScreen);
+            btnFullScreen.repaint();
+            switchToCustomPreset();
+            hasUnsavedChanges = true;
+        });
+
+        addHoverSound(btnFullScreen);
+
+        row.add(lbl, BorderLayout.CENTER);
+        row.add(btnFullScreen, BorderLayout.EAST);
+        return row;
     }
 
     private JPanel makeSeparatorPanel() {
@@ -242,7 +263,9 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         setSliderValue(renderScaleSlider,    config.renderScale);
         setSliderValue(bloomIntensitySlider, config.bloom != null ? config.bloom.intensity : 0f);
         setSliderValue(glowIntensitySlider,  config.glow  != null ? config.glow.intensity  : 0f);
-        fullScreenCheckBox.setSelected(config.fullScreen);
+        btnFullScreen.setToggled(config.fullScreen);
+        btnFullScreen.setText(config.fullScreen ? "ON" : "OFF");
+        btnFullScreen.repaint();
         ignoreSliderChanges = false;
     }
 
@@ -263,24 +286,27 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         if (config.glow  != null) config.glow.enabled  = false;
         config.renderScale = 0.25f;
         config.fullScreen = true;
-        setSliderValue(renderScaleSlider, 0.25f); setSliderValue(bloomIntensitySlider, 0f); setSliderValue(glowIntensitySlider, 0f);
-        fullScreenCheckBox.setSelected(true);
+        btnFullScreen.setToggled(true);
+        btnFullScreen.setText("ON");
+        btnFullScreen.repaint();
     }
     private void applyBalancedPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.5f;  }
         config.renderScale = 0.4f;
         config.fullScreen = true;
-        setSliderValue(renderScaleSlider, 0.4f); setSliderValue(bloomIntensitySlider, 0.05f); setSliderValue(glowIntensitySlider, 0.5f);
-        fullScreenCheckBox.setSelected(true);
+        btnFullScreen.setToggled(true);
+        btnFullScreen.setText("ON");
+        btnFullScreen.repaint();
     }
     private void applyUltraPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.7f;  }
         config.renderScale = 1.0f;
         config.fullScreen = true;
-        setSliderValue(renderScaleSlider, 1.0f); setSliderValue(bloomIntensitySlider, 0.05f); setSliderValue(glowIntensitySlider, 0.7f);
-        fullScreenCheckBox.setSelected(true);
+        btnFullScreen.setToggled(true);
+        btnFullScreen.setText("ON");
+        btnFullScreen.repaint();
     }
 
     private void switchToCustomPreset() {
@@ -361,7 +387,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         if (config.bloom != null) config.bloom.intensity = getSliderFloatValue(bloomIntensitySlider);
         if (config.glow  != null) config.glow.intensity  = getSliderFloatValue(glowIntensitySlider);
         config.renderScale = getSliderFloatValue(renderScaleSlider);
-        config.fullScreen = fullScreenCheckBox.isSelected();
+        config.fullScreen = btnFullScreen.isToggled();
         try { PostFXConfigLoader.save(config); } catch (Exception e) { e.printStackTrace(); }
         if (callback != null) callback.onSettingsChanged(config);
         hasUnsavedChanges = false;
