@@ -281,7 +281,7 @@ public abstract class LivingEntity extends Entity {
  
         setHp(Math.max(0, getHp() - finalDamage));
  
-        if (getHp() <= 0 && finalDamage > 0) {
+        if (getHp() <= 0 && finalDamage > 0 && !(this instanceof Player) && !isDying()) {
             String deathSound = Math.random() < 0.5 ? "robot_death_1" : "robot_death_2";
             GameController.getInstance().getSoundManager().play(deathSound);
         }
