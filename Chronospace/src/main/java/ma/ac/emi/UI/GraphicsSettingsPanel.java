@@ -33,6 +33,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
     private GraphicsPreset currentPreset = GraphicsPreset.BALANCED;
     private ButtonGroup presetButtonGroup;
     private JSlider renderScaleSlider, bloomIntensitySlider, glowIntensitySlider;
+    private JCheckBox fullScreenCheckBox;
 
     public GraphicsSettingsPanel(PostFXConfig config) { this(config, null); }
 
@@ -69,6 +70,21 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
 
         contentPanel.add(makeSectionLabel("ADVANCED SETTINGS"));
         contentPanel.add(Box.createVerticalStrut(14));
+
+        fullScreenCheckBox = new JCheckBox("FULL SCREEN MODE");
+        fullScreenCheckBox.setFont(MenuStyle.FONT_BODY);
+        fullScreenCheckBox.setForeground(MenuStyle.TEXT_BORDER);
+        fullScreenCheckBox.setBackground(MenuStyle.BG_PANEL);
+        fullScreenCheckBox.setFocusPainted(false);
+        fullScreenCheckBox.setSelected(config.fullScreen);
+        fullScreenCheckBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        fullScreenCheckBox.addActionListener(e -> {
+            playUiSound("select_menu");
+            switchToCustomPreset();
+            hasUnsavedChanges = true;
+        });
+        contentPanel.add(fullScreenCheckBox);
+        contentPanel.add(Box.createVerticalStrut(20));
 
         renderScaleSlider = createSlider(0.25f, 1.0f, config.renderScale, 0.05f);
         contentPanel.add(makeSliderRow("RENDER SCALE", renderScaleSlider));
@@ -226,6 +242,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         setSliderValue(renderScaleSlider,    config.renderScale);
         setSliderValue(bloomIntensitySlider, config.bloom != null ? config.bloom.intensity : 0f);
         setSliderValue(glowIntensitySlider,  config.glow  != null ? config.glow.intensity  : 0f);
+        fullScreenCheckBox.setSelected(config.fullScreen);
         ignoreSliderChanges = false;
     }
 
@@ -245,19 +262,25 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         if (config.bloom != null) config.bloom.enabled = false;
         if (config.glow  != null) config.glow.enabled  = false;
         config.renderScale = 0.25f;
+        config.fullScreen = true;
         setSliderValue(renderScaleSlider, 0.25f); setSliderValue(bloomIntensitySlider, 0f); setSliderValue(glowIntensitySlider, 0f);
+        fullScreenCheckBox.setSelected(true);
     }
     private void applyBalancedPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.5f;  }
         config.renderScale = 0.4f;
+        config.fullScreen = true;
         setSliderValue(renderScaleSlider, 0.4f); setSliderValue(bloomIntensitySlider, 0.05f); setSliderValue(glowIntensitySlider, 0.5f);
+        fullScreenCheckBox.setSelected(true);
     }
     private void applyUltraPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.7f;  }
         config.renderScale = 1.0f;
+        config.fullScreen = true;
         setSliderValue(renderScaleSlider, 1.0f); setSliderValue(bloomIntensitySlider, 0.05f); setSliderValue(glowIntensitySlider, 0.7f);
+        fullScreenCheckBox.setSelected(true);
     }
 
     private void switchToCustomPreset() {
@@ -275,9 +298,11 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         boolean glowOn  = config.glow  != null && config.glow.enabled;
         float bi = config.bloom != null ? config.bloom.intensity : 0f;
         float gi = config.glow  != null ? config.glow.intensity  : 0f;
-        if (Math.abs(rs-0.25f)<0.01f && !bloomOn && !glowOn)                                                           { currentPreset = GraphicsPreset.FAST;     return; }
-        if (Math.abs(rs-0.4f) <0.01f && bloomOn && Math.abs(bi-0.05f)<0.01f && glowOn && Math.abs(gi-0.5f)<0.01f)     { currentPreset = GraphicsPreset.BALANCED; return; }
-        if (Math.abs(rs-1.0f) <0.01f && bloomOn && Math.abs(bi-0.05f)<0.01f && glowOn && Math.abs(gi-0.7f)<0.01f)     { currentPreset = GraphicsPreset.ULTRA;    return; }
+        boolean fs = config.fullScreen;
+
+        if (Math.abs(rs-0.25f)<0.01f && !bloomOn && !glowOn && fs)                                                            { currentPreset = GraphicsPreset.FAST;     return; }
+        if (Math.abs(rs-0.4f) <0.01f && bloomOn && Math.abs(bi-0.05f)<0.01f && glowOn && Math.abs(gi-0.5f)<0.01f && fs)      { currentPreset = GraphicsPreset.BALANCED; return; }
+        if (Math.abs(rs-1.0f) <0.01f && bloomOn && Math.abs(bi-0.05f)<0.01f && glowOn && Math.abs(gi-0.7f)<0.01f && fs)      { currentPreset = GraphicsPreset.ULTRA;    return; }
         currentPreset = GraphicsPreset.CUSTOM;
     }
 
@@ -336,6 +361,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         if (config.bloom != null) config.bloom.intensity = getSliderFloatValue(bloomIntensitySlider);
         if (config.glow  != null) config.glow.intensity  = getSliderFloatValue(glowIntensitySlider);
         config.renderScale = getSliderFloatValue(renderScaleSlider);
+        config.fullScreen = fullScreenCheckBox.isSelected();
         try { PostFXConfigLoader.save(config); } catch (Exception e) { e.printStackTrace(); }
         if (callback != null) callback.onSettingsChanged(config);
         hasUnsavedChanges = false;

@@ -104,6 +104,7 @@ public class GameController implements Runnable {
 
                             // Post-processing reload
                             GraphicsSettingsCallback callback = (updatedConfig) -> {
+                                window.setFullScreen(updatedConfig.fullScreen);
                                 gameGLPanel.invoke(false, (glDrawable) -> {
                                     gameGLPanel.getRenderer().reloadPostProcessing(
                                             glDrawable.getGL().getGL3(), updatedConfig);
@@ -122,6 +123,8 @@ public class GameController implements Runnable {
 
                             // Register the canvas with the window (adds it to the JFrame)
                             window.registerGLCanvas(gameGLPanel);
+
+                            window.setFullScreen(postFXConfig.fullScreen);
 
                             window.showMenuMain();
                         },

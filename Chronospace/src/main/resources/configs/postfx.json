@@ -1,5 +1,6 @@
 {
   "renderScale": 0.4,
+  "fullScreen": true,
   "colorCorrection": {
     "enabled": true,
     "r": 1.0,
