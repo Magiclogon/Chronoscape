@@ -46,6 +46,9 @@ public class TileManager implements GameDrawable{
         loadTileSprites(); 
         
         colorCorrection = new SpriteColorCorrection();
+        
+        AssetsLoader.registerTileManager(this);
+
     }
     
     public void addMap(TileMap map) {
@@ -151,4 +154,8 @@ public class TileManager implements GameDrawable{
 	@Override
 	public void drawBlackGL(GL3 gl, GLGraphics glGraphics) {}
 	public void drawGlowGL(GL3 gl, GLGraphics glGraphics) {}
+	
+	public void disposeGLResources(GL3 gl) {
+	    mapCache.dispose(gl); // nulls texture, keeps the BufferedImage intact
+	}
 }

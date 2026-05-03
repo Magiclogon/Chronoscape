@@ -62,4 +62,6 @@ public class GameGLPanel extends GLCanvas {
 	public void resetFade() {
 		this.renderer.resetFade();
 	}
+	
+	
 }

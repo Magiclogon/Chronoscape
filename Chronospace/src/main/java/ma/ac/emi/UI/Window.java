@@ -33,6 +33,7 @@ public class Window extends JFrame {
     private Rectangle previousBounds;
 
     private GameGLPanel glCanvas;
+    private volatile boolean glPaused = false;
 
     public Window() {
         // 1. Initialize the Root System (The "Master" Switch)
@@ -123,14 +124,13 @@ public class Window extends JFrame {
         navigationManager.navigateTo(name);
 
         if ("GAME".equals(name)) {
-            rootLayout.show(rootContainer, "GAME_VIEW");
-            CursorManager.apply(glCanvas, 
-            		InputConfig.getInstance().keyboardAimMode ?
-            				CursorManager.CursorType.HIDDEN :
-            				CursorManager.CursorType.TARGET);
-            if (glCanvas != null) glCanvas.requestFocusInWindow();
+            resumeGL(); // handles card switch internally
+            CursorManager.apply(glCanvas,
+                    InputConfig.getInstance().keyboardAimMode ?
+                            CursorManager.CursorType.HIDDEN :
+                            CursorManager.CursorType.TARGET);
         } else {
-            rootLayout.show(rootContainer, "UI_VIEW");
+            pauseGL(); // handles card switch internally
             layout.show(mainPanel, name);
             CursorManager.apply(rootContainer, CursorManager.CursorType.ARROW);
         }
@@ -138,6 +138,32 @@ public class Window extends JFrame {
         revalidate();
         repaint();
     }
+
+    private void pauseGL() {
+        glPaused = true;
+        SwingUtilities.invokeLater(() -> {
+            if (glCanvas != null) {
+                rootContainer.remove(glCanvas);
+                rootContainer.revalidate();
+            }
+            rootLayout.show(rootContainer, "UI_VIEW");
+            rootContainer.repaint();
+        });
+    }
+
+    private void resumeGL() {
+        SwingUtilities.invokeLater(() -> {
+            if (glCanvas != null) {
+                rootContainer.add(glCanvas, "GAME_VIEW");
+                rootContainer.revalidate();
+                rootLayout.show(rootContainer, "GAME_VIEW");
+                glCanvas.requestFocusInWindow();
+            }
+            glPaused = false;
+        });
+    }
+
+    public boolean isGLPaused() { return glPaused; }
 
     public void jumpTo(String name) {
         navigationManager.jumpTo(name);
@@ -207,8 +233,8 @@ public class Window extends JFrame {
         if (this.isFullScreen == fullScreen) return;
         this.isFullScreen = fullScreen;
 
-        dispose(); // Must dispose before changing undecorated state
-
+        dispose();
+        
         if (fullScreen) {
             previousBounds = getBounds();
             setUndecorated(true);
