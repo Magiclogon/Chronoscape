@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 
 import com.jogamp.opengl.GL3;
 
+import ma.ac.emi.tiles.TileManager;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +18,19 @@ import java.util.jar.JarFile;
 public class AssetsLoader {
 
     private final static Map<String, Sprite> sprites = new HashMap<>();
+    private final static List<SpriteSheet> sheets = new ArrayList<>();
+    private final static List<TileManager> tileManagers = new ArrayList<>();
+
+
     private static String rootFolder;
+
+    public static void registerSheet(SpriteSheet sheet) {
+        sheets.add(sheet);
+    }
+    
+    public static void registerTileManager(TileManager tm) {
+        tileManagers.add(tm);
+    }
     
     public static Sprite getSprite(String key) {
         return sprites.get(key);
@@ -110,13 +124,18 @@ public class AssetsLoader {
                lower.endsWith(".gif");
     }
     
+ // Called on GL context loss — only frees GPU memory, keeps CPU data intact
+
+    public static void disposeGLResources(GL3 gl) {
+        for (Sprite sprite : sprites.values()) sprite.dispose(gl);
+        for (SpriteSheet sheet : sheets) sheet.disposeGLResources(gl);
+        for (TileManager tm : tileManagers) tm.disposeGLResources(gl); // add this
+    }
+
+    // Called only when truly shutting down the game entirely
     public static void disposeAll(GL3 gl) {
-        for (Sprite sprite : sprites.values()) {
-            sprite.dispose(gl);
-        }
+        disposeGLResources(gl);
         sprites.clear();
-        
-        System.out.println("Disposing of sprites");
     }
 
 	public static void reloadAssets() {

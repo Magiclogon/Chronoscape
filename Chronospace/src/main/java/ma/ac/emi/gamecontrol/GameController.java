@@ -490,7 +490,9 @@ public class GameController implements Runnable {
                 accumTime = 0;
             }
 
-            gameGLPanel.display();
+            if (!window.isGLPaused() && gameGLPanel.isVisible()) {
+                gameGLPanel.display();
+            }
 
             try { Thread.sleep(1); }
             catch (InterruptedException e) { e.printStackTrace(); }

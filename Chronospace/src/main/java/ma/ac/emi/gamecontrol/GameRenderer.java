@@ -445,14 +445,14 @@ public class GameRenderer implements GLEventListener {
     	GL3 gl = drawable.getGL().getGL3();
     	System.out.println("Disposing of Renderer..");
     	
-    	ParticleAnimationCache.clear(gl);
+    	ParticleAnimationCache.disposeGLResources(gl);
     	
     	if (glGraphics    != null) glGraphics.dispose(gl);
     	if (postProcessor != null) postProcessor.dispose(gl);
     	if (lightingSystem!= null) lightingSystem.dispose(gl);
     	if (glHud != null) glHud.dispose(gl);
     	
-    	AssetsLoader.disposeAll(gl);
+    	AssetsLoader.disposeGLResources(gl);
     }
 
     public LightingSystem getLightingSystem() {

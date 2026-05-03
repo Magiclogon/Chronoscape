@@ -38,12 +38,16 @@ public class ParticleAnimationCache {
         System.out.println("Initialized " + CACHE.size() + " particle animation textures");
     }
     
-
-    public static void clear(GL3 gl) {
+ 
+    public static void disposeGLResources(GL3 gl) {
         for (ParticleAnimation anim : CACHE.values()) {
             anim.dispose(gl);
         }
-        CACHE.clear();
         texturesInitialized = false;
+    }
+
+    public static void clear(GL3 gl) {
+        disposeGLResources(gl);
+        CACHE.clear();
     }
 }

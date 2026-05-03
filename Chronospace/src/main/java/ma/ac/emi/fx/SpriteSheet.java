@@ -2,6 +2,8 @@ package ma.ac.emi.fx;
 
 import javax.imageio.ImageIO;
 
+import com.jogamp.opengl.GL3;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,6 +28,7 @@ public class SpriteSheet {
 
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
+        AssetsLoader.registerSheet(this);
     }
 
     
@@ -69,6 +72,12 @@ public class SpriteSheet {
         }
 
         return frames;
+    }
+    
+    public void disposeGLResources(GL3 gl) {
+        for (Sprite sprite : cache.values()) {
+            sprite.dispose(gl); // nulls texture, keeps BufferedImage
+        }
     }
 
 }
