@@ -49,12 +49,21 @@ public class PassiveWeaponEffect extends WeaponBehavior {
         if (player == null) return;
         apply(player, true);
         active = true;
-        System.out.println("switching in");
     }
 
     @Override
     public void onSwitchOut(Weapon weapon) {
         if (!active) return;
+        Player player = getPlayer(weapon);
+        if (player == null) return;
+        apply(player, false);
+        System.out.println("PassiveWeapon: switching out");
+        active = false;
+    }
+    
+    @Override
+    public void onWaveEnd(Weapon weapon) {
+    	if (!active) return;
         Player player = getPlayer(weapon);
         if (player == null) return;
         apply(player, false);

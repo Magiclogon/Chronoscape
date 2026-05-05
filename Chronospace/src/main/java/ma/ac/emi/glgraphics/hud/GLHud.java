@@ -75,6 +75,11 @@ public class GLHud {
     private float cardHoldTimer = 0f;
     private int cardWaveNumber = 1;
     private Runnable cardDoneCallback;
+
+    private static final float FS_WAVE_INFO = 28f;
+    private static final float[] C_TIMER_NORMAL = {0.85f, 0.85f, 0.85f, 1f};
+    private static final float[] C_TIMER_URGENT = {0.95f, 0.25f, 0.25f, 1f};
+    private static final float TIMER_URGENT_THRESHOLD = 10f; // seconds
     
     private static final float CARD_HOLD_SECS = 3f;
     private static final float FADE_STEP = 0.02f; // approx 60fps step
@@ -105,6 +110,7 @@ public class GLHud {
         drawWeaponSlots(gl, g, inv, player.getWeaponIndex(), dpiScale);
         drawMinimap(gl, g, player, dpiScale);
         drawFPS(gl, dpiScale);
+        drawWaveInfo(gl, g, dpiScale);
         if (cardState != CardState.HIDDEN && cardAlpha > 0) {
             drawWaveCard(gl, g, sw, sh, dpiScale, font);
         }
@@ -146,6 +152,48 @@ public class GLHud {
                 }
             }
             default -> {}
+        }
+    }
+    
+    private void drawWaveInfo(GL3 gl, GLGraphics g, float dpiScale) {
+        if (cardState != CardState.HIDDEN) return;
+
+        try {
+            World world = GameController.getInstance().getWorldManager().getCurrentWorld();
+            if (world == null || world.getWaveManager() == null) return;
+
+            var wm = world.getWaveManager();
+            if (!wm.isWaveActive()) return;
+
+            float scaledFS = FS_WAVE_INFO * dpiScale;
+            float lineH    = font.lineHeight(scaledFS);
+            float topY     = (int)(28 * dpiScale);
+
+            // ── Wave label ─────────────────────────────────────
+            String waveLabel = "WAVE " + wm.getCurrentWaveIndex();
+            float wlW = font.measureWidth(waveLabel, scaledFS);
+            float wlX = (screenW - wlW) / 2f;
+            drawTextShadow(gl, waveLabel, wlX, topY, scaledFS, C_WHITE, dpiScale);
+
+            // ── Timer (if the wave has a time limit) ──────────────────────────
+            double remaining = wm.getRemainingTimeInCurrentWave();
+            if (remaining < 0) return; // no time limit on this wave
+
+            int secs  = (int) Math.ceil(remaining);
+            int mins  = secs / 60;
+            String timerText = mins > 0
+                ? String.format("%d:%02d", mins, secs % 60)
+                : String.format("0:%02d", secs);
+
+            float[] timerColor = (remaining <= TIMER_URGENT_THRESHOLD) ? C_TIMER_URGENT : C_TIMER_NORMAL;
+
+            float ttW = font.measureWidth(timerText, scaledFS);
+            float ttX = (screenW - ttW) / 2f;
+            float ttY = topY + lineH + (4 * dpiScale);
+            drawTextShadow(gl, timerText, ttX, ttY, scaledFS, timerColor, dpiScale);
+
+        } catch (Exception e) {
+            System.err.println("GLHud wave info error: " + e.getMessage());
         }
     }
     

@@ -25,6 +25,7 @@ public class Settings extends JPanel {
     private static final int MAX_WIDTH = 760;
 
     private JTabbedPane tabs;
+    private RetroButton applyBtn;
 
     public Settings(Runnable goBackAction) {
         setLayout(new BorderLayout());
@@ -56,8 +57,8 @@ public class Settings extends JPanel {
         footerSep.setBackground(BORDER_DIM);
         footerSep.setPreferredSize(new Dimension(0, 1));
 
-        RetroButton applyBtn = new RetroButton("APPLY",   RetroButton.Style.SOLID,   ACCENT_GREEN,  Color.BLACK);
-        RetroButton resetBtn = new RetroButton("RESET",   RetroButton.Style.DANGER,  ACCENT_RED,    Color.WHITE);
+        applyBtn = new RetroButton("APPLY",   RetroButton.Style.SOLID,   ACCENT_GREEN,  Color.BLACK);
+        applyBtn.setEnabled(false);        RetroButton resetBtn = new RetroButton("RESET",   RetroButton.Style.DANGER,  ACCENT_RED,    Color.WHITE);
         RetroButton backBtn  = new RetroButton("< BACK",  RetroButton.Style.OUTLINE, BORDER_LIGHT);
         applyBtn.setPreferredSize(new Dimension(140, 38));
         resetBtn.setPreferredSize(new Dimension(140, 38));
@@ -87,6 +88,8 @@ public class Settings extends JPanel {
         outer.add(card, gbc);
         add(outer, BorderLayout.CENTER);
     }
+    
+    public RetroButton getApplyButton() { return applyBtn; }
 
     // ── Sound helpers ─────────────────────────────────────────────────────
 
@@ -103,7 +106,8 @@ public class Settings extends JPanel {
 
     // ── Tab management ────────────────────────────────────────────────────
 
-    public void addTab(String title, JPanel tab) {
+    public void addTab(String title, SettingsPanel tab) {
+    	tab.setApplyButton(applyBtn);
         tabs.addTab(title, tab);
     }
 
@@ -164,7 +168,18 @@ public class Settings extends JPanel {
             @Override protected Insets getTabAreaInsets(int tp)       { return new Insets(4,4,0,4); }
             @Override protected int calculateTabHeight(int tp, int ti, int fh) { return 38; }
         });
-
+        
+        // In Settings.java, after creating the tabs:
+        tab.addChangeListener(e -> {
+            // Reflect the dirty state of the newly selected tab
+            int idx = tabs.getSelectedIndex();
+            if (idx < 0) return;
+            Component c = tabs.getComponentAt(idx);
+            if(c instanceof SettingsPanel sp) {
+            	applyBtn.setEnabled(sp.isHasUnsavedChanges());
+            }
+        });
+        
         return tab;
     }
 }

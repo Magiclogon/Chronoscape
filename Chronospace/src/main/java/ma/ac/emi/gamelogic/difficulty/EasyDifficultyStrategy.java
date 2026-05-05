@@ -17,4 +17,13 @@ public class EasyDifficultyStrategy extends AbstractDifficultyStrategy {
     public double getBossSpawnCountMultiplier() { return 0.8; }
     @Override
     public double getBossSpawnRateMultiplier() { return 0.8; }
+
+	@Override
+	public double getEnemyHpScalingFactor() {return 0.005;}
+
+	@Override
+	public double getEnemyDamageScalingFactor() {return 0.04;}
+
+	@Override
+	public double getWaveTimerMultiplier() {return 1.2;}
 }

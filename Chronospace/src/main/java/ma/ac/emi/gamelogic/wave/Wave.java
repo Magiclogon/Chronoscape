@@ -39,6 +39,9 @@ public class Wave extends WaveNotifier {
     private int worldWidth;
     private int worldHeight;
     private double enemyNumberMultiplier;
+    private double waveTimeLimit;   // total seconds allowed; <= 0 means no limit
+    private double waveTimeElapsed;
+    private boolean timedOut;
 
     private AttackObjectManager attackObjectManager;
     private WaveManager waveManager;
@@ -58,6 +61,9 @@ public class Wave extends WaveNotifier {
         spawnPoints = new ArrayList<>();
         this.worldWidth = worldWidth;
         this.worldHeight = worldHeight;
+        this.waveTimeLimit = 0;
+        this.waveTimeElapsed = 0;
+        this.timedOut = false;
 
         this.enemyNumberMultiplier = 1;
         
@@ -79,8 +85,17 @@ public class Wave extends WaveNotifier {
 
     public void spawn() {
         spawnState = WaveSpawnState.SPAWNING;
-        spawnTimer = 0;
         enemiesSpawned = 0;
+
+        // Ensure all enemies spawn within 75% of the time limit
+        if (waveTimeLimit > 0 && enemiesNumber > 1) {
+            double spawnWindow = waveTimeLimit * 0.75;
+            double maxAllowedDelay = spawnWindow / (enemiesNumber - 1);
+            spawnDelay = Math.min(spawnDelay, maxAllowedDelay);
+            spawnDelay = Math.max(spawnDelay, 0.1);
+        }
+
+        spawnTimer = 0;
     }
 
     public void update(double deltaTime, Vector3D playerPos) {
@@ -98,42 +113,65 @@ public class Wave extends WaveNotifier {
             }
         }
 
+        // Tick wave timer
+        if (waveTimeLimit > 0 && !timedOut) {
+            waveTimeElapsed += deltaTime;
+            if (waveTimeElapsed >= waveTimeLimit) {
+                timedOut = true;
+                killAllEnemiesNoDrops();
+                spawnState = WaveSpawnState.SPAWN_COMPLETE;
+            }
+        }
+
+        // Collect drop events only for normally-killed enemies
         List<SpawnDropEvent> dropEvents = new ArrayList<>();
         enemies.forEach(e -> {
             if (!e.isActive()) {
                 boolean isBoss = e instanceof BossEnnemy;
                 dropEvents.add(new SpawnDropEvent(
                     e.getPos(),
-                    isBoss ? 10 : 1,      
-                    isBoss ? 1.0 : -1.0  
+                    isBoss ? 10 : 1,
+                    isBoss ? 1.0 : -1.0
                 ));
             }
         });
 
-        if (!dropEvents.isEmpty()) {
+        if (!dropEvents.isEmpty() && this.waveTimeElapsed < this.waveTimeLimit) {
             notifyListeners(dropEvents);
         }
 
         enemies.forEach(enemy -> {
-            if(!enemy.isActive()) {
+            if (!enemy.isActive()) {
                 GameController.getInstance().removeDrawable(enemy);
-                if(enemy.getShadow() != null) GameController.getInstance().removeDrawable(enemy.getShadow());
+                if (enemy.getShadow() != null) GameController.getInstance().removeDrawable(enemy.getShadow());
 
-        		@SuppressWarnings("unchecked")
-				ObjectPool<Ennemy> pool =
-        		        (ObjectPool<Ennemy>) waveManager.pools.get(enemy.getClass());
-
-    		    if (pool != null) {
-    		        pool.free(enemy);
-    		    }
+                @SuppressWarnings("unchecked")
+                ObjectPool<Ennemy> pool =
+                    (ObjectPool<Ennemy>) waveManager.pools.get(enemy.getClass());
+                if (pool != null) pool.free(enemy);
             }
         });
 
         enemies.removeIf(enemy -> !enemy.isActive());
 
-        for(Ennemy e: enemies) {
+        for (Ennemy e : enemies) {
             e.update(deltaTime, playerPos);
         }
+    }
+
+    private void killAllEnemiesNoDrops() {
+        enemies.forEach(enemy -> {
+            enemy.forceKill();
+        });
+    }
+
+    public double getRemainingTime() {
+        if (waveTimeLimit <= 0) return -1; // no limit
+        return Math.max(0, waveTimeLimit - waveTimeElapsed);
+    }
+
+    public boolean isTimedOut() {
+        return timedOut;
     }
     
     public void onStart() {

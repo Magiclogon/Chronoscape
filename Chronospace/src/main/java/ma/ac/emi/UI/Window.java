@@ -2,6 +2,8 @@ package ma.ac.emi.UI;
 
 import java.awt.*;
 import javax.swing.*;
+
+import ma.ac.emi.UI.component.SettingsPanel;
 import ma.ac.emi.gamecontrol.*;
 import ma.ac.emi.input.InputConfig;
 
@@ -223,7 +225,9 @@ public class Window extends JFrame {
     public String  getCurrentScreen() { return navigationManager.getCurrentScreen(); }
     
     public void refreshShop()        { if(shopUI != null) shopUI.refresh(); }
-    public void addSettings(JPanel s, String title) { settings.addTab(title, s); }
+    public void addSettings(SettingsPanel s, String title) { 
+    	settings.addTab(title, s); 
+    }
     
     public TransitionManager getTransitionManager() { return transitionManager; }
     public LoadingScreen     getLoadingScreen()      { return loadingScreen; }

@@ -50,9 +50,9 @@ public class RetroButton extends JButton {
             setPreferredSize(new Dimension(getPreferredSize().width, MenuStyle.BTN_HEIGHT_SM));
 
         addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e)  { hovered = true;  repaint(); }
+            public void mouseEntered(MouseEvent e)  { if (isEnabled()) { hovered = true;  repaint(); } }
             public void mouseExited (MouseEvent e)  { hovered = false; repaint(); }
-            public void mousePressed(MouseEvent e)  { pressed = true;  repaint(); }
+            public void mousePressed(MouseEvent e)  { if (isEnabled()) { pressed = true;  repaint(); } }
             public void mouseReleased(MouseEvent e) { pressed = false; repaint(); }
         });
     }
@@ -66,6 +66,31 @@ public class RetroButton extends JButton {
 
     @Override
     protected void paintComponent(Graphics g) {
+    	// ── Disabled state ────────────────────────────────────────────────────
+    	if (!isEnabled()) {
+    	    Graphics2D g2 = (Graphics2D) g.create();
+    	    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    	    int w = getWidth(), h = getHeight();
+
+    	    // Dim fill
+    	    g2.setColor(new Color(50, 50, 58));
+    	    g2.fillRoundRect(0, 0, w, h, MenuStyle.ARC, MenuStyle.ARC);
+
+    	    // Dim border
+    	    g2.setColor(new Color(70, 70, 80));
+    	    g2.setStroke(new BasicStroke(1.5f));
+    	    g2.drawRoundRect(1, 1, w - 2, h - 2, MenuStyle.ARC, MenuStyle.ARC);
+
+    	    // Dim text
+    	    g2.setFont(MenuStyle.FONT_BODY);
+    	    g2.setColor(new Color(90, 90, 100));
+    	    FontMetrics fm = g2.getFontMetrics();
+    	    g2.drawString(getText(), (w - fm.stringWidth(getText())) / 2, (h - fm.getHeight()) / 2 + fm.getAscent());
+
+    	    g2.dispose();
+    	    return; // skip normal painting entirely
+    	}
+    	
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

@@ -102,10 +102,14 @@ public abstract class EnnemySpecieFactory implements DifficultyObserver {
 	// Applique la difficulté aux ennemies crées
 	protected void applyDifficultyStats(Ennemy enemy) {
 		if (currentDifficulty == null) return;
-
-		enemy.setHpMax(enemy.getHpMax() * currentDifficulty.getEnemyHpMultiplier());
+		int wave = GameController.getInstance().getWorldManager().getCurrentWaveNumber();
+	    
+	    double hpScale   = 1.0 + (wave - 1)*(wave - 1) * currentDifficulty.getEnemyHpScalingFactor();
+	    double dmgScale  = 1.0 + (wave - 1)*(wave - 1) * currentDifficulty.getEnemyDamageScalingFactor();
+	    	    
+		enemy.setHpMax(enemy.getHpMax() * currentDifficulty.getEnemyHpMultiplier() * hpScale);
 		enemy.setHp(enemy.getHpMax());
-		enemy.setStrength(enemy.getStrength() * currentDifficulty.getEnemyDamageMultiplier());
+		enemy.setStrength(enemy.getStrength() * currentDifficulty.getEnemyDamageMultiplier() * dmgScale);
 		enemy.setSpeed(enemy.getSpeed() * currentDifficulty.getEnemySpeedMultiplier());
 	}
 

@@ -7,7 +7,7 @@ import ma.ac.emi.UI.MenuStyle;
 import ma.ac.emi.UI.component.RetroButton;
 import ma.ac.emi.UI.component.SettingsPanel;
 
-public class SoundSettingsPanel extends JPanel implements SettingsPanel {
+public class SoundSettingsPanel extends SettingsPanel {
 
     private boolean isMuted = false;
 
@@ -82,6 +82,7 @@ public class SoundSettingsPanel extends JPanel implements SettingsPanel {
         slider.addChangeListener(e -> {
             valueLabel.setText(slider.getValue() + "%");
             onChange.accept(slider.getValue());
+            markChanged();
         });
 
         row.add(lbl,        BorderLayout.WEST);
@@ -106,18 +107,12 @@ public class SoundSettingsPanel extends JPanel implements SettingsPanel {
             muteBtn.setText(isMuted ? "ON" : "OFF");
             muteBtn.setToggled(isMuted);
             // SoundManager.getInstance().setMuted(isMuted);
+            markChanged();
         });
 
         row.add(lbl,     BorderLayout.WEST);
         row.add(muteBtn, BorderLayout.EAST);
         return row;
-    }
-
-    private JSeparator makeSeparator() {
-        JSeparator sep = new JSeparator();
-        sep.setForeground(new Color(60, 60, 70));
-        sep.setBackground(MenuStyle.BG_DARK);
-        return sep;
     }
 
     @Override public void applyChanges()    { /* TODO */ }

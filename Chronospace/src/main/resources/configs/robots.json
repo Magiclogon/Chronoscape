@@ -4,12 +4,10 @@
       "type": "common",
       "speed": 40,
       "hpMax": 80,
-
       "weaponId": "blaster404",
       "projectileSpeedMultiplier": 0.2,
-      "damageMultiplier": 0.5,
+      "damageMultiplier": 0.7,
       "attackSpeedMultiplier": 0.1,
-
       "animationDetails": {
         "spriteSheetPath": "enemies/common robot-Sheet.png",
         "spriteWidth": 32,
@@ -20,10 +18,8 @@
         "dyingLength": 28,
         "spawningLength": 47
       },
-
       "weaponXOffset": 8,
       "weaponYOffset": 0,
-
       "behaviors": [
         {
           "type": "onMovement",
@@ -57,17 +53,14 @@
         }
       ]
     },
-
     {
       "type": "ranged",
       "speed": 30,
       "hpMax": 70,
-
       "weaponId": "snipnk",
       "projectileSpeedMultiplier": 0.3,
-      "damageMultiplier": 0.30,
+      "damageMultiplier": 0.2,
       "attackSpeedMultiplier": 0.35,
-
       "animationDetails": {
         "spriteSheetPath": "enemies/ranged robot-Sheet.png",
         "spriteWidth": 32,
@@ -78,10 +71,8 @@
         "dyingLength": 29,
         "spawningLength": 47
       },
-
       "weaponXOffset": 13,
       "weaponYOffset": -2,
-
       "behaviors": [
         {
           "type": "onMovement",
@@ -115,17 +106,14 @@
         }
       ]
     },
-
     {
       "type": "speedster",
       "speed": 80,
       "hpMax": 50,
-
       "weaponId": "lightsaber",
       "projectileSpeedMultiplier": 1.0,
-      "damageMultiplier": 0.45,
+      "damageMultiplier": 0.35,
       "attackSpeedMultiplier": 1.0,
-
       "animationDetails": {
         "spriteSheetPath": "enemies/speedster robot-Sheet.png",
         "spriteWidth": 48,
@@ -136,10 +124,8 @@
         "dyingLength": 28,
         "spawningLength": 47
       },
-
       "weaponXOffset": 14,
       "weaponYOffset": 3,
-
       "behaviors": [
         {
           "type": "onMovement",
@@ -173,17 +159,14 @@
         }
       ]
     },
-
     {
       "type": "tank",
       "speed": 22,
       "hpMax": 380,
-
       "weaponId": "hammer",
       "projectileSpeedMultiplier": 1.0,
       "damageMultiplier": 0.55,
       "attackSpeedMultiplier": 0.7,
-
       "animationDetails": {
         "spriteSheetPath": "enemies/tank robot-Sheet.png",
         "spriteWidth": 48,
@@ -194,10 +177,8 @@
         "dyingLength": 29,
         "spawningLength": 47
       },
-
       "weaponXOffset": -10,
       "weaponYOffset": 3,
-
       "behaviors": [
         {
           "type": "onMovement",
@@ -231,12 +212,10 @@
         }
       ]
     },
-
     {
       "type": "boss",
       "speed": 55,
       "hpMax": 1800,
-
       "weaponId": "robot_boss_machinegun",
       "weaponIds": [
         "robot_boss_machinegun",
@@ -245,8 +224,7 @@
       ],
       "projectileSpeedMultiplier": 0.75,
       "damageMultiplier": 0.85,
-      "attackSpeedMultiplier": 0.9,
-
+      "attackSpeedMultiplier": 0.5,
       "animationDetails": {
         "spriteSheetPath": "enemies/boss robot-Sheet.png",
         "spriteWidth": 96,
@@ -257,10 +235,8 @@
         "dyingLength": 106,
         "spawningLength": 47
       },
-
       "weaponXOffset": 24,
       "weaponYOffset": -1,
-
       "behaviors": [
         {
           "type": "onMovement",

@@ -6,7 +6,7 @@
   "baseSpeed": 100,
   "baseStrength": 1.0,
   "baseRegenerationSpeed": 0.5,
-  "baseLuck": 0.2,
+  "baseLuck": 0,
   "startingWeaponId": "crossbow",
   "animationDetails": {
     "spriteSheetPath": "player/main_character-Sheet.png",
@@ -30,7 +30,7 @@
     "maxRegen": 50,
     "minLuck": 0,
     "maxLuck": 5.0,
-    "maxDodge": 0.75,
+    "maxDodge": 0.85,
     "minDamage": 1,
     "minAttackSpeed": 0.1,
     "maxAttackSpeed": 30,
