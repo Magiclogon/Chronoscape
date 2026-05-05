@@ -236,7 +236,7 @@ public class Inventory {
         player.setLuck(player.getBaseLuck() + luckAddBonus + player.getBaseLuck() * luckMulBonus);
         player.setDefense(defAddBonus);
         player.setDodge(dodgeAddBonus);
-        player.setRegenerationSpeed(player.getBaseRegenerationSpeed() + Math.max(0, regenAddBonus));
+        player.setRegenerationSpeed(player.getBaseRegenerationSpeed() + regenAddBonus);
     }
 
     private void applyWeaponUpgrades() {

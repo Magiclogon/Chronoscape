@@ -14,7 +14,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.function.Consumer;
 
-public class ControlsPanel extends JPanel implements SettingsPanel {
+public class ControlsPanel extends SettingsPanel {
 
     // Working copy — written to InputConfig only on applyChanges()
     private int wMoveUp, wMoveDown, wMoveLeft, wMoveRight;
@@ -43,17 +43,6 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
             stopListening();
         }
     };
-
-    private void playUiSound(String name) {
-        SoundManager sm = GameController.getInstance().getSoundManager();
-        if (sm != null) sm.play(name);
-    }
-
-    private void addHoverSound(javax.swing.JButton btn) {
-        btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override public void mouseEntered(java.awt.event.MouseEvent e) { playUiSound("hover_menu"); }
-        });
-    }
 
     public ControlsPanel() {
         loadFromConfig();
@@ -144,6 +133,8 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         cfg.aimRight    = wAimRight;
         cfg.keyboardAimMode = wKeyboardAim;
         cfg.save();
+        
+        this.clearChanged();
     }
 
     @Override
@@ -163,22 +154,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
         wAimRight    = defaults.aimRight;
         wKeyboardAim = defaults.keyboardAimMode;
         refreshAllButtons();
-    }
-
-    private JLabel makeSectionLabel(String text) {
-        JLabel lbl = new JLabel(text, SwingConstants.CENTER);
-        lbl.setFont(MenuStyle.FONT_BODY);
-        lbl.setForeground(MenuStyle.TEXT_BORDER);
-        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return lbl;
-    }
-
-    private JPanel makeSeparator() {
-        JPanel p = new JPanel();
-        p.setBackground(new Color(60, 60, 70));
-        p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
-        p.setPreferredSize(new Dimension(0, 1));
-        return p;
+        markChanged();
     }
 
     private JPanel makeAimModeRow() {
@@ -213,6 +189,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
             btnAimMode.setText(wKeyboardAim ? "ON" : "OFF");
             btnAimMode.setToggled(wKeyboardAim);
             btnAimMode.repaint();
+            markChanged();
         });
 
         addHoverSound(btnAimMode);
@@ -240,7 +217,7 @@ public class ControlsPanel extends JPanel implements SettingsPanel {
                 MenuStyle.ACCENT);
         btn.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
 
-        btn.addActionListener(e -> { playUiSound("select_menu"); startListening(btn, onBound); });
+        btn.addActionListener(e -> { playUiSound("select_menu"); startListening(btn, onBound); markChanged();});
         addHoverSound(btn);
 
         row.add(lbl, BorderLayout.WEST);

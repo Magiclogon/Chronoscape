@@ -153,6 +153,34 @@ public abstract class Ennemy extends LivingEntity {
 
 		if(!isIdle() && !isDying() && !isSpawning()) stateMachine.trigger("Stop");
 		
+		
+		
+		if (this.getHp() <= 0 && !this.isDying()) {
+            Player player = Player.getInstance();
+            if (player != null && player.getInventory() != null) {
+                player.getInventory().getEffectContext().fireOnKill(player, this);
+            }
+            
+            if (player.getActiveWeapon() != null)
+                player.getActiveWeapon().onKill(this);
+        }
+
+		if(getHp() <= 0) {
+			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);
+			if(!isDying()) {
+				if(!isIdle()) stateMachine.trigger("Stop");
+				stateMachine.trigger("Die");
+			}
+			stateMachine.update(step);
+			super.update(step);
+			
+			if(this.deathAnimationDone()) {
+				stateMachine.getCurrentAnimationState().reset();
+				active = false;
+			}
+			return;
+		}
+		
 		if(isSpawning()) {
 			stateMachine.update(step);
 
@@ -170,30 +198,6 @@ public abstract class Ennemy extends LivingEntity {
 			super.update(step);
 			return;
 		}
-		
-		if (this.getHp() <= 0 && !this.isDying()) {
-            Player player = Player.getInstance();
-            if (player != null && player.getInventory() != null) {
-                player.getInventory().getEffectContext().fireOnKill(player, this);
-            }
-            
-            if (player.getActiveWeapon() != null)
-                player.getActiveWeapon().onKill(this);
-        }
-
-		if(getHp() <= 0) {
-			if(activeWeapon != null) GameController.getInstance().removeDrawable(activeWeapon);
-			if(!isDying()) stateMachine.trigger("Die");
-			stateMachine.update(step);
-			super.update(step);
-			
-			if(this.deathAnimationDone()) {
-				stateMachine.getCurrentAnimationState().reset();
-				active = false;
-			}
-			return;
-		}
-		
 
 		// AI Logic
 		if (aiBehavior != null) {
@@ -279,6 +283,10 @@ public abstract class Ennemy extends LivingEntity {
 	
 	@Override
 	public void switchWeapons() {}
+
+	public void forceKill() {
+		setHp(0);
+	}
 
 
 

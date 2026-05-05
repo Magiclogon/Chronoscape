@@ -12,7 +12,7 @@ import ma.ac.emi.glgraphics.post.config.PostFXConfig;
 import ma.ac.emi.glgraphics.post.config.PostFXConfigLoader;
 import ma.ac.emi.sound.SoundManager;
 
-public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
+public class GraphicsSettingsPanel extends SettingsPanel {
 
     public enum GraphicsPreset {
         FAST("FAST", "Fast & Smooth", "Minimal effects for maximum FPS"),
@@ -28,13 +28,12 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
     private PostFXConfig config;
     private GraphicsSettingsCallback callback;
     private Runnable goBackAction;
-    private boolean hasUnsavedChanges   = false;
     private boolean ignoreSliderChanges = false;
     private GraphicsPreset currentPreset = GraphicsPreset.BALANCED;
     private ButtonGroup presetButtonGroup;
     private JSlider renderScaleSlider, bloomIntensitySlider, glowIntensitySlider;
     private RetroButton btnFullScreen;
-
+    
     public GraphicsSettingsPanel(PostFXConfig config) { this(config, null); }
 
     public GraphicsSettingsPanel(PostFXConfig config, GraphicsSettingsCallback callback) {
@@ -114,26 +113,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         updateUIForCurrentPreset();
     }
 
-    private void playUiSound(String name) {
-        SoundManager sm = GameController.getInstance().getSoundManager();
-        if (sm != null) sm.play(name);
-    }
-
-    private void addHoverSound(javax.swing.JButton btn) {
-        btn.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override public void mouseEntered(java.awt.event.MouseEvent e) { playUiSound("hover_menu"); }
-        });
-    }
-
     // ── Helpers ───────────────────────────────────────────────────────────
-
-    private JLabel makeSectionLabel(String text) {
-        JLabel lbl = new JLabel(text, SwingConstants.CENTER);
-        lbl.setFont(MenuStyle.FONT_BODY);
-        lbl.setForeground(MenuStyle.TEXT_BORDER);
-        lbl.setAlignmentX(Component.CENTER_ALIGNMENT);
-        return lbl;
-    }
 
     private JPanel makeFullScreenRow() {
         JPanel row = new JPanel(new BorderLayout(16, 0));
@@ -157,8 +137,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
             btnFullScreen.setText(config.fullScreen ? "ON" : "OFF");
             btnFullScreen.setToggled(config.fullScreen);
             btnFullScreen.repaint();
-            switchToCustomPreset();
-            hasUnsavedChanges = true;
+            markChanged();
         });
 
         addHoverSound(btnFullScreen);
@@ -243,7 +222,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         slider.addChangeListener(e -> {
             valueLabel.setText(getSliderValue(slider));
             if (!ignoreSliderChanges && !slider.getValueIsAdjusting()) switchToCustomPreset();
-            hasUnsavedChanges = true;
+            markChanged();
         });
 
         row.add(lbl,        BorderLayout.WEST);
@@ -271,7 +250,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
 
     private void applyPreset(GraphicsPreset preset) {
         if (preset == GraphicsPreset.CUSTOM) { currentPreset = preset; return; }
-        currentPreset = preset; hasUnsavedChanges = true; ignoreSliderChanges = true;
+        currentPreset = preset; markChanged(); ignoreSliderChanges = true;
         switch (preset) {
             case FAST:     applyFastPreset();     break;
             case BALANCED: applyBalancedPreset(); break;
@@ -285,28 +264,16 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         if (config.bloom != null) config.bloom.enabled = false;
         if (config.glow  != null) config.glow.enabled  = false;
         config.renderScale = 0.25f;
-        config.fullScreen = true;
-        btnFullScreen.setToggled(true);
-        btnFullScreen.setText("ON");
-        btnFullScreen.repaint();
     }
     private void applyBalancedPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.5f;  }
         config.renderScale = 0.4f;
-        config.fullScreen = true;
-        btnFullScreen.setToggled(true);
-        btnFullScreen.setText("ON");
-        btnFullScreen.repaint();
     }
     private void applyUltraPreset() {
         if (config.bloom != null) { config.bloom.enabled = true; config.bloom.intensity = 0.05f; }
         if (config.glow  != null) { config.glow.enabled  = true; config.glow.intensity  = 0.7f;  }
         config.renderScale = 1.0f;
-        config.fullScreen = true;
-        btnFullScreen.setToggled(true);
-        btnFullScreen.setText("ON");
-        btnFullScreen.repaint();
     }
 
     private void switchToCustomPreset() {
@@ -372,7 +339,7 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         RetroButton cancel = new RetroButton("CANCEL", RetroButton.Style.DANGER, MenuStyle.ACCENT_RED, Color.WHITE);
         ok.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
         cancel.setPreferredSize(new Dimension(120, MenuStyle.BTN_HEIGHT_SM));
-        ok.addActionListener(e -> { playUiSound("select_menu"); adv.applyToConfig(config); hasUnsavedChanges = true; switchToCustomPreset(); dialog.dispose(); });
+        ok.addActionListener(e -> { playUiSound("select_menu"); adv.applyToConfig(config); markChanged(); switchToCustomPreset(); dialog.dispose(); });
         cancel.addActionListener(e -> { playUiSound("select_menu"); dialog.dispose(); });
         addHoverSound(ok);
         addHoverSound(cancel);
@@ -390,7 +357,9 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
         config.fullScreen = btnFullScreen.isToggled();
         try { PostFXConfigLoader.save(config); } catch (Exception e) { e.printStackTrace(); }
         if (callback != null) callback.onSettingsChanged(config);
-        hasUnsavedChanges = false;
+        
+        clearChanged();
+
     }
 
     @Override public void applyChanges()    { applyChangesInternal(); }
@@ -451,4 +420,5 @@ public class GraphicsSettingsPanel extends JPanel implements SettingsPanel {
             g2.dispose();
         }
     }
+
 }

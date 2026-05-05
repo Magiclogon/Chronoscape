@@ -16,4 +16,9 @@ public interface DifficultyStrategy {
     // boss spawn adjustments
     double getBossSpawnCountMultiplier();
     double getBossSpawnRateMultiplier();
+    
+    // Enemy stats scaling per wave
+    double getEnemyHpScalingFactor();
+    double getEnemyDamageScalingFactor();
+	double getWaveTimerMultiplier();
 }

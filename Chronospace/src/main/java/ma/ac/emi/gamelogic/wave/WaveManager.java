@@ -215,6 +215,11 @@ public class WaveManager implements DifficultyObserver {
         }
         return 0;
     }
+    
+    public double getRemainingTimeInCurrentWave() {
+        Wave wave = getCurrentWave();
+        return wave != null ? wave.getRemainingTime() : -1;
+    }
 
     /**
      * Called by GameController once the wave intro sequence completes.

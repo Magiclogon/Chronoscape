@@ -20,11 +20,13 @@ public class ParticleEmitterManager {
 	}
 	
 	public void update(double step) {
-		emitters.forEach(e -> {
-			if(e.isShouldEmit()) e.update(step);
-		});
-		
-		emitters.removeIf(e -> !e.isActive());
+		List<ParticleEmitter> snapshot = new ArrayList<>(emitters);
+	    
+	    snapshot.forEach(e -> {
+	        if (e.isShouldEmit()) e.update(step);
+	    });
+
+	    emitters.removeIf(e -> !e.isActive());
 	}
 
 	public void clear() {
